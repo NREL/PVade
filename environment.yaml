@@ -1,0 +1,22 @@
+name: pvopt-env
+channels:
+  - conda-forge  
+  - defaults
+dependencies:
+  # Dependencies should be kept as loosely pinned to version numbers as possible
+  - alive-progress
+  - black
+  - fenics-dolfinx
+  - jsonschema
+  - jupyter
+  - matplotlib
+  - pandas
+  - pytest
+  - python-gmsh
+  - pyyaml
+  - scipy
+  - snakeviz
+  - tqdm
+  - pip
+  - pip:
+    - -e . # Installs the pvopt package
