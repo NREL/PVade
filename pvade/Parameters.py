@@ -139,7 +139,7 @@ class SimParams:
                 f"--{key}", metavar="", type=cli_type, help=help_message
             )
 
-        command_line_inputs = parser.parse_args()
+        command_line_inputs, unknown = parser.parse_known_args()
 
         # Find any command line arguments that were used and replace those entries in params
         for key, value in vars(command_line_inputs).items():
@@ -151,6 +151,10 @@ class SimParams:
 
                 if self.rank == 0:
                     print(f"| Setting {key} = {value} from command line.")
+
+        for key in unknown:
+            if self.rank == 0:
+                print(f"| Got unknown option {key}, skipping.")
 
     def _validate_inputs(self):
         # This compares the input dictionary against the yaml schema
