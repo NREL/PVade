@@ -1,0 +1,7 @@
+.*
+!/.gitignore
+!/.readthedocs.yaml
+*.pyc
+*.egg-info/
+
+docs/_build/

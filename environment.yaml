@@ -16,7 +16,9 @@ dependencies:
   - pyyaml
   - scipy
   - snakeviz
+  - sphinx
   - tqdm
   - pip
   - pip:
+    - sphinx-rtd-theme
     - -e . # Installs the pvopt package
