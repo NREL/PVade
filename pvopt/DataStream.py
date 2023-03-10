@@ -29,7 +29,8 @@ class DataStream:
 
         with XDMFFile(self.comm, self.results_filename, "w") as xdmf_file:
             tt = 0.0
-            xdmf_file.write_mesh(domain.msh)
+            xdmf_file.write_mesh(domain.mesh)
+            xdmf_file.write_function(domain.total_mesh_displacement, tt)
             xdmf_file.write_function(flow.u_k, 0.0)
             xdmf_file.write_function(flow.p_k, 0.0)
 
@@ -38,6 +39,27 @@ class DataStream:
         with XDMFFile(self.comm, self.results_filename, "a") as xdmf_file:
             xdmf_file.write_function(flow.u_k, tt)
             xdmf_file.write_function(flow.p_k, tt)
+
+        self._write_single_time_xdmf(domain, flow, tt)
+
+    def save_XDMF_files(self, domain, flow, tt):
+
+        with XDMFFile(self.comm, self.results_filename, "a") as xdmf_file:
+            xdmf_file.write_function(domain.total_mesh_displacement, tt)
+            xdmf_file.write_function(flow.u_k, tt)
+            xdmf_file.write_function(flow.p_k, tt)
+
+        self._write_single_time_xdmf(domain, flow, tt)
+
+    def _write_single_time_xdmf(self, domain, flow, tt):
+        new_filename = self.results_filename.split(".xdmf")[0] + f"{int(tt*1000):06.0f}.xdmf"
+
+        with XDMFFile(self.comm, new_filename, "w") as xdmf_file:
+            xdmf_file.write_mesh(domain.mesh)
+            xdmf_file.write_function(domain.total_mesh_displacement, tt)
+            xdmf_file.write_function(flow.u_k, tt)
+            xdmf_file.write_function(flow.p_k, tt)
+
 
     # def save_XDMF_files(self, flow, params, step, xdmf_file):
     #     current_time = step * params["dt"]

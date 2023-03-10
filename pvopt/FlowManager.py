@@ -600,7 +600,7 @@ class Flow:
         # Define variational problem for step 1: tentative velocity
         self.F1 = (
             (1.0 / self.dt_c) * inner(self.u - self.u_k1, self.v) * dx
-            + inner(dot(U_AB, nabla_grad(U_CN)), self.v) * dx
+            + inner(dot(U_AB-domain.mesh_motion/self.dt_c, nabla_grad(U_CN)), self.v) * dx
             + (nu + self.nu_T) * inner(grad(U_CN), grad(self.v)) * dx
             + inner(grad(self.p_k1), self.v) * dx
             - inner(self.dpdx, self.v) * dx
@@ -722,12 +722,21 @@ class Flow:
         self.solver_5.getPC().setType("jacobi")
         self.solver_5.setFromOptions()
 
-    def solve(self, params):
+    def solve(self, domain, params):
         """solve the variational forms
 
         Args:
             params (_type_): _description_
         """
+
+        mesh_vel = dolfinx.fem.Function(self.V)
+        mesh_vel.interpolate(domain.mesh_motion)
+        mesh_vel.vector.array[:] /= params.solver.dt
+
+        self.bcu[-2] = dirichletbc(mesh_vel, self.internal_surface_V_dofs)
+
+        # print(np.amax(mesh_vel.vector.array[:]), np.amax(domain.mesh_motion.vector.array[:]))
+
         if self.first_call_to_solver:
             if self.rank == 0:
                 print("Starting Fluid Solution")
@@ -780,6 +789,11 @@ class Flow:
         self.u_k.x.scatter_forward()
 
     def _solver_step_2(self, params):
+        self.A2.zeroEntries()
+        self.A2 = fem.petsc.assemble_matrix(self.A2, self.a2, bcs=self.bcp)
+        self.A2.assemble()
+        self.solver_2.setOperators(self.A2)
+
         # Step 2: Pressure correction step
         with self.b2.localForm() as loc:
             loc.set(0)
@@ -798,6 +812,11 @@ class Flow:
         self.p_k.x.scatter_forward()
 
     def _solver_step_3(self, params):
+        self.A3.zeroEntries()
+        self.A3 = fem.petsc.assemble_matrix(self.A3, self.a3)
+        self.A3.assemble()
+        self.solver_3.setOperators(self.A3)
+
         # Step 3: Velocity correction step
         with self.b3.localForm() as loc:
             loc.set(0)
@@ -812,6 +831,11 @@ class Flow:
         self.u_k.x.scatter_forward()
 
     def compute_cfl(self):
+        self.A5.zeroEntries()
+        self.A5 = fem.petsc.assemble_matrix(self.A5, self.a5)
+        self.A5.assemble()
+        self.solver_5.setOperators(self.A5)
+
         # Compute the CFL number
         # TODO: only do this on save/print steps?
         with self.b5.localForm() as loc:

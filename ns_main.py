@@ -17,6 +17,7 @@ import time
 from dolfinx.common import TimingType, list_timings
 import tqdm.autonotebook
 
+from mpi4py import MPI
 
 def main():
     # problems solver are:
@@ -87,7 +88,9 @@ def main():
     flow.build_boundary_conditions(domain, params)
 
     # # # Build the fluid forms
+    domain.move_mesh(0.0)
     flow.build_forms(domain, params)
+
 
     dataIO = DataStream(domain, flow, params)
 
@@ -106,8 +109,11 @@ def main():
         if domain.rank == 0:
             progress.update(1)
 
+        domain.move_mesh(params.solver.dt*(k+1))
+
         # Solve the fluid problem at each timestep
-        flow.solve(params)
+        flow.solve(domain, params)
+        # flow.cfl_max = 1.0
 
         # adjust pressure to avoid dissipation of pressure profile
         # flow.adjust_dpdx_for_constant_flux(mpi_info)
@@ -117,7 +123,8 @@ def main():
                     f"Time {params.solver.dt*(k+1):.2f} of {params.solver.t_final:.2f}, CFL = {flow.cfl_max}"
                 )
 
-            dataIO.save_XDMF_files(flow, (k + 1) * params.solver.dt)
+            dataIO.save_XDMF_files(domain, flow, (k + 1) * params.solver.dt)
+
     toc = time.time()
     if domain.rank == 0:
         print(f"Total solve time = {toc-tic:.2f} s.")
