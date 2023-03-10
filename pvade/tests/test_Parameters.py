@@ -57,6 +57,7 @@ def test_parameters(create_params):
     assert params.solver.save_xdmf_interval_n == 5
 
 
+@pytest.mark.unit
 def test_bad_parameters(create_bad_params):
     with pytest.raises(Exception):
         params = SimParams(filename)
