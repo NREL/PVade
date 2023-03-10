@@ -1,7 +1,5 @@
-# PVOPT
-This project will develop an open source fluid-structure interaction model which can be used as part of a modeling chain to provide stressor inputs to mechanical module models to study the physics of failure for degradation mechanisms such as cell cracking, weathering of cracked cells, and glass breakage.
-
-https://github.nrel.gov/pages/warsalan/PVOPT/
+# PVade
+`PVade` is an open source fluid-structure interaction model which can be used to study wind loading and stability on solar-tracking PV arrays. `PVade` can be used as part of a larger modeling chain to provide stressor inputs to mechanical module models to study the physics of failure for degradation mechanisms such as cell cracking, weathering of cracked cells, and glass breakage.
 
 # Getting Started
 1. To use this software, begin by creating a Conda environment using the provided `environment.yaml` file:

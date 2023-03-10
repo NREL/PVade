@@ -1,4 +1,4 @@
-name: pvopt-env
+name: pvade
 channels:
   - conda-forge  
   - defaults
@@ -16,7 +16,9 @@ dependencies:
   - pyyaml
   - scipy
   - snakeviz
+  - sphinx
   - tqdm
   - pip
   - pip:
-    - -e . # Installs the pvopt package
+    - sphinx-rtd-theme
+    - -e . # Installs the pvade package
