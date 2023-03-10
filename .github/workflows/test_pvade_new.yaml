@@ -1,0 +1,29 @@
+name: Python Package using Conda
+
+on: [push, pull_request]
+
+jobs:
+  build-linux:
+    runs-on: ubuntu-latest
+    strategy:
+      max-parallel: 5
+
+    steps:
+    - uses: actions/checkout@v3
+    - uses: conda-incubator/setup-miniconda@v2
+      with:
+        miniconda-version: "latest"
+        channels: conda-forge
+        auto-update-conda: true
+        python-version: '3.10'
+    - name: Install PVade Conda environment
+      shell: pwsh
+      run: |
+        conda env create -f environment.yaml -n test-env
+        conda activate test-env
+        conda list
+    - name: Test PVade with pytest
+      shell: pwsh
+      run: |
+        conda activate test-env
+        pytest -s pvade/tests/
