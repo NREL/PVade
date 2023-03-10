@@ -173,7 +173,7 @@ class Domain:
             )
 
             if os.path.exists(self.params.general.output_dir_mesh) == False:
-                os.mkdir(self.params.general.output_dir_mesh)
+                os.makedirs(self.params.general.output_dir_mesh)
             gmsh.write("%s/mesh.msh" % (self.params.general.output_dir_mesh))
             gmsh.write("%s/mesh.vtk" % (self.params.general.output_dir_mesh))
 

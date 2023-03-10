@@ -383,7 +383,7 @@ class FSIDomain:
             print('Writing Mesh to %s... ' % (self.params.general.output_dir_mesh), end='')
             
             if os.path.exists(self.params.general.output_dir_mesh) == False: 
-                os.mkdir(self.params.general.output_dir_mesh)
+                os.makedirs(self.params.general.output_dir_mesh)
             gmsh.write('%s/mesh.msh' % (self.params.general.output_dir_mesh))
             gmsh.write('%s/mesh.vtk' % (self.params.general.output_dir_mesh))
             def create_mesh(mesh, clean_points, cell_type):
