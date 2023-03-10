@@ -33,6 +33,8 @@ class SimParams:
 
             # Open the input file for reading and load its contents into a dictionary
             with open(input_file_path, "r") as fp:
+                if self.rank == 0:
+                    print(f"Reading problem definition from {input_file_path}")
                 self.input_file_dict = yaml.safe_load(fp)
 
             # Set values as specified by the input yaml file
@@ -111,6 +113,15 @@ class SimParams:
 
         parser = argparse.ArgumentParser()
 
+        ignore_list = ["input_file"]
+
+        parser.add_argument(
+            "--input_file",
+            metavar="",
+            type=str,
+            help="The full path to the input file, e.g., 'intputs/my_params.yaml'",
+        )
+
         for key, value in self.flat_schema_dict.items():
 
             help_message = f"{value['description']} (data type = {value['type']}, Units = {value['units']})"
@@ -132,11 +143,14 @@ class SimParams:
 
         # Find any command line arguments that were used and replace those entries in params
         for key, value in vars(command_line_inputs).items():
-            if value is not None:
+            if key not in ignore_list and value is not None:
                 path_to_input = key.split(".")
                 self._set_nested_dict_value(
                     self.input_dict, path_to_input, value, error_on_missing_key=False
                 )
+
+                if self.rank == 0:
+                    print(f"| Setting {key} = {value} from command line.")
 
     def _validate_inputs(self):
         # This compares the input dictionary against the yaml schema
@@ -223,3 +237,8 @@ class SimParams:
         self.solver.save_text_interval_n = int(
             self.solver.save_text_interval / self.solver.dt
         )
+
+        if hasattr(self.domain, "z_min"):
+            self.domain.dim = 3
+        else:
+            self.domain.dim = 2
