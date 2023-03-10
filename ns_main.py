@@ -1,13 +1,6 @@
-# <<<<<<< HEAD
-# ## from altFlowManager import *
-# from pvopt.FlowManager_copy import *
-# #from pvopt.IOManager import DataStream
-# =======
-
-from pvopt.FlowManager import Flow
-from pvopt.DataStream import DataStream
-
-from pvopt.Parameters import SimParams
+from pvade.FlowManager import Flow
+from pvade.DataStream import DataStream
+from pvade.Parameters import SimParams
 
 import cProfile
 import sys
@@ -50,9 +43,9 @@ def main():
         print("command used is: ",str(sys.argv))
 
     if dim == 3:
-        from pvopt.geometry.MeshManager3d import FSIDomain
+        from pvade.geometry.MeshManager3d import FSIDomain
     elif dim == 2:
-        from pvopt.geometry.MeshManager2d import FSIDomain
+        from pvade.geometry.MeshManager2d import FSIDomain
     else:
         print("dimension not defined")
         exit()

@@ -1,8 +1,8 @@
-"""This is the base package for ``pvopt``.
+"""This is the base package for ``pvade``.
 """
 
 
-class PvoptError(Exception):
+class PVadeError(Exception):
     """The base error for the package. All custom exceptions raised will derive
     from this exception.
     """
