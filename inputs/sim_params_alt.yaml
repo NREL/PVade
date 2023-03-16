@@ -4,7 +4,7 @@ general:
   output_dir_sol: output/panels/solution
   create_mesh: True 
   read_mesh: False
-  mesh_only: False
+  mesh_only: True
 domain:
   x_min: -10
   x_max: 50

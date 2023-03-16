@@ -6,11 +6,6 @@ from mpi4py import MPI
 from pandas import json_normalize
 from jsonschema import validate
 
-class Dummy:
-    def __init__(self):
-        self.x = 1e-10
-    def yo(self, t):
-        self.t = t
 
 class SimParams:
     def __init__(self, input_file_path=None):
