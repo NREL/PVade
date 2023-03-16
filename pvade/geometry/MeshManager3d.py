@@ -9,7 +9,7 @@ import os
 import time
 import ufl
 import dolfinx 
-import meshio
+# import meshio
 
 # from pvopt.geometry.panels.DomainCreation   import *
 class FSIDomain:
@@ -386,21 +386,21 @@ class FSIDomain:
                 os.makedirs(self.params.general.output_dir_mesh)
             gmsh.write('%s/mesh.msh' % (self.params.general.output_dir_mesh))
             gmsh.write('%s/mesh.vtk' % (self.params.general.output_dir_mesh))
-            def create_mesh(mesh, clean_points, cell_type):
-                cells = mesh.get_cells_type(cell_type)
-                cell_data = mesh.get_cell_data("gmsh:physical", cell_type)
+            # def create_mesh(mesh, clean_points, cell_type):
+            #     cells = mesh.get_cells_type(cell_type)
+            #     cell_data = mesh.get_cell_data("gmsh:physical", cell_type)
 
-                out_mesh = meshio.Mesh(points=clean_points, cells={
-                                    cell_type: cells}, cell_data={"name_to_read": [cell_data]})
-                return out_mesh
+            #     out_mesh = meshio.Mesh(points=clean_points, cells={
+            #                         cell_type: cells}, cell_data={"name_to_read": [cell_data]})
+            #     return out_mesh
                 
-            mesh_from_file = meshio.read(f'{self.params.general.output_dir_mesh}/mesh.msh')
-            pts = mesh_from_file.points
-            tetra_mesh = create_mesh(mesh_from_file, pts, "tetra")
-            tri_mesh = create_mesh(mesh_from_file, pts, "triangle")
+            # mesh_from_file = meshio.read(f'{self.params.general.output_dir_mesh}/mesh.msh')
+            # pts = mesh_from_file.points
+            # tetra_mesh = create_mesh(mesh_from_file, pts, "tetra")
+            # tri_mesh = create_mesh(mesh_from_file, pts, "triangle")
 
-            meshio.write(f'{self.params.general.output_dir_mesh}/mesh.xdmf', tetra_mesh)
-            meshio.write(f'{self.params.general.output_dir_mesh}/mesh_mf.xdmf', tri_mesh)
+            # meshio.write(f'{self.params.general.output_dir_mesh}/mesh.xdmf', tetra_mesh)
+            # meshio.write(f'{self.params.general.output_dir_mesh}/mesh_mf.xdmf', tri_mesh)
             print("Done.")
 
     def test_mesh_functionspace(self):

@@ -1,5 +1,5 @@
 DataStream
 ==========
 
-.. automodule:: DataStream
+.. automodule:: pvade.DataStream
    :members:
