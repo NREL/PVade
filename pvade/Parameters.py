@@ -22,8 +22,8 @@ class SimParams:
         flat_schema_dict (dict): A flattened dictionary version of the yaml schema file used to set default values and provide valid command-line options.
         input_dict (dict): The aggregated input dictionary containing all command-line updated values and input-file values.
         input_file_dict (dict): The dictionary representing the input file.
-        num_procs (int): The total number of MPI processes.
-        rank (int): The MPI rank of this process, in the range `[0, 1, ..., num_procs-1]`.
+        num_procs (int): The total number of processors being used to solve the problem
+        rank (int): A unique ID for each process in the range `[0, 1, ..., num_procs-1]`
         schema_dict (dict): The unflattened (nested) representation of the yaml schema dictionary.
     """
 

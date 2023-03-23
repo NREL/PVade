@@ -1,3 +1,5 @@
+"""Summary
+"""
 import numpy as np
 from math import log
 import ufl
@@ -58,12 +60,18 @@ class Flow:
     """This class solves the CFD problem"""
 
     def __init__(self, domain):
-        """The class is initialised here
+        """Initialize the fluid solver
+
+        This method initialize the Flow object, namely, it creates all the
+        necessary function spaces on the mesh, initializes key counting and
+        boolean variables and records certain characteristic quantities like
+        the minimum cell size and the number of degrees of freedom attributed
+        to both the pressure and velocity function spaces.
 
         Args:
-            domain (_type_): all variables related to the computational domain
-        """
+            domain (:obj:`pvade.geometry.MeshManager.Domain`): A Domain object
 
+        """
         # Pressure (Scalar)
         P1 = ufl.FiniteElement("Lagrange", domain.msh.ufl_cell(), 1)
         self.Q = fem.FunctionSpace(domain.msh, P1)
@@ -115,11 +123,17 @@ class Flow:
             print(f"Total num dofs = {self.num_Q_dofs + self.num_V_dofs}")
 
     def build_boundary_conditions(self, domain, params):
-        """define and apply boundary conditions
+        """Build the boundary conditions
+
+        A method to manage the building of boundary conditions, including the
+        steps of identifying entities on the boundary, marking those degrees
+        of freedom either by the identified facets or a gmsh marker function,
+        and finally assembling a list of Boundary objects that enforce the
+        correct value.
 
         Args:
-            domain (_type_): computational domain
-            params (_type_): input parameters
+            domain (:obj:`pvade.geometry.MeshManager.Domain`): A Domain object
+            params (:obj:`pvade.Parameters.SimParams`): A SimParams object
         """
         self.facet_dim = self.ndim - 1
 
@@ -139,29 +153,87 @@ class Flow:
         """functions that defines facets using coordinates
 
         Args:
-            domain (_type_): computational domain
-            params (_type_): input parameters
+            domain (:obj:`pvade.geometry.MeshManager.Domain`): A Domain object
+            params (:obj:`pvade.Parameters.SimParams`): A SimParams object
         """
 
         def x_min_wall(x):
+            """Summary
+
+            Args:
+                x (TYPE): Description
+
+            Returns:
+                TYPE: Description
+            """
             return np.isclose(x[0], params.domain.x_min)
 
         def x_max_wall(x):
+            """Summary
+
+            Args:
+                x (TYPE): Description
+
+            Returns:
+                TYPE: Description
+            """
             return np.isclose(x[0], params.domain.x_max)
 
         def y_min_wall(x):
+            """Summary
+
+            Args:
+                x (TYPE): Description
+
+            Returns:
+                TYPE: Description
+            """
             return np.isclose(x[1], params.domain.y_min)
 
         def y_max_wall(x):
+            """Summary
+
+            Args:
+                x (TYPE): Description
+
+            Returns:
+                TYPE: Description
+            """
             return np.isclose(x[1], params.domain.y_max)
 
         if self.ndim == 3:
+
             def z_min_wall(x):
+                """Summary
+
+                Args:
+                    x (TYPE): Description
+
+                Returns:
+                    TYPE: Description
+                """
                 return np.isclose(x[2], params.domain.z_min)
 
             def z_max_wall(x):
+                """Summary
+
+                Args:
+                    x (TYPE): Description
+
+                Returns:
+                    TYPE: Description
+                """
                 return np.isclose(x[2], params.domain.z_max)
+
         def internal_surface(x):
+            """Summary
+
+            Args:
+                x (TYPE): Description
+
+            Returns:
+                TYPE: Description
+            """
             x_mid = np.logical_and(
                 params.domain.x_min < x[0], x[0] < params.domain.x_max
             )
@@ -251,6 +323,8 @@ class Flow:
 
         Args:
             domain (_type_): computational domain
+
+        Deleted Parameters:
             params (_type_): input parameters
         """
         self.x_min_V_dofs = locate_dofs_topological(
@@ -270,10 +344,12 @@ class Flow:
         )
         if self.ndim == 3:
             self.z_min_V_dofs = locate_dofs_topological(
-                self.V, self.facet_dim, domain.ft.find(domain.z_min_marker))
+                self.V, self.facet_dim, domain.ft.find(domain.z_min_marker)
+            )
 
             self.z_max_V_dofs = locate_dofs_topological(
-                self.V, self.facet_dim, domain.ft.find(domain.z_max_marker))
+                self.V, self.facet_dim, domain.ft.find(domain.z_max_marker)
+            )
 
         self.internal_surface_V_dofs = locate_dofs_topological(
             self.V, self.facet_dim, domain.ft.find(domain.internal_surface_marker)
@@ -297,10 +373,12 @@ class Flow:
 
         if self.ndim == 3:
             self.z_min_Q_dofs = locate_dofs_topological(
-                self.Q, self.facet_dim, domain.ft.find(domain.z_min_marker))
+                self.Q, self.facet_dim, domain.ft.find(domain.z_min_marker)
+            )
 
             self.z_max_Q_dofs = locate_dofs_topological(
-                self.Q, self.facet_dim, domain.ft.find(domain.z_max_marker))
+                self.Q, self.facet_dim, domain.ft.find(domain.z_max_marker)
+            )
 
         self.internal_surface_Q_dofs = locate_dofs_topological(
             self.Q, self.facet_dim, domain.ft.find(domain.internal_surface_marker)
@@ -311,10 +389,10 @@ class Flow:
            condition for given inputs
 
         Args:
-            value : scalar or function set on the dof
-            domain : computational domain
-            V : function space
-            marker : boundary tag
+            value: scalar or function set on the dof
+            domain: computational domain
+            V: function space
+            marker: boundary tag
 
         Returns:
             dirichlet boundary conditions
@@ -348,11 +426,22 @@ class Flow:
         # self.bcu.append(dirichletbc(self.zero_vec, self.z_max_V_dofs, self.V))
 
         def _apply_type_bc(bc_name, functionspace, marker, bcname):
+            """Summary
+
+            Args:
+                bc_name (TYPE): Description
+                functionspace (TYPE): Description
+                marker (TYPE): Description
+                bcname (TYPE): Description
+
+            Returns:
+                TYPE: Description
+            """
             if bc_name == "free":
                 if domain.rank == 0:
                     print("free bc_name on ", bcname)
             elif bc_name == "noslip":
-                bc = self._applybc(self.zero_vec,domain,functionspace,marker)
+                bc = self._applybc(self.zero_vec, domain, functionspace, marker)
                 if domain.rank == 0:
                     print("noslip bc_name on ", bcname)
             elif bc_name == "slip":
@@ -362,7 +451,13 @@ class Flow:
                     temp_func = functionspace.sub(2)
                 bc = self._applybc(self.zero_scalar, domain, temp_func, marker)
                 if domain.rank == 0:
-                    print("Slip bc_name on ", bcname, "boundary normal velocity in ", bcname, "are set to 0.")
+                    print(
+                        "Slip bc_name on ",
+                        bcname,
+                        "boundary normal velocity in ",
+                        bcname,
+                        "are set to 0.",
+                    )
             else:
                 if domain.rank == 0:
                     print("bc_name not recognized")
@@ -402,7 +497,7 @@ class Flow:
 
         elif self.ndim == 2:
             # iterate over all noudaries
-            for bclocation  in "bc_ywall_min", "bc_ywall_max":
+            for bclocation in "bc_ywall_min", "bc_ywall_max":
                 if bclocation == "bc_ywall_max":
                     temp_marker = domain.y_max_marker
                     temp_bcname = "y max"
@@ -429,6 +524,14 @@ class Flow:
         )
 
         def inflow_profile_expression(x):
+            """Summary
+
+            Args:
+                x (TYPE): Description
+
+            Returns:
+                TYPE: Description
+            """
             inflow_values = np.zeros(
                 (domain.msh.geometry.dim, x.shape[1]), dtype=PETSc.ScalarType
             )
@@ -440,7 +543,7 @@ class Flow:
             u_hub = params.fluid.u_ref
             z_hub = params.pv_array.elevation
 
-            if params.general.example == 'cylinder3d':
+            if params.general.example == "cylinder3d":
                 inflow_values[0] = (
                     16.0
                     * params.fluid.u_ref
@@ -450,19 +553,28 @@ class Flow:
                     * inflow_dz
                     / H**4
                 )
-            elif params.general.example == 'cylinder2d':
+            elif params.general.example == "cylinder2d":
                 inflow_values[0] = (
-                    4 * (params.fluid.u_ref) * np.sin( np.pi/8) * x[1] * (0.41 - x[1])/(0.41**2)
+                    4
+                    * (params.fluid.u_ref)
+                    * np.sin(np.pi / 8)
+                    * x[1]
+                    * (0.41 - x[1])
+                    / (0.41**2)
                     # 16.0 * params.fluid.u_ref * x[1]  * inflow_dy / H**4
                 )
-            elif params.general.example == 'panels':
+            elif params.general.example == "panels":
                 inflow_values[0] = (
-                    (params.fluid.u_ref) * np.log(((x[2])-d0)/z0) / (np.log((z_hub-d0)/z0))
+                    (params.fluid.u_ref)
+                    * np.log(((x[2]) - d0) / z0)
+                    / (np.log((z_hub - d0) / z0))
                     # 4 * params.fluid.u_ref * np.sin(x[2]* np.pi/params.domain.z_max) * x[2] * (params.domain.z_max - x[2])/(params.domain.z_max**2)
                 )
-            elif params.general.example == 'panels2d':
+            elif params.general.example == "panels2d":
                 inflow_values[0] = (
-                    (params.fluid.u_ref) * np.log(((x[1])-d0)/z0) / (np.log((z_hub-d0)/z0))
+                    (params.fluid.u_ref)
+                    * np.log(((x[1]) - d0) / z0)
+                    / (np.log((z_hub - d0) / z0))
                     # 4 * params.fluid.u_ref * np.sin(x[2]* np.pi/params.domain.z_max) * x[2] * (params.domain.z_max - x[2])/(params.domain.z_max**2)
                 )
 
@@ -470,7 +582,7 @@ class Flow:
 
         self.inflow_profile = fem.Function(self.V)
 
-        if  params.general.example in ['cylinder3d', 'cylinder2d']:
+        if params.general.example in ["cylinder3d", "cylinder2d"]:
             self.inflow_profile.interpolate(inflow_profile_expression)
 
         else:
@@ -478,23 +590,24 @@ class Flow:
             d0 = 0.5
             if self.ndim == 3:
                 upper_cells = locate_entities(
-                    domain.msh, self.ndim, lambda x: x[2] > d0+z0
+                    domain.msh, self.ndim, lambda x: x[2] > d0 + z0
                 )
                 lower_cells = locate_entities(
-                    domain.msh, self.ndim, lambda x: x[2] <= d0+z0
+                    domain.msh, self.ndim, lambda x: x[2] <= d0 + z0
                 )
             elif self.ndim == 2:
                 upper_cells = locate_entities(
-                    domain.msh, self.ndim, lambda x: x[1] > d0+z0
+                    domain.msh, self.ndim, lambda x: x[1] > d0 + z0
                 )
                 lower_cells = locate_entities(
-                    domain.msh, self.ndim, lambda x: x[1] <= d0+z0
+                    domain.msh, self.ndim, lambda x: x[1] <= d0 + z0
                 )
 
-
-            self.inflow_profile.interpolate(lambda x:  np.zeros(
+            self.inflow_profile.interpolate(
+                lambda x: np.zeros(
                     (domain.msh.geometry.dim, x.shape[1]), dtype=PETSc.ScalarType
-                ))
+                )
+            )
             self.inflow_profile.interpolate(inflow_profile_expression, upper_cells)
 
         self.bcu.append(dirichletbc(self.inflow_profile, self.x_min_V_dofs))
@@ -518,7 +631,7 @@ class Flow:
             domain (_type_): _description_
             params (_type_): _description_
 
-        Returns:
+        No Longer Returned:
             _type_: _description_
         """
         # Define fluid properties
@@ -560,7 +673,7 @@ class Flow:
         use_eddy_viscosity = True
 
         if use_eddy_viscosity:
-        # By default, don't use any eddy viscosity
+            # By default, don't use any eddy viscosity
             filter_scale = CellVolume(domain.msh) ** (1.0 / domain.msh.topology.dim)
 
             # Strain rate tensor, 0.5*(du_i/dx_j + du_j/dx_i)
@@ -578,17 +691,34 @@ class Flow:
         else:
             self.nu_T = fem.Constant(domain.msh, 0.0)
 
-
         # ================================================================#
         # DEFINE VARIATIONAL FORMS
         # ================================================================#
         U = 0.5 * (self.u_k1 + self.u)
 
         def epsilon(u):
+            """Summary
+
+            Args:
+                u (TYPE): Description
+
+            Returns:
+                TYPE: Description
+            """
             return sym(nabla_grad(u))
 
         # Define stress tensor
         def sigma(u, p, nu):
+            """Summary
+
+            Args:
+                u (TYPE): Description
+                p (TYPE): Description
+                nu (TYPE): Description
+
+            Returns:
+                TYPE: Description
+            """
             return 2 * nu * epsilon(u) - p * Identity(len(u))
 
         fractional_step_scheme = "IPCS"
@@ -680,8 +810,12 @@ class Flow:
         # self.J_history = [self.J_initial]
         self.dpdx_history = [0.0]
 
-    def _assemble_system(self,params):
-        """Assemble left-hand side matrices outside the time loop and set solver options"""
+    def _assemble_system(self, params):
+        """Assemble left-hand side matrices outside the time loop and set solver options
+
+        Args:
+            params (TYPE): Description
+        """
 
         self.A1 = fem.petsc.assemble_matrix(self.a1, bcs=self.bcu)
         self.A2 = fem.petsc.assemble_matrix(self.a2, bcs=self.bcp)
@@ -755,7 +889,11 @@ class Flow:
             self.first_call_to_solver = False
 
     def _solver_step_1(self, params):
+        """Summary
 
+        Args:
+            params (TYPE): Description
+        """
         # Step 0: Re-assemble A1 since using an implicit convective term
         self.A1.zeroEntries()
         self.A1 = fem.petsc.assemble_matrix(self.A1, self.a1, bcs=self.bcu)
@@ -780,6 +918,11 @@ class Flow:
         self.u_k.x.scatter_forward()
 
     def _solver_step_2(self, params):
+        """Summary
+
+        Args:
+            params (TYPE): Description
+        """
         # Step 2: Pressure correction step
         with self.b2.localForm() as loc:
             loc.set(0)
@@ -798,6 +941,11 @@ class Flow:
         self.p_k.x.scatter_forward()
 
     def _solver_step_3(self, params):
+        """Summary
+
+        Args:
+            params (TYPE): Description
+        """
         # Step 3: Velocity correction step
         with self.b3.localForm() as loc:
             loc.set(0)
@@ -812,6 +960,7 @@ class Flow:
         self.u_k.x.scatter_forward()
 
     def compute_cfl(self):
+        """Summary"""
         # Compute the CFL number
         # TODO: only do this on save/print steps?
         with self.b5.localForm() as loc:
@@ -834,7 +983,23 @@ class Flow:
         self.cfl_max = self.cfl_max[0]
 
     def adjust_dpdx_for_constant_flux(self, mpi_info):
+        """Summary
+
+        Args:
+            mpi_info (TYPE): Description
+        """
+
         def pid_controller(J_init, J_history, dt):
+            """Summary
+
+            Args:
+                J_init (TYPE): Description
+                J_history (TYPE): Description
+                dt (TYPE): Description
+
+            Returns:
+                TYPE: Description
+            """
             assert type(J_history) is list
 
             # K_p = 0.1
