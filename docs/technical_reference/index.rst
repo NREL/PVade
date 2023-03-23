@@ -4,7 +4,8 @@ Technical Reference
 .. toctree::
    :maxdepth: 1
 
-   data_stream
-   flow_manager
-   mesh_manager
    parameters
+   data_stream
+   domain_creation
+   mesh_manager
+   flow_manager
