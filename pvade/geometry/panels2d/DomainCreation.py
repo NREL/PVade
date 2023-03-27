@@ -7,12 +7,13 @@ import numpy as np
 import os
 import time
 import ufl
-import dolfinx 
+import dolfinx
 import meshio
+
 
 class DomainCreation:
     def __init__(self, params):
-        """ Initialize the DomainCreation object
+        """Initialize the DomainCreation object
          This initializes an object that creates the computational domain.
 
         Args:
@@ -34,18 +35,18 @@ class DomainCreation:
         self.z_max_marker = 6
         self.internal_surface_marker = 7
         self.fluid_marker = 8
-        
+
     def build(self):
-        """ This function creates the computational domain for a 2d simulation involving N panels.
+        """This function creates the computational domain for a 2d simulation involving N panels.
             The panels are set at a distance apart, rotated at an angle theta and are elevated with a distance H from the ground.
-            
+
         Returns:
-            The function returns gmsh.model which contains the geometric description of the computational domain 
+            The function returns gmsh.model which contains the geometric description of the computational domain
         """
         self.mesh_comm = MPI.COMM_WORLD
         self.model_rank = 0
         self.gdim = 3
-    
+
         # Initialize Gmsh options
         gmsh.initialize()
         gmsh.option.setNumber("General.Terminal", 0)
@@ -70,10 +71,10 @@ class DomainCreation:
         domain = self.pv_model.occ.addRectangle(
             self.params.domain.x_min,
             self.params.domain.y_min,
-            0,#self.params.domain.z_min,
+            0,  # self.params.domain.z_min,
             self.x_span,
             self.y_span
-            #self.z_span,
+            # self.z_span,
         )
 
         for panel_id in range(self.params.pv_array.num_rows):
@@ -82,7 +83,7 @@ class DomainCreation:
                 -0.5 * self.params.pv_array.panel_thickness,
                 0,
                 self.params.pv_array.panel_length,
-                self.params.pv_array.panel_thickness
+                self.params.pv_array.panel_thickness,
             )
 
             # Rotate the panel currently centered at (0, 0, 0)
@@ -95,15 +96,11 @@ class DomainCreation:
                 [(2, panel_box)],
                 panel_id * self.params.pv_array.spacing[0],
                 self.params.pv_array.elevation,
-                0
+                0,
             )
 
             # Remove each panel from the overall domain
             self.pv_model.occ.cut([(2, domain)], [(2, panel_box)])
 
-
-
-
         self.pv_model.occ.synchronize()
         return self.pv_model
-    

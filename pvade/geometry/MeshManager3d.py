@@ -22,7 +22,7 @@ class FSIDomain:
         """The class is initialised here
             Depending on the example we are solving, we import the corresponding DomainCrearion file
             We define markers which will be used for boundary tag asignment
-        
+
         Args:
             params (input parameters): input parameters available in the input file
         """
