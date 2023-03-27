@@ -13,7 +13,7 @@ import meshio
 
 # from pvopt.geometry.panels.DomainCreation   import *
 class FSIDomain:
-    """This class creates the computational domain 
+    """This class creates the computational domain for 2D computational domains (2D panels, 2D cylinder)
     """
     def __init__(self, params):
         """The class is initialised here
@@ -33,16 +33,16 @@ class FSIDomain:
         problem = self.params.general.example
 
         if problem == "panels":
-            from pvopt.geometry.panels.DomainCreation   import DomainCreation
+            from pvade.geometry.panels.DomainCreation   import DomainCreation
             dim = 3 
         elif problem == "panels2d":
-            from pvopt.geometry.panels2d.DomainCreation   import DomainCreation
+            from pvade.geometry.panels2d.DomainCreation   import DomainCreation
             dim = 2 
         elif problem == "cylinder3d":
-            from pvopt.geometry.cylinder3d.DomainCreation   import DomainCreation
+            from pvade.geometry.cylinder3d.DomainCreation   import DomainCreation
             dim = 3 
         elif problem == "cylinder2d":
-            from pvopt.geometry.cylinder2d.DomainCreation   import DomainCreation
+            from pvade.geometry.cylinder2d.DomainCreation   import DomainCreation
             dim = 2 
 
         # define markers for boundaries 
@@ -74,13 +74,13 @@ class FSIDomain:
         problem = self.params.general.example
 
         if problem == "panels":
-            from pvopt.geometry.panels.DomainCreation   import DomainCreation
+            from pvade.geometry.panels.DomainCreation   import DomainCreation
         elif problem == "panels2d":
-            from pvopt.geometry.panels2d.DomainCreation   import DomainCreation
+            from pvade.geometry.panels2d.DomainCreation   import DomainCreation
         elif problem == "cylinder3d":
-            from pvopt.geometry.cylinder3d.DomainCreation   import DomainCreation
+            from pvade.geometry.cylinder3d.DomainCreation   import DomainCreation
         elif problem == "cylinder2d":
-            from pvopt.geometry.cylinder2d.DomainCreation   import DomainCreation
+            from pvade.geometry.cylinder2d.DomainCreation   import DomainCreation
             
 
         geometry = DomainCreation(self.params)

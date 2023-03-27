@@ -12,7 +12,12 @@ import meshio
 
 class DomainCreation:
     def __init__(self, params):
+        """ Initialize the DomainCreation object
+         This initializes an object that creates the computational domain.
 
+        Args:
+            params (:obj:`pvade.Parameters.SimParams`): A SimParams object
+        """
         # Get MPI communicators
         self.comm = MPI.COMM_WORLD
         self.rank = self.comm.Get_rank()
@@ -31,7 +36,12 @@ class DomainCreation:
         self.fluid_marker = 8
         
     def build(self):
-
+        """ This function creates the computational domain for a 2d simulation involving N panels.
+            The panels are set at a distance apart, rotated at an angle theta and are elevated with a distance H from the ground.
+            
+        Returns:
+            The function returns gmsh.model which contains the geometric description of the computational domain 
+        """
         self.mesh_comm = MPI.COMM_WORLD
         self.model_rank = 0
         self.gdim = 3
