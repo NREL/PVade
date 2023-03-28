@@ -34,3 +34,4 @@ def test_meshing_3dcylinder():
     # initialize the domain and construct the initial mesh
     domain = FSIDomain(params)
     domain.build()
+    

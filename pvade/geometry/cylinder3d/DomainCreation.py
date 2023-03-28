@@ -2,7 +2,7 @@ from dolfinx.io import XDMFFile, gmshio
 from dolfinx.fem import VectorFunctionSpace, FunctionSpace
 from dolfinx.cpp import mesh as cppmesh
 from mpi4py import MPI
-from pvopt.geometry.template.TemplateDomainCreation import TemplateDomainCreation
+from pvade.geometry.template.TemplateDomainCreation import TemplateDomainCreation
 
 import gmsh
 import numpy as np
