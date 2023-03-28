@@ -11,7 +11,7 @@ import time
 import ufl
 import dolfinx
 
-import meshio
+# import meshio
 
 
 class DomainCreation(TemplateDomainCreation):
