@@ -53,6 +53,8 @@ class DomainCreation(TemplateDomainCreation):
 
         self.gmsh_model.occ.synchronize()
 
+        return self.gmsh_model
+
     def set_length_scales(self):
 
         # Define a distance field from the cylinder
