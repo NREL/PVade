@@ -53,9 +53,9 @@ class DomainCreation:
                 0,
                 self.params.domain.x_max,
                 self.params.domain.y_max,
-                tag=1,
+                tag=500
             )
-            obstacle = self.pv_model.occ.addDisk(c_x, c_y, 0, r, r)
+            obstacle = self.pv_model.occ.addDisk(c_x, c_y, 0, r, r,tag=600)
 
         if mesh_comm.rank == model_rank:
             self.pv_model.occ.cut([(gdim, rectangle)], [(gdim, obstacle)])
