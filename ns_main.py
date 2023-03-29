@@ -12,7 +12,8 @@ import tqdm.autonotebook
 def main():
 
     # Get the path to the input file from the command line
-    input_file = get_input_file()
+    # input_file = get_input_file()
+    input_file = "inputs/2d_cyld.yaml"  #get_input_file()
 
     # Load the parameters object specified by the input file
     params = SimParams(input_file)

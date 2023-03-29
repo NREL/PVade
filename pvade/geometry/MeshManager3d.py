@@ -93,7 +93,7 @@ class FSIDomain:
 
             
     def read(self,path):
-        """"""Read the mesh from an external file.
+        """Read the mesh from an external file.
         The User can load an existing mesh file (mesh.xdmf)
         and use it to solve the CFD/CSD problem
         """
@@ -319,8 +319,7 @@ class FSIDomain:
                 print(f"Total meshing time = {toc-tic:.1f} s")
 
     def write_mesh_file(self):
-        """
-        TODO: when saving a mesh file using only dolfinx functions
+        """        TODO: when saving a mesh file using only dolfinx functions
         it's possible certain elements of the data aren't preserved
         and that the mesh won't be able to be properly read in later
         on. MAKE SURE YOU CAN SAVE A MESH USING ONLY DOLFINX FUNCTIONS
