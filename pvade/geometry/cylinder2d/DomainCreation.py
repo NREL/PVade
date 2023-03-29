@@ -9,12 +9,13 @@ import time
 import ufl
 import dolfinx
 import meshio
+
 # from pvopt.geometry.panels.domain_creation import *
 
 
 class FSIDomain:
     def __init__(self, params):
-        """ Initialize the DomainCreation object
+        """Initialize the DomainCreation object
          This initializes an object that creates the computational domain.
 
         Args:
@@ -29,10 +30,10 @@ class FSIDomain:
         self.params = params
 
     def build(self):
-        """ This function creates the computational domain for a flow around a 2D cylinder.
-            
+        """This function creates the computational domain for a flow around a 2D cylinder.
+
         Returns:
-            The function returns gmsh.model which contains the geometric description of the computational domain 
+            The function returns gmsh.model which contains the geometric description of the computational domain
         """
         gmsh.initialize()
         gmsh.option.setNumber("General.Terminal", 0)
@@ -46,16 +47,17 @@ class FSIDomain:
         mesh_comm = MPI.COMM_WORLD
         model_rank = 0
         if mesh_comm.rank == model_rank:
-            rectangle = self.pv_model.occ.addRectangle(self.params.domain.x_min ,
-                                                    self.params.domain.y_min ,
-                                                    0,
-                                                    self.params.domain.x_max ,
-                                                    self.params.domain.y_max , tag=1)
+            rectangle = self.pv_model.occ.addRectangle(
+                self.params.domain.x_min,
+                self.params.domain.y_min,
+                0,
+                self.params.domain.x_max,
+                self.params.domain.y_max,
+                tag=1,
+            )
             obstacle = self.pv_model.occ.addDisk(c_x, c_y, 0, r, r)
 
         if mesh_comm.rank == model_rank:
             self.pv_model.occ.cut([(gdim, rectangle)], [(gdim, obstacle)])
             self.pv_model.occ.synchronize()
         return self.pv_model
-
-

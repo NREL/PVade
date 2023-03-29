@@ -11,17 +11,18 @@ import time
 import ufl
 import dolfinx
 
-import meshio
+# import meshio
 
 
 class DomainCreation(TemplateDomainCreation):
-    """_summary_ test 
+    """_summary_ test
 
     Args:
         TemplateDomainCreation (_type_): _description_
     """
+
     def __init__(self, params):
-        """ Initialize the DomainCreation object
+        """Initialize the DomainCreation object
          This initializes an object that creates the computational domain.
 
         Args:
@@ -30,11 +31,11 @@ class DomainCreation(TemplateDomainCreation):
         super().__init__(params)
 
     def build(self):
-        """ This function creates the computational domain for a 3d simulation involving N panels.
+        """This function creates the computational domain for a 3d simulation involving N panels.
             The panels are set at a distance apart, rotated at an angle theta and are elevated with a distance H from the ground.
-            
+
         Returns:
-            The function returns gmsh.model which contains the geometric description of the computational domain 
+            The function returns gmsh.model which contains the geometric description of the computational domain
         """
         # Compute and store some useful geometric quantities
         self.x_span = self.params.domain.x_max - self.params.domain.x_min
@@ -80,4 +81,3 @@ class DomainCreation(TemplateDomainCreation):
 
         self.gmsh_model.occ.synchronize()
         return self.gmsh_model
-

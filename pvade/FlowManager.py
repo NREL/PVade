@@ -406,15 +406,15 @@ class Flow:
 
     def _applybc(self, value, domain, V, marker):
         """Apply a single boundary condition
-        
+
         This function builds a single Dirichlet boundary condition given the value, gmsh marker, and function space.
-        
+
         Args:
             value (float, dolfinx.fem.Function): Scalar or function set on the dof
             domain (:obj:`pvade.geometry.MeshManager.Domain`): A Domain object
             V (:obj:`dolfinx.fem.FunctionSpace`): The function space on which the boundary condition will be acting
             marker (int): boundary tag created in gmsh
-        
+
         Returns:
             :obj:`dolfinx.fem.dirichletbc`: Dirichlet boundary conditions
 
@@ -660,7 +660,7 @@ class Flow:
         tentative velocity, the calculation of the change in pressure
         required to correct the tentative velocity to enforce continuity, and
         the update to the velocity field to reflect this change in
-        pressure. 
+        pressure.
 
         Args:
             domain (:obj:`pvade.geometry.MeshManager.Domain`): A Domain object

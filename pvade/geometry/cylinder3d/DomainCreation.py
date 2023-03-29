@@ -2,7 +2,7 @@ from dolfinx.io import XDMFFile, gmshio
 from dolfinx.fem import VectorFunctionSpace, FunctionSpace
 from dolfinx.cpp import mesh as cppmesh
 from mpi4py import MPI
-from pvopt.geometry.template.TemplateDomainCreation import TemplateDomainCreation
+from pvade.geometry.template.TemplateDomainCreation import TemplateDomainCreation
 
 import gmsh
 import numpy as np
@@ -12,7 +12,7 @@ import time
 
 class DomainCreation(TemplateDomainCreation):
     def __init__(self, params):
-        """ Initialize the DomainCreation object
+        """Initialize the DomainCreation object
          This initializes an object that creates the computational domain.
 
         Args:
@@ -21,10 +21,10 @@ class DomainCreation(TemplateDomainCreation):
         super().__init__(params)
 
     def build(self):
-        """ This function creates the computational domain for a flow around a 3D cylinder.
-            
+        """This function creates the computational domain for a flow around a 3D cylinder.
+
         Returns:
-            The function returns gmsh.model which contains the geometric description of the computational domain 
+            The function returns gmsh.model which contains the geometric description of the computational domain
         """
         # Compute and store some useful geometric quantities
         self.x_span = self.params.domain.x_max - self.params.domain.x_min
@@ -53,18 +53,23 @@ class DomainCreation(TemplateDomainCreation):
 
         self.gmsh_model.occ.synchronize()
 
+        return self.gmsh_model
+
     def set_length_scales(self):
 
         # Define a distance field from the cylinder
         self.gmsh_model.mesh.field.add("Distance", 1)
-        self.gmsh_model.mesh.field.setNumbers(1, "FacesList", self.dom_tags["internal_surface"])
+        self.gmsh_model.mesh.field.setNumbers(
+            1, "FacesList", self.dom_tags["internal_surface"]
+        )
 
         self.gmsh_model.mesh.field.add("Threshold", 2)
         self.gmsh_model.mesh.field.setNumber(2, "IField", 1)
         self.gmsh_model.mesh.field.setNumber(2, "LcMin", self.params.domain.l_char)
-        self.gmsh_model.mesh.field.setNumber(2, "LcMax", 6.0 * self.params.domain.l_char)
+        self.gmsh_model.mesh.field.setNumber(
+            2, "LcMax", 6.0 * self.params.domain.l_char
+        )
         self.gmsh_model.mesh.field.setNumber(2, "DistMin", 2.0 * self.cyld_radius)
-        self.gmsh_model.mesh.field.setNumber(2, "DistMax", 4.0*self.cyld_radius)
+        self.gmsh_model.mesh.field.setNumber(2, "DistMax", 4.0 * self.cyld_radius)
 
         self.gmsh_model.mesh.field.setAsBackgroundMesh(2)
-
