@@ -12,10 +12,20 @@ import time
 
 class DomainCreation(TemplateDomainCreation):
     def __init__(self, params):
+        """Initialize the DomainCreation object
+         This initializes an object that creates the computational domain.
+
+        Args:
+            params (:obj:`pvade.Parameters.SimParams`): A SimParams object
+        """
         super().__init__(params)
 
     def build(self):
+        """This function creates the computational domain for a flow around a 3D cylinder.
 
+        Returns:
+            The function returns gmsh.model which contains the geometric description of the computational domain
+        """
         # Compute and store some useful geometric quantities
         self.x_span = self.params.domain.x_max - self.params.domain.x_min
         self.y_span = self.params.domain.y_max - self.params.domain.y_min
@@ -54,7 +64,6 @@ class DomainCreation(TemplateDomainCreation):
             threshold = pv_model.mesh.field.add("Threshold")
             pv_model.mesh.field.setNumber(threshold, "IField", distance)
 
-
             factor = self.params.domain.l_char
             
             self.cyld_radius = self.params.domain.cyld_radius
@@ -92,3 +101,4 @@ class DomainCreation(TemplateDomainCreation):
             pv_model.mesh.field.setNumbers(minimum, "FieldsList", [threshold, xy_thre, zmin_thre ])
             pv_model.mesh.field.setAsBackgroundMesh(minimum)
             return pv_model
+

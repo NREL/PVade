@@ -9,8 +9,17 @@ import time
 
 
 class TemplateDomainCreation:
-    def __init__(self, params):
+    """This class creates the geometry used for a given example.
+    Gmsh is used to create the computational domain
 
+    """
+
+    def __init__(self, params):
+        """The class is initialised here
+
+        Args:
+            params (_type_): _description_
+        """
         # Store a full copy of params on this object
         self.params = params
 
@@ -40,16 +49,31 @@ class TemplateDomainCreation:
         self.gmsh_model.setCurrent("domain")
 
     def build(self):
+        """
+            panels: This function creates the computational domain for a 3d simulation involving N panels.
+            The panels are set at a distance apart, rotated at an angle theta and are elevated with a distance H from the ground.
+            panels2d: This function creates the computational domain for a 2d simulation involving N panels.
+            The panels are set at a distance apart, rotated at an angle theta and are elevated with a distance H from the ground.
+            cylinder3d: This function creates the computational domain for a flow around a 3D cylinder.
+            cylinder2d: This function creates the computational domain for a flow around a 2D cylinder.
+        Returns:
+            The function returns gmsh.model which contains the geometric description of the computational domain
+        """
         pass
 
     def set_length_scales(self):
-
+        """This function call defines the characteristic length for the mesh in locations of interst
+        LcMin,LcMax,DistMin and DistMax are used to create a refined mesh in specific locations
+        which results in a high fidelity mesh without using a uniform element size in the whole mesh.
+        """
         if self.rank == 0:
             all_pts = self.gmsh_model.occ.getEntities(0)
             self.gmsh_model.mesh.setSize(all_pts, self.params.domain.l_char)
 
     def mark_surfaces(self):
-        """Creates boundary tags using gmsh"""
+        """This function call iterates over all boundaries and assigns tags for each boundary.
+        The Tags are being used when appying boundaty condition.
+        """
         # Loop through all surfaces to find periodic tags
         surf_ids = self.gmsh_model.occ.getEntities(2)
 

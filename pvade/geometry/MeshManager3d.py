@@ -8,15 +8,20 @@ import numpy as np
 import os
 import time
 import ufl
-import dolfinx 
-import meshio
+import dolfinx
+
+# import meshio
 
 # from pvade.geometry.panels.DomainCreation   import *
 class FSIDomain:
-    """This class creates the computational domain 
     """
+    This class creates the computational domain for 3D examples(3D panels, 3D cylinder)
+    """
+
     def __init__(self, params):
         """The class is initialised here
+            Depending on the example we are solving, we import the corresponding DomainCrearion file
+            We define markers which will be used for boundary tag asignment
 
         Args:
             params (input parameters): input parameters available in the input file
@@ -30,6 +35,7 @@ class FSIDomain:
         # # Store a full copy of params on this object
         self.params = params
 
+
         # define markers for boundaries 
         
         self.x_min_marker = 1 
@@ -42,14 +48,13 @@ class FSIDomain:
         self.fluid_marker = 8
         
 
+
     def build(self):
-        """This function call builds the geometry using Gmsh
-        """
+        """This function call builds the geometry, marks the boundaries and creates a mesh using Gmsh."""
         self.mesh_comm = MPI.COMM_WORLD
         self.model_rank = 0
         self.gdim = 3
 
- 
         problem = self.params.general.example
 
         if problem == "panels":
@@ -64,14 +69,7 @@ class FSIDomain:
         # Only rank 0 builds the geometry and meshes the domain
         # if self.rank == 0:
         self.pv_model = geometry.build()
-        
-        def print_model_info(model):
-            print("Model Info:")
-            for dim in range(3+1):
-                ents = model.occ.getEntities(dim)
-                print(f"| Dim {dim}: {ents}")
-                
-        print_model_info(self.pv_model)       
+     
         
         self._mark_surfaces()
         self.pv_model = geometry._set_length_scales(self.pv_model,self.dom_tags) 
@@ -92,24 +90,28 @@ class FSIDomain:
         self.msh.name = self.params.general.example
         self.mt.name = f"{self.msh.name}_cells"
         self.ft.name = f"{self.msh.name}_facets"
+
             
     def read(self,path):
-        """Read the mesh from external file located in output/mesh
+        """"""Read the mesh from an external file.
+        The User can load an existing mesh file (mesh.xdmf)
+        and use it to solve the CFD/CSD problem
         """
-        if self.rank  == 0:
+        if self.rank == 0:
             print("Reading the mesh from file ...")
+
         with dolfinx.io.XDMFFile(MPI.COMM_WORLD, path+"/mesh.xdmf", "r") as xdmf:
             self.msh = xdmf.read_mesh(name="Grid")
 
         self.msh.topology.create_connectivity(self.msh.topology.dim-1, self.msh.topology.dim)
         with XDMFFile(MPI.COMM_WORLD,path+"/mesh_mf.xdmf",'r') as infile:
             self.ft = infile.read_meshtags(self.msh, "Grid")
-        if self.rank  == 0:
+        if self.rank == 0:
             print("Done.")
 
-
     def _mark_surfaces(self):
-        """Creates boundary tags using gmsh 
+        """This function call iterates over all boundaries and assigns tags for each boundary.
+        The Tags are being used when appying boundaty condition.
         """
         # Loop through all surfaces to find periodic tags
         surf_ids = self.pv_model.occ.getEntities(2)
@@ -145,7 +147,6 @@ class FSIDomain:
                 else:
                     self.dom_tags["panel_surface"] = [tag]
 
-
         self.pv_model.addPhysicalGroup(3, [1], 11)
         self.pv_model.setPhysicalName(3, 11, "fluid")
 
@@ -161,7 +162,9 @@ class FSIDomain:
         self.pv_model.setPhysicalName(2, self.z_min_marker, "bottom")
         self.pv_model.addPhysicalGroup(2, self.dom_tags["top"], self.z_max_marker)
         self.pv_model.setPhysicalName(2, self.z_max_marker, "top")
-        self.pv_model.addPhysicalGroup(2, self.dom_tags["panel_surface"], self.internal_surface_marker)
+        self.pv_model.addPhysicalGroup(
+            2, self.dom_tags["panel_surface"], self.internal_surface_marker
+        )
         self.pv_model.setPhysicalName(2, self.internal_surface_marker, "panel_surface")
 
     # def _set_length_scales(self):
@@ -220,7 +223,7 @@ class FSIDomain:
     #         self.pv_model.mesh.field.setNumbers(minimum, "FieldsList", [threshold, xy_thre, zmin_thre ])
     #         self.pv_model.mesh.field.setAsBackgroundMesh(minimum)
 
- 
+
 
     def _enforce_periodicity(self):
 
@@ -276,6 +279,7 @@ class FSIDomain:
         )
 
     def _generate_mesh(self):
+        """This function call generates the mesh."""
         if self.rank == 0:
             print("Starting mesh generation... ", end="")
 
@@ -314,39 +318,41 @@ class FSIDomain:
                 print("Finished.")
                 print(f"Total meshing time = {toc-tic:.1f} s")
 
-
     def write_mesh_file(self):
-        '''
+        """
         TODO: when saving a mesh file using only dolfinx functions
         it's possible certain elements of the data aren't preserved
         and that the mesh won't be able to be properly read in later
         on. MAKE SURE YOU CAN SAVE A MESH USING ONLY DOLFINX FUNCTIONS
         AND THEN READ IN THAT SAME MESH WITHOUT A LOSS OF CAPABILITY.
-        '''
+        """
 
         if self.rank == 0:
             # Save the *.msh file and *.vtk file (the latter is for visualization only)
-            print('Writing Mesh to %s... ' % (self.params.general.output_dir_mesh), end='')
-            
-            if os.path.exists(self.params.general.output_dir_mesh) == False: 
+            print(
+                "Writing Mesh to %s... " % (self.params.general.output_dir_mesh), end=""
+            )
+
+            if os.path.exists(self.params.general.output_dir_mesh) == False:
                 os.makedirs(self.params.general.output_dir_mesh)
-            gmsh.write('%s/mesh.msh' % (self.params.general.output_dir_mesh))
-            gmsh.write('%s/mesh.vtk' % (self.params.general.output_dir_mesh))
-            def create_mesh(mesh, clean_points, cell_type):
-                cells = mesh.get_cells_type(cell_type)
-                cell_data = mesh.get_cell_data("gmsh:physical", cell_type)
+            gmsh.write("%s/mesh.msh" % (self.params.general.output_dir_mesh))
+            gmsh.write("%s/mesh.vtk" % (self.params.general.output_dir_mesh))
 
-                out_mesh = meshio.Mesh(points=clean_points, cells={
-                                    cell_type: cells}, cell_data={"name_to_read": [cell_data]})
-                return out_mesh
-                
-            mesh_from_file = meshio.read(f'{self.params.general.output_dir_mesh}/mesh.msh')
-            pts = mesh_from_file.points
-            tetra_mesh = create_mesh(mesh_from_file, pts, "tetra")
-            tri_mesh = create_mesh(mesh_from_file, pts, "triangle")
+            # def create_mesh(mesh, clean_points, cell_type):
+            #     cells = mesh.get_cells_type(cell_type)
+            #     cell_data = mesh.get_cell_data("gmsh:physical", cell_type)
 
-            meshio.write(f'{self.params.general.output_dir_mesh}/mesh.xdmf', tetra_mesh)
-            meshio.write(f'{self.params.general.output_dir_mesh}/mesh_mf.xdmf', tri_mesh)
+            #     out_mesh = meshio.Mesh(points=clean_points, cells={
+            #                         cell_type: cells}, cell_data={"name_to_read": [cell_data]})
+            #     return out_mesh
+
+            # mesh_from_file = meshio.read(f'{self.params.general.output_dir_mesh}/mesh.msh')
+            # pts = mesh_from_file.points
+            # tetra_mesh = create_mesh(mesh_from_file, pts, "tetra")
+            # tri_mesh = create_mesh(mesh_from_file, pts, "triangle")
+
+            # meshio.write(f'{self.params.general.output_dir_mesh}/mesh.xdmf', tetra_mesh)
+            # meshio.write(f'{self.params.general.output_dir_mesh}/mesh_mf.xdmf', tri_mesh)
             print("Done.")
 
     def test_mesh_functionspace(self):
