@@ -12,7 +12,7 @@ import meshio
 # from pvopt.geometry.panels.domain_creation import *
 
 
-class FSIDomain:
+class DomainCreation:
     def __init__(self, params):
 
         # Get MPI communicators
