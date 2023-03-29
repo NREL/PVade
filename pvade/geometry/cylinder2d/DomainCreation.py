@@ -14,7 +14,12 @@ import meshio
 
 class FSIDomain:
     def __init__(self, params):
+        """ Initialize the DomainCreation object
+         This initializes an object that creates the computational domain.
 
+        Args:
+            params (:obj:`pvade.Parameters.SimParams`): A SimParams object
+        """
         # Get MPI communicators
         self.comm = MPI.COMM_WORLD
         self.rank = self.comm.Get_rank()
@@ -24,6 +29,11 @@ class FSIDomain:
         self.params = params
 
     def build(self):
+        """ This function creates the computational domain for a flow around a 2D cylinder.
+            
+        Returns:
+            The function returns gmsh.model which contains the geometric description of the computational domain 
+        """
         gmsh.initialize()
         gmsh.option.setNumber("General.Terminal", 0)
         gmsh.option.setNumber("Mesh.MshFileVersion", 2.2)

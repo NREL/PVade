@@ -9,15 +9,16 @@ import os
 import time
 import ufl
 import dolfinx 
-import meshio
+# import meshio
 
 # from pvopt.geometry.panels.DomainCreation   import *
 class FSIDomain:
-    """This class creates the computational domain 
+    """This class creates the computational domain for 3D examples(3D panels, 3D cylinder)
     """
     def __init__(self, params):
         """The class is initialised here
-
+            Depending on the example we are solving, we import the corresponding DomainCrearion file
+            We define markers which will be used for boundary tag asignment
         Args:
             params (input parameters): input parameters available in the input file
         """
@@ -33,16 +34,16 @@ class FSIDomain:
         problem = self.params.general.example
 
         if problem == "panels":
-            from pvopt.geometry.panels.DomainCreation   import DomainCreation
+            from pvade.geometry.panels.DomainCreation   import DomainCreation
             dim = 3 
         elif problem == "panels2d":
-            from pvopt.geometry.panels2d.DomainCreation   import DomainCreation
+            from pvade.geometry.panels2d.DomainCreation   import DomainCreation
             dim = 2 
         elif problem == "cylinder3d":
-            from pvopt.geometry.cylinder3d.DomainCreation   import DomainCreation
+            from pvade.geometry.cylinder3d.DomainCreation   import DomainCreation
             dim = 3 
         elif problem == "cylinder2d":
-            from pvopt.geometry.cylinder2d.DomainCreation   import DomainCreation
+            from pvade.geometry.cylinder2d.DomainCreation   import DomainCreation
             dim = 2 
 
         # define markers for boundaries 
@@ -64,7 +65,7 @@ class FSIDomain:
             self.fluid_marker = 8
 
     def build(self):
-        """This function call builds the geometry using Gmsh
+        """This function call builds the geometry, marks the boundaries and creates a mesh using Gmsh.
         """
         self.mesh_comm = MPI.COMM_WORLD
         self.model_rank = 0
@@ -74,13 +75,13 @@ class FSIDomain:
         problem = self.params.general.example
 
         if problem == "panels":
-            from pvopt.geometry.panels.DomainCreation   import DomainCreation
+            from pvade.geometry.panels.DomainCreation   import DomainCreation
         elif problem == "panels2d":
-            from pvopt.geometry.panels2d.DomainCreation   import DomainCreation
+            from pvade.geometry.panels2d.DomainCreation   import DomainCreation
         elif problem == "cylinder3d":
-            from pvopt.geometry.cylinder3d.DomainCreation   import DomainCreation
+            from pvade.geometry.cylinder3d.DomainCreation   import DomainCreation
         elif problem == "cylinder2d":
-            from pvopt.geometry.cylinder2d.DomainCreation   import DomainCreation
+            from pvade.geometry.cylinder2d.DomainCreation   import DomainCreation
             
 
         geometry = DomainCreation(self.params)
@@ -109,7 +110,9 @@ class FSIDomain:
         self.ft.name = f"{self.msh.name}_facets"
             
     def read(self):
-        """Read the mesh from external file located in output/mesh
+        """Read the mesh from an external file.
+           The User can load an existing mesh file (mesh.xdmf)
+           and use it to solve the CFD/CSD problem
         """
         if self.rank  == 0:
             print("Reading the mesh from file ...")
@@ -124,7 +127,8 @@ class FSIDomain:
 
 
     def _mark_surfaces(self):
-        """Creates boundary tags using gmsh 
+        """ This function call iterates over all boundaries and assigns tags for each boundary.
+        The Tags are being used when appying boundaty condition.
         """
         # Loop through all surfaces to find periodic tags
         surf_ids = self.pv_model.occ.getEntities(2)
@@ -180,6 +184,11 @@ class FSIDomain:
         self.pv_model.setPhysicalName(2, self.internal_surface_marker, "panel_surface")
 
     def _set_length_scales_mod(self):
+        """ This function call defines the characteristic length for the mesh in locations of interst
+            LcMin,LcMax,DistMin and DistMax are used to create a refined mesh in specific locations 
+            which results in a high fidelity mesh without using a uniform element size in the whole mesh. 
+        """
+
         res_min = self.params.domain.l_char
         if self.mesh_comm.rank == self.model_rank:
             # Define a distance field from the immersed panels
@@ -350,6 +359,9 @@ class FSIDomain:
         )
 
     def _generate_mesh(self):
+        """ This function call generates the mesh.
+           
+        """
         if self.rank == 0:
             print("Starting mesh generation... ", end="")
 
@@ -386,21 +398,23 @@ class FSIDomain:
                 os.makedirs(self.params.general.output_dir_mesh)
             gmsh.write('%s/mesh.msh' % (self.params.general.output_dir_mesh))
             gmsh.write('%s/mesh.vtk' % (self.params.general.output_dir_mesh))
-            def create_mesh(mesh, clean_points, cell_type):
-                cells = mesh.get_cells_type(cell_type)
-                cell_data = mesh.get_cell_data("gmsh:physical", cell_type)
 
-                out_mesh = meshio.Mesh(points=clean_points, cells={
-                                    cell_type: cells}, cell_data={"name_to_read": [cell_data]})
-                return out_mesh
+            
+            # def create_mesh(mesh, clean_points, cell_type):
+            #     cells = mesh.get_cells_type(cell_type)
+            #     cell_data = mesh.get_cell_data("gmsh:physical", cell_type)
+
+            #     out_mesh = meshio.Mesh(points=clean_points, cells={
+            #                         cell_type: cells}, cell_data={"name_to_read": [cell_data]})
+            #     return out_mesh
                 
-            mesh_from_file = meshio.read(f'{self.params.general.output_dir_mesh}/mesh.msh')
-            pts = mesh_from_file.points
-            tetra_mesh = create_mesh(mesh_from_file, pts, "tetra")
-            tri_mesh = create_mesh(mesh_from_file, pts, "triangle")
+            # mesh_from_file = meshio.read(f'{self.params.general.output_dir_mesh}/mesh.msh')
+            # pts = mesh_from_file.points
+            # tetra_mesh = create_mesh(mesh_from_file, pts, "tetra")
+            # tri_mesh = create_mesh(mesh_from_file, pts, "triangle")
 
-            meshio.write(f'{self.params.general.output_dir_mesh}/mesh.xdmf', tetra_mesh)
-            meshio.write(f'{self.params.general.output_dir_mesh}/mesh_mf.xdmf', tri_mesh)
+            # meshio.write(f'{self.params.general.output_dir_mesh}/mesh.xdmf', tetra_mesh)
+            # meshio.write(f'{self.params.general.output_dir_mesh}/mesh_mf.xdmf', tri_mesh)
             print("Done.")
 
     def test_mesh_functionspace(self):

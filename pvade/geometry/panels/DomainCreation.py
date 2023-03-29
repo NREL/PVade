@@ -2,7 +2,7 @@ from dolfinx.io import XDMFFile, gmshio
 from dolfinx.fem import VectorFunctionSpace, FunctionSpace
 from dolfinx.cpp import mesh as cppmesh
 from mpi4py import MPI
-from pvopt.geometry.template.TemplateDomainCreation import TemplateDomainCreation
+from pvade.geometry.template.TemplateDomainCreation import TemplateDomainCreation
 
 import gmsh
 import numpy as np
@@ -11,15 +11,31 @@ import time
 import ufl
 import dolfinx
 
-# import meshio
+import meshio
 
 
 class DomainCreation(TemplateDomainCreation):
+    """_summary_ test 
+
+    Args:
+        TemplateDomainCreation (_type_): _description_
+    """
     def __init__(self, params):
+        """ Initialize the DomainCreation object
+         This initializes an object that creates the computational domain.
+
+        Args:
+            params (:obj:`pvade.Parameters.SimParams`): A SimParams object
+        """
         super().__init__(params)
 
     def build(self):
-
+        """ This function creates the computational domain for a 3d simulation involving N panels.
+            The panels are set at a distance apart, rotated at an angle theta and are elevated with a distance H from the ground.
+            
+        Returns:
+            The function returns gmsh.model which contains the geometric description of the computational domain 
+        """
         # Compute and store some useful geometric quantities
         self.x_span = self.params.domain.x_max - self.params.domain.x_min
         self.y_span = self.params.domain.y_max - self.params.domain.y_min

@@ -1,5 +1,6 @@
 FlowManager
 =============
 
-.. automodule:: FlowManager
+.. automodule:: pvade.FlowManager
    :members:
+   :private-members:
