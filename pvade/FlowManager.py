@@ -703,7 +703,7 @@ class Flow:
         # Adams-Bashforth velocity
         U_AB = 1.5 * self.u_k1 - 0.5 * self.u_k2
 
-        use_eddy_viscosity = True
+        use_eddy_viscosity = params.fluid.use_eddy_viscosity
 
         if use_eddy_viscosity:
             # By default, don't use any eddy viscosity
@@ -762,20 +762,12 @@ class Flow:
         )
         # Define variational problem for step 1: tentative velocity
         self.F1 = (
-            (1.0 / self.dt_c) * inner(self.u - self.u_k1, self.v) * dx
-            + inner(dot(U_AB, nabla_grad(U_CN)), self.v) * dx
-            + (nu + self.nu_T) * inner(grad(U_CN), grad(self.v)) * dx
-            + inner(grad(self.p_k1), self.v) * dx
-            - inner(self.dpdx, self.v) * dx
-        )
-        # self.F1 = (
-        #     dot((self.u - self.u_k1) / self.dt_c, self.v) * dx
-        #     + dot(dot(self.u_k1, nabla_grad(self.u_k1)), self.v) * dx
-        #     + inner(sigma(U, self.p_k1, nu + self.nu_T), epsilon(self.v)) * dx
-        #     + dot(self.p_k1 * n, self.v) * ds
-        #     - dot(nu * nabla_grad(U) * n, self.v) * ds
-        #     - dot(f, self.v) * dx
-        # )
+                (1.0 / self.dt_c) * inner(self.u - self.u_k1, self.v) * dx
+                + inner(dot(U_AB, nabla_grad(U_CN)), self.v) * dx
+                + (nu + self.nu_T) * inner(grad(U_CN), grad(self.v)) * dx
+                + inner(grad(self.p_k1), self.v) * dx
+                - inner(self.dpdx, self.v) * dx
+            )
 
         self.a1 = form(lhs(self.F1))
         self.L1 = form(rhs(self.F1))

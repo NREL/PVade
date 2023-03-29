@@ -13,7 +13,7 @@ import meshio
 # from pvopt.geometry.panels.domain_creation import *
 
 
-class FSIDomain:
+class DomainCreation:
     def __init__(self, params):
         """Initialize the DomainCreation object
          This initializes an object that creates the computational domain.

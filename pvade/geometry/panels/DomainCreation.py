@@ -81,3 +81,54 @@ class DomainCreation(TemplateDomainCreation):
 
         self.gmsh_model.occ.synchronize()
         return self.gmsh_model
+
+
+    def _set_length_scales(self,pv_model,dom_tags):
+        res_min = self.params.domain.l_char
+        if self.rank == 0:
+            # Define a distance field from the immersed panels
+            distance = pv_model.mesh.field.add("Distance", 1)
+            pv_model.mesh.field.setNumbers(distance, "FacesList", dom_tags["panel_surface"])
+            
+            threshold = pv_model.mesh.field.add("Threshold")
+            pv_model.mesh.field.setNumber(threshold, "IField", distance)
+
+
+            factor = self.params.domain.l_char
+            
+            resolution = factor * 10*self.params.pv_array.panel_thickness/2
+            half_panel = self.params.pv_array.panel_length * np.cos(self.params.pv_array.tracker_angle)
+            pv_model.mesh.field.setNumber(threshold, "LcMin", resolution*0.5)
+            pv_model.mesh.field.setNumber(threshold, "LcMax", 5*resolution)
+            pv_model.mesh.field.setNumber(threshold, "DistMin", self.params.pv_array.spacing[0])
+            pv_model.mesh.field.setNumber(threshold, "DistMax", self.params.pv_array.spacing+half_panel)
+
+
+            # Define a distance field from the immersed panels
+            zmin_dist = pv_model.mesh.field.add("Distance")
+            pv_model.mesh.field.setNumbers(zmin_dist, "FacesList", dom_tags["bottom"])
+
+            zmin_thre = pv_model.mesh.field.add("Threshold")
+            pv_model.mesh.field.setNumber(zmin_thre, "IField", zmin_dist)
+            pv_model.mesh.field.setNumber(zmin_thre, "LcMin", 2*resolution)
+            pv_model.mesh.field.setNumber(zmin_thre, "LcMax", 5*resolution)
+            pv_model.mesh.field.setNumber(zmin_thre, "DistMin", 0.1)
+            pv_model.mesh.field.setNumber(zmin_thre, "DistMax", 0.5)
+            
+            xy_dist = pv_model.mesh.field.add("Distance")
+            pv_model.mesh.field.setNumbers(xy_dist, "FacesList", dom_tags["left"])
+            pv_model.mesh.field.setNumbers(xy_dist, "FacesList", dom_tags["right"])
+            
+            xy_thre = pv_model.mesh.field.add("Threshold")
+            pv_model.mesh.field.setNumber(xy_thre, "IField", xy_dist)
+            pv_model.mesh.field.setNumber(xy_thre, "LcMin", 2 * resolution)
+            pv_model.mesh.field.setNumber(xy_thre, "LcMax", 5* resolution)
+            pv_model.mesh.field.setNumber(xy_thre, "DistMin", 0.1)
+            pv_model.mesh.field.setNumber(xy_thre, "DistMax", 0.5)
+
+
+            minimum = pv_model.mesh.field.add("Min")
+            pv_model.mesh.field.setNumbers(minimum, "FieldsList", [threshold, xy_thre, zmin_thre ])
+            pv_model.mesh.field.setAsBackgroundMesh(minimum)
+            return pv_model
+

@@ -12,7 +12,7 @@ import dolfinx
 
 # import meshio
 
-# from pvopt.geometry.panels.DomainCreation   import *
+# from pvade.geometry.panels.DomainCreation   import *
 class FSIDomain:
     """
     This class creates the computational domain for 3D examples(3D panels, 3D cylinder)
@@ -32,45 +32,22 @@ class FSIDomain:
         self.rank = self.comm.Get_rank()
         self.num_procs = self.comm.Get_size()
 
-        # Store a full copy of params on this object
+        # # Store a full copy of params on this object
         self.params = params
 
-        problem = self.params.general.example
 
-        if problem == "panels":
-            from pvade.geometry.panels.DomainCreation import DomainCreation
+        # define markers for boundaries 
+        
+        self.x_min_marker = 1 
+        self.y_min_marker = 2
+        self.z_min_marker = 3
+        self.x_max_marker = 4
+        self.y_max_marker = 5
+        self.z_max_marker = 6
+        self.internal_surface_marker = 7
+        self.fluid_marker = 8
+        
 
-            dim = 3
-        elif problem == "panels2d":
-            from pvade.geometry.panels2d.DomainCreation import DomainCreation
-
-            dim = 2
-        elif problem == "cylinder3d":
-            from pvade.geometry.cylinder3d.DomainCreation import DomainCreation
-
-            dim = 3
-        elif problem == "cylinder2d":
-            from pvade.geometry.cylinder2d.DomainCreation import DomainCreation
-
-            dim = 2
-
-        # define markers for boundaries
-        if dim == 3:
-            self.x_min_marker = 1
-            self.y_min_marker = 2
-            self.z_min_marker = 3
-            self.x_max_marker = 4
-            self.y_max_marker = 5
-            self.z_max_marker = 6
-            self.internal_surface_marker = 7
-            self.fluid_marker = 8
-        elif dim == 2:
-            self.x_min_marker = 1
-            self.y_min_marker = 2
-            self.x_max_marker = 4
-            self.y_max_marker = 5
-            self.internal_surface_marker = 7
-            self.fluid_marker = 8
 
     def build(self):
         """This function call builds the geometry, marks the boundaries and creates a mesh using Gmsh."""
@@ -81,22 +58,23 @@ class FSIDomain:
         problem = self.params.general.example
 
         if problem == "panels":
-            from pvade.geometry.panels.DomainCreation import DomainCreation
-        elif problem == "panels2d":
-            from pvade.geometry.panels2d.DomainCreation import DomainCreation
+            from pvade.geometry.panels.DomainCreation   import DomainCreation
         elif problem == "cylinder3d":
-            from pvade.geometry.cylinder3d.DomainCreation import DomainCreation
-        elif problem == "cylinder2d":
-            from pvade.geometry.cylinder2d.DomainCreation import DomainCreation
+            from pvade.geometry.cylinder3d.DomainCreation   import DomainCreation
+        
+            
 
         geometry = DomainCreation(self.params)
-
+        print(geometry)
         # Only rank 0 builds the geometry and meshes the domain
         # if self.rank == 0:
         self.pv_model = geometry.build()
-
+     
+        
         self._mark_surfaces()
-        self._set_length_scales_mod()  # TODO: this should probably be a method of the domain creation class
+        self.pv_model = geometry._set_length_scales(self.pv_model,self.dom_tags) 
+
+        # self._set_length_scales() # TODO: this should probably be a method of the domain creation class
 
         if self.params.fluid.periodic:
             self._enforce_periodicity()
@@ -113,24 +91,20 @@ class FSIDomain:
         self.mt.name = f"{self.msh.name}_cells"
         self.ft.name = f"{self.msh.name}_facets"
 
-    def read(self):
-        """Read the mesh from an external file.
+            
+    def read(self,path):
+        """"""Read the mesh from an external file.
         The User can load an existing mesh file (mesh.xdmf)
         and use it to solve the CFD/CSD problem
         """
         if self.rank == 0:
             print("Reading the mesh from file ...")
-        with dolfinx.io.XDMFFile(
-            MPI.COMM_WORLD, self.params.general.output_dir_mesh + "/mesh.xdmf", "r"
-        ) as xdmf:
+
+        with dolfinx.io.XDMFFile(MPI.COMM_WORLD, path+"/mesh.xdmf", "r") as xdmf:
             self.msh = xdmf.read_mesh(name="Grid")
 
-        self.msh.topology.create_connectivity(
-            self.msh.topology.dim - 1, self.msh.topology.dim
-        )
-        with XDMFFile(
-            MPI.COMM_WORLD, self.params.general.output_dir_mesh + "/mesh_mf.xdmf", "r"
-        ) as infile:
+        self.msh.topology.create_connectivity(self.msh.topology.dim-1, self.msh.topology.dim)
+        with XDMFFile(MPI.COMM_WORLD,path+"/mesh_mf.xdmf",'r') as infile:
             self.ft = infile.read_meshtags(self.msh, "Grid")
         if self.rank == 0:
             print("Done.")
@@ -193,136 +167,63 @@ class FSIDomain:
         )
         self.pv_model.setPhysicalName(2, self.internal_surface_marker, "panel_surface")
 
-    def _set_length_scales_mod(self):
-        """This function call defines the characteristic length for the mesh in locations of interst
-        LcMin,LcMax,DistMin and DistMax are used to create a refined mesh in specific locations
-        which results in a high fidelity mesh without using a uniform element size in the whole mesh.
-        """
+    # def _set_length_scales(self):
+    #     res_min = self.params.domain.l_char
+    #     if self.mesh_comm.rank == self.model_rank:
+    #         # Define a distance field from the immersed panels
+    #         distance = self.pv_model.mesh.field.add("Distance", 1)
+    #         self.pv_model.mesh.field.setNumbers(distance, "FacesList", self.dom_tags["panel_surface"])
+            
+    #         threshold = self.pv_model.mesh.field.add("Threshold")
+    #         self.pv_model.mesh.field.setNumber(threshold, "IField", distance)
 
-        res_min = self.params.domain.l_char
-        if self.mesh_comm.rank == self.model_rank:
-            # Define a distance field from the immersed panels
-            distance = self.pv_model.mesh.field.add("Distance", 1)
-            self.pv_model.mesh.field.setNumbers(
-                distance, "FacesList", self.dom_tags["panel_surface"]
-            )
 
-            threshold = self.pv_model.mesh.field.add("Threshold")
-            self.pv_model.mesh.field.setNumber(threshold, "IField", distance)
+    #         factor = self.params.domain.l_char
+    #         if 'cylinder3d' in self.params.general.example:
+    #             self.cyld_radius = self.params.domain.cyld_radius
+    #             resolution = factor * self.cyld_radius / 10
+    #             self.pv_model.mesh.field.setNumber(threshold, "LcMin", resolution)
+    #             self.pv_model.mesh.field.setNumber(threshold, "LcMax", 20 * resolution)
+    #             self.pv_model.mesh.field.setNumber(threshold, "DistMin", .5 * self.cyld_radius)
+    #             self.pv_model.mesh.field.setNumber(threshold, "DistMax", self.cyld_radius)
 
-            factor = self.params.domain.l_char
-            if "cylinder3d" in self.params.general.example:
-                self.cyld_radius = self.params.domain.cyld_radius
-                resolution = factor * self.cyld_radius / 10
-                self.pv_model.mesh.field.setNumber(threshold, "LcMin", resolution)
-                self.pv_model.mesh.field.setNumber(threshold, "LcMax", 20 * resolution)
-                self.pv_model.mesh.field.setNumber(
-                    threshold, "DistMin", 0.5 * self.cyld_radius
-                )
-                self.pv_model.mesh.field.setNumber(
-                    threshold, "DistMax", self.cyld_radius
-                )
+    #         else:
+    #             resolution = factor * 10*self.params.pv_array.panel_thickness/2
+    #             half_panel = self.params.pv_array.panel_length * np.cos(self.params.pv_array.tracker_angle)
+    #             self.pv_model.mesh.field.setNumber(threshold, "LcMin", resolution*0.5)
+    #             self.pv_model.mesh.field.setNumber(threshold, "LcMax", 5*resolution)
+    #             self.pv_model.mesh.field.setNumber(threshold, "DistMin", self.params.pv_array.spacing[0])
+    #             self.pv_model.mesh.field.setNumber(threshold, "DistMax", self.params.pv_array.spacing+half_panel)
 
-            else:
-                resolution = factor * 10 * self.params.pv_array.panel_thickness / 2
-                half_panel = self.params.pv_array.panel_length * np.cos(
-                    self.params.pv_array.tracker_angle
-                )
-                self.pv_model.mesh.field.setNumber(threshold, "LcMin", resolution * 0.5)
-                self.pv_model.mesh.field.setNumber(threshold, "LcMax", 5 * resolution)
-                self.pv_model.mesh.field.setNumber(
-                    threshold, "DistMin", self.params.pv_array.spacing[0]
-                )
-                self.pv_model.mesh.field.setNumber(
-                    threshold, "DistMax", self.params.pv_array.spacing + half_panel
-                )
 
-            # # Define a distance field from the immersed panels
-            # zmin_dist = self.pv_model.mesh.field.add("Distance")
-            # self.pv_model.mesh.field.setNumbers(zmin_dist, "FacesList", self.dom_tags["bottom"])
+    #         # Define a distance field from the immersed panels
+    #         zmin_dist = self.pv_model.mesh.field.add("Distance")
+    #         self.pv_model.mesh.field.setNumbers(zmin_dist, "FacesList", self.dom_tags["bottom"])
 
-            # zmin_thre = self.pv_model.mesh.field.add("Threshold")
-            # self.pv_model.mesh.field.setNumber(zmin_thre, "IField", zmin_dist)
-            # self.pv_model.mesh.field.setNumber(zmin_thre, "LcMin", .5*resolution)
-            # self.pv_model.mesh.field.setNumber(zmin_thre, "LcMax", 5*resolution)
-            # self.pv_model.mesh.field.setNumber(zmin_thre, "DistMin", 1.5)
-            # self.pv_model.mesh.field.setNumber(zmin_thre, "DistMax", 1.5+half_panel)
+    #         zmin_thre = self.pv_model.mesh.field.add("Threshold")
+    #         self.pv_model.mesh.field.setNumber(zmin_thre, "IField", zmin_dist)
+    #         self.pv_model.mesh.field.setNumber(zmin_thre, "LcMin", 2*resolution)
+    #         self.pv_model.mesh.field.setNumber(zmin_thre, "LcMax", 5*resolution)
+    #         self.pv_model.mesh.field.setNumber(zmin_thre, "DistMin", 0.1)
+    #         self.pv_model.mesh.field.setNumber(zmin_thre, "DistMax", 0.5)
+            
+    #         xy_dist = self.pv_model.mesh.field.add("Distance")
+    #         self.pv_model.mesh.field.setNumbers(xy_dist, "FacesList", self.dom_tags["left"])
+    #         self.pv_model.mesh.field.setNumbers(xy_dist, "FacesList", self.dom_tags["right"])
+            
+    #         xy_thre = self.pv_model.mesh.field.add("Threshold")
+    #         self.pv_model.mesh.field.setNumber(xy_thre, "IField", xy_dist)
+    #         self.pv_model.mesh.field.setNumber(xy_thre, "LcMin", 2 * resolution)
+    #         self.pv_model.mesh.field.setNumber(xy_thre, "LcMax", 5* resolution)
+    #         self.pv_model.mesh.field.setNumber(xy_thre, "DistMin", 0.1)
+    #         self.pv_model.mesh.field.setNumber(xy_thre, "DistMax", 0.5)
 
-            # other_dist = self.pv_model.mesh.field.add("Distance")
-            # self.pv_model.mesh.field.setNumbers(other_dist, "FacesList", self.dom_tags["front"])
-            # self.pv_model.mesh.field.setNumbers(other_dist, "FacesList", self.dom_tags["back"])
-            # self.pv_model.mesh.field.setNumbers(other_dist, "FacesList", self.dom_tags["top"])
 
-            # other_thre = self.pv_model.mesh.field.add("Threshold")
-            # self.pv_model.mesh.field.setNumber(other_thre, "IField", other_dist)
-            # self.pv_model.mesh.field.setNumber(other_thre, "LcMin", 5.0 * self.params.domain.l_char)
-            # self.pv_model.mesh.field.setNumber(other_thre, "LcMax", 10.0 * self.params.domain.l_char)
-            # self.pv_model.mesh.field.setNumber(other_thre, "DistMin", 0.1)
-            # self.pv_model.mesh.field.setNumber(other_thre, "DistMax", 0.5)
+    #         minimum = self.pv_model.mesh.field.add("Min")
+    #         self.pv_model.mesh.field.setNumbers(minimum, "FieldsList", [threshold, xy_thre, zmin_thre ])
+    #         self.pv_model.mesh.field.setAsBackgroundMesh(minimum)
 
-            xy_dist = self.pv_model.mesh.field.add("Distance")
-            self.pv_model.mesh.field.setNumbers(
-                xy_dist, "FacesList", self.dom_tags["left"]
-            )
-            self.pv_model.mesh.field.setNumbers(
-                xy_dist, "FacesList", self.dom_tags["right"]
-            )
 
-            xy_thre = self.pv_model.mesh.field.add("Threshold")
-            self.pv_model.mesh.field.setNumber(xy_thre, "IField", xy_dist)
-            self.pv_model.mesh.field.setNumber(xy_thre, "LcMin", 2 * resolution)
-            self.pv_model.mesh.field.setNumber(xy_thre, "LcMax", 5 * resolution)
-            self.pv_model.mesh.field.setNumber(xy_thre, "DistMin", 0.1)
-            self.pv_model.mesh.field.setNumber(xy_thre, "DistMax", 0.5)
-
-            minimum = self.pv_model.mesh.field.add("Min")
-            self.pv_model.mesh.field.setNumbers(
-                minimum, "FieldsList", [threshold, xy_thre]
-            )
-            self.pv_model.mesh.field.setAsBackgroundMesh(minimum)
-
-            # self.pv_model.mesh.field.setAsBackgroundMesh(7)
-
-            # gmsh.model.mesh.field.add("Distance", 1)
-            # gmsh.model.mesh.field.setNumbers(1, "FacesList", self.dom_tags["panel_surface"])
-            # r = res_min
-            # resolution = r
-            # gmsh.model.mesh.field.add("Threshold", 2)
-            # gmsh.model.mesh.field.setNumber(2, "IField", 1)
-            # gmsh.model.mesh.field.setNumber(2, "LcMin", resolution)
-            # gmsh.model.mesh.field.setNumber(2, "LcMax", 2*resolution)
-            # gmsh.model.mesh.field.setNumber(2, "DistMin", 0.5*r)
-            # gmsh.model.mesh.field.setNumber(2, "DistMax", r)
-
-            # # We add a similar threshold at the inlet to ensure fully resolved inlet flow
-
-            # gmsh.model.mesh.field.add("Distance", 3)
-            # gmsh.model.mesh.field.setNumbers(3, "FacesList", self.dom_tags['back'] )
-            # gmsh.model.mesh.field.setNumbers(3, "FacesList", self.dom_tags['front'] )
-            # gmsh.model.mesh.field.setNumbers(3, "FacesList", self.dom_tags['top'] )
-            # gmsh.model.mesh.field.setNumbers(3, "FacesList", self.dom_tags['bottom'] )
-            # gmsh.model.mesh.field.setNumbers(3, "FacesList", self.dom_tags['left'] )
-            # gmsh.model.mesh.field.setNumbers(3, "FacesList", self.dom_tags['right'] )
-            # gmsh.model.mesh.field.add("Threshold", 4)
-            # gmsh.model.mesh.field.setNumber(4, "IField", 3)
-            # gmsh.model.mesh.field.setNumber(4, "LcMin", 5*resolution)
-            # gmsh.model.mesh.field.setNumber(4, "LcMax", 10*resolution)
-            # gmsh.model.mesh.field.setNumber(4, "DistMin", 0.1)
-            # gmsh.model.mesh.field.setNumber(4, "DistMax", 0.5)
-
-            # # We combine these fields by using the minimum field
-            # gmsh.model.mesh.field.add("Min", 5)
-            # gmsh.model.mesh.field.setNumbers(5, "FieldsList", [2, 4])
-            # gmsh.model.mesh.field.setAsBackgroundMesh(5)
-
-        # if self.mesh_comm.rank == self.model_rank:
-        # gmsh.option.setNumber("Mesh.Algorithm", 5)
-        # gmsh.option.setNumber("Mesh.RecombinationAlgorithm", 2)
-        # gmsh.option.setNumber("Mesh.RecombineAll", 1)
-        # gmsh.option.setNumber("Mesh.SubdivisionAlgorithm", 1)
-        # gmsh.model.mesh.generate(3)
-        # gmsh.model.mesh.setOrder(2)
-        # gmsh.model.mesh.optimize("Netgen")
 
     def _enforce_periodicity(self):
 
@@ -384,14 +285,34 @@ class FSIDomain:
 
             # Generate the mesh
             tic = time.time()
-            gmsh.option.setNumber("Mesh.Algorithm", 8)
-            gmsh.option.setNumber("Mesh.RecombinationAlgorithm", 2)
+
+            #Mesh.Algorithm 2D mesh algorithm 
+            # (1: MeshAdapt, 2: Automatic, 3: Initial mesh only, 5: Delaunay, 6: Frontal-Delaunay, 7: BAMG, 8: Frontal-Delaunay for Quads, 9: Packing of Parallelograms)
+            # Default value: 6
+            gmsh.option.setNumber("Mesh.Algorithm", 6)
+            
+            #3D mesh algorithm 
+            # (1: Delaunay, 3: Initial mesh only, 4: Frontal, 7: MMG3D, 9: R-tree, 10: HXT)
+            # Default value: 1
+            gmsh.option.setNumber("Mesh.Algorithm3D", 1)
+
+            
+            # Mesh recombination algorithm 
+            # (0: simple, 1: blossom, 2: simple full-quad, 3: blos- som full-quad)
+            # Default value: 1
+            gmsh.option.setNumber("Mesh.RecombinationAlgorithm", 0)
+            
+            # Apply recombination algorithm to all surfaces, ignoring per-surface spec Default value: 0
             # gmsh.option.setNumber("Mesh.RecombineAll", 1)
-            gmsh.option.setNumber("Mesh.SubdivisionAlgorithm", 1)
+
             self.pv_model.mesh.generate(3)
             self.pv_model.mesh.setOrder(2)
-            self.pv_model.mesh.optimize("Netgen")
+
+
+            self.pv_model.mesh.optimize("Relocate3D")
             self.pv_model.mesh.generate(3)
+
+
             toc = time.time()
             if self.rank == 0:
                 print("Finished.")

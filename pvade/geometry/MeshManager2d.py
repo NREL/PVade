@@ -30,42 +30,24 @@ class FSIDomain:
         # Store a full copy of params on this object
         self.params = params
 
-        problem = self.params.general.example
+        
+        # problem = self.params.general.example
+        
+        # if problem == "panels2d":
+        #     from pvade.geometry.panels2d.DomainCreation   import DomainCreation 
+        # elif problem == "cylinder2d":
+        #     from pvade.geometry.cylinder2d.DomainCreation   import DomainCreation
+        
 
-        if problem == "panels":
-            from pvade.geometry.panels.DomainCreation import DomainCreation
+        # define markers for boundaries 
+    
+        self.x_min_marker = 1
+        self.y_min_marker = 2
+        self.x_max_marker = 4
+        self.y_max_marker = 5
+        self.internal_surface_marker = 7
+        self.fluid_marker = 8
 
-            dim = 3
-        elif problem == "panels2d":
-            from pvade.geometry.panels2d.DomainCreation import DomainCreation
-
-            dim = 2
-        elif problem == "cylinder3d":
-            from pvade.geometry.cylinder3d.DomainCreation import DomainCreation
-
-            dim = 3
-        elif problem == "cylinder2d":
-            from pvade.geometry.cylinder2d.DomainCreation import DomainCreation
-
-            dim = 2
-
-        # define markers for boundaries
-        if dim == 3:
-            self.x_min_marker = 1
-            self.y_min_marker = 2
-            self.z_min_marker = 3
-            self.x_max_marker = 4
-            self.y_max_marker = 5
-            self.z_max_marker = 6
-            self.internal_surface_marker = 7
-            self.fluid_marker = 8
-        elif dim == 2:
-            self.x_min_marker = 1
-            self.y_min_marker = 2
-            self.x_max_marker = 4
-            self.y_max_marker = 5
-            self.internal_surface_marker = 7
-            self.fluid_marker = 8
 
     def build(self):
         """This function call builds the geometry using Gmsh"""
@@ -75,14 +57,13 @@ class FSIDomain:
 
         problem = self.params.general.example
 
-        if problem == "panels":
-            from pvade.geometry.panels.DomainCreation import DomainCreation
-        elif problem == "panels2d":
-            from pvade.geometry.panels2d.DomainCreation import DomainCreation
-        elif problem == "cylinder3d":
-            from pvade.geometry.cylinder3d.DomainCreation import DomainCreation
+
+        if problem == "panels2d":
+            from pvade.geometry.panels2d.DomainCreation   import DomainCreation 
         elif problem == "cylinder2d":
-            from pvade.geometry.cylinder2d.DomainCreation import DomainCreation
+            from pvade.geometry.cylinder2d.DomainCreation   import DomainCreation
+            
+
 
         geometry = DomainCreation(self.params)
 
@@ -108,21 +89,18 @@ class FSIDomain:
         self.mt.name = f"{self.msh.name}_cells"
         self.ft.name = f"{self.msh.name}_facets"
 
-    def read(self):
-        """Read the mesh from external file located in output/mesh"""
-        if self.rank == 0:
+            
+    def read(self,path):
+        """Read the mesh from external file located in output/mesh
+        """
+        if self.rank  == 0:
             print("Reading the mesh from file ...")
-        with dolfinx.io.XDMFFile(
-            MPI.COMM_WORLD, self.params.general.output_dir_mesh + "/mesh.xdmf", "r"
-        ) as xdmf:
+        with dolfinx.io.XDMFFile(MPI.COMM_WORLD, path+"/mesh.xdmf", "r") as xdmf:
             self.msh = xdmf.read_mesh(name="Grid")
 
-        self.msh.topology.create_connectivity(
-            self.msh.topology.dim - 1, self.msh.topology.dim
-        )
-        with XDMFFile(
-            MPI.COMM_WORLD, self.params.general.output_dir_mesh + "/mesh_mf.xdmf", "r"
-        ) as infile:
+        self.msh.topology.create_connectivity(self.msh.topology.dim-1, self.msh.topology.dim)
+        with XDMFFile(MPI.COMM_WORLD,path+"/mesh_mf.xdmf",'r') as infile:
+
             self.ft = infile.read_meshtags(self.msh, "Grid")
         if self.rank == 0:
             print("Done.")
@@ -319,7 +297,13 @@ class FSIDomain:
 
             # Generate the mesh
             tic = time.time()
-            gmsh.option.setNumber("Mesh.Algorithm", 8)
+
+            #Mesh.Algorithm 2D mesh algorithm 
+            # (1: MeshAdapt, 2: Automatic, 3: Initial mesh only, 5: Delaunay, 6: Frontal-Delaunay, 7: BAMG, 8: Frontal-Delaunay for Quads, 9: Packing of Parallelograms)
+            # Default value: 6
+            gmsh.option.setNumber("Mesh.Algorithm", 2)
+
+
             gmsh.option.setNumber("Mesh.RecombinationAlgorithm", 2)
             # gmsh.option.setNumber("Mesh.RecombineAll", 1)
             gmsh.option.setNumber("Mesh.SubdivisionAlgorithm", 1)

@@ -52,24 +52,53 @@ class DomainCreation(TemplateDomainCreation):
         self.gmsh_model.occ.cut([(3, domain)], [(3, cylinder)])
 
         self.gmsh_model.occ.synchronize()
-
         return self.gmsh_model
+    
+    def _set_length_scales(self,pv_model,dom_tags):
+        res_min = self.params.domain.l_char
+        if self.rank == 0:
+            # Define a distance field from the immersed panels
+            distance = pv_model.mesh.field.add("Distance", 1)
+            pv_model.mesh.field.setNumbers(distance, "FacesList", dom_tags["panel_surface"])
+            
+            threshold = pv_model.mesh.field.add("Threshold")
+            pv_model.mesh.field.setNumber(threshold, "IField", distance)
 
-    def set_length_scales(self):
+            factor = self.params.domain.l_char
+            
+            self.cyld_radius = self.params.domain.cyld_radius
+            resolution = factor * self.cyld_radius / 10
+            pv_model.mesh.field.setNumber(threshold, "LcMin", resolution)
+            pv_model.mesh.field.setNumber(threshold, "LcMax", 20 * resolution)
+            pv_model.mesh.field.setNumber(threshold, "DistMin", .5 * self.cyld_radius)
+            pv_model.mesh.field.setNumber(threshold, "DistMax", self.cyld_radius)
 
-        # Define a distance field from the cylinder
-        self.gmsh_model.mesh.field.add("Distance", 1)
-        self.gmsh_model.mesh.field.setNumbers(
-            1, "FacesList", self.dom_tags["internal_surface"]
-        )
+            
+            # Define a distance field from the immersed panels
+            zmin_dist = pv_model.mesh.field.add("Distance")
+            pv_model.mesh.field.setNumbers(zmin_dist, "FacesList", dom_tags["bottom"])
 
-        self.gmsh_model.mesh.field.add("Threshold", 2)
-        self.gmsh_model.mesh.field.setNumber(2, "IField", 1)
-        self.gmsh_model.mesh.field.setNumber(2, "LcMin", self.params.domain.l_char)
-        self.gmsh_model.mesh.field.setNumber(
-            2, "LcMax", 6.0 * self.params.domain.l_char
-        )
-        self.gmsh_model.mesh.field.setNumber(2, "DistMin", 2.0 * self.cyld_radius)
-        self.gmsh_model.mesh.field.setNumber(2, "DistMax", 4.0 * self.cyld_radius)
+            zmin_thre = pv_model.mesh.field.add("Threshold")
+            pv_model.mesh.field.setNumber(zmin_thre, "IField", zmin_dist)
+            pv_model.mesh.field.setNumber(zmin_thre, "LcMin", 2*resolution)
+            pv_model.mesh.field.setNumber(zmin_thre, "LcMax", 5*resolution)
+            pv_model.mesh.field.setNumber(zmin_thre, "DistMin", 0.1)
+            pv_model.mesh.field.setNumber(zmin_thre, "DistMax", 0.5)
+            
+            xy_dist = pv_model.mesh.field.add("Distance")
+            pv_model.mesh.field.setNumbers(xy_dist, "FacesList", dom_tags["left"])
+            pv_model.mesh.field.setNumbers(xy_dist, "FacesList", dom_tags["right"])
+            
+            xy_thre = pv_model.mesh.field.add("Threshold")
+            pv_model.mesh.field.setNumber(xy_thre, "IField", xy_dist)
+            pv_model.mesh.field.setNumber(xy_thre, "LcMin", 2 * resolution)
+            pv_model.mesh.field.setNumber(xy_thre, "LcMax", 5* resolution)
+            pv_model.mesh.field.setNumber(xy_thre, "DistMin", 0.1)
+            pv_model.mesh.field.setNumber(xy_thre, "DistMax", 0.5)
 
-        self.gmsh_model.mesh.field.setAsBackgroundMesh(2)
+
+            minimum = pv_model.mesh.field.add("Min")
+            pv_model.mesh.field.setNumbers(minimum, "FieldsList", [threshold, xy_thre, zmin_thre ])
+            pv_model.mesh.field.setAsBackgroundMesh(minimum)
+            return pv_model
+
