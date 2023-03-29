@@ -18,6 +18,7 @@ dependencies:
   - snakeviz
   - sphinx
   - tqdm
+  - meshio
   - pip
   - pip:
     - sphinx-rtd-theme
