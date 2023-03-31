@@ -29,8 +29,8 @@ def main():
     # Initialize the domain and construct the initial mesh
     domain = FSIDomain(params)
     if params.general.create_mesh == True:
-        domain.build()
-        domain.write_mesh_file()
+        domain.build(params)
+        domain.write_mesh_file(params)
     elif params.general.read_mesh == True:
         domain.read()
     else:

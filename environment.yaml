@@ -10,6 +10,7 @@ dependencies:
   - jsonschema
   - jupyter
   - matplotlib
+  - meshio
   - pandas
   - pytest
   - python-gmsh
@@ -18,7 +19,6 @@ dependencies:
   - snakeviz
   - sphinx
   - tqdm
-  - meshio
   - pip
   - pip:
     - sphinx-rtd-theme
