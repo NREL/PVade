@@ -1,8 +1,3 @@
-from dolfinx.io import XDMFFile, gmshio
-from dolfinx.fem import VectorFunctionSpace, FunctionSpace
-from dolfinx.cpp import mesh as cppmesh
-
-from mpi4py import MPI
 import gmsh
 import numpy as np
 import os
@@ -10,6 +5,7 @@ import time
 import ufl
 import dolfinx
 import meshio
+
 
 # from pvopt.geometry.panels.DomainCreation   import *
 class FSIDomain:
@@ -43,10 +39,10 @@ class FSIDomain:
         problem = params.general.example
 
         if problem == "panels2d":
-            from pvade.geometry.panels2d.DomainCreation   import DomainCreation 
+            from pvade.geometry.panels2d.DomainCreation import DomainCreation
         elif problem == "cylinder2d":
-            from pvade.geometry.cylinder2d.DomainCreation   import DomainCreation
-            
+            from pvade.geometry.cylinder2d.DomainCreation import DomainCreation
+
         self.geometry = DomainCreation(params)
 
         # Only rank 0 builds the geometry and meshes the domain
@@ -61,7 +57,9 @@ class FSIDomain:
             self._generate_mesh()
 
         # All ranks receive their portion of the mesh from rank 0 (like an MPI scatter)
-        self.msh, self.mt, self.ft = gmshio.model_to_mesh(self.geometry.gmsh_model, self.comm, 0)
+        self.msh, self.mt, self.ft = dolfinx.io.gmshio.model_to_mesh(
+            self.geometry.gmsh_model, self.comm, 0
+        )
 
         self.ndim = self.msh.topology.dim
 
@@ -70,25 +68,25 @@ class FSIDomain:
         self.mt.name = f"{self.msh.name}_cells"
         self.ft.name = f"{self.msh.name}_facets"
 
-            
-    def read(self,path):
-        """Read the mesh from external file located in output/mesh
-        """
-        if self.rank  == 0:
+    def read(self, path):
+        """Read the mesh from external file located in output/mesh"""
+        if self.rank == 0:
             print("Reading the mesh from file ...")
-        with dolfinx.io.XDMFFile(MPI.COMM_WORLD, path+"/mesh.xdmf", "r") as xdmf:
+
+        with dolfinx.io.XDMFFile(self.comm, path + "/mesh.xdmf", "r") as xdmf:
             self.msh = xdmf.read_mesh(name="Grid")
 
-        self.msh.topology.create_connectivity(self.msh.topology.dim-1, self.msh.topology.dim)
-        with XDMFFile(MPI.COMM_WORLD,path+"/mesh_mf.xdmf",'r') as infile:
+        self.msh.topology.create_connectivity(
+            self.msh.topology.dim - 1, self.msh.topology.dim
+        )
 
-            self.ft = infile.read_meshtags(self.msh, "Grid")
+        with dolfinx.io.XDMFFile(self.comm, path + "/mesh_mf.xdmf", "r") as xdmf:
+            self.ft = xdmf.read_meshtags(self.msh, "Grid")
+
         if self.rank == 0:
             print("Done.")
 
-
     def _enforce_periodicity(self):
-
         # TODO: Make this a generic mapping depending on which walls are marked for peridic BCs
         # TODO: Copy code to enforce periodicity from old generate_and_convert_3d_meshes.py
 
@@ -146,11 +144,10 @@ class FSIDomain:
         # Generate the mesh
         tic = time.time()
 
-        #Mesh.Algorithm 2D mesh algorithm 
+        # Mesh.Algorithm 2D mesh algorithm
         # (1: MeshAdapt, 2: Automatic, 3: Initial mesh only, 5: Delaunay, 6: Frontal-Delaunay, 7: BAMG, 8: Frontal-Delaunay for Quads, 9: Packing of Parallelograms)
         # Default value: 6
         gmsh.option.setNumber("Mesh.Algorithm", 2)
-
 
         gmsh.option.setNumber("Mesh.RecombinationAlgorithm", 2)
         # gmsh.option.setNumber("Mesh.RecombineAll", 1)
@@ -164,7 +161,6 @@ class FSIDomain:
             print("Finished.")
             print(f"Total meshing time = {toc-tic:.1f} s")
 
-
     def write_mesh_file(self, params):
         """
         TODO: when saving a mesh file using only dolfinx functions
@@ -176,9 +172,7 @@ class FSIDomain:
 
         if self.rank == 0:
             # Save the *.msh file and *.vtk file (the latter is for visualization only)
-            print(
-                "Writing Mesh to %s... " % (params.general.output_dir_mesh), end=""
-            )
+            print("Writing Mesh to %s... " % (params.general.output_dir_mesh), end="")
 
             if os.path.exists(params.general.output_dir_mesh) == False:
                 os.makedirs(params.general.output_dir_mesh)
@@ -196,21 +190,16 @@ class FSIDomain:
                 )
                 return out_mesh
 
-            mesh_from_file = meshio.read(
-                f"{params.general.output_dir_mesh}/mesh.msh"
-            )
+            mesh_from_file = meshio.read(f"{params.general.output_dir_mesh}/mesh.msh")
             pts = mesh_from_file.points
             tetra_mesh = create_mesh(mesh_from_file, pts, "quad")
             tri_mesh = create_mesh(mesh_from_file, pts, "line")
 
             meshio.write(f"{params.general.output_dir_mesh}/mesh.xdmf", tetra_mesh)
-            meshio.write(
-                f"{params.general.output_dir_mesh}/mesh_mf.xdmf", tri_mesh
-            )
+            meshio.write(f"{params.general.output_dir_mesh}/mesh_mf.xdmf", tri_mesh)
             print("Done.")
 
     def test_mesh_functionspace(self):
-
         P2 = ufl.VectorElement("Lagrange", self.msh.ufl_cell(), 2)
         P1 = ufl.FiniteElement("Lagrange", self.msh.ufl_cell(), 1)
         V = FunctionSpace(self.msh, P2)

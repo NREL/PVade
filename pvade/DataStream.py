@@ -8,7 +8,8 @@ from mpi4py import MPI
 from pathlib import Path
 import pytest
 
-#test actions
+
+# test actions
 class DataStream:
 
     """Input/Output and file writing class

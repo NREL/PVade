@@ -1,16 +1,11 @@
-from dolfinx.io import XDMFFile, gmshio
-from dolfinx.fem import VectorFunctionSpace, FunctionSpace
-from dolfinx.cpp import mesh as cppmesh
-
-from mpi4py import MPI
 import gmsh
 import numpy as np
 import os
 import time
 import ufl
 import dolfinx
+import meshio
 
-# import meshio
 
 # from pvade.geometry.panels.DomainCreation   import *
 class FSIDomain:
@@ -42,16 +37,15 @@ class FSIDomain:
         self.fluid_marker = 8
         self.structure_marker = 8
 
-
     def build(self, params):
         """This function call builds the geometry, marks the boundaries and creates a mesh using Gmsh."""
         problem = params.general.example
 
         if problem == "panels":
-            from pvade.geometry.panels.DomainCreation   import DomainCreation
+            from pvade.geometry.panels.DomainCreation import DomainCreation
         elif problem == "cylinder3d":
-            from pvade.geometry.cylinder3d.DomainCreation   import DomainCreation
-        
+            from pvade.geometry.cylinder3d.DomainCreation import DomainCreation
+
         self.geometry = DomainCreation(params)
 
         # Only rank 0 builds the geometry and meshes the domain
@@ -66,7 +60,9 @@ class FSIDomain:
             self._generate_mesh()
 
         # All ranks receive their portion of the mesh from rank 0 (like an MPI scatter)
-        self.msh, self.mt, self.ft = gmshio.model_to_mesh(self.geometry.gmsh_model, self.comm, 0)
+        self.msh, self.mt, self.ft = dolfinx.io.gmshio.model_to_mesh(
+            self.geometry.gmsh_model, self.comm, 0
+        )
 
         self.ndim = self.msh.topology.dim
 
@@ -75,8 +71,7 @@ class FSIDomain:
         self.mt.name = f"{self.msh.name}_cells"
         self.ft.name = f"{self.msh.name}_facets"
 
-            
-    def read(self,path):
+    def read(self, path):
         """Read the mesh from an external file.
         The User can load an existing mesh file (mesh.xdmf)
         and use it to solve the CFD/CSD problem
@@ -84,18 +79,20 @@ class FSIDomain:
         if self.rank == 0:
             print("Reading the mesh from file ...")
 
-        with dolfinx.io.XDMFFile(MPI.COMM_WORLD, path+"/mesh.xdmf", "r") as xdmf:
+        with dolfinx.io.XDMFFile(self.comm, path + "/mesh.xdmf", "r") as xdmf:
             self.msh = xdmf.read_mesh(name="Grid")
 
-        self.msh.topology.create_connectivity(self.msh.topology.dim-1, self.msh.topology.dim)
-        with XDMFFile(MPI.COMM_WORLD,path+"/mesh_mf.xdmf",'r') as infile:
-            self.ft = infile.read_meshtags(self.msh, "Grid")
+        self.msh.topology.create_connectivity(
+            self.msh.topology.dim - 1, self.msh.topology.dim
+        )
+
+        with dolfinx.io.XDMFFile(self.comm, path + "/mesh_mf.xdmf", "r") as xdmf:
+            self.ft = xdmf.read_meshtags(self.msh, "Grid")
+
         if self.rank == 0:
             print("Done.")
 
-
     def _enforce_periodicity(self):
-
         # TODO: Make this a generic mapping depending on which walls are marked for peridic BCs
         # TODO: Copy code to enforce periodicity from old generate_and_convert_3d_meshes.py
 
@@ -154,32 +151,29 @@ class FSIDomain:
         # Generate the mesh
         tic = time.time()
 
-        #Mesh.Algorithm 2D mesh algorithm 
+        # Mesh.Algorithm 2D mesh algorithm
         # (1: MeshAdapt, 2: Automatic, 3: Initial mesh only, 5: Delaunay, 6: Frontal-Delaunay, 7: BAMG, 8: Frontal-Delaunay for Quads, 9: Packing of Parallelograms)
         # Default value: 6
         gmsh.option.setNumber("Mesh.Algorithm", 6)
-        
-        #3D mesh algorithm 
+
+        # 3D mesh algorithm
         # (1: Delaunay, 3: Initial mesh only, 4: Frontal, 7: MMG3D, 9: R-tree, 10: HXT)
         # Default value: 1
         gmsh.option.setNumber("Mesh.Algorithm3D", 1)
 
-        
-        # Mesh recombination algorithm 
+        # Mesh recombination algorithm
         # (0: simple, 1: blossom, 2: simple full-quad, 3: blos- som full-quad)
         # Default value: 1
         gmsh.option.setNumber("Mesh.RecombinationAlgorithm", 0)
-        
+
         # Apply recombination algorithm to all surfaces, ignoring per-surface spec Default value: 0
         # gmsh.option.setNumber("Mesh.RecombineAll", 1)
 
         self.geometry.gmsh_model.mesh.generate(3)
         self.geometry.gmsh_model.mesh.setOrder(2)
 
-
         self.geometry.gmsh_model.mesh.optimize("Relocate3D")
         self.geometry.gmsh_model.mesh.generate(3)
-
 
         toc = time.time()
         if self.rank == 0:
@@ -187,7 +181,7 @@ class FSIDomain:
             print(f"Total meshing time = {toc-tic:.1f} s")
 
     def write_mesh_file(self, params):
-        """        TODO: when saving a mesh file using only dolfinx functions
+        """TODO: when saving a mesh file using only dolfinx functions
         it's possible certain elements of the data aren't preserved
         and that the mesh won't be able to be properly read in later
         on. MAKE SURE YOU CAN SAVE A MESH USING ONLY DOLFINX FUNCTIONS
@@ -196,34 +190,34 @@ class FSIDomain:
 
         if self.rank == 0:
             # Save the *.msh file and *.vtk file (the latter is for visualization only)
-            print(
-                "Writing Mesh to %s... " % (params.general.output_dir_mesh), end=""
-            )
+            print("Writing Mesh to %s... " % (params.general.output_dir_mesh), end="")
 
             if os.path.exists(params.general.output_dir_mesh) == False:
                 os.makedirs(params.general.output_dir_mesh)
             gmsh.write("%s/mesh.msh" % (params.general.output_dir_mesh))
             gmsh.write("%s/mesh.vtk" % (params.general.output_dir_mesh))
 
-            # def create_mesh(mesh, clean_points, cell_type):
-            #     cells = mesh.get_cells_type(cell_type)
-            #     cell_data = mesh.get_cell_data("gmsh:physical", cell_type)
+            def create_mesh(mesh, clean_points, cell_type):
+                cells = mesh.get_cells_type(cell_type)
+                cell_data = mesh.get_cell_data("gmsh:physical", cell_type)
 
-            #     out_mesh = meshio.Mesh(points=clean_points, cells={
-            #                         cell_type: cells}, cell_data={"name_to_read": [cell_data]})
-            #     return out_mesh
+                out_mesh = meshio.Mesh(
+                    points=clean_points,
+                    cells={cell_type: cells},
+                    cell_data={"name_to_read": [cell_data]},
+                )
+                return out_mesh
 
-            # mesh_from_file = meshio.read(f'{params.general.output_dir_mesh}/mesh.msh')
-            # pts = mesh_from_file.points
-            # tetra_mesh = create_mesh(mesh_from_file, pts, "tetra")
-            # tri_mesh = create_mesh(mesh_from_file, pts, "triangle")
+            mesh_from_file = meshio.read(f"{params.general.output_dir_mesh}/mesh.msh")
+            pts = mesh_from_file.points
+            tetra_mesh = create_mesh(mesh_from_file, pts, "tetra")
+            tri_mesh = create_mesh(mesh_from_file, pts, "triangle")
 
-            # meshio.write(f'{params.general.output_dir_mesh}/mesh.xdmf', tetra_mesh)
-            # meshio.write(f'{params.general.output_dir_mesh}/mesh_mf.xdmf', tri_mesh)
+            meshio.write(f"{params.general.output_dir_mesh}/mesh.xdmf", tetra_mesh)
+            meshio.write(f"{params.general.output_dir_mesh}/mesh_mf.xdmf", tri_mesh)
             print("Done.")
 
     def test_mesh_functionspace(self):
-
         P2 = ufl.VectorElement("Lagrange", self.msh.ufl_cell(), 2)
         P1 = ufl.FiniteElement("Lagrange", self.msh.ufl_cell(), 1)
         V = FunctionSpace(self.msh, P2)

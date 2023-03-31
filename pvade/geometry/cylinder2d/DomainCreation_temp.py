@@ -11,10 +11,10 @@ import ufl
 import dolfinx
 import meshio
 
+
 # from pvopt.geometry.panels.domain_creation   import *
 class FSIDomain:
     def __init__(self, params):
-
         # Get MPI communicators
         self.comm = MPI.COMM_WORLD
         self.rank = self.comm.Get_rank()
@@ -191,7 +191,6 @@ class FSIDomain:
             print("Done.")
 
     def _construct_geometry(self):
-
         self.pv_model.add("pv_domain")
         self.pv_model.setCurrent("pv_domain")
 
@@ -240,7 +239,6 @@ class FSIDomain:
         self.pv_model.occ.synchronize()
 
     def _construct_geometry_mod(self):
-
         if self.mesh_comm.rank == self.model_rank:
             # Initialize Gmsh options
             gmsh.initialize()
@@ -294,7 +292,6 @@ class FSIDomain:
             gmsh.model.occ.synchronize()
 
     def _mark_surfaces(self):
-
         # Loop through all surfaces to find periodic tags
         surf_ids = self.pv_model.occ.getEntities(2)
 
@@ -350,7 +347,6 @@ class FSIDomain:
         self.pv_model.setPhysicalName(2, self.internal_surface_marker, "panel_surface")
 
     def _mark_surfaces_mod(self):
-
         fluid_marker = 1
         if self.mesh_comm.rank == self.model_rank:
             volumes = gmsh.model.getEntities(dim=3)
@@ -443,7 +439,6 @@ class FSIDomain:
             gmsh.model.setPhysicalName(1, self.obstacle_marker, "Obstacle")
 
     def _set_length_scales(self):
-
         # Set size scales for the mesh
         # eps = 0.1
 
@@ -630,7 +625,6 @@ class FSIDomain:
         # self.pv_model.mesh.field.setAsBackgroundMesh(5)
 
     def _enforce_periodicity(self):
-
         # TODO: Make this a generic mapping depending on which walls are marked for peridic BCs
         # TODO: Copy code to enforce periodicity from old generate_and_convert_3d_meshes.py
 
@@ -735,7 +729,6 @@ class FSIDomain:
             print("Done.")
 
     def test_mesh_functionspace(self):
-
         P2 = ufl.VectorElement("Lagrange", self.msh.ufl_cell(), 2)
         P1 = ufl.FiniteElement("Lagrange", self.msh.ufl_cell(), 1)
         V = FunctionSpace(self.msh, P2)

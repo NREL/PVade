@@ -3,6 +3,7 @@ import numpy as np
 
 from pvade.geometry.template.TemplateDomainCreation import TemplateDomainCreation
 
+
 class DomainCreation(TemplateDomainCreation):
     """_summary_ test
 

@@ -4,6 +4,7 @@ import numpy as np
 
 from pvade.geometry.template.TemplateDomainCreation import TemplateDomainCreation
 
+
 class DomainCreation(TemplateDomainCreation):
     """_summary_ test
 
@@ -35,8 +36,9 @@ class DomainCreation(TemplateDomainCreation):
             self.params.domain.x_min,
             self.params.domain.y_min,
             0,
-            self.params.domain.x_max-self.params.domain.x_min,
-            self.params.domain.y_max-self.params.domain.y_min)
+            self.params.domain.x_max - self.params.domain.x_min,
+            self.params.domain.y_max - self.params.domain.y_min,
+        )
 
         obstacle = self.gmsh_model.occ.addDisk(c_x, c_y, 0, r, r)
 
