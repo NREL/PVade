@@ -26,6 +26,11 @@ class Flow:
             domain (:obj:`pvade.geometry.MeshManager.Domain`): A Domain object
 
         """
+        # Store the comm and mpi info for convenience
+        self.comm = domain.comm
+        self.rank = domain.rank
+        self.num_procs = domain.num_procs
+
         # Pressure (Scalar)
         P1 = ufl.FiniteElement("Lagrange", domain.msh.ufl_cell(), 1)
         self.Q = dolfinx.fem.FunctionSpace(domain.msh, P1)
@@ -48,10 +53,6 @@ class Flow:
         # Store the dimension of the problem for convenience
         self.ndim = domain.msh.topology.dim
 
-        # Store the comm and mpi info for convenience
-        self.comm = domain.comm
-        self.rank = domain.rank
-        self.num_procs = domain.num_procs
 
         # find hmin in mesh
         num_cells = domain.msh.topology.index_map(self.ndim).size_local

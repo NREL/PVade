@@ -6,6 +6,8 @@ import ufl
 import dolfinx
 import meshio
 
+from importlib import import_module
+
 
 # from pvade.geometry.panels.DomainCreation   import *
 class FSIDomain:
@@ -39,14 +41,17 @@ class FSIDomain:
 
     def build(self, params):
         """This function call builds the geometry, marks the boundaries and creates a mesh using Gmsh."""
-        problem = params.general.example
 
-        if problem == "panels":
-            from pvade.geometry.panels.DomainCreation import DomainCreation
-        elif problem == "cylinder3d":
-            from pvade.geometry.cylinder3d.DomainCreation import DomainCreation
+        domain_creation_module = (
+            f"pvade.geometry.{params.general.example}.DomainCreation"
+        )
+        try:
+            # This is equivalent to "import pvade.geometry.{params.general.example}.DomainCreation as dcm"
+            dcm = import_module(domain_creation_module)
+        except:
+            raise ValueError(f"Could not import {domain_creation_module}")
 
-        self.geometry = DomainCreation(params)
+        self.geometry = dcm.DomainCreation(params)
 
         # Only rank 0 builds the geometry and meshes the domain
         if self.rank == 0:
@@ -66,12 +71,14 @@ class FSIDomain:
 
         self.ndim = self.msh.topology.dim
 
+        assert self.ndim == self.geometry.ndim
+
         # Specify names for the mesh elements
         self.msh.name = params.general.example
         self.mt.name = f"{self.msh.name}_cells"
         self.ft.name = f"{self.msh.name}_facets"
 
-    def read(self, path):
+    def read(self, read_path):
         """Read the mesh from an external file.
         The User can load an existing mesh file (mesh.xdmf)
         and use it to solve the CFD/CSD problem
@@ -79,14 +86,16 @@ class FSIDomain:
         if self.rank == 0:
             print("Reading the mesh from file ...")
 
-        with dolfinx.io.XDMFFile(self.comm, path + "/mesh.xdmf", "r") as xdmf:
+        path_to_mesh = os.path.join(read_path, "mesh.xdmf")
+        path_to_facet_mesh = os.path.join(read_path, "mesh_mf.xdmf")
+
+        with dolfinx.io.XDMFFile(self.comm, path_to_mesh, "r") as xdmf:
             self.msh = xdmf.read_mesh(name="Grid")
 
-        self.msh.topology.create_connectivity(
-            self.msh.topology.dim - 1, self.msh.topology.dim
-        )
+        self.ndim = self.msh.topology.dim
+        self.msh.topology.create_connectivity(self.ndim - 1, self.ndim)
 
-        with dolfinx.io.XDMFFile(self.comm, path + "/mesh_mf.xdmf", "r") as xdmf:
+        with dolfinx.io.XDMFFile(self.comm, path_to_facet_mesh, "r") as xdmf:
             self.ft = xdmf.read_meshtags(self.msh, "Grid")
 
         if self.rank == 0:
@@ -151,6 +160,18 @@ class FSIDomain:
         # Generate the mesh
         tic = time.time()
 
+        if self.geometry.ndim == 3:
+            self._generate_mesh_3d()
+        elif self.geometry.ndim == 2:
+            self._generate_mesh_2d()
+
+        toc = time.time()
+
+        if self.rank == 0:
+            print("Finished.")
+            print(f"Total meshing time = {toc-tic:.1f} s")
+
+    def _generate_mesh_3d(self):
         # Mesh.Algorithm 2D mesh algorithm
         # (1: MeshAdapt, 2: Automatic, 3: Initial mesh only, 5: Delaunay, 6: Frontal-Delaunay, 7: BAMG, 8: Frontal-Delaunay for Quads, 9: Packing of Parallelograms)
         # Default value: 6
@@ -175,10 +196,21 @@ class FSIDomain:
         self.geometry.gmsh_model.mesh.optimize("Relocate3D")
         self.geometry.gmsh_model.mesh.generate(3)
 
-        toc = time.time()
-        if self.rank == 0:
-            print("Finished.")
-            print(f"Total meshing time = {toc-tic:.1f} s")
+    def _generate_mesh_2d(self):
+        # Mesh.Algorithm 2D mesh algorithm
+        # (1: MeshAdapt, 2: Automatic, 3: Initial mesh only, 5: Delaunay, 6: Frontal-Delaunay, 7: BAMG, 8: Frontal-Delaunay for Quads, 9: Packing of Parallelograms)
+        # Default value: 6
+        gmsh.option.setNumber("Mesh.Algorithm", 2)
+
+        gmsh.option.setNumber("Mesh.RecombinationAlgorithm", 2)
+        # gmsh.option.setNumber("Mesh.RecombineAll", 1)
+        gmsh.option.setNumber("Mesh.SubdivisionAlgorithm", 1)
+
+        self.geometry.gmsh_model.mesh.generate(3)
+        self.geometry.gmsh_model.mesh.setOrder(2)
+
+        self.geometry.gmsh_model.mesh.optimize("Netgen")
+        self.geometry.gmsh_model.mesh.generate(3)
 
     def write_mesh_file(self, params):
         """TODO: when saving a mesh file using only dolfinx functions
@@ -190,12 +222,12 @@ class FSIDomain:
 
         if self.rank == 0:
             # Save the *.msh file and *.vtk file (the latter is for visualization only)
-            print("Writing Mesh to %s... " % (params.general.output_dir_mesh), end="")
+            print(f"Writing Mesh to {params.general.output_dir_mesh}...")
 
             if os.path.exists(params.general.output_dir_mesh) == False:
                 os.makedirs(params.general.output_dir_mesh)
-            gmsh.write("%s/mesh.msh" % (params.general.output_dir_mesh))
-            gmsh.write("%s/mesh.vtk" % (params.general.output_dir_mesh))
+            gmsh.write(os.path.join(params.general.output_dir_mesh, "mesh.msh"))
+            gmsh.write(os.path.join(params.general.output_dir_mesh, "mesh.vtk"))
 
             def create_mesh(mesh, clean_points, cell_type):
                 cells = mesh.get_cells_type(cell_type)
@@ -206,22 +238,38 @@ class FSIDomain:
                     cells={cell_type: cells},
                     cell_data={"name_to_read": [cell_data]},
                 )
+
                 return out_mesh
 
-            mesh_from_file = meshio.read(f"{params.general.output_dir_mesh}/mesh.msh")
-            pts = mesh_from_file.points
-            tetra_mesh = create_mesh(mesh_from_file, pts, "tetra")
-            tri_mesh = create_mesh(mesh_from_file, pts, "triangle")
+            mesh_from_file = meshio.read(
+                os.path.join(params.general.output_dir_mesh, "mesh.msh")
+            )
 
-            meshio.write(f"{params.general.output_dir_mesh}/mesh.xdmf", tetra_mesh)
-            meshio.write(f"{params.general.output_dir_mesh}/mesh_mf.xdmf", tri_mesh)
+            pts = mesh_from_file.points
+
+            if self.ndim == 3:
+                cell_mesh = create_mesh(mesh_from_file, pts, "tetra")
+                facet_mesh = create_mesh(mesh_from_file, pts, "triangle")
+            elif self.ndim == 2:
+                cell_mesh = create_mesh(mesh_from_file, pts, "quad")
+                facet_mesh = create_mesh(mesh_from_file, pts, "line")
+
+            meshio.write(
+                os.path.join(params.general.output_dir_mesh, "mesh.xdmf"), cell_mesh
+            )
+            meshio.write(
+                os.path.join(params.general.output_dir_mesh, "mesh_mf.xdmf"), facet_mesh
+            )
+            for k in range(10):
+                print("yoyoyo")
+
             print("Done.")
 
     def test_mesh_functionspace(self):
         P2 = ufl.VectorElement("Lagrange", self.msh.ufl_cell(), 2)
         P1 = ufl.FiniteElement("Lagrange", self.msh.ufl_cell(), 1)
-        V = FunctionSpace(self.msh, P2)
-        Q = FunctionSpace(self.msh, P1)
+        V = dolfinx.fem.FunctionSpace(self.msh, P2)
+        Q = dolfinx.fem.FunctionSpace(self.msh, P1)
 
         local_rangeV = V.dofmap.index_map.local_range
         dofsV = np.arange(*local_rangeV)
@@ -232,7 +280,7 @@ class FSIDomain:
         nodes_dim = 0
         self.msh.topology.create_connectivity(nodes_dim, 0)
         num_nodes_owned_by_proc = self.msh.topology.index_map(nodes_dim).size_local
-        geometry_entitites = cppmesh.entities_to_geometry(
+        geometry_entitites = dolfinx.cpp.mesh.entities_to_geometry(
             self.msh,
             nodes_dim,
             np.arange(num_nodes_owned_by_proc, dtype=np.int32),
