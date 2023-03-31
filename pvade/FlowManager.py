@@ -53,7 +53,6 @@ class Flow:
         # Store the dimension of the problem for convenience
         self.ndim = domain.msh.topology.dim
 
-
         # find hmin in mesh
         num_cells = domain.msh.topology.index_map(self.ndim).size_local
         h = dolfinx.cpp.mesh.h(domain.msh, self.ndim, range(num_cells))

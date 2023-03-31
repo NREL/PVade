@@ -20,7 +20,7 @@ class DomainCreation(TemplateDomainCreation):
         """
         super().__init__(params)
 
-    def build(self):
+    def build(self, params):
         """This function creates the computational domain for a 3d simulation involving N panels.
             The panels are set at a distance apart, rotated at an angle theta and are elevated with a distance H from the ground.
 
@@ -28,29 +28,29 @@ class DomainCreation(TemplateDomainCreation):
             The function returns gmsh.model which contains the geometric description of the computational domain
         """
         # Compute and store some useful geometric quantities
-        self.x_span = self.params.domain.x_max - self.params.domain.x_min
-        self.y_span = self.params.domain.y_max - self.params.domain.y_min
-        self.z_span = self.params.domain.z_max - self.params.domain.z_min
-        tracker_angle_rad = np.radians(self.params.pv_array.tracker_angle)
+        self.x_span = params.domain.x_max - params.domain.x_min
+        self.y_span = params.domain.y_max - params.domain.y_min
+        self.z_span = params.domain.z_max - params.domain.z_min
+        tracker_angle_rad = np.radians(params.pv_array.tracker_angle)
 
         # Create the fluid domain extent
         domain = self.gmsh_model.occ.addBox(
-            self.params.domain.x_min,
-            self.params.domain.y_min,
-            self.params.domain.z_min,
+            params.domain.x_min,
+            params.domain.y_min,
+            params.domain.z_min,
             self.x_span,
             self.y_span,
             self.z_span,
         )
 
-        for panel_id in range(self.params.pv_array.num_rows):
+        for panel_id in range(params.pv_array.num_rows):
             panel_box = self.gmsh_model.occ.addBox(
-                -0.5 * self.params.pv_array.panel_length,
+                -0.5 * params.pv_array.panel_length,
                 0.0,
-                -0.5 * self.params.pv_array.panel_thickness,
-                self.params.pv_array.panel_length,
-                self.params.pv_array.panel_width,
-                self.params.pv_array.panel_thickness,
+                -0.5 * params.pv_array.panel_thickness,
+                params.pv_array.panel_length,
+                params.pv_array.panel_width,
+                params.pv_array.panel_thickness,
             )
 
             # Rotate the panel currently centered at (0, 0, 0)
@@ -61,9 +61,9 @@ class DomainCreation(TemplateDomainCreation):
             # Translate the panel [panel_loc, 0, elev]
             self.gmsh_model.occ.translate(
                 [(3, panel_box)],
-                panel_id * self.params.pv_array.spacing[0],
+                panel_id * params.pv_array.spacing[0],
                 0,
-                self.params.pv_array.elevation,
+                params.pv_array.elevation,
             )
 
             # Remove each panel from the overall domain
@@ -71,37 +71,37 @@ class DomainCreation(TemplateDomainCreation):
 
         self.gmsh_model.occ.synchronize()
 
-    def set_length_scales(self):
-        res_min = self.params.domain.l_char
+    def set_length_scales(self, params, domain_markers):
+        res_min = params.domain.l_char
 
         # Define a distance field from the immersed panels
         distance = self.gmsh_model.mesh.field.add("Distance", 1)
         self.gmsh_model.mesh.field.setNumbers(
-            distance, "FacesList", self.dom_tags["internal_surface"]
+            distance, "FacesList", domain_markers["internal_surface"]["gmsh_tags"]
         )
 
         threshold = self.gmsh_model.mesh.field.add("Threshold")
         self.gmsh_model.mesh.field.setNumber(threshold, "IField", distance)
 
-        factor = self.params.domain.l_char
+        factor = params.domain.l_char
 
-        resolution = factor * 10 * self.params.pv_array.panel_thickness / 2
-        half_panel = self.params.pv_array.panel_length * np.cos(
-            self.params.pv_array.tracker_angle
+        resolution = factor * 10 * params.pv_array.panel_thickness / 2
+        half_panel = params.pv_array.panel_length * np.cos(
+            params.pv_array.tracker_angle
         )
         self.gmsh_model.mesh.field.setNumber(threshold, "LcMin", resolution * 0.5)
         self.gmsh_model.mesh.field.setNumber(threshold, "LcMax", 5 * resolution)
         self.gmsh_model.mesh.field.setNumber(
-            threshold, "DistMin", self.params.pv_array.spacing[0]
+            threshold, "DistMin", params.pv_array.spacing[0]
         )
         self.gmsh_model.mesh.field.setNumber(
-            threshold, "DistMax", self.params.pv_array.spacing + half_panel
+            threshold, "DistMax", params.pv_array.spacing + half_panel
         )
 
         # Define a distance field from the immersed panels
         zmin_dist = self.gmsh_model.mesh.field.add("Distance")
         self.gmsh_model.mesh.field.setNumbers(
-            zmin_dist, "FacesList", self.dom_tags["z_min"]
+            zmin_dist, "FacesList", domain_markers["z_min"]["gmsh_tags"]
         )
 
         zmin_thre = self.gmsh_model.mesh.field.add("Threshold")
@@ -113,10 +113,10 @@ class DomainCreation(TemplateDomainCreation):
 
         xy_dist = self.gmsh_model.mesh.field.add("Distance")
         self.gmsh_model.mesh.field.setNumbers(
-            xy_dist, "FacesList", self.dom_tags["x_min"]
+            xy_dist, "FacesList", domain_markers["x_min"]["gmsh_tags"]
         )
         self.gmsh_model.mesh.field.setNumbers(
-            xy_dist, "FacesList", self.dom_tags["x_max"]
+            xy_dist, "FacesList", domain_markers["x_max"]["gmsh_tags"]
         )
 
         xy_thre = self.gmsh_model.mesh.field.add("Threshold")

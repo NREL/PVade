@@ -29,15 +29,27 @@ class FSIDomain:
         self.rank = params.rank
         self.num_procs = params.num_procs
 
-        self.x_min_marker = 1
-        self.x_max_marker = 2
-        self.y_min_marker = 3
-        self.y_max_marker = 4
-        self.z_min_marker = 5
-        self.z_max_marker = 6
-        self.internal_surface_marker = 7
-        self.fluid_marker = 8
-        self.structure_marker = 8
+        self._get_domain_markers()
+
+    def _get_domain_markers(self):
+
+        domain_markers = {}
+
+        # Facet Markers
+        domain_markers["x_min"] = {"idx": 1, "entity": "facet", "gmsh_tags": []}
+        domain_markers["x_max"] = {"idx": 2, "entity": "facet", "gmsh_tags": []}
+        domain_markers["y_min"] = {"idx": 3, "entity": "facet", "gmsh_tags": []}
+        domain_markers["y_max"] = {"idx": 4, "entity": "facet", "gmsh_tags": []}
+        domain_markers["z_min"] = {"idx": 5, "entity": "facet", "gmsh_tags": []}
+        domain_markers["z_max"] = {"idx": 6, "entity": "facet", "gmsh_tags": []}
+
+        domain_markers["internal_surface"] = {"idx": 7, "entity": "facet", "gmsh_tags": []}
+
+        # Cell Markers
+        domain_markers["fluid"] = {"idx": 8, "entity": "cell", "gmsh_tags": []}
+        domain_markers["structure"] = {"idx": 9, "entity": "cell", "gmsh_tags": []}
+
+        return domain_markers
 
     def build(self, params):
         """This function call builds the geometry, marks the boundaries and creates a mesh using Gmsh."""
@@ -51,13 +63,16 @@ class FSIDomain:
         except:
             raise ValueError(f"Could not import {domain_creation_module}")
 
+
         self.geometry = dcm.DomainCreation(params)
+
+        domain_markers = self._get_domain_markers()
 
         # Only rank 0 builds the geometry and meshes the domain
         if self.rank == 0:
-            self.geometry.build()
-            self.geometry.mark_surfaces()
-            self.geometry.set_length_scales()
+            self.geometry.build(params)
+            domain_markers = self.geometry.mark_surfaces(params, domain_markers)
+            self.geometry.set_length_scales(params, domain_markers)
 
             if params.fluid.periodic:
                 self._enforce_periodicity()
@@ -260,8 +275,6 @@ class FSIDomain:
             meshio.write(
                 os.path.join(params.general.output_dir_mesh, "mesh_mf.xdmf"), facet_mesh
             )
-            for k in range(10):
-                print("yoyoyo")
 
             print("Done.")
 

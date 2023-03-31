@@ -53,7 +53,7 @@ class DataStream:
             xdmf_file.write_function(flow.p_k, 0.0)
 
         if self.rank == 0:
-            with open(self.log_filename, 'w') as fp:
+            with open(self.log_filename, "w") as fp:
                 fp.write("Run Started.\n")
 
     def save_XDMF_files(self, flow, tt):

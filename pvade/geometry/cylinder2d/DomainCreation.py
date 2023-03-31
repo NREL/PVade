@@ -21,7 +21,7 @@ class DomainCreation(TemplateDomainCreation):
         """
         super().__init__(params)
 
-    def build(self):
+    def build(self, params):
         """This function creates the computational domain for a flow around a 2D cylinder.
 
         Returns:
@@ -30,14 +30,14 @@ class DomainCreation(TemplateDomainCreation):
 
         # All ranks create a Gmsh model object
         c_x = c_y = 0.2
-        r = self.params.domain.cyld_radius
+        r = params.domain.cyld_radius
 
         rectangle = self.gmsh_model.occ.addRectangle(
-            self.params.domain.x_min,
-            self.params.domain.y_min,
+            params.domain.x_min,
+            params.domain.y_min,
             0,
-            self.params.domain.x_max - self.params.domain.x_min,
-            self.params.domain.y_max - self.params.domain.y_min,
+            params.domain.x_max - params.domain.x_min,
+            params.domain.y_max - params.domain.y_min,
         )
 
         obstacle = self.gmsh_model.occ.addDisk(c_x, c_y, 0, r, r)

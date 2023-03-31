@@ -20,22 +20,22 @@ class DomainCreation(TemplateDomainCreation):
         """
         super().__init__(params)
 
-    def build(self):
+    def build(self, params):
         """This function creates the computational domain for a flow around a 3D cylinder.
 
         Returns:
             The function returns gmsh.model which contains the geometric description of the computational domain
         """
         # Compute and store some useful geometric quantities
-        self.x_span = self.params.domain.x_max - self.params.domain.x_min
-        self.y_span = self.params.domain.y_max - self.params.domain.y_min
-        self.z_span = self.params.domain.z_max - self.params.domain.z_min
+        self.x_span = params.domain.x_max - params.domain.x_min
+        self.y_span = params.domain.y_max - params.domain.y_min
+        self.z_span = params.domain.z_max - params.domain.z_min
 
         # Create the fluid domain extent
         domain = self.gmsh_model.occ.addBox(
-            self.params.domain.x_min,
-            self.params.domain.y_min,
-            self.params.domain.z_min,
+            params.domain.x_min,
+            params.domain.y_min,
+            params.domain.z_min,
             self.x_span,
             self.y_span,
             self.z_span,
@@ -53,21 +53,21 @@ class DomainCreation(TemplateDomainCreation):
 
         self.gmsh_model.occ.synchronize()
 
-    def set_length_scales(self):
-        res_min = self.params.domain.l_char
+    def set_length_scales(self, params, domain_markers):
+        res_min = params.domain.l_char
 
         # Define a distance field from the immersed panels
         distance = self.gmsh_model.mesh.field.add("Distance", 1)
         self.gmsh_model.mesh.field.setNumbers(
-            distance, "FacesList", self.dom_tags["internal_surface"]
+            distance, "FacesList", domain_markers["internal_surface"]["gmsh_tags"]
         )
 
         threshold = self.gmsh_model.mesh.field.add("Threshold")
         self.gmsh_model.mesh.field.setNumber(threshold, "IField", distance)
 
-        factor = self.params.domain.l_char
+        factor = params.domain.l_char
 
-        self.cyld_radius = self.params.domain.cyld_radius
+        self.cyld_radius = params.domain.cyld_radius
         resolution = factor * self.cyld_radius / 10
         self.gmsh_model.mesh.field.setNumber(threshold, "LcMin", resolution)
         self.gmsh_model.mesh.field.setNumber(threshold, "LcMax", 20 * resolution)
@@ -79,7 +79,7 @@ class DomainCreation(TemplateDomainCreation):
         # Define a distance field from the immersed panels
         zmin_dist = self.gmsh_model.mesh.field.add("Distance")
         self.gmsh_model.mesh.field.setNumbers(
-            zmin_dist, "FacesList", self.dom_tags["z_min"]
+            zmin_dist, "FacesList", domain_markers["z_min"]["gmsh_tags"]
         )
 
         zmin_thre = self.gmsh_model.mesh.field.add("Threshold")
@@ -91,10 +91,10 @@ class DomainCreation(TemplateDomainCreation):
 
         xy_dist = self.gmsh_model.mesh.field.add("Distance")
         self.gmsh_model.mesh.field.setNumbers(
-            xy_dist, "FacesList", self.dom_tags["x_min"]
+            xy_dist, "FacesList", domain_markers["x_min"]["gmsh_tags"]
         )
         self.gmsh_model.mesh.field.setNumbers(
-            xy_dist, "FacesList", self.dom_tags["x_max"]
+            xy_dist, "FacesList", domain_markers["x_max"]["gmsh_tags"]
         )
 
         xy_thre = self.gmsh_model.mesh.field.add("Threshold")
