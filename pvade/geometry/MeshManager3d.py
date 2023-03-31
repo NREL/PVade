@@ -83,8 +83,6 @@ class FSIDomain:
 
         self.ndim = self.msh.topology.dim
 
-        assert self.ndim == self.geometry.ndim
-
         # Specify names for the mesh elements
         self.msh.name = params.general.example
         self.mt.name = f"{self.msh.name}_cells"
