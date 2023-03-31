@@ -33,23 +33,22 @@ class FSIDomain:
 
     def _get_domain_markers(self):
 
-        domain_markers = {}
+        self.domain_markers = {}
 
         # Facet Markers
-        domain_markers["x_min"] = {"idx": 1, "entity": "facet", "gmsh_tags": []}
-        domain_markers["x_max"] = {"idx": 2, "entity": "facet", "gmsh_tags": []}
-        domain_markers["y_min"] = {"idx": 3, "entity": "facet", "gmsh_tags": []}
-        domain_markers["y_max"] = {"idx": 4, "entity": "facet", "gmsh_tags": []}
-        domain_markers["z_min"] = {"idx": 5, "entity": "facet", "gmsh_tags": []}
-        domain_markers["z_max"] = {"idx": 6, "entity": "facet", "gmsh_tags": []}
+        self.domain_markers["x_min"] = {"idx": 1, "entity": "facet", "gmsh_tags": []}
+        self.domain_markers["x_max"] = {"idx": 2, "entity": "facet", "gmsh_tags": []}
+        self.domain_markers["y_min"] = {"idx": 3, "entity": "facet", "gmsh_tags": []}
+        self.domain_markers["y_max"] = {"idx": 4, "entity": "facet", "gmsh_tags": []}
+        self.domain_markers["z_min"] = {"idx": 5, "entity": "facet", "gmsh_tags": []}
+        self.domain_markers["z_max"] = {"idx": 6, "entity": "facet", "gmsh_tags": []}
 
-        domain_markers["internal_surface"] = {"idx": 7, "entity": "facet", "gmsh_tags": []}
+        self.domain_markers["internal_surface"] = {"idx": 7, "entity": "facet", "gmsh_tags": []}
 
         # Cell Markers
-        domain_markers["fluid"] = {"idx": 8, "entity": "cell", "gmsh_tags": []}
-        domain_markers["structure"] = {"idx": 9, "entity": "cell", "gmsh_tags": []}
+        self.domain_markers["fluid"] = {"idx": 8, "entity": "cell", "gmsh_tags": []}
+        self.domain_markers["structure"] = {"idx": 9, "entity": "cell", "gmsh_tags": []}
 
-        return domain_markers
 
     def build(self, params):
         """This function call builds the geometry, marks the boundaries and creates a mesh using Gmsh."""
@@ -66,13 +65,11 @@ class FSIDomain:
 
         self.geometry = dcm.DomainCreation(params)
 
-        domain_markers = self._get_domain_markers()
-
         # Only rank 0 builds the geometry and meshes the domain
         if self.rank == 0:
             self.geometry.build(params)
-            domain_markers = self.geometry.mark_surfaces(params, domain_markers)
-            self.geometry.set_length_scales(params, domain_markers)
+            self.domain_markers = self.geometry.mark_surfaces(params, self.domain_markers)
+            self.geometry.set_length_scales(params, self.domain_markers)
 
             if params.fluid.periodic:
                 self._enforce_periodicity()

@@ -97,9 +97,11 @@ class Flow:
             domain.msh, PETSc.ScalarType((0.0, 0.0, 0.0))
         )
 
-        self._locate_boundary_entities(domain, params)
-
+        # TODO: These two functions can be eliminated if using dof tags?
+        # TODO: Is there any reason to keep them
+        # self._locate_boundary_entities(domain, params)
         # self._locate_boundary_dofs()
+
         self._locate_boundary_dofs_tags(domain)
 
         self._build_velocity_boundary_conditions(domain, params)
@@ -302,62 +304,62 @@ class Flow:
         Args:
             domain (:obj:`pvade.geometry.MeshManager.Domain`): A Domain object
 
-        """
+        """        
         self.x_min_V_dofs = dolfinx.fem.locate_dofs_topological(
-            self.V, self.facet_dim, domain.ft.find(domain.x_min_marker)
+            self.V, self.facet_dim, domain.ft.find(domain.domain_markers["x_min"]["idx"])
         )
 
         self.x_max_V_dofs = dolfinx.fem.locate_dofs_topological(
-            self.V, self.facet_dim, domain.ft.find(domain.x_max_marker)
+            self.V, self.facet_dim, domain.ft.find(domain.domain_markers["x_max"]["idx"])
         )
 
         self.y_min_V_dofs = dolfinx.fem.locate_dofs_topological(
-            self.V, self.facet_dim, domain.ft.find(domain.y_min_marker)
+            self.V, self.facet_dim, domain.ft.find(domain.domain_markers["y_min"]["idx"])
         )
 
         self.y_max_V_dofs = dolfinx.fem.locate_dofs_topological(
-            self.V, self.facet_dim, domain.ft.find(domain.y_max_marker)
+            self.V, self.facet_dim, domain.ft.find(domain.domain_markers["y_max"]["idx"])
         )
         if self.ndim == 3:
             self.z_min_V_dofs = dolfinx.fem.locate_dofs_topological(
-                self.V, self.facet_dim, domain.ft.find(domain.z_min_marker)
+                self.V, self.facet_dim, domain.ft.find(domain.domain_markers["z_min"]["idx"])
             )
 
             self.z_max_V_dofs = dolfinx.fem.locate_dofs_topological(
-                self.V, self.facet_dim, domain.ft.find(domain.z_max_marker)
+                self.V, self.facet_dim, domain.ft.find(domain.domain_markers["z_max"]["idx"])
             )
 
         self.internal_surface_V_dofs = dolfinx.fem.locate_dofs_topological(
-            self.V, self.facet_dim, domain.ft.find(domain.internal_surface_marker)
+            self.V, self.facet_dim, domain.ft.find(domain.domain_markers["internal_surface"]["idx"])
         )
 
         self.x_min_Q_dofs = dolfinx.fem.locate_dofs_topological(
-            self.Q, self.facet_dim, domain.ft.find(domain.x_min_marker)
+            self.Q, self.facet_dim, domain.ft.find(domain.domain_markers["x_min"]["idx"])
         )
 
         self.x_max_Q_dofs = dolfinx.fem.locate_dofs_topological(
-            self.Q, self.facet_dim, domain.ft.find(domain.x_max_marker)
+            self.Q, self.facet_dim, domain.ft.find(domain.domain_markers["x_max"]["idx"])
         )
 
         self.y_min_Q_dofs = dolfinx.fem.locate_dofs_topological(
-            self.Q, self.facet_dim, domain.ft.find(domain.y_min_marker)
+            self.Q, self.facet_dim, domain.ft.find(domain.domain_markers["y_min"]["idx"])
         )
 
         self.y_max_Q_dofs = dolfinx.fem.locate_dofs_topological(
-            self.Q, self.facet_dim, domain.ft.find(domain.y_max_marker)
+            self.Q, self.facet_dim, domain.ft.find(domain.domain_markers["y_max"]["idx"])
         )
 
         if self.ndim == 3:
             self.z_min_Q_dofs = dolfinx.fem.locate_dofs_topological(
-                self.Q, self.facet_dim, domain.ft.find(domain.z_min_marker)
+                self.Q, self.facet_dim, domain.ft.find(domain.domain_markers["z_min"]["idx"])
             )
 
             self.z_max_Q_dofs = dolfinx.fem.locate_dofs_topological(
-                self.Q, self.facet_dim, domain.ft.find(domain.z_max_marker)
+                self.Q, self.facet_dim, domain.ft.find(domain.domain_markers["z_max"]["idx"])
             )
 
         self.internal_surface_Q_dofs = dolfinx.fem.locate_dofs_topological(
-            self.Q, self.facet_dim, domain.ft.find(domain.internal_surface_marker)
+            self.Q, self.facet_dim, domain.ft.find(domain.domain_markers["internal_surface"]["idx"])
         )
 
     def _applybc(self, value, domain, V, marker):
@@ -458,19 +460,19 @@ class Flow:
                 "bc_zwall_min",
             ):
                 if bclocation == "bc_ywall_max":
-                    temp_marker = domain.y_max_marker
+                    temp_marker = domain.domain_markers["y_max"]["idx"]
                     temp_bcname = "y max"
                     bc_value = params.fluid.bc_ywall_max
                 elif bclocation == "bc_ywall_min":
-                    temp_marker = domain.y_min_marker
+                    temp_marker = domain.domain_markers["y_min"]["idx"]
                     temp_bcname = "y min"
                     bc_value = params.fluid.bc_ywall_min
                 elif bclocation == "bc_zwall_max":
-                    temp_marker = domain.z_max_marker
+                    temp_marker = domain.domain_markers["z_max"]["idx"]
                     temp_bcname = "z max"
                     bc_value = params.fluid.bc_zwall_max
                 elif bclocation == "bc_zwall_min":
-                    temp_marker = domain.z_min_marker
+                    temp_marker = domain.domain_markers["z_min"]["idx"]
                     temp_bcname = "z min"
                     bc_value = params.fluid.bc_zwall_min
 
@@ -482,11 +484,11 @@ class Flow:
             # iterate over all noudaries
             for bclocation in "bc_ywall_min", "bc_ywall_max":
                 if bclocation == "bc_ywall_max":
-                    temp_marker = domain.y_max_marker
+                    temp_marker = domain.domain_markers["y_max"]["idx"]
                     temp_bcname = "y max"
                     bc_value = params.fluid.bc_ywall_max
                 elif bclocation == "bc_ywall_min":
-                    temp_marker = domain.y_min_marker
+                    temp_marker = domain.domain_markers["y_min"]["idx"]
                     temp_bcname = "y min"
                     bc_value = params.fluid.bc_ywall_min
 
