@@ -23,9 +23,9 @@ class FSIDomain:
         """
 
         # Get MPI communicators
-        self.comm = MPI.COMM_WORLD
-        self.rank = self.comm.Get_rank()
-        self.num_procs = self.comm.Get_size()
+        self.comm = params.comm
+        self.rank = params.rank
+        self.num_procs = params.num_procs
 
         self.x_min_marker = 1
         self.x_max_marker = 2
@@ -141,29 +141,28 @@ class FSIDomain:
         )
 
     def _generate_mesh(self):
+        print("Starting mesh generation... ", end="")
+
+        # Generate the mesh
+        tic = time.time()
+
+        #Mesh.Algorithm 2D mesh algorithm 
+        # (1: MeshAdapt, 2: Automatic, 3: Initial mesh only, 5: Delaunay, 6: Frontal-Delaunay, 7: BAMG, 8: Frontal-Delaunay for Quads, 9: Packing of Parallelograms)
+        # Default value: 6
+        gmsh.option.setNumber("Mesh.Algorithm", 2)
+
+
+        gmsh.option.setNumber("Mesh.RecombinationAlgorithm", 2)
+        # gmsh.option.setNumber("Mesh.RecombineAll", 1)
+        gmsh.option.setNumber("Mesh.SubdivisionAlgorithm", 1)
+        self.geometry.gmsh_model.mesh.generate(3)
+        self.geometry.gmsh_model.mesh.setOrder(2)
+        self.geometry.gmsh_model.mesh.optimize("Netgen")
+        self.geometry.gmsh_model.mesh.generate(3)
+        toc = time.time()
         if self.rank == 0:
-            print("Starting mesh generation... ", end="")
-
-            # Generate the mesh
-            tic = time.time()
-
-            #Mesh.Algorithm 2D mesh algorithm 
-            # (1: MeshAdapt, 2: Automatic, 3: Initial mesh only, 5: Delaunay, 6: Frontal-Delaunay, 7: BAMG, 8: Frontal-Delaunay for Quads, 9: Packing of Parallelograms)
-            # Default value: 6
-            gmsh.option.setNumber("Mesh.Algorithm", 2)
-
-
-            gmsh.option.setNumber("Mesh.RecombinationAlgorithm", 2)
-            # gmsh.option.setNumber("Mesh.RecombineAll", 1)
-            gmsh.option.setNumber("Mesh.SubdivisionAlgorithm", 1)
-            self.geometry.gmsh_model.mesh.generate(3)
-            self.geometry.gmsh_model.mesh.setOrder(2)
-            self.geometry.gmsh_model.mesh.optimize("Netgen")
-            self.geometry.gmsh_model.mesh.generate(3)
-            toc = time.time()
-            if self.rank == 0:
-                print("Finished.")
-                print(f"Total meshing time = {toc-tic:.1f} s")
+            print("Finished.")
+            print(f"Total meshing time = {toc-tic:.1f} s")
 
 
     def write_mesh_file(self, params):

@@ -42,6 +42,7 @@ class TemplateDomainCreation:
         self.gmsh_model.add("domain")
         self.gmsh_model.setCurrent("domain")
 
+
     def build(self):
         """
             panels: This function creates the computational domain for a 3d simulation involving N panels.
@@ -107,7 +108,6 @@ class TemplateDomainCreation:
                     self.dom_tags["internal_surface"].append(tag)
                 else:
                     self.dom_tags["internal_surface"] = [tag]
-        print(self.dom_tags)
 
         self.gmsh_model.addPhysicalGroup(self.ndim, [1], self.fluid_marker)
         self.gmsh_model.setPhysicalName(self.ndim, self.fluid_marker, "fluid")
@@ -133,4 +133,3 @@ class TemplateDomainCreation:
         self.gmsh_model.setPhysicalName(
             self.ndim-1, self.internal_surface_marker, "internal_surface"
         )
-
