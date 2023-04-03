@@ -24,7 +24,7 @@ jobs:
       - uses: mamba-org/provision-with-micromamba@main
         with:
           channel-priority: disabled
-          environment-file: PVade/environment.yml
+          environment-file: ./environment.yml
       # - name: Bash
       #   shell: bash -l {0}
       #   run: pyright .
