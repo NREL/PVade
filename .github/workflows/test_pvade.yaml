@@ -43,11 +43,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: ["ubuntu-latest", "macos-latest"]
+        os: [ubuntu-22.04, macos-12]
     steps:
-      # - name: Update conda
-      #   run: |
-      #     conda update conda
+      - name: Update conda
+        run: |
+          conda update conda
       - name: Install DOLFINx (py3-9)
         run: conda create -n env3-9 -c conda-forge python=3.9 fenics-dolfinx mpich python-gmsh
       - name: Test (py3-9)
