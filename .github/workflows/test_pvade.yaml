@@ -9,37 +9,30 @@ on:
 jobs:
   build:
     name: test_pvade - ${{ matrix.os }}
-    runs-on: ${{ matrix.os-version }}
+    runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
-        python-version:
-          - '3.10'
-        os:
-          - linux
-          - macos
-        include:
-          - os: linux
-            os-version: ubuntu-latest
-          - os: macos
-            os-version: macos-latest
+        os: ["ubuntu-latest", "macos-latest"]
+        python-version: "3.10"
     steps:
-    - uses: actions/checkout@v3
-    - uses: mamba-org/provision-with-micromamba@main
-      with:
-        channels: conda-forge
-        python-version: ${{ matrix.python-version }}
-    - name: Install PVade Conda environment
-      shell: pwsh
-      run: |
-        mamba env create -f environment.yaml -n test-env
-        mamba activate test-env
-        mamba list
-    - name: Test PVade with pytest
-      shell: pwsh
-      run: |
-        mamba activate test-env
-        pytest -sv pvade/tests/
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v2
+        with:
+          python-version: 3.10
+      - uses: mamba-org/provision-with-micromamba@main
+        with:
+          channel-priority: disabled
+          environment-file: environment.yml
+      # - name: Bash
+      #   shell: bash -l {0}
+      #   run: pyright .
+      # - name: Run PyLint
+      #   shell: bash -l {0}
+      #   run: pylint main.py pkg/
+      - name: Run PyTest
+        shell: bash -l {0}
+        run: pytest .
 
     # steps:
     #   - uses: actions/checkout@v2
