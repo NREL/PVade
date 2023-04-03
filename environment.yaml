@@ -13,7 +13,7 @@ dependencies:
   - meshio
   - pandas
   - pytest
-  # - python-gmsh
+  - python-gmsh
   - pyyaml
   - scipy
   - snakeviz
@@ -21,6 +21,5 @@ dependencies:
   - tqdm
   - pip
   - pip:
-    - gmsh
     - sphinx-rtd-theme
     - -e . # Installs the pvade package
