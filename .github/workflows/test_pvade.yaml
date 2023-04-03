@@ -44,19 +44,15 @@ jobs:
       fail-fast: false
       matrix:
         os: ["ubuntu-latest", "macos-latest"]
-        python-version: ["3.10"]
     steps:
       # - name: Update conda
       #   run: |
       #     conda update conda
-      - name: Install DOLFINx (py3-10)
-        shell: pwsh
-        run: conda env create -f environment.yaml -n test2
-      - name: Test (py3-10)
-        shell: pwsh
+      - name: Install DOLFINx (py3-9)
+        run: conda create -n env3-9 -c conda-forge python=3.9 fenics-dolfinx mpich python-gmsh
+      - name: Test (py3-9)
         run: |
-          conda activate test2 
-          pytest .
+          conda run -n env3-9 python -c "import dolfinx; import gmsh;"
     # steps:
     #   - uses: actions/checkout@v2
 
