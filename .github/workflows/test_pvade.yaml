@@ -51,11 +51,11 @@ jobs:
       #     conda update conda
       - name: Install DOLFINx (py3-10)
         shell: pwsh
-        run: conda env create -n env3-10 -f environment.yaml
+        run: conda env create -f environment.yaml -n test2
       - name: Test (py3-10)
         shell: pwsh
         run: |
-          conda activate env3-10 
+          conda activate test2 
           pytest .
     # steps:
     #   - uses: actions/checkout@v2
