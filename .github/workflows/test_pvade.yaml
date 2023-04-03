@@ -41,6 +41,4 @@ jobs:
       shell: pwsh
       run: |
         conda activate test-env
-        echo "for test in pvade/tests/*.py;do pytest -sv $test;done;" > run.sh
-        chmod +x run.sh
-        ./run.sh
+        pytest -sv pvade/tests/*.py
