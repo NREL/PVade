@@ -32,13 +32,13 @@ jobs:
       #   auto-update-conda: true
       #   python-version: ${{ matrix.python-version }}
     - name: Install PVade Conda environment
-      shell: bash -l {0}
+      shell: pwsh
       run: |
         mamba env create -f environment.yaml -n test-env
         mamba activate test-env
         mamba list
     - name: Test PVade with pytest
-      shell: bash -l {0}
+      shell: pwsh
       run: |
         mamba activate test-env
         pytest -sv pvade/tests/
