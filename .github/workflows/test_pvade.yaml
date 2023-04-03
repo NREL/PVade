@@ -50,8 +50,10 @@ jobs:
         run: |
           conda update conda
       - name: Install DOLFINx (py3-10)
+        shell: bash -l {0}
         run: conda env create -n env3-10 -f environment.yaml
       - name: Test (py3-10)
+        shell: bash -l {0}
         run: |
           conda activate env3-10 
           pytest .
