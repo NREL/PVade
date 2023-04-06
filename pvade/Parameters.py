@@ -209,7 +209,6 @@ class SimParams:
         )
 
         for key, value in self.flat_schema_dict.items():
-
             help_message = f"{value['description']} (data type = {value['type']}, Units = {value['units']})"
 
             if value["type"] == "string":

@@ -44,6 +44,7 @@ fluid:
   bc_ywall_min: slip # slip noslip free
   bc_zwall_max: slip # slip noslip free
   bc_zwall_min: noslip # slip noslip free
+  use_eddy_viscosity: True
   # c_s: 0.325
 structure:
   youngs: 1.0e+09

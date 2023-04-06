@@ -1,8 +1,3 @@
-from dolfinx.io import XDMFFile, gmshio
-from dolfinx.fem import VectorFunctionSpace, FunctionSpace
-from dolfinx.cpp import mesh as cppmesh
-
-from mpi4py import MPI
 import gmsh
 import numpy as np
 import os
@@ -10,6 +5,7 @@ import time
 import ufl
 import dolfinx
 import meshio
+
 
 # from pvopt.geometry.panels.DomainCreation   import *
 class FSIDomain:
@@ -23,223 +19,74 @@ class FSIDomain:
         """
 
         # Get MPI communicators
-        self.comm = MPI.COMM_WORLD
-        self.rank = self.comm.Get_rank()
-        self.num_procs = self.comm.Get_size()
+        self.comm = params.comm
+        self.rank = params.rank
+        self.num_procs = params.num_procs
 
-        # Store a full copy of params on this object
-        self.params = params
-
-        
-        # problem = self.params.general.example
-        
-        # if problem == "panels2d":
-        #     from pvade.geometry.panels2d.DomainCreation   import DomainCreation 
-        # elif problem == "cylinder2d":
-        #     from pvade.geometry.cylinder2d.DomainCreation   import DomainCreation
-        
-
-        # define markers for boundaries 
-    
         self.x_min_marker = 1
-        self.y_min_marker = 2
-        self.x_max_marker = 4
-        self.y_max_marker = 5
+        self.x_max_marker = 2
+        self.y_min_marker = 3
+        self.y_max_marker = 4
+        self.z_min_marker = 5
+        self.z_max_marker = 6
         self.internal_surface_marker = 7
         self.fluid_marker = 8
+        self.structure_marker = 8
 
-
-    def build(self):
+    def build(self, params):
         """This function call builds the geometry using Gmsh"""
-        self.mesh_comm = MPI.COMM_WORLD
-        self.model_rank = 0
-        self.gdim = 3
 
-        problem = self.params.general.example
-
+        problem = params.general.example
 
         if problem == "panels2d":
-            from pvade.geometry.panels2d.DomainCreation   import DomainCreation 
+            from pvade.geometry.panels2d.DomainCreation import DomainCreation
         elif problem == "cylinder2d":
-            from pvade.geometry.cylinder2d.DomainCreation   import DomainCreation
-            
+            from pvade.geometry.cylinder2d.DomainCreation import DomainCreation
 
-
-        geometry = DomainCreation(self.params)
+        self.geometry = DomainCreation(params)
 
         # Only rank 0 builds the geometry and meshes the domain
-        # if self.rank == 0:
-        self.pv_model = geometry.build()
+        if self.rank == 0:
+            self.geometry.build()
+            self.geometry.mark_surfaces()
+            self.geometry.set_length_scales()
 
-        self._mark_surfaces()
-        self._set_length_scales_mod()  # TODO: this should probably be a method of the domain creation class
+            if params.fluid.periodic:
+                self._enforce_periodicity()
 
-        if self.params.fluid.periodic:
-            self._enforce_periodicity()
-
-        self._generate_mesh()
+            self._generate_mesh()
 
         # All ranks receive their portion of the mesh from rank 0 (like an MPI scatter)
-        self.msh, self.mt, self.ft = gmshio.model_to_mesh(self.pv_model, self.comm, 0)
+        self.msh, self.mt, self.ft = dolfinx.io.gmshio.model_to_mesh(
+            self.geometry.gmsh_model, self.comm, 0
+        )
 
         self.ndim = self.msh.topology.dim
 
         # Specify names for the mesh elements
-        self.msh.name = self.params.general.example
+        self.msh.name = params.general.example
         self.mt.name = f"{self.msh.name}_cells"
         self.ft.name = f"{self.msh.name}_facets"
 
-            
-    def read(self,path):
-        """Read the mesh from external file located in output/mesh
-        """
-        if self.rank  == 0:
+    def read(self, path):
+        """Read the mesh from external file located in output/mesh"""
+        if self.rank == 0:
             print("Reading the mesh from file ...")
-        with dolfinx.io.XDMFFile(MPI.COMM_WORLD, path+"/mesh.xdmf", "r") as xdmf:
+
+        with dolfinx.io.XDMFFile(self.comm, path + "/mesh.xdmf", "r") as xdmf:
             self.msh = xdmf.read_mesh(name="Grid")
 
-        self.msh.topology.create_connectivity(self.msh.topology.dim-1, self.msh.topology.dim)
-        with XDMFFile(MPI.COMM_WORLD,path+"/mesh_mf.xdmf",'r') as infile:
+        self.msh.topology.create_connectivity(
+            self.msh.topology.dim - 1, self.msh.topology.dim
+        )
 
-            self.ft = infile.read_meshtags(self.msh, "Grid")
+        with dolfinx.io.XDMFFile(self.comm, path + "/mesh_mf.xdmf", "r") as xdmf:
+            self.ft = xdmf.read_meshtags(self.msh, "Grid")
+
         if self.rank == 0:
             print("Done.")
 
-    def _mark_surfaces(self):
-        """Creates boundary tags using gmsh"""
-        # Loop through all surfaces to find periodic tags
-        surf_ids = self.pv_model.occ.getEntities(1)
-
-        self.dom_tags = {}
-
-        for surf in surf_ids:
-            tag = surf[1]
-
-            com = self.pv_model.occ.getCenterOfMass(1, tag)
-
-            if np.isclose(com[0], self.params.domain.x_min):
-                self.dom_tags["left"] = [tag]
-
-            elif np.allclose(com[0], self.params.domain.x_max):
-                self.dom_tags["right"] = [tag]
-
-            elif np.allclose(com[1], self.params.domain.y_min):
-                self.dom_tags["bottom"] = [tag]
-
-            elif np.allclose(com[1], self.params.domain.y_max):
-                self.dom_tags["top"] = [tag]
-
-            else:
-                if "panel_surface" in self.dom_tags:
-                    self.dom_tags["panel_surface"].append(tag)
-                else:
-                    self.dom_tags["panel_surface"] = [tag]
-
-        self.pv_model.addPhysicalGroup(2, [1], 11)
-        self.pv_model.setPhysicalName(2, 11, "fluid")
-
-        self.pv_model.addPhysicalGroup(1, self.dom_tags["left"], self.x_min_marker)
-        self.pv_model.setPhysicalName(1, self.x_min_marker, "left")
-        self.pv_model.addPhysicalGroup(1, self.dom_tags["right"], self.x_max_marker)
-        self.pv_model.setPhysicalName(1, self.x_max_marker, "right")
-        self.pv_model.addPhysicalGroup(1, self.dom_tags["bottom"], self.y_min_marker)
-        self.pv_model.setPhysicalName(1, self.y_min_marker, "bottom")
-        self.pv_model.addPhysicalGroup(1, self.dom_tags["top"], self.y_max_marker)
-        self.pv_model.setPhysicalName(1, self.y_max_marker, "top")
-
-        self.pv_model.addPhysicalGroup(
-            1, self.dom_tags["panel_surface"], self.internal_surface_marker
-        )
-        self.pv_model.setPhysicalName(1, self.internal_surface_marker, "panel_surface")
-
-    def _set_length_scales_mod(self):
-        res_min = self.params.domain.l_char
-        if self.mesh_comm.rank == self.model_rank:
-            # Define a distance field from the immersed panels
-            self.pv_model.mesh.field.add("Distance", 1)
-            self.pv_model.mesh.field.setNumbers(
-                1, "FacesList", self.dom_tags["panel_surface"]
-            )
-            self.pv_model.mesh.field.add("Threshold", 2)
-            self.pv_model.mesh.field.setNumber(2, "IField", 1)
-            if "cylinder2d" in self.params.general.example:
-                self.cyld_radius = self.params.domain.cyld_radius
-                self.pv_model.mesh.field.setNumber(
-                    2, "LcMin", self.params.domain.l_char
-                )
-                self.pv_model.mesh.field.setNumber(
-                    2, "LcMax", 3.0 * self.params.domain.l_char
-                )
-                self.pv_model.mesh.field.setNumber(2, "DistMin", 2.0 * self.cyld_radius)
-                self.pv_model.mesh.field.setNumber(
-                    2, "DistMax", 10.0 * self.cyld_radius
-                )
-
-            else:
-                self.pv_model.mesh.field.setNumber(
-                    2, "LcMin", 0.2 * self.params.domain.l_char
-                )
-                self.pv_model.mesh.field.setNumber(
-                    2, "LcMax", 3.0 * self.params.domain.l_char
-                )
-                self.pv_model.mesh.field.setNumber(
-                    2, "DistMin", 0.5 * self.params.domain.l_char
-                )
-                self.pv_model.mesh.field.setNumber(
-                    2, "DistMax", 1.0 * self.params.domain.l_char
-                )
-
-                # self.pv_model.mesh.field.setNumber(4, "LcMin", self.params.pv_array.panel_thickness)
-                # self.pv_model.mesh.field.setNumber(4, "LcMax", 3.0 * self.params.pv_array.panel_thickness)
-                # self.pv_model.mesh.field.setNumber(4, "DistMin", 2* self.params.pv_array.panel_length)
-                # self.pv_model.mesh.field.setNumber(4, "DistMax", 10.* self.params.pv_array.panel_length)
-
-            self.pv_model.mesh.field.add("Distance", 3)
-            self.pv_model.mesh.field.setNumbers(3, "FacesList", self.dom_tags["top"])
-            self.pv_model.mesh.field.setNumbers(3, "FacesList", self.dom_tags["bottom"])
-
-            self.pv_model.mesh.field.add("Threshold", 4)
-            self.pv_model.mesh.field.setNumber(4, "IField", 3)
-            self.pv_model.mesh.field.setNumber(
-                4, "LcMin", 5.0 * self.params.domain.l_char
-            )
-            self.pv_model.mesh.field.setNumber(
-                4, "LcMax", 10.0 * self.params.domain.l_char
-            )
-            self.pv_model.mesh.field.setNumber(4, "DistMin", 0.1)
-            self.pv_model.mesh.field.setNumber(4, "DistMax", 0.5)
-
-            self.pv_model.mesh.field.add("Distance", 5)
-            self.pv_model.mesh.field.setNumbers(5, "FacesList", self.dom_tags["left"])
-            self.pv_model.mesh.field.setNumbers(5, "FacesList", self.dom_tags["right"])
-
-            self.pv_model.mesh.field.add("Threshold", 6)
-            self.pv_model.mesh.field.setNumber(6, "IField", 5)
-            self.pv_model.mesh.field.setNumber(
-                6, "LcMin", 2.0 * self.params.domain.l_char
-            )
-            self.pv_model.mesh.field.setNumber(
-                6, "LcMax", 5.0 * self.params.domain.l_char
-            )
-            self.pv_model.mesh.field.setNumber(6, "DistMin", 0.1)
-            self.pv_model.mesh.field.setNumber(6, "DistMax", 0.5)
-
-            self.pv_model.mesh.field.add("Min", 7)
-            self.pv_model.mesh.field.setNumbers(7, "FieldsList", [2, 4, 6])
-            self.pv_model.mesh.field.setAsBackgroundMesh(7)
-
-        if self.mesh_comm.rank == self.model_rank:
-            gmsh.option.setNumber("Mesh.Algorithm", 8)
-            gmsh.option.setNumber("Mesh.RecombinationAlgorithm", 2)
-            gmsh.option.setNumber("Mesh.RecombineAll", 1)
-            gmsh.option.setNumber("Mesh.SubdivisionAlgorithm", 1)
-
-            gmsh.model.mesh.generate(2)
-            gmsh.model.mesh.setOrder(2)
-            gmsh.model.mesh.optimize("Netgen")
-
     def _enforce_periodicity(self):
-
         # TODO: Make this a generic mapping depending on which walls are marked for peridic BCs
         # TODO: Copy code to enforce periodicity from old generate_and_convert_3d_meshes.py
 
@@ -263,7 +110,7 @@ class FSIDomain:
             1,
         ]
 
-        self.pv_model.mesh.setPeriodic(
+        self.geometry.gmsh_model.mesh.setPeriodic(
             2, self.dom_tags["back"], self.dom_tags["front"], front_back_translation
         )
 
@@ -287,36 +134,34 @@ class FSIDomain:
             1,
         ]
 
-        self.pv_model.mesh.setPeriodic(
+        self.geometry.gmsh_model.mesh.setPeriodic(
             2, self.dom_tags["right"], self.dom_tags["left"], left_right_translation
         )
 
     def _generate_mesh(self):
+        print("Starting mesh generation... ", end="")
+
+        # Generate the mesh
+        tic = time.time()
+
+        # Mesh.Algorithm 2D mesh algorithm
+        # (1: MeshAdapt, 2: Automatic, 3: Initial mesh only, 5: Delaunay, 6: Frontal-Delaunay, 7: BAMG, 8: Frontal-Delaunay for Quads, 9: Packing of Parallelograms)
+        # Default value: 6
+        gmsh.option.setNumber("Mesh.Algorithm", 2)
+
+        gmsh.option.setNumber("Mesh.RecombinationAlgorithm", 2)
+        # gmsh.option.setNumber("Mesh.RecombineAll", 1)
+        gmsh.option.setNumber("Mesh.SubdivisionAlgorithm", 1)
+        self.geometry.gmsh_model.mesh.generate(3)
+        self.geometry.gmsh_model.mesh.setOrder(2)
+        self.geometry.gmsh_model.mesh.optimize("Netgen")
+        self.geometry.gmsh_model.mesh.generate(3)
+        toc = time.time()
         if self.rank == 0:
-            print("Starting mesh generation... ", end="")
+            print("Finished.")
+            print(f"Total meshing time = {toc-tic:.1f} s")
 
-            # Generate the mesh
-            tic = time.time()
-
-            #Mesh.Algorithm 2D mesh algorithm 
-            # (1: MeshAdapt, 2: Automatic, 3: Initial mesh only, 5: Delaunay, 6: Frontal-Delaunay, 7: BAMG, 8: Frontal-Delaunay for Quads, 9: Packing of Parallelograms)
-            # Default value: 6
-            gmsh.option.setNumber("Mesh.Algorithm", 2)
-
-
-            gmsh.option.setNumber("Mesh.RecombinationAlgorithm", 2)
-            # gmsh.option.setNumber("Mesh.RecombineAll", 1)
-            gmsh.option.setNumber("Mesh.SubdivisionAlgorithm", 1)
-            self.pv_model.mesh.generate(3)
-            self.pv_model.mesh.setOrder(2)
-            self.pv_model.mesh.optimize("Netgen")
-            self.pv_model.mesh.generate(3)
-            toc = time.time()
-            if self.rank == 0:
-                print("Finished.")
-                print(f"Total meshing time = {toc-tic:.1f} s")
-
-    def write_mesh_file(self):
+    def write_mesh_file(self, params):
         """
         TODO: when saving a mesh file using only dolfinx functions
         it's possible certain elements of the data aren't preserved
@@ -327,14 +172,12 @@ class FSIDomain:
 
         if self.rank == 0:
             # Save the *.msh file and *.vtk file (the latter is for visualization only)
-            print(
-                "Writing Mesh to %s... " % (self.params.general.output_dir_mesh), end=""
-            )
+            print("Writing Mesh to %s... " % (params.general.output_dir_mesh), end="")
 
-            if os.path.exists(self.params.general.output_dir_mesh) == False:
-                os.makedirs(self.params.general.output_dir_mesh)
-            gmsh.write("%s/mesh.msh" % (self.params.general.output_dir_mesh))
-            gmsh.write("%s/mesh.vtk" % (self.params.general.output_dir_mesh))
+            if os.path.exists(params.general.output_dir_mesh) == False:
+                os.makedirs(params.general.output_dir_mesh)
+            gmsh.write("%s/mesh.msh" % (params.general.output_dir_mesh))
+            gmsh.write("%s/mesh.vtk" % (params.general.output_dir_mesh))
 
             def create_mesh(mesh, clean_points, cell_type):
                 cells = mesh.get_cells_type(cell_type)
@@ -347,21 +190,16 @@ class FSIDomain:
                 )
                 return out_mesh
 
-            mesh_from_file = meshio.read(
-                f"{self.params.general.output_dir_mesh}/mesh.msh"
-            )
+            mesh_from_file = meshio.read(f"{params.general.output_dir_mesh}/mesh.msh")
             pts = mesh_from_file.points
             tetra_mesh = create_mesh(mesh_from_file, pts, "quad")
             tri_mesh = create_mesh(mesh_from_file, pts, "line")
 
-            meshio.write(f"{self.params.general.output_dir_mesh}/mesh.xdmf", tetra_mesh)
-            meshio.write(
-                f"{self.params.general.output_dir_mesh}/mesh_mf.xdmf", tri_mesh
-            )
+            meshio.write(f"{params.general.output_dir_mesh}/mesh.xdmf", tetra_mesh)
+            meshio.write(f"{params.general.output_dir_mesh}/mesh_mf.xdmf", tri_mesh)
             print("Done.")
 
     def test_mesh_functionspace(self):
-
         P2 = ufl.VectorElement("Lagrange", self.msh.ufl_cell(), 2)
         P1 = ufl.FiniteElement("Lagrange", self.msh.ufl_cell(), 1)
         V = FunctionSpace(self.msh, P2)
@@ -372,8 +210,6 @@ class FSIDomain:
 
         local_rangeQ = Q.dofmap.index_map.local_range
         dofsQ = np.arange(*local_rangeQ)
-
-        # coords = self.mesh.coordinates()
 
         nodes_dim = 0
         self.msh.topology.create_connectivity(nodes_dim, 0)

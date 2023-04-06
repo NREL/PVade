@@ -8,7 +8,8 @@ from mpi4py import MPI
 from pathlib import Path
 import pytest
 
-#test actions
+
+# test actions
 class DataStream:
 
     """Input/Output and file writing class
@@ -43,12 +44,17 @@ class DataStream:
         self.ndim = domain.msh.topology.dim
 
         self.results_filename = f"{params.general.output_dir_sol}/solution.xdmf"
+        self.log_filename = f"{params.general.output_dir_sol}/log.txt"
 
         with XDMFFile(self.comm, self.results_filename, "w") as xdmf_file:
             tt = 0.0
             xdmf_file.write_mesh(domain.msh)
             xdmf_file.write_function(flow.u_k, 0.0)
             xdmf_file.write_function(flow.p_k, 0.0)
+
+        if self.rank == 0:
+            with open(self.log_filename, "w") as fp:
+                fp.write("Run Started.\n")
 
     def save_XDMF_files(self, flow, tt):
         """Write additional timestep to XDMF file
@@ -63,3 +69,10 @@ class DataStream:
         with XDMFFile(self.comm, self.results_filename, "a") as xdmf_file:
             xdmf_file.write_function(flow.u_k, tt)
             xdmf_file.write_function(flow.p_k, tt)
+
+    def print_and_log(self, string_to_print):
+        if self.rank == 0:
+            print(string_to_print)
+
+            with open(self.log_filename, "a") as fp:
+                fp.write(f"{string_to_print}\n")

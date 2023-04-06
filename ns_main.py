@@ -2,6 +2,7 @@ from pvade.FlowManager import Flow
 from pvade.DataStream import DataStream
 from pvade.Parameters import SimParams
 from pvade.Utilities import get_input_file, write_metrics
+from pvade.geometry.MeshManager3d import FSIDomain
 
 from dolfinx.common import TimingType, list_timings
 import cProfile
@@ -18,19 +19,11 @@ def main():
     # Load the parameters object specified by the input file
     params = SimParams(input_file)
 
-    if params.domain.dim == 3:
-        from pvade.geometry.MeshManager3d import FSIDomain
-    elif params.domain.dim == 2:
-        from pvade.geometry.MeshManager2d import FSIDomain
-    else:
-        print("dimension not defined")
-        exit()
-
     # Initialize the domain and construct the initial mesh
     domain = FSIDomain(params)
     if params.general.create_mesh == True:
-        domain.build()
-        domain.write_mesh_file()
+        domain.build(params)
+        domain.write_mesh_file(params)
     elif params.general.read_mesh == True:
         domain.read()
     else:
