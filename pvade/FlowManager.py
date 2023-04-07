@@ -304,62 +304,90 @@ class Flow:
         Args:
             domain (:obj:`pvade.geometry.MeshManager.Domain`): A Domain object
 
-        """        
+        """
         self.x_min_V_dofs = dolfinx.fem.locate_dofs_topological(
-            self.V, self.facet_dim, domain.ft.find(domain.domain_markers["x_min"]["idx"])
+            self.V,
+            self.facet_dim,
+            domain.ft.find(domain.domain_markers["x_min"]["idx"]),
         )
 
         self.x_max_V_dofs = dolfinx.fem.locate_dofs_topological(
-            self.V, self.facet_dim, domain.ft.find(domain.domain_markers["x_max"]["idx"])
+            self.V,
+            self.facet_dim,
+            domain.ft.find(domain.domain_markers["x_max"]["idx"]),
         )
 
         self.y_min_V_dofs = dolfinx.fem.locate_dofs_topological(
-            self.V, self.facet_dim, domain.ft.find(domain.domain_markers["y_min"]["idx"])
+            self.V,
+            self.facet_dim,
+            domain.ft.find(domain.domain_markers["y_min"]["idx"]),
         )
 
         self.y_max_V_dofs = dolfinx.fem.locate_dofs_topological(
-            self.V, self.facet_dim, domain.ft.find(domain.domain_markers["y_max"]["idx"])
+            self.V,
+            self.facet_dim,
+            domain.ft.find(domain.domain_markers["y_max"]["idx"]),
         )
         if self.ndim == 3:
             self.z_min_V_dofs = dolfinx.fem.locate_dofs_topological(
-                self.V, self.facet_dim, domain.ft.find(domain.domain_markers["z_min"]["idx"])
+                self.V,
+                self.facet_dim,
+                domain.ft.find(domain.domain_markers["z_min"]["idx"]),
             )
 
             self.z_max_V_dofs = dolfinx.fem.locate_dofs_topological(
-                self.V, self.facet_dim, domain.ft.find(domain.domain_markers["z_max"]["idx"])
+                self.V,
+                self.facet_dim,
+                domain.ft.find(domain.domain_markers["z_max"]["idx"]),
             )
 
         self.internal_surface_V_dofs = dolfinx.fem.locate_dofs_topological(
-            self.V, self.facet_dim, domain.ft.find(domain.domain_markers["internal_surface"]["idx"])
+            self.V,
+            self.facet_dim,
+            domain.ft.find(domain.domain_markers["internal_surface"]["idx"]),
         )
 
         self.x_min_Q_dofs = dolfinx.fem.locate_dofs_topological(
-            self.Q, self.facet_dim, domain.ft.find(domain.domain_markers["x_min"]["idx"])
+            self.Q,
+            self.facet_dim,
+            domain.ft.find(domain.domain_markers["x_min"]["idx"]),
         )
 
         self.x_max_Q_dofs = dolfinx.fem.locate_dofs_topological(
-            self.Q, self.facet_dim, domain.ft.find(domain.domain_markers["x_max"]["idx"])
+            self.Q,
+            self.facet_dim,
+            domain.ft.find(domain.domain_markers["x_max"]["idx"]),
         )
 
         self.y_min_Q_dofs = dolfinx.fem.locate_dofs_topological(
-            self.Q, self.facet_dim, domain.ft.find(domain.domain_markers["y_min"]["idx"])
+            self.Q,
+            self.facet_dim,
+            domain.ft.find(domain.domain_markers["y_min"]["idx"]),
         )
 
         self.y_max_Q_dofs = dolfinx.fem.locate_dofs_topological(
-            self.Q, self.facet_dim, domain.ft.find(domain.domain_markers["y_max"]["idx"])
+            self.Q,
+            self.facet_dim,
+            domain.ft.find(domain.domain_markers["y_max"]["idx"]),
         )
 
         if self.ndim == 3:
             self.z_min_Q_dofs = dolfinx.fem.locate_dofs_topological(
-                self.Q, self.facet_dim, domain.ft.find(domain.domain_markers["z_min"]["idx"])
+                self.Q,
+                self.facet_dim,
+                domain.ft.find(domain.domain_markers["z_min"]["idx"]),
             )
 
             self.z_max_Q_dofs = dolfinx.fem.locate_dofs_topological(
-                self.Q, self.facet_dim, domain.ft.find(domain.domain_markers["z_max"]["idx"])
+                self.Q,
+                self.facet_dim,
+                domain.ft.find(domain.domain_markers["z_max"]["idx"]),
             )
 
         self.internal_surface_Q_dofs = dolfinx.fem.locate_dofs_topological(
-            self.Q, self.facet_dim, domain.ft.find(domain.domain_markers["internal_surface"]["idx"])
+            self.Q,
+            self.facet_dim,
+            domain.ft.find(domain.domain_markers["internal_surface"]["idx"]),
         )
 
     def _applybc(self, value, domain, V, marker):
