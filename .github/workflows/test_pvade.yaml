@@ -9,68 +9,30 @@ on:
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
-  
+
 jobs:
-  build:
-    name: test_pvade - ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
+  # Job 1 of 2 - run pytest on code
+  pytest:
+    name: Pytest
     strategy:
       fail-fast: false
       matrix:
-        os: ["ubuntu-latest", "macos-latest"]
-        python-version: ["3.10"]
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/setup-python@v2
+      - name: Build Conda environment
+        uses: mamba-org/provision-with-micromamba@main
         with:
-          python-version: "3.10"
-      - uses: mamba-org/provision-with-micromamba@main
-        with:
-          channel-priority: disabled
           environment-file: environment.yaml
-      # - name: Bash
-      #   shell: bash -l {0}
-      #   run: pyright .
-      # - name: Run PyLint
-      #   shell: bash -l {0}
-      #   run: pylint main.py pkg/
-      - name: Run PyTest
+      - name: Run pytest
         shell: bash -l {0}
-        run: pytest .
-  conda-with-gmsh:
-    name: test_pvade - ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-22.04, macos-12]
-    steps:
-      - name: Install DOLFINx (py3-9)
-        run: conda create -n w_gmsh -c conda-forge python=3.10 fenics-dolfinx mpich python-gmsh
-      - name: Test with gmsh
-        run: |
-          conda run -n w_gmsh python -c "import dolfinx; import gmsh;"
-  conda-without-gmsh:
-    name: test_pvade - ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-22.04, macos-12]
-    steps:
-      - name: Install DOLFINx (py3-9)
-        run: conda create -n wout_gmsh -c conda-forge python=3.10 fenics-dolfinx mpich
-      - name: Test without gmsh
-        run: |
-          conda run -n wout_gmsh python -c "import dolfinx;"
-    # steps:
-    #   - uses: actions/checkout@v2
+        run: pytest -sv pvade/tests/
 
-    #   - name: Install Conda environment with Micromamba
-    #     uses: mamba-org/provision-with-micromamba@main
-    #     with:
-    #       environment-file: myenv.yaml
-    #       environment-name: myenvname
-    #       extra-specs: |
-    #         python=3.7
-    #         pytest=${{ matrix.pytest }}
+  # Job 2 of 2 - enforce Black formatting
+  formatting:
+    name: Black formatting
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: psf/black@stable

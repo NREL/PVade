@@ -90,24 +90,26 @@ class TemplateDomainCreation:
             else:
                 domain_markers["internal_surface"]["gmsh_tags"].append(tag)
 
-
         # self.gmsh_model.addPhysicalGroup(self.ndim, [1], domain_marker_idx["fluid"])
         # self.gmsh_model.setPhysicalName(self.ndim, domain_marker_idx["fluid"], "fluid")
-        # TODO: this is a hack to add fluid tags, need to loop through cells 
-        # as we do for facets and mark fluid and structure 
+        # TODO: this is a hack to add fluid tags, need to loop through cells
+        # as we do for facets and mark fluid and structure
         domain_markers["fluid"]["gmsh_tags"].append(1)
 
         for key, data in domain_markers.items():
             if len(data["gmsh_tags"]) > 0:
                 # Cells (i.e., entities of dim = msh.topology.dim)
                 if data["entity"] == "cell":
-                    self.gmsh_model.addPhysicalGroup(self.ndim, data["gmsh_tags"], data["idx"])
+                    self.gmsh_model.addPhysicalGroup(
+                        self.ndim, data["gmsh_tags"], data["idx"]
+                    )
                     self.gmsh_model.setPhysicalName(self.ndim, data["idx"], key)
 
                 # Facets (i.e., entities of dim = msh.topology.dim - 1)
                 if data["entity"] == "facet":
-                    self.gmsh_model.addPhysicalGroup(self.ndim-1, data["gmsh_tags"], data["idx"])
-                    self.gmsh_model.setPhysicalName(self.ndim-1, data["idx"], key)
+                    self.gmsh_model.addPhysicalGroup(
+                        self.ndim - 1, data["gmsh_tags"], data["idx"]
+                    )
+                    self.gmsh_model.setPhysicalName(self.ndim - 1, data["idx"], key)
 
         return domain_markers
-

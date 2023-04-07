@@ -32,7 +32,6 @@ class FSIDomain:
         self._get_domain_markers()
 
     def _get_domain_markers(self):
-
         self.domain_markers = {}
 
         # Facet Markers
@@ -43,12 +42,15 @@ class FSIDomain:
         self.domain_markers["z_min"] = {"idx": 5, "entity": "facet", "gmsh_tags": []}
         self.domain_markers["z_max"] = {"idx": 6, "entity": "facet", "gmsh_tags": []}
 
-        self.domain_markers["internal_surface"] = {"idx": 7, "entity": "facet", "gmsh_tags": []}
+        self.domain_markers["internal_surface"] = {
+            "idx": 7,
+            "entity": "facet",
+            "gmsh_tags": [],
+        }
 
         # Cell Markers
         self.domain_markers["fluid"] = {"idx": 8, "entity": "cell", "gmsh_tags": []}
         self.domain_markers["structure"] = {"idx": 9, "entity": "cell", "gmsh_tags": []}
-
 
     def build(self, params):
         """This function call builds the geometry, marks the boundaries and creates a mesh using Gmsh."""
@@ -62,13 +64,14 @@ class FSIDomain:
         except:
             raise ValueError(f"Could not import {domain_creation_module}")
 
-
         self.geometry = dcm.DomainCreation(params)
 
         # Only rank 0 builds the geometry and meshes the domain
         if self.rank == 0:
             self.geometry.build(params)
-            self.domain_markers = self.geometry.mark_surfaces(params, self.domain_markers)
+            self.domain_markers = self.geometry.mark_surfaces(
+                params, self.domain_markers
+            )
             self.geometry.set_length_scales(params, self.domain_markers)
 
             if params.fluid.periodic:
