@@ -10,10 +10,11 @@ import time
 import ufl
 import dolfinx
 import meshio
+
+
 # from pvopt.geometry.panels.domain_creation   import *
 class FSIDomain:
     def __init__(self, params):
-
         # Get MPI communicators
         self.comm = MPI.COMM_WORLD
         self.rank = self.comm.Get_rank()
@@ -38,13 +39,13 @@ class FSIDomain:
 
             L = 2.2
             H = 0.41
-            c_x = c_y =0.2
+            c_x = c_y = 0.2
             r = 0.05
             gdim = 2
             mesh_comm = MPI.COMM_WORLD
             model_rank = 0
             if mesh_comm.rank == model_rank:
-                rectangle = gmsh.model.occ.addRectangle(0,0,0, L, H, tag=1)
+                rectangle = gmsh.model.occ.addRectangle(0, 0, 0, L, H, tag=1)
                 obstacle = gmsh.model.occ.addDisk(c_x, c_y, 0, r, r)
 
             if mesh_comm.rank == model_rank:
@@ -53,21 +54,32 @@ class FSIDomain:
             fluid_marker = 1
             if mesh_comm.rank == model_rank:
                 volumes = gmsh.model.getEntities(dim=gdim)
-                assert(len(volumes) == 1)
-                gmsh.model.addPhysicalGroup(volumes[0][0], [volumes[0][1]], fluid_marker)
+                assert len(volumes) == 1
+                gmsh.model.addPhysicalGroup(
+                    volumes[0][0], [volumes[0][1]], fluid_marker
+                )
                 gmsh.model.setPhysicalName(volumes[0][0], fluid_marker, "Fluid")
 
-            self.inlet_marker, self.outlet_marker, self.wall_marker, self.obstacle_marker = 2, 3, 4, 5
+            (
+                self.inlet_marker,
+                self.outlet_marker,
+                self.wall_marker,
+                self.obstacle_marker,
+            ) = (2, 3, 4, 5)
             inflow, outflow, walls, obstacle = [], [], [], []
             if mesh_comm.rank == model_rank:
                 boundaries = gmsh.model.getBoundary(volumes, oriented=False)
                 for boundary in boundaries:
-                    center_of_mass = gmsh.model.occ.getCenterOfMass(boundary[0], boundary[1])
-                    if np.allclose(center_of_mass, [0, H/2, 0]):
+                    center_of_mass = gmsh.model.occ.getCenterOfMass(
+                        boundary[0], boundary[1]
+                    )
+                    if np.allclose(center_of_mass, [0, H / 2, 0]):
                         inflow.append(boundary[1])
-                    elif np.allclose(center_of_mass, [L, H/2, 0]):
+                    elif np.allclose(center_of_mass, [L, H / 2, 0]):
                         outflow.append(boundary[1])
-                    elif np.allclose(center_of_mass, [L/2, H, 0]) or np.allclose(center_of_mass, [L/2, 0, 0]):
+                    elif np.allclose(center_of_mass, [L / 2, H, 0]) or np.allclose(
+                        center_of_mass, [L / 2, 0, 0]
+                    ):
                         walls.append(boundary[1])
                     else:
                         obstacle.append(boundary[1])
@@ -90,15 +102,21 @@ class FSIDomain:
                 res_min = r / 3
                 if mesh_comm.rank == model_rank:
                     distance_field = gmsh.model.mesh.field.add("Distance")
-                    gmsh.model.mesh.field.setNumbers(distance_field, "EdgesList", obstacle)
+                    gmsh.model.mesh.field.setNumbers(
+                        distance_field, "EdgesList", obstacle
+                    )
                     threshold_field = gmsh.model.mesh.field.add("Threshold")
-                    gmsh.model.mesh.field.setNumber(threshold_field, "IField", distance_field)
+                    gmsh.model.mesh.field.setNumber(
+                        threshold_field, "IField", distance_field
+                    )
                     gmsh.model.mesh.field.setNumber(threshold_field, "LcMin", res_min)
                     gmsh.model.mesh.field.setNumber(threshold_field, "LcMax", 0.25 * H)
                     gmsh.model.mesh.field.setNumber(threshold_field, "DistMin", r)
                     gmsh.model.mesh.field.setNumber(threshold_field, "DistMax", 2 * H)
                     min_field = gmsh.model.mesh.field.add("Min")
-                    gmsh.model.mesh.field.setNumbers(min_field, "FieldsList", [threshold_field])
+                    gmsh.model.mesh.field.setNumbers(
+                        min_field, "FieldsList", [threshold_field]
+                    )
                     gmsh.model.mesh.field.setAsBackgroundMesh(min_field)
 
                 if mesh_comm.rank == model_rank:
@@ -110,15 +128,15 @@ class FSIDomain:
                     gmsh.model.mesh.setOrder(2)
                     gmsh.model.mesh.optimize("Netgen")
 
-                self.msh, self._, self.ft = gmshio.model_to_mesh(gmsh.model, mesh_comm, model_rank, gdim=gdim)
+                self.msh, self._, self.ft = gmshio.model_to_mesh(
+                    gmsh.model, mesh_comm, model_rank, gdim=gdim
+                )
                 # Specify names for the mesh elements
                 self.msh.name = "pv_domain"
                 self._.name = f"{self.msh.name}_cells"
                 self.ft.name = f"{self.msh.name}_facets"
                 with XDMFFile(self.msh.comm, "output_mesh_name.pvd", "w") as fp:
                     fp.write_mesh(self.msh)
-
-
 
         else:
             self.mesh_comm = MPI.COMM_WORLD
@@ -145,7 +163,9 @@ class FSIDomain:
             self._generate_mesh()
 
             # All ranks receive their portion of the mesh from rank 0 (like an MPI scatter)
-            self.msh, self.mt, self.ft = gmshio.model_to_mesh(self.pv_model, self.comm, 0)
+            self.msh, self.mt, self.ft = gmshio.model_to_mesh(
+                self.pv_model, self.comm, 0
+            )
 
             # Specify names for the mesh elements
             self.msh.name = "pv_domain"
@@ -153,19 +173,24 @@ class FSIDomain:
             self.ft.name = f"{self.msh.name}_facets"
 
     def read(self):
-        if self.rank  == 0:
+        if self.rank == 0:
             print("Reading the mesh from file ...")
-        with dolfinx.io.XDMFFile(MPI.COMM_WORLD, self.params.general.output_dir_mesh+"/mesh.xdmf", "r") as xdmf:
+        with dolfinx.io.XDMFFile(
+            MPI.COMM_WORLD, self.params.general.output_dir_mesh + "/mesh.xdmf", "r"
+        ) as xdmf:
             self.msh = xdmf.read_mesh(name="Grid")
 
-        self.msh.topology.create_connectivity(self.msh.topology.dim-1, self.msh.topology.dim)
-        with XDMFFile(MPI.COMM_WORLD,self.params.general.output_dir_mesh+"/mesh_mf.xdmf",'r') as infile:
+        self.msh.topology.create_connectivity(
+            self.msh.topology.dim - 1, self.msh.topology.dim
+        )
+        with XDMFFile(
+            MPI.COMM_WORLD, self.params.general.output_dir_mesh + "/mesh_mf.xdmf", "r"
+        ) as infile:
             self.ft = infile.read_meshtags(self.msh, "Grid")
-        if self.rank  == 0:
+        if self.rank == 0:
             print("Done.")
 
     def _construct_geometry(self):
-
         self.pv_model.add("pv_domain")
         self.pv_model.setCurrent("pv_domain")
 
@@ -214,7 +239,6 @@ class FSIDomain:
         self.pv_model.occ.synchronize()
 
     def _construct_geometry_mod(self):
-
         if self.mesh_comm.rank == self.model_rank:
             # Initialize Gmsh options
             gmsh.initialize()
@@ -268,7 +292,6 @@ class FSIDomain:
             gmsh.model.occ.synchronize()
 
     def _mark_surfaces(self):
-
         # Loop through all surfaces to find periodic tags
         surf_ids = self.pv_model.occ.getEntities(2)
 
@@ -303,7 +326,6 @@ class FSIDomain:
                 else:
                     self.dom_tags["panel_surface"] = [tag]
 
-
         self.pv_model.addPhysicalGroup(3, [1], 11)
         self.pv_model.setPhysicalName(3, 11, "fluid")
 
@@ -319,28 +341,58 @@ class FSIDomain:
         self.pv_model.setPhysicalName(2, self.z_min_marker, "bottom")
         self.pv_model.addPhysicalGroup(2, self.dom_tags["top"], self.z_max_marker)
         self.pv_model.setPhysicalName(2, self.z_max_marker, "top")
-        self.pv_model.addPhysicalGroup(2, self.dom_tags["panel_surface"], self.internal_surface_marker)
+        self.pv_model.addPhysicalGroup(
+            2, self.dom_tags["panel_surface"], self.internal_surface_marker
+        )
         self.pv_model.setPhysicalName(2, self.internal_surface_marker, "panel_surface")
 
     def _mark_surfaces_mod(self):
-
         fluid_marker = 1
         if self.mesh_comm.rank == self.model_rank:
             volumes = gmsh.model.getEntities(dim=3)
-            assert(len(volumes) == 1)
+            assert len(volumes) == 1
             gmsh.model.addPhysicalGroup(volumes[0][0], [volumes[0][1]], fluid_marker)
             gmsh.model.setPhysicalName(volumes[0][0], fluid_marker, "Fluid")
 
-        self.inlet_marker, self.outlet_marker, self.wall_z_marker, self.obstacle_marker, self.wall_y_marker = 2, 3, 4, 5, 6
-        self.inflow, self.outflow, self.walls_z, self.walls_y, self.obstacle = [], [], [], [],[]
-        inflow_b_found,outflow_b_found,wallz_b_found, wally_b_found, obstacle_b_found = False,False,False,False,False
+        (
+            self.inlet_marker,
+            self.outlet_marker,
+            self.wall_z_marker,
+            self.obstacle_marker,
+            self.wall_y_marker,
+        ) = (2, 3, 4, 5, 6)
+        self.inflow, self.outflow, self.walls_z, self.walls_y, self.obstacle = (
+            [],
+            [],
+            [],
+            [],
+            [],
+        )
+        (
+            inflow_b_found,
+            outflow_b_found,
+            wallz_b_found,
+            wally_b_found,
+            obstacle_b_found,
+        ) = (False, False, False, False, False)
         if self.mesh_comm.rank == self.model_rank:
             boundaries = gmsh.model.getBoundary(volumes, oriented=False)
             for boundary in boundaries:
-                center_of_mass = gmsh.model.occ.getCenterOfMass(boundary[0], boundary[1])
-                center_x = self.params.domain.x_min + abs(self.params.domain.x_max-self.params.domain.x_min)/2
-                center_y = self.params.domain.y_min + abs(self.params.domain.y_max-self.params.domain.y_min)/2
-                center_z = self.params.domain.z_min + abs(self.params.domain.z_max-self.params.domain.z_min)/2
+                center_of_mass = gmsh.model.occ.getCenterOfMass(
+                    boundary[0], boundary[1]
+                )
+                center_x = (
+                    self.params.domain.x_min
+                    + abs(self.params.domain.x_max - self.params.domain.x_min) / 2
+                )
+                center_y = (
+                    self.params.domain.y_min
+                    + abs(self.params.domain.y_max - self.params.domain.y_min) / 2
+                )
+                center_z = (
+                    self.params.domain.z_min
+                    + abs(self.params.domain.z_max - self.params.domain.z_min) / 2
+                )
                 # if np.allclose(center_of_mass, [self.params.domain.x_min, center_y, center_z]):
                 #     self.inflow.append(boundary[1])
                 #     inflow_b_found = True
@@ -350,17 +402,27 @@ class FSIDomain:
                 elif np.allclose(center_of_mass[0], [self.params.domain.x_max]):
                     self.outflow.append(boundary[1])
                     outflow_b_found = True
-                elif np.allclose(center_of_mass[1], [self.params.domain.y_max]) or np.allclose(center_of_mass[1], [self.params.domain.y_min]):
+                elif np.allclose(
+                    center_of_mass[1], [self.params.domain.y_max]
+                ) or np.allclose(center_of_mass[1], [self.params.domain.y_min]):
                     self.walls_y.append(boundary[1])
                     wally_b_found = True
-                elif np.allclose(center_of_mass[2], [self.params.domain.z_max]) or np.allclose(center_of_mass[2], [self.params.domain.z_min]):
+                elif np.allclose(
+                    center_of_mass[2], [self.params.domain.z_max]
+                ) or np.allclose(center_of_mass[2], [self.params.domain.z_min]):
                     self.walls_z.append(boundary[1])
                     wallz_b_found = True
                 else:
                     self.obstacle.append(boundary[1])
                     obstacle_b_found = True
 
-            if (inflow_b_found and outflow_b_found and wallz_b_found and wally_b_found and obstacle_b_found) == True:
+            if (
+                inflow_b_found
+                and outflow_b_found
+                and wallz_b_found
+                and wally_b_found
+                and obstacle_b_found
+            ) == True:
                 print("all boundaries are found ")
             else:
                 print("boundary missing")
@@ -377,7 +439,6 @@ class FSIDomain:
             gmsh.model.setPhysicalName(1, self.obstacle_marker, "Obstacle")
 
     def _set_length_scales(self):
-
         # Set size scales for the mesh
         # eps = 0.1
 
@@ -401,13 +462,11 @@ class FSIDomain:
 
         # Define a distance field from the immersed panels
         self.pv_model.mesh.field.add("Distance", 3)
-        self.pv_model.mesh.field.setNumbers(
-            3, "FacesList", self.obstacle
-        )
+        self.pv_model.mesh.field.setNumbers(3, "FacesList", self.obstacle)
 
         self.pv_model.mesh.field.add("Threshold", 4)
         self.pv_model.mesh.field.setNumber(4, "IField", 3)
-        self.pv_model.mesh.field.setNumber(4, "LcMin", 0.2*self.params.domain.l_char)
+        self.pv_model.mesh.field.setNumber(4, "LcMin", 0.2 * self.params.domain.l_char)
         self.pv_model.mesh.field.setNumber(4, "LcMax", 6.0 * self.params.domain.l_char)
         self.pv_model.mesh.field.setNumber(4, "DistMin", 0.5)
         self.pv_model.mesh.field.setNumber(4, "DistMax", 0.6 * self.params.domain.z_max)
@@ -419,10 +478,18 @@ class FSIDomain:
         distance_field = gmsh.model.mesh.field.add("Distance")
         self.pv_model.mesh.field.setNumbers(distance_field, "EdgesList", self.obstacle)
         self.pv_model.mesh.field.setNumber(threshold_field, "IField", distance_field)
-        self.pv_model.mesh.field.setNumber(threshold_field, "LcMin", self.params.domain.l_char)
-        self.pv_model.mesh.field.setNumber(threshold_field, "LcMax", 0.25 * self.params.domain.z_max)
-        self.pv_model.mesh.field.setNumber(threshold_field, "DistMin", self.params.domain.l_char)
-        self.pv_model.mesh.field.setNumber(threshold_field, "DistMax", 2 * self.params.domain.z_max)
+        self.pv_model.mesh.field.setNumber(
+            threshold_field, "LcMin", self.params.domain.l_char
+        )
+        self.pv_model.mesh.field.setNumber(
+            threshold_field, "LcMax", 0.25 * self.params.domain.z_max
+        )
+        self.pv_model.mesh.field.setNumber(
+            threshold_field, "DistMin", self.params.domain.l_char
+        )
+        self.pv_model.mesh.field.setNumber(
+            threshold_field, "DistMax", 2 * self.params.domain.z_max
+        )
         min_field = gmsh.model.mesh.field.add("Min")
         self.pv_model.mesh.field.setNumbers(min_field, "FieldsList", [threshold_field])
         self.pv_model.mesh.field.setAsBackgroundMesh(min_field)
@@ -440,11 +507,17 @@ class FSIDomain:
 
             self.pv_model.mesh.field.add("Threshold", 2)
             self.pv_model.mesh.field.setNumber(2, "IField", 1)
-            self.pv_model.mesh.field.setNumber(2, "LcMin", 2.0 * self.params.domain.l_char)
+            self.pv_model.mesh.field.setNumber(
+                2, "LcMin", 2.0 * self.params.domain.l_char
+            )
             # self.pv_model.mesh.field.setNumber(2, 'LcMin', self.params.domain.l_char)
-            self.pv_model.mesh.field.setNumber(2, "LcMax", 6.0 * self.params.domain.l_char)
+            self.pv_model.mesh.field.setNumber(
+                2, "LcMax", 6.0 * self.params.domain.l_char
+            )
             self.pv_model.mesh.field.setNumber(2, "DistMin", 4.5)
-            self.pv_model.mesh.field.setNumber(2, "DistMax", 1.0 * self.params.domain.z_max)
+            self.pv_model.mesh.field.setNumber(
+                2, "DistMax", 1.0 * self.params.domain.z_max
+            )
 
             # Define a distance field from the immersed panels
             self.pv_model.mesh.field.add("Distance", 3)
@@ -455,15 +528,20 @@ class FSIDomain:
             self.pv_model.mesh.field.add("Threshold", 4)
             self.pv_model.mesh.field.setNumber(4, "IField", 3)
 
-            self.pv_model.mesh.field.setNumber(4, "LcMin", self.params.domain.l_char*0.5)
-            self.pv_model.mesh.field.setNumber(4, "LcMax",  5*self.params.domain.l_char)
+            self.pv_model.mesh.field.setNumber(
+                4, "LcMin", self.params.domain.l_char * 0.5
+            )
+            self.pv_model.mesh.field.setNumber(
+                4, "LcMax", 5 * self.params.domain.l_char
+            )
             self.pv_model.mesh.field.setNumber(4, "DistMin", 0.5)
-            self.pv_model.mesh.field.setNumber(4, "DistMax", 0.6 * self.params.domain.z_max)
+            self.pv_model.mesh.field.setNumber(
+                4, "DistMax", 0.6 * self.params.domain.z_max
+            )
 
             self.pv_model.mesh.field.add("Min", 5)
             self.pv_model.mesh.field.setNumbers(5, "FieldsList", [2, 4])
             self.pv_model.mesh.field.setAsBackgroundMesh(5)
-
 
             # gmsh.model.mesh.field.add("Distance", 1)
             # gmsh.model.mesh.field.setNumbers(1, "FacesList", self.dom_tags["panel_surface"])
@@ -497,7 +575,6 @@ class FSIDomain:
             # gmsh.model.mesh.field.setNumbers(5, "FieldsList", [2, 4])
             # gmsh.model.mesh.field.setAsBackgroundMesh(5)
 
-
         if self.mesh_comm.rank == self.model_rank:
             gmsh.option.setNumber("Mesh.Algorithm", 5)
             gmsh.option.setNumber("Mesh.RecombinationAlgorithm", 2)
@@ -506,9 +583,6 @@ class FSIDomain:
             gmsh.model.mesh.generate(3)
             gmsh.model.mesh.setOrder(2)
             gmsh.model.mesh.optimize("Netgen")
-
-
-
 
         # self.msh, self._, self.ft = gmshio.model_to_mesh(gmsh.model, self.mesh_comm, self.model_rank, gdim=2)
         # Set size scales for the mesh
@@ -551,7 +625,6 @@ class FSIDomain:
         # self.pv_model.mesh.field.setAsBackgroundMesh(5)
 
     def _enforce_periodicity(self):
-
         # TODO: Make this a generic mapping depending on which walls are marked for peridic BCs
         # TODO: Copy code to enforce periodicity from old generate_and_convert_3d_meshes.py
 
@@ -625,28 +698,37 @@ class FSIDomain:
     def write_mesh_file(self):
         if self.rank == 0:
             # Save the *.msh file and *.vtk file (the latter is for visualization only)
-            print('Writing Mesh to %s... ' % (self.params.general.output_dir_mesh), end='')
-            gmsh.write('%s/mesh.msh' % (self.params.general.output_dir_mesh))
-            gmsh.write('%s/mesh.vtk' % (self.params.general.output_dir_mesh))
+            print(
+                "Writing Mesh to %s... " % (self.params.general.output_dir_mesh), end=""
+            )
+            gmsh.write("%s/mesh.msh" % (self.params.general.output_dir_mesh))
+            gmsh.write("%s/mesh.vtk" % (self.params.general.output_dir_mesh))
+
             def create_mesh(mesh, clean_points, cell_type):
                 cells = mesh.get_cells_type(cell_type)
                 cell_data = mesh.get_cell_data("gmsh:physical", cell_type)
 
-                out_mesh = meshio.Mesh(points=clean_points, cells={
-                                    cell_type: cells}, cell_data={"name_to_read": [cell_data]})
+                out_mesh = meshio.Mesh(
+                    points=clean_points,
+                    cells={cell_type: cells},
+                    cell_data={"name_to_read": [cell_data]},
+                )
                 return out_mesh
 
-            mesh_from_file = meshio.read(f'{self.params.general.output_dir_mesh}/mesh.msh')
+            mesh_from_file = meshio.read(
+                f"{self.params.general.output_dir_mesh}/mesh.msh"
+            )
             pts = mesh_from_file.points
             tetra_mesh = create_mesh(mesh_from_file, pts, "tetra")
             tri_mesh = create_mesh(mesh_from_file, pts, "triangle")
 
-            meshio.write(f'{self.params.general.output_dir_mesh}/mesh.xdmf', tetra_mesh)
-            meshio.write(f'{self.params.general.output_dir_mesh}/mesh_mf.xdmf', tri_mesh)
+            meshio.write(f"{self.params.general.output_dir_mesh}/mesh.xdmf", tetra_mesh)
+            meshio.write(
+                f"{self.params.general.output_dir_mesh}/mesh_mf.xdmf", tri_mesh
+            )
             print("Done.")
 
     def test_mesh_functionspace(self):
-
         P2 = ufl.VectorElement("Lagrange", self.msh.ufl_cell(), 2)
         P1 = ufl.FiniteElement("Lagrange", self.msh.ufl_cell(), 1)
         V = FunctionSpace(self.msh, P2)
@@ -676,4 +758,3 @@ class FSIDomain:
         coords = points[:]
 
         print(f"Rank {self.rank} owns {num_nodes_owned_by_proc} nodes\n{coords}")
-

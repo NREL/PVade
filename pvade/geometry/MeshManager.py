@@ -9,7 +9,9 @@ import os
 import time
 import ufl
 import dolfinx
+
 # import meshio
+
 
 # from pvopt.geometry.panels.DomainCreation   import *
 class Domain:
@@ -44,7 +46,6 @@ class Domain:
         self.geometry = DomainCreation(self.params)
 
     def build(self):
-
         # Only rank 0 builds the geometry and meshes the domain
         if self.rank == 0:
             self.geometry.build()
@@ -88,7 +89,6 @@ class Domain:
             print("Done.")
 
     def _enforce_periodicity(self, gmsh_model):
-
         # TODO: Make this a generic mapping depending on which walls are marked for peridic BCs
         # TODO: Copy code to enforce periodicity from old generate_and_convert_3d_meshes.py
 
@@ -202,7 +202,6 @@ class Domain:
             print("Done.")
 
     def test_mesh_functionspace(self):
-
         P2 = ufl.VectorElement("Lagrange", self.mesh.ufl_cell(), 2)
         P1 = ufl.FiniteElement("Lagrange", self.mesh.ufl_cell(), 1)
         V = FunctionSpace(self.mesh, P2)

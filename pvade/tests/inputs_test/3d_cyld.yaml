@@ -4,7 +4,7 @@ general:
   output_dir_sol: output/cylinder3d/solution
   create_mesh: True
   read_mesh: False
-  mesh_only: False
+  mesh_only: True
 domain:
   x_min: 0.0
   x_max: 2.5
@@ -12,7 +12,7 @@ domain:
   y_max: 0.41
   z_min: 0.0
   z_max: 0.41
-  l_char: 2.0 #.02
+  l_char: 20 #.02
   cyld_radius: 0.05
 pv_array:
   num_rows: 1 # not used
@@ -35,8 +35,8 @@ solver:
   solver3_pc: jacobi
   save_text_interval: 0.1
   save_xdmf_interval: 0.1
-
 fluid:
+  use_eddy_viscosity: True
   u_ref: 0.45
   nu: 0.001 # Establish re = 20 with diam = 0.1 and u_bar = u_ref * (4/9)
   dpdx: 0.0

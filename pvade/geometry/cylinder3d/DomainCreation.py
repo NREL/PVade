@@ -1,31 +1,41 @@
-from dolfinx.io import XDMFFile, gmshio
-from dolfinx.fem import VectorFunctionSpace, FunctionSpace
-from dolfinx.cpp import mesh as cppmesh
-from mpi4py import MPI
-from pvopt.geometry.template.TemplateDomainCreation import TemplateDomainCreation
-
 import gmsh
 import numpy as np
-import os
-import time
+
+from pvade.geometry.template.TemplateDomainCreation import TemplateDomainCreation
 
 
 class DomainCreation(TemplateDomainCreation):
+    """_summary_ test
+
+    Args:
+        TemplateDomainCreation (_type_): _description_
+    """
+
     def __init__(self, params):
+        """Initialize the DomainCreation object
+         This initializes an object that creates the computational domain.
+
+        Args:
+            params (:obj:`pvade.Parameters.SimParams`): A SimParams object
+        """
         super().__init__(params)
 
-    def build(self):
+    def build(self, params):
+        """This function creates the computational domain for a flow around a 3D cylinder.
 
+        Returns:
+            The function returns gmsh.model which contains the geometric description of the computational domain
+        """
         # Compute and store some useful geometric quantities
-        self.x_span = self.params.domain.x_max - self.params.domain.x_min
-        self.y_span = self.params.domain.y_max - self.params.domain.y_min
-        self.z_span = self.params.domain.z_max - self.params.domain.z_min
+        self.x_span = params.domain.x_max - params.domain.x_min
+        self.y_span = params.domain.y_max - params.domain.y_min
+        self.z_span = params.domain.z_max - params.domain.z_min
 
         # Create the fluid domain extent
         domain = self.gmsh_model.occ.addBox(
-            self.params.domain.x_min,
-            self.params.domain.y_min,
-            self.params.domain.z_min,
+            params.domain.x_min,
+            params.domain.y_min,
+            params.domain.z_min,
             self.x_span,
             self.y_span,
             self.z_span,
@@ -43,18 +53,59 @@ class DomainCreation(TemplateDomainCreation):
 
         self.gmsh_model.occ.synchronize()
 
-    def set_length_scales(self):
+    def set_length_scales(self, params, domain_markers):
+        res_min = params.domain.l_char
 
-        # Define a distance field from the cylinder
-        self.gmsh_model.mesh.field.add("Distance", 1)
-        self.gmsh_model.mesh.field.setNumbers(1, "FacesList", self.dom_tags["internal_surface"])
+        # Define a distance field from the immersed panels
+        distance = self.gmsh_model.mesh.field.add("Distance", 1)
+        self.gmsh_model.mesh.field.setNumbers(
+            distance, "FacesList", domain_markers["internal_surface"]["gmsh_tags"]
+        )
 
-        self.gmsh_model.mesh.field.add("Threshold", 2)
-        self.gmsh_model.mesh.field.setNumber(2, "IField", 1)
-        self.gmsh_model.mesh.field.setNumber(2, "LcMin", self.params.domain.l_char)
-        self.gmsh_model.mesh.field.setNumber(2, "LcMax", 6.0 * self.params.domain.l_char)
-        self.gmsh_model.mesh.field.setNumber(2, "DistMin", 2.0 * self.cyld_radius)
-        self.gmsh_model.mesh.field.setNumber(2, "DistMax", 4.0*self.cyld_radius)
+        threshold = self.gmsh_model.mesh.field.add("Threshold")
+        self.gmsh_model.mesh.field.setNumber(threshold, "IField", distance)
 
-        self.gmsh_model.mesh.field.setAsBackgroundMesh(2)
+        factor = params.domain.l_char
 
+        self.cyld_radius = params.domain.cyld_radius
+        resolution = factor * self.cyld_radius / 10
+        self.gmsh_model.mesh.field.setNumber(threshold, "LcMin", resolution)
+        self.gmsh_model.mesh.field.setNumber(threshold, "LcMax", 20 * resolution)
+        self.gmsh_model.mesh.field.setNumber(
+            threshold, "DistMin", 0.5 * self.cyld_radius
+        )
+        self.gmsh_model.mesh.field.setNumber(threshold, "DistMax", self.cyld_radius)
+
+        # Define a distance field from the immersed panels
+        zmin_dist = self.gmsh_model.mesh.field.add("Distance")
+        self.gmsh_model.mesh.field.setNumbers(
+            zmin_dist, "FacesList", domain_markers["z_min"]["gmsh_tags"]
+        )
+
+        zmin_thre = self.gmsh_model.mesh.field.add("Threshold")
+        self.gmsh_model.mesh.field.setNumber(zmin_thre, "IField", zmin_dist)
+        self.gmsh_model.mesh.field.setNumber(zmin_thre, "LcMin", 2 * resolution)
+        self.gmsh_model.mesh.field.setNumber(zmin_thre, "LcMax", 5 * resolution)
+        self.gmsh_model.mesh.field.setNumber(zmin_thre, "DistMin", 0.1)
+        self.gmsh_model.mesh.field.setNumber(zmin_thre, "DistMax", 0.5)
+
+        xy_dist = self.gmsh_model.mesh.field.add("Distance")
+        self.gmsh_model.mesh.field.setNumbers(
+            xy_dist, "FacesList", domain_markers["x_min"]["gmsh_tags"]
+        )
+        self.gmsh_model.mesh.field.setNumbers(
+            xy_dist, "FacesList", domain_markers["x_max"]["gmsh_tags"]
+        )
+
+        xy_thre = self.gmsh_model.mesh.field.add("Threshold")
+        self.gmsh_model.mesh.field.setNumber(xy_thre, "IField", xy_dist)
+        self.gmsh_model.mesh.field.setNumber(xy_thre, "LcMin", 2 * resolution)
+        self.gmsh_model.mesh.field.setNumber(xy_thre, "LcMax", 5 * resolution)
+        self.gmsh_model.mesh.field.setNumber(xy_thre, "DistMin", 0.1)
+        self.gmsh_model.mesh.field.setNumber(xy_thre, "DistMax", 0.5)
+
+        minimum = self.gmsh_model.mesh.field.add("Min")
+        self.gmsh_model.mesh.field.setNumbers(
+            minimum, "FieldsList", [threshold, xy_thre, zmin_thre]
+        )
+        self.gmsh_model.mesh.field.setAsBackgroundMesh(minimum)
