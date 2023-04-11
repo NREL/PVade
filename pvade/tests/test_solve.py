@@ -25,7 +25,7 @@ def test_flow_3dpanels():
 
     # Initialize the domain and construct the initial mesh
     domain = FSIDomain(params)
-    domain.read("pvade/tests/test_mesh/panels")
+    domain.read("pvade/tests/test_mesh/panels3d")
     # Initialize the function spaces for the flow
     flow = Flow(domain)
     # # # Specify the boundary conditions
