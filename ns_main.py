@@ -2,7 +2,7 @@ from pvade.FlowManager import Flow
 from pvade.DataStream import DataStream
 from pvade.Parameters import SimParams
 from pvade.Utilities import get_input_file, write_metrics
-from pvade.geometry.MeshManager3d import FSIDomain
+from pvade.geometry.MeshManager import FSIDomain
 
 from dolfinx.common import TimingType, list_timings
 import cProfile
