@@ -33,8 +33,10 @@ class DomainCreation(TemplateDomainCreation):
         self.z_span = params.domain.z_max - params.domain.z_min
         tracker_angle_rad = np.radians(params.pv_array.tracker_angle)
 
+        ndim = 3
+
         # Create the fluid domain extent
-        domain = self.gmsh_model.occ.addBox(
+        domain_id = self.gmsh_model.occ.addBox(
             params.domain.x_min,
             params.domain.y_min,
             params.domain.z_min,
@@ -43,8 +45,15 @@ class DomainCreation(TemplateDomainCreation):
             self.z_span,
         )
 
-        for panel_id in range(params.pv_array.num_rows):
-            panel_box = self.gmsh_model.occ.addBox(
+        domain_tag = (ndim, domain_id)
+
+        domain_tag_list = []
+        domain_tag_list.append(domain_tag)
+
+        panel_tag_list = []
+
+        for k in range(params.pv_array.num_rows):
+            panel_id = self.gmsh_model.occ.addBox(
                 -0.5 * params.pv_array.panel_length,
                 0.0,
                 -0.5 * params.pv_array.panel_thickness,
@@ -53,21 +62,24 @@ class DomainCreation(TemplateDomainCreation):
                 params.pv_array.panel_thickness,
             )
 
+            panel_tag = (ndim, panel_id)
+            panel_tag_list.append(panel_tag)
+
             # Rotate the panel currently centered at (0, 0, 0)
             self.gmsh_model.occ.rotate(
-                [(3, panel_box)], 0, 0, 0, 0, -1, 0, tracker_angle_rad
+                [panel_tag], 0, 0, 0, 0, 1, 0, tracker_angle_rad
             )
 
             # Translate the panel [panel_loc, 0, elev]
             self.gmsh_model.occ.translate(
-                [(3, panel_box)],
-                panel_id * params.pv_array.spacing[0],
+                [panel_tag],
+                k * params.pv_array.spacing[0],
                 0,
                 params.pv_array.elevation,
             )
 
-            # Remove each panel from the overall domain
-            self.gmsh_model.occ.cut([(3, domain)], [(3, panel_box)])
+        # Fragment all panels from the overall domain
+        self.gmsh_model.occ.fragment(domain_tag_list, panel_tag_list)
 
         self.gmsh_model.occ.synchronize()
 

@@ -1,5 +1,5 @@
 general:
-  example: panels
+  example: panels3d
   output_dir_mesh: output/panels/mesh
   output_dir_sol: output/panels/solution
   create_mesh: True 
