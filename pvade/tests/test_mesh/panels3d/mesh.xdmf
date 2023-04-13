@@ -1,1 +1,32 @@
-<Xdmf Version="3.0"><Domain><Grid Name="Grid"><Geometry GeometryType="XYZ"><DataItem DataType="Float" Dimensions="436 3" Format="HDF" Precision="8">mesh.h5:/data0</DataItem></Geometry><Topology TopologyType="Tetrahedron" NumberOfElements="1586" NodesPerElement="4"><DataItem DataType="Int" Dimensions="1586 4" Format="HDF" Precision="4">mesh.h5:/data1</DataItem></Topology><Attribute Name="name_to_read" AttributeType="Scalar" Center="Cell"><DataItem DataType="Int" Dimensions="1586" Format="HDF" Precision="4">mesh.h5:/data2</DataItem></Attribute></Grid></Domain></Xdmf>
+<?xml version="1.0"?>
+<!DOCTYPE Xdmf SYSTEM "Xdmf.dtd" []>
+<Xdmf Version="3.0" xmlns:xi="http://www.w3.org/2001/XInclude">
+  <Domain>
+    <Grid Name="mesh_total" GridType="Uniform">
+      <Topology TopologyType="Tetrahedron" NumberOfElements="1734" NodesPerElement="4">
+        <DataItem Dimensions="1734 4" NumberType="Int" Format="HDF">mesh.h5:/Mesh/mesh_total/topology</DataItem>
+      </Topology>
+      <Geometry GeometryType="XYZ">
+        <DataItem Dimensions="434 3" Format="HDF">mesh.h5:/Mesh/mesh_total/geometry</DataItem>
+      </Geometry>
+    </Grid>
+    <Grid Name="cell_tags" GridType="Uniform">
+      <xi:include xpointer="xpointer(/Xdmf/Domain/Grid/Geometry)" />
+      <Topology TopologyType="Tetrahedron" NumberOfElements="1734" NodesPerElement="4">
+        <DataItem Dimensions="1734 4" NumberType="Int" Format="HDF">mesh.h5:/MeshTags/cell_tags/topology</DataItem>
+      </Topology>
+      <Attribute Name="cell_tags" AttributeType="Scalar" Center="Cell">
+        <DataItem Dimensions="1734 1" Format="HDF">mesh.h5:/MeshTags/cell_tags/Values</DataItem>
+      </Attribute>
+    </Grid>
+    <Grid Name="facet_tags" GridType="Uniform">
+      <xi:include xpointer="xpointer(/Xdmf/Domain/Grid/Geometry)" />
+      <Topology TopologyType="Triangle" NumberOfElements="690" NodesPerElement="3">
+        <DataItem Dimensions="690 3" NumberType="Int" Format="HDF">mesh.h5:/MeshTags/facet_tags/topology</DataItem>
+      </Topology>
+      <Attribute Name="facet_tags" AttributeType="Scalar" Center="Cell">
+        <DataItem Dimensions="690 1" Format="HDF">mesh.h5:/MeshTags/facet_tags/Values</DataItem>
+      </Attribute>
+    </Grid>
+  </Domain>
+</Xdmf>

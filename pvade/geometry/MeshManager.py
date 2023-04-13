@@ -80,22 +80,24 @@ class FSIDomain:
             self._generate_mesh()
 
         # All ranks receive their portion of the mesh from rank 0 (like an MPI scatter)
-        self.msh, self.mt, self.ft = dolfinx.io.gmshio.model_to_mesh(
+        self.msh, self.cell_tags, self.facet_tags = dolfinx.io.gmshio.model_to_mesh(
             self.geometry.gmsh_model, self.comm, 0
         )
 
         self.ndim = self.msh.topology.dim
 
         # Specify names for the mesh elements
-        self.msh.name = params.general.example
-        self.mt.name = f"{self.msh.name}_cells"
-        self.ft.name = f"{self.msh.name}_facets"
+        self.msh.name = "mesh_total"
+        self.cell_tags.name = "cell_tags"
+        self.facet_tags.name = "facet_tags"
 
         # Create submeshes (if necessary, based on whether there are "structure" tags)
         if len(self.domain_markers["structure"]["gmsh_tags"]) > 0:
             for marker_key in ["fluid", "structure"]:
+                if self.rank == 0:
+                    print(f"Creating {marker_key} submesh")
                 marker_id = self.domain_markers[marker_key]["idx"]
-                submesh_cells = self.mt.find(marker_id)
+                submesh_cells = self.cell_tags.find(marker_id)
                 submesh = dolfinx.mesh.create_submesh(self.msh, self.ndim, submesh_cells)
 
                 setattr(self, f"msh_{marker_key}", submesh[0])
@@ -109,16 +111,24 @@ class FSIDomain:
             print("Reading the mesh from file ...")
 
         path_to_mesh = os.path.join(read_path, "mesh.xdmf")
-        path_to_facet_mesh = os.path.join(read_path, "mesh_mf.xdmf")
 
         with dolfinx.io.XDMFFile(self.comm, path_to_mesh, "r") as xdmf:
-            self.msh = xdmf.read_mesh(name="Grid")
+            self.msh = xdmf.read_mesh(name="mesh_total")
+            self.cell_tags = xdmf.read_meshtags(self.msh, name="cell_tags")
 
-        self.ndim = self.msh.topology.dim
-        self.msh.topology.create_connectivity(self.ndim - 1, self.ndim)
+            self.ndim = self.msh.topology.dim
+            self.msh.topology.create_connectivity(self.ndim - 1, self.ndim)
 
-        with dolfinx.io.XDMFFile(self.comm, path_to_facet_mesh, "r") as xdmf:
-            self.ft = xdmf.read_meshtags(self.msh, "Grid")
+            self.facet_tags = xdmf.read_meshtags(self.msh, "facet_tags")
+
+        for marker_key in ["fluid", "structure"]:
+            if self.rank == 0:
+                print(f"Creating {marker_key} submesh")
+            marker_id = self.domain_markers[marker_key]["idx"]
+            submesh_cells = self.cell_tags.find(marker_id)
+            submesh = dolfinx.mesh.create_submesh(self.msh, self.ndim, submesh_cells)
+
+            setattr(self, f"msh_{marker_key}", submesh[0])
 
         if self.rank == 0:
             print("Done.")
@@ -248,40 +258,13 @@ class FSIDomain:
 
             if os.path.exists(params.general.output_dir_mesh) == False:
                 os.makedirs(params.general.output_dir_mesh)
-            gmsh.write(os.path.join(params.general.output_dir_mesh, "mesh.msh"))
-            gmsh.write(os.path.join(params.general.output_dir_mesh, "mesh.vtk"))
 
-            def create_mesh(mesh, clean_points, cell_type):
-                cells = mesh.get_cells_type(cell_type)
-                cell_data = mesh.get_cell_data("gmsh:physical", cell_type)
+            mesh_filename = os.path.join(params.general.output_dir_mesh, "mesh.xdmf")
 
-                out_mesh = meshio.Mesh(
-                    points=clean_points,
-                    cells={cell_type: cells},
-                    cell_data={"name_to_read": [cell_data]},
-                )
-
-                return out_mesh
-
-            mesh_from_file = meshio.read(
-                os.path.join(params.general.output_dir_mesh, "mesh.msh")
-            )
-
-            pts = mesh_from_file.points
-
-            if self.ndim == 3:
-                cell_mesh = create_mesh(mesh_from_file, pts, "tetra")
-                facet_mesh = create_mesh(mesh_from_file, pts, "triangle")
-            elif self.ndim == 2:
-                cell_mesh = create_mesh(mesh_from_file, pts, "quad")
-                facet_mesh = create_mesh(mesh_from_file, pts, "line")
-
-            meshio.write(
-                os.path.join(params.general.output_dir_mesh, "mesh.xdmf"), cell_mesh
-            )
-            meshio.write(
-                os.path.join(params.general.output_dir_mesh, "mesh_mf.xdmf"), facet_mesh
-            )
+            with dolfinx.io.XDMFFile(self.comm, mesh_filename, "w") as fp:
+                fp.write_mesh(self.msh)
+                fp.write_meshtags(self.cell_tags)
+                fp.write_meshtags(self.facet_tags)
 
             print("Done.")
 

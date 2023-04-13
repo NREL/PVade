@@ -253,86 +253,86 @@ class Flow:
         self.x_min_V_dofs = dolfinx.fem.locate_dofs_topological(
             self.V,
             self.facet_dim,
-            domain.ft.find(domain.domain_markers["x_min"]["idx"]),
+            domain.facet_tags.find(domain.domain_markers["x_min"]["idx"]),
         )
 
         self.x_max_V_dofs = dolfinx.fem.locate_dofs_topological(
             self.V,
             self.facet_dim,
-            domain.ft.find(domain.domain_markers["x_max"]["idx"]),
+            domain.facet_tags.find(domain.domain_markers["x_max"]["idx"]),
         )
 
         self.y_min_V_dofs = dolfinx.fem.locate_dofs_topological(
             self.V,
             self.facet_dim,
-            domain.ft.find(domain.domain_markers["y_min"]["idx"]),
+            domain.facet_tags.find(domain.domain_markers["y_min"]["idx"]),
         )
 
         self.y_max_V_dofs = dolfinx.fem.locate_dofs_topological(
             self.V,
             self.facet_dim,
-            domain.ft.find(domain.domain_markers["y_max"]["idx"]),
+            domain.facet_tags.find(domain.domain_markers["y_max"]["idx"]),
         )
         if self.ndim == 3:
             self.z_min_V_dofs = dolfinx.fem.locate_dofs_topological(
                 self.V,
                 self.facet_dim,
-                domain.ft.find(domain.domain_markers["z_min"]["idx"]),
+                domain.facet_tags.find(domain.domain_markers["z_min"]["idx"]),
             )
 
             self.z_max_V_dofs = dolfinx.fem.locate_dofs_topological(
                 self.V,
                 self.facet_dim,
-                domain.ft.find(domain.domain_markers["z_max"]["idx"]),
+                domain.facet_tags.find(domain.domain_markers["z_max"]["idx"]),
             )
 
         self.internal_surface_V_dofs = dolfinx.fem.locate_dofs_topological(
             self.V,
             self.facet_dim,
-            domain.ft.find(domain.domain_markers["internal_surface"]["idx"]),
+            domain.facet_tags.find(domain.domain_markers["internal_surface"]["idx"]),
         )
 
         self.x_min_Q_dofs = dolfinx.fem.locate_dofs_topological(
             self.Q,
             self.facet_dim,
-            domain.ft.find(domain.domain_markers["x_min"]["idx"]),
+            domain.facet_tags.find(domain.domain_markers["x_min"]["idx"]),
         )
 
         self.x_max_Q_dofs = dolfinx.fem.locate_dofs_topological(
             self.Q,
             self.facet_dim,
-            domain.ft.find(domain.domain_markers["x_max"]["idx"]),
+            domain.facet_tags.find(domain.domain_markers["x_max"]["idx"]),
         )
 
         self.y_min_Q_dofs = dolfinx.fem.locate_dofs_topological(
             self.Q,
             self.facet_dim,
-            domain.ft.find(domain.domain_markers["y_min"]["idx"]),
+            domain.facet_tags.find(domain.domain_markers["y_min"]["idx"]),
         )
 
         self.y_max_Q_dofs = dolfinx.fem.locate_dofs_topological(
             self.Q,
             self.facet_dim,
-            domain.ft.find(domain.domain_markers["y_max"]["idx"]),
+            domain.facet_tags.find(domain.domain_markers["y_max"]["idx"]),
         )
 
         if self.ndim == 3:
             self.z_min_Q_dofs = dolfinx.fem.locate_dofs_topological(
                 self.Q,
                 self.facet_dim,
-                domain.ft.find(domain.domain_markers["z_min"]["idx"]),
+                domain.facet_tags.find(domain.domain_markers["z_min"]["idx"]),
             )
 
             self.z_max_Q_dofs = dolfinx.fem.locate_dofs_topological(
                 self.Q,
                 self.facet_dim,
-                domain.ft.find(domain.domain_markers["z_max"]["idx"]),
+                domain.facet_tags.find(domain.domain_markers["z_max"]["idx"]),
             )
 
         self.internal_surface_Q_dofs = dolfinx.fem.locate_dofs_topological(
             self.Q,
             self.facet_dim,
-            domain.ft.find(domain.domain_markers["internal_surface"]["idx"]),
+            domain.facet_tags.find(domain.domain_markers["internal_surface"]["idx"]),
         )
 
     def _get_dirichlet_bc(self, bc_value, domain, functionspace, marker, bc_location):
@@ -354,7 +354,7 @@ class Flow:
         identify_by_gmsh_marker = False
 
         if identify_by_gmsh_marker:
-            facets = domain.ft.find(marker)
+            facets = domain.facet_tags.find(marker)
 
         else:
             facets = getattr(self, f"{bc_location}_facets")
@@ -385,11 +385,11 @@ class Flow:
                 bc = self._get_dirichlet_bc(self.zero_vec, domain, functionspace, marker, bc_location)
 
             elif bc_type == "slip":
-                if "x" in bc_location:
+                if bc_location in ["x_min", "x_max"]:
                     sub_id = 0
-                elif "y" in bc_location:
+                elif bc_location in ["y_min", "y_max"]:
                     sub_id = 1
-                elif "z" in bc_location:
+                elif bc_location in ["z_min", "z_max"]:
                     sub_id = 2
 
                 bc = self._get_dirichlet_bc(self.zero_scalar, domain, functionspace.sub(sub_id), marker, bc_location)
@@ -417,6 +417,7 @@ class Flow:
         # Generate list of locations to loop over
         if self.ndim == 2:
             bc_location_list = ["y_min", "y_max"]
+
         elif self.ndim == 3:
             bc_location_list = ["y_min", "y_max", "z_min", "z_max"]
 
@@ -431,7 +432,7 @@ class Flow:
             self.bcu.append(bc)
 
         # Set all interior surfaces to no slip
-        bc = self._build_vel_bc_by_type("noslip", domain, self.V, domain.domain_markers["internal_surface"]["idx"], "internal_surface")
+        bc = self._build_vel_bc_by_type("noslip", domain, self.V, None, "internal_surface")
         self.bcu.append(bc)
 
         def inflow_profile_expression(x):

@@ -4,7 +4,7 @@ general:
   output_dir_sol: output/panels/solution
   create_mesh: True 
   read_mesh: False
-  mesh_only: False
+  mesh_only: True
 domain:
   x_min: -10
   x_max: 50
@@ -32,8 +32,8 @@ solver:
   solver1_pc: jacobi
   solver2_pc: jacobi
   solver3_pc: jacobi
-  save_text_interval: 0.1
-  save_xdmf_interval: 0.1
+  save_text_interval: 0.01
+  save_xdmf_interval: 0.01
 fluid:
   u_ref: 8.0
   nu: 0.01
