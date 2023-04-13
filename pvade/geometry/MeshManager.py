@@ -98,7 +98,9 @@ class FSIDomain:
                     print(f"Creating {marker_key} submesh")
                 marker_id = self.domain_markers[marker_key]["idx"]
                 submesh_cells = self.cell_tags.find(marker_id)
-                submesh = dolfinx.mesh.create_submesh(self.msh, self.ndim, submesh_cells)
+                submesh = dolfinx.mesh.create_submesh(
+                    self.msh, self.ndim, submesh_cells
+                )
 
                 setattr(self, f"msh_{marker_key}", submesh[0])
 

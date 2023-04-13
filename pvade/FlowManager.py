@@ -236,7 +236,6 @@ class Flow:
             domain.msh_fluid, self.facet_dim, internal_surface
         )
 
-
     def _locate_boundary_dofs_tags(self, domain):
         """Associate degrees of freedom with marker functions
 
@@ -359,46 +358,54 @@ class Flow:
         else:
             facets = getattr(self, f"{bc_location}_facets")
 
-        dofs = dolfinx.fem.locate_dofs_topological(functionspace, self.facet_dim, facets)
+        dofs = dolfinx.fem.locate_dofs_topological(
+            functionspace, self.facet_dim, facets
+        )
 
         bc = dolfinx.fem.dirichletbc(bc_value, dofs, functionspace)
 
         return bc
 
-    def _build_vel_bc_by_type(self, bc_type, domain, functionspace, marker, bc_location):
-            """Summary
+    def _build_vel_bc_by_type(
+        self, bc_type, domain, functionspace, marker, bc_location
+    ):
+        """Summary
 
-            Args:
-                bc_type (TYPE): Description
-                functionspace (TYPE): Description
-                marker (TYPE): Description
-                bc_location (TYPE): Description
+        Args:
+            bc_type (TYPE): Description
+            functionspace (TYPE): Description
+            marker (TYPE): Description
+            bc_location (TYPE): Description
 
-            Returns:
-                TYPE: Description
-            """
+        Returns:
+            TYPE: Description
+        """
 
-            if self.rank == 0:
-                print(f"Setting '{bc_type}' BC on {bc_location}")
+        if self.rank == 0:
+            print(f"Setting '{bc_type}' BC on {bc_location}")
 
-            if bc_type == "noslip":
-                bc = self._get_dirichlet_bc(self.zero_vec, domain, functionspace, marker, bc_location)
+        if bc_type == "noslip":
+            bc = self._get_dirichlet_bc(
+                self.zero_vec, domain, functionspace, marker, bc_location
+            )
 
-            elif bc_type == "slip":
-                if bc_location in ["x_min", "x_max"]:
-                    sub_id = 0
-                elif bc_location in ["y_min", "y_max"]:
-                    sub_id = 1
-                elif bc_location in ["z_min", "z_max"]:
-                    sub_id = 2
+        elif bc_type == "slip":
+            if bc_location in ["x_min", "x_max"]:
+                sub_id = 0
+            elif bc_location in ["y_min", "y_max"]:
+                sub_id = 1
+            elif bc_location in ["z_min", "z_max"]:
+                sub_id = 2
 
-                bc = self._get_dirichlet_bc(self.zero_scalar, domain, functionspace.sub(sub_id), marker, bc_location)
+            bc = self._get_dirichlet_bc(
+                self.zero_scalar, domain, functionspace.sub(sub_id), marker, bc_location
+            )
 
-            else:
-                if domain.rank == 0:
-                    raise ValueError(f"{bc_type} BC not recognized")
+        else:
+            if domain.rank == 0:
+                raise ValueError(f"{bc_type} BC not recognized")
 
-            return bc
+        return bc
 
     def _build_velocity_boundary_conditions(self, domain, params):
         """Build all boundary conditions on velocity
@@ -413,7 +420,6 @@ class Flow:
         # Define velocity boundary conditions
         self.bcu = []
 
-
         # Generate list of locations to loop over
         if self.ndim == 2:
             bc_location_list = ["y_min", "y_max"]
@@ -427,12 +433,16 @@ class Flow:
 
             marker_id = domain.domain_markers[bc_location]["idx"]
 
-            bc = self._build_vel_bc_by_type(bc_type, domain, self.V, marker_id, bc_location)
+            bc = self._build_vel_bc_by_type(
+                bc_type, domain, self.V, marker_id, bc_location
+            )
 
             self.bcu.append(bc)
 
         # Set all interior surfaces to no slip
-        bc = self._build_vel_bc_by_type("noslip", domain, self.V, None, "internal_surface")
+        bc = self._build_vel_bc_by_type(
+            "noslip", domain, self.V, None, "internal_surface"
+        )
         self.bcu.append(bc)
 
         def inflow_profile_expression(x):
@@ -522,7 +532,9 @@ class Flow:
             )
             self.inflow_profile.interpolate(inflow_profile_expression, upper_cells)
 
-        dofs = dolfinx.fem.locate_dofs_topological(self.V, self.facet_dim, self.x_min_facets)
+        dofs = dolfinx.fem.locate_dofs_topological(
+            self.V, self.facet_dim, self.x_min_facets
+        )
 
         self.bcu.append(dolfinx.fem.dirichletbc(self.inflow_profile, dofs))
 
@@ -538,11 +550,11 @@ class Flow:
         # Define pressure boundary conditions
         self.bcp = []
 
-        dofs = dolfinx.fem.locate_dofs_topological(self.Q, self.facet_dim, self.x_max_facets)
-
-        self.bcp.append(
-            dolfinx.fem.dirichletbc(self.zero_scalar, dofs, self.Q)
+        dofs = dolfinx.fem.locate_dofs_topological(
+            self.Q, self.facet_dim, self.x_max_facets
         )
+
+        self.bcp.append(dolfinx.fem.dirichletbc(self.zero_scalar, dofs, self.Q))
 
     def build_forms(self, domain, params):
         """Builds all variational statements
@@ -600,7 +612,9 @@ class Flow:
 
         if use_eddy_viscosity:
             # By default, don't use any eddy viscosity
-            filter_scale = ufl.CellVolume(domain.msh_fluid) ** (1.0 / domain.msh_fluid.topology.dim)
+            filter_scale = ufl.CellVolume(domain.msh_fluid) ** (
+                1.0 / domain.msh_fluid.topology.dim
+            )
 
             # Strain rate tensor, 0.5*(du_i/dx_j + du_j/dx_i)
             Sij = ufl.sym(ufl.nabla_grad(U_AB))
@@ -651,7 +665,8 @@ class Flow:
         U = 0.5 * (self.u_k1 + self.u)
         n = ufl.FacetNormal(domain.msh_fluid)
         f = dolfinx.fem.Constant(
-            domain.msh_fluid, (PETSc.ScalarType(0), PETSc.ScalarType(0), PETSc.ScalarType(0))
+            domain.msh_fluid,
+            (PETSc.ScalarType(0), PETSc.ScalarType(0), PETSc.ScalarType(0)),
         )
         # Define variational problem for step 1: tentative velocity
         self.F1 = (
