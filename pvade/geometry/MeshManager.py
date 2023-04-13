@@ -91,6 +91,15 @@ class FSIDomain:
         self.mt.name = f"{self.msh.name}_cells"
         self.ft.name = f"{self.msh.name}_facets"
 
+        # Create submeshes (if necessary, based on whether there are "structure" tags)
+        if len(self.domain_markers["structure"]["gmsh_tags"]) > 0:
+            for marker_key in ["fluid", "structure"]:
+                marker_id = self.domain_markers[marker_key]["idx"]
+                submesh_cells = self.mt.find(marker_id)
+                submesh = dolfinx.mesh.create_submesh(self.msh, self.ndim, submesh_cells)
+
+                setattr(self, f"msh_{marker_key}", submesh[0])
+
     def read(self, read_path):
         """Read the mesh from an external file.
         The User can load an existing mesh file (mesh.xdmf)

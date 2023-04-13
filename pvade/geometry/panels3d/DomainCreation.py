@@ -43,6 +43,7 @@ class DomainCreation(TemplateDomainCreation):
             self.x_span,
             self.y_span,
             self.z_span,
+            0,
         )
 
         domain_tag = (ndim, domain_id)

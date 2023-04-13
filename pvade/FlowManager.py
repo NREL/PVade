@@ -32,30 +32,30 @@ class Flow:
         self.num_procs = domain.num_procs
 
         # Pressure (Scalar)
-        P1 = ufl.FiniteElement("Lagrange", domain.msh.ufl_cell(), 1)
-        self.Q = dolfinx.fem.FunctionSpace(domain.msh, P1)
+        P1 = ufl.FiniteElement("Lagrange", domain.msh_fluid.ufl_cell(), 1)
+        self.Q = dolfinx.fem.FunctionSpace(domain.msh_fluid, P1)
 
         # Velocity (Vector)
-        P2 = ufl.VectorElement("Lagrange", domain.msh.ufl_cell(), 2)
-        self.V = dolfinx.fem.FunctionSpace(domain.msh, P2)
+        P2 = ufl.VectorElement("Lagrange", domain.msh_fluid.ufl_cell(), 2)
+        self.V = dolfinx.fem.FunctionSpace(domain.msh_fluid, P2)
 
         # Stress (Tensor)
-        P3 = ufl.TensorElement("Lagrange", domain.msh.ufl_cell(), 2)
-        self.T = dolfinx.fem.FunctionSpace(domain.msh, P3)
+        P3 = ufl.TensorElement("Lagrange", domain.msh_fluid.ufl_cell(), 2)
+        self.T = dolfinx.fem.FunctionSpace(domain.msh_fluid, P3)
 
-        P4 = ufl.FiniteElement("DG", domain.msh.ufl_cell(), 0)
+        P4 = ufl.FiniteElement("DG", domain.msh_fluid.ufl_cell(), 0)
 
-        self.DG = dolfinx.fem.FunctionSpace(domain.msh, P4)
+        self.DG = dolfinx.fem.FunctionSpace(domain.msh_fluid, P4)
 
         self.first_call_to_solver = True
         self.first_call_to_surface_pressure = True
 
         # Store the dimension of the problem for convenience
-        self.ndim = domain.msh.topology.dim
+        self.ndim = domain.msh_fluid.topology.dim
 
         # find hmin in mesh
-        num_cells = domain.msh.topology.index_map(self.ndim).size_local
-        h = dolfinx.cpp.mesh.h(domain.msh, self.ndim, range(num_cells))
+        num_cells = domain.msh_fluid.topology.index_map(self.ndim).size_local
+        h = dolfinx.cpp.mesh.h(domain.msh_fluid, self.ndim, range(num_cells))
 
         # This value of hmin is local to the mesh portion owned by the process
         hmin_local = np.amin(h)
@@ -92,17 +92,16 @@ class Flow:
         """
         self.facet_dim = self.ndim - 1
 
-        self.zero_scalar = dolfinx.fem.Constant(domain.msh, PETSc.ScalarType(0.0))
+        self.zero_scalar = dolfinx.fem.Constant(domain.msh_fluid, PETSc.ScalarType(0.0))
         self.zero_vec = dolfinx.fem.Constant(
-            domain.msh, PETSc.ScalarType((0.0, 0.0, 0.0))
+            domain.msh_fluid, PETSc.ScalarType((0.0, 0.0, 0.0))
         )
 
         # TODO: These two functions can be eliminated if using dof tags?
         # TODO: Is there any reason to keep them
-        # self._locate_boundary_entities(domain, params)
+        self._locate_boundary_entities(domain, params)
         # self._locate_boundary_dofs()
-
-        self._locate_boundary_dofs_tags(domain)
+        # self._locate_boundary_dofs_tags(domain)
 
         self._build_velocity_boundary_conditions(domain, params)
 
@@ -214,83 +213,29 @@ class Flow:
                 return np.logical_and(x_mid, y_mid)
 
         self.x_min_facets = dolfinx.mesh.locate_entities_boundary(
-            domain.msh, self.facet_dim, x_min_wall
+            domain.msh_fluid, self.facet_dim, x_min_wall
         )
         self.x_max_facets = dolfinx.mesh.locate_entities_boundary(
-            domain.msh, self.facet_dim, x_max_wall
+            domain.msh_fluid, self.facet_dim, x_max_wall
         )
         self.y_min_facets = dolfinx.mesh.locate_entities_boundary(
-            domain.msh, self.facet_dim, y_min_wall
+            domain.msh_fluid, self.facet_dim, y_min_wall
         )
         self.y_max_facets = dolfinx.mesh.locate_entities_boundary(
-            domain.msh, self.facet_dim, y_max_wall
+            domain.msh_fluid, self.facet_dim, y_max_wall
         )
         if self.ndim == 3:
             self.z_min_facets = dolfinx.mesh.locate_entities_boundary(
-                domain.msh, self.facet_dim, z_min_wall
+                domain.msh_fluid, self.facet_dim, z_min_wall
             )
             self.z_max_facets = dolfinx.mesh.locate_entities_boundary(
-                domain.msh, self.facet_dim, z_max_wall
+                domain.msh_fluid, self.facet_dim, z_max_wall
             )
 
         self.internal_surface_facets = dolfinx.mesh.locate_entities_boundary(
-            domain.msh, self.facet_dim, internal_surface
+            domain.msh_fluid, self.facet_dim, internal_surface
         )
 
-    def _locate_boundary_dofs(self):
-        """Associate degrees of freedom with boundary facets
-
-        This function takes the previously-constructed facets from
-        ``_locate_boundary_entities`` and finds the corresponding degrees of
-        freedom for use in the actual boundary condition specification.
-
-        Args:
-            None
-
-        """
-        self.x_min_V_dofs = dolfinx.fem.locate_dofs_topological(
-            self.V, self.facet_dim, self.x_min_facets
-        )
-        self.x_max_V_dofs = dolfinx.fem.locate_dofs_topological(
-            self.V, self.facet_dim, self.x_max_facets
-        )
-        self.y_min_V_dofs = dolfinx.fem.locate_dofs_topological(
-            self.V, self.facet_dim, self.y_min_facets
-        )
-        self.y_max_V_dofs = dolfinx.fem.locate_dofs_topological(
-            self.V, self.facet_dim, self.y_max_facets
-        )
-        self.z_min_V_dofs = dolfinx.fem.locate_dofs_topological(
-            self.V, self.facet_dim, self.z_min_facets
-        )
-        self.z_max_V_dofs = dolfinx.fem.locate_dofs_topological(
-            self.V, self.facet_dim, self.z_max_facets
-        )
-        self.internal_surface_V_dofs = dolfinx.fem.locate_dofs_topological(
-            self.V, self.facet_dim, self.internal_surface_facets
-        )
-
-        self.x_min_Q_dofs = dolfinx.fem.locate_dofs_topological(
-            self.Q, self.facet_dim, self.x_min_facets
-        )
-        self.x_max_Q_dofs = dolfinx.fem.locate_dofs_topological(
-            self.Q, self.facet_dim, self.x_max_facets
-        )
-        self.y_min_Q_dofs = dolfinx.fem.locate_dofs_topological(
-            self.Q, self.facet_dim, self.y_min_facets
-        )
-        self.y_max_Q_dofs = dolfinx.fem.locate_dofs_topological(
-            self.Q, self.facet_dim, self.y_max_facets
-        )
-        self.z_min_Q_dofs = dolfinx.fem.locate_dofs_topological(
-            self.Q, self.facet_dim, self.z_min_facets
-        )
-        self.z_max_Q_dofs = dolfinx.fem.locate_dofs_topological(
-            self.Q, self.facet_dim, self.z_max_facets
-        )
-        self.internal_surface_Q_dofs = dolfinx.fem.locate_dofs_topological(
-            self.Q, self.facet_dim, self.internal_surface_facets
-        )
 
     def _locate_boundary_dofs_tags(self, domain):
         """Associate degrees of freedom with marker functions
@@ -390,30 +335,70 @@ class Flow:
             domain.ft.find(domain.domain_markers["internal_surface"]["idx"]),
         )
 
-    def _applybc(self, value, domain, V, marker):
+    def _get_dirichlet_bc(self, bc_value, domain, functionspace, marker, bc_location):
         """Apply a single boundary condition
 
         This function builds a single Dirichlet boundary condition given the value, gmsh marker, and function space.
 
         Args:
-            value (float, dolfinx.fem.Function): Scalar or function set on the dof
+            bc_value (float, dolfinx.fem.Function): Scalar or function set on the dof
             domain (:obj:`pvade.geometry.MeshManager.Domain`): A Domain object
-            V (:obj:`dolfinx.dolfinx.fem.FunctionSpace`): The function space on which the boundary condition will be acting
+            functionspace (:obj:`dolfinx.dolfinx.fem.FunctionSpace`): The function space on which the boundary condition will be acting
             marker (int): boundary tag created in gmsh
 
         Returns:
             :obj:`dolfinx.fem.dolfinx.fem.dirichletbc`: Dirichlet boundary conditions
 
         """
-        dofs = dolfinx.fem.locate_dofs_topological(
-            V, self.facet_dim, domain.ft.find(marker)
-        )
 
-        # print(value, dofs, V)
+        identify_by_gmsh_marker = False
 
-        bc = dolfinx.fem.dirichletbc(value, dofs, V)
+        if identify_by_gmsh_marker:
+            facets = domain.ft.find(marker)
+
+        else:
+            facets = getattr(self, f"{bc_location}_facets")
+
+        dofs = dolfinx.fem.locate_dofs_topological(functionspace, self.facet_dim, facets)
+
+        bc = dolfinx.fem.dirichletbc(bc_value, dofs, functionspace)
 
         return bc
+
+    def _build_vel_bc_by_type(self, bc_type, domain, functionspace, marker, bc_location):
+            """Summary
+
+            Args:
+                bc_type (TYPE): Description
+                functionspace (TYPE): Description
+                marker (TYPE): Description
+                bc_location (TYPE): Description
+
+            Returns:
+                TYPE: Description
+            """
+
+            if self.rank == 0:
+                print(f"Setting '{bc_type}' BC on {bc_location}")
+
+            if bc_type == "noslip":
+                bc = self._get_dirichlet_bc(self.zero_vec, domain, functionspace, marker, bc_location)
+
+            elif bc_type == "slip":
+                if "x" in bc_location:
+                    sub_id = 0
+                elif "y" in bc_location:
+                    sub_id = 1
+                elif "z" in bc_location:
+                    sub_id = 2
+
+                bc = self._get_dirichlet_bc(self.zero_scalar, domain, functionspace.sub(sub_id), marker, bc_location)
+
+            else:
+                if domain.rank == 0:
+                    raise ValueError(f"{bc_type} BC not recognized")
+
+            return bc
 
     def _build_velocity_boundary_conditions(self, domain, params):
         """Build all boundary conditions on velocity
@@ -428,113 +413,26 @@ class Flow:
         # Define velocity boundary conditions
         self.bcu = []
 
-        # x_min and x_max wall BCs
-        # self.bcu.append(dolfinx.fem.dirichletbc(self.zero_vec, self.x_min_V_dofs, self.V))
-        # self.bcu.append(dolfinx.fem.dirichletbc(self.zero_vec, self.x_max_V_dofs, self.V))
 
-        # y_min and y_max wall BCs
-        # self.bcu.append(dolfinx.fem.dirichletbc(self.zero_vec, self.y_min_V_dofs, self.V))
-        # self.bcu.append(dolfinx.fem.dirichletbc(self.zero_vec, self.y_max_V_dofs, self.V))
-        # self.bcu.append(dolfinx.fem.dirichletbc(self.zero_vec, self.z_min_V_dofs, self.V))
-        # self.bcu.append(dolfinx.fem.dirichletbc(self.zero_vec, self.z_max_V_dofs, self.V))
+        # Generate list of locations to loop over
+        if self.ndim == 2:
+            bc_location_list = ["y_min", "y_max"]
+        elif self.ndim == 3:
+            bc_location_list = ["y_min", "y_max", "z_min", "z_max"]
 
-        def _apply_type_bc(bc_name, functionspace, marker, bcname):
-            """Summary
+        # Iterate over all boundaries
+        for bc_location in bc_location_list:
+            bc_type = getattr(params.fluid, f"bc_{bc_location}")
 
-            Args:
-                bc_name (TYPE): Description
-                functionspace (TYPE): Description
-                marker (TYPE): Description
-                bcname (TYPE): Description
+            marker_id = domain.domain_markers[bc_location]["idx"]
 
-            Returns:
-                TYPE: Description
-            """
-            if bc_name == "free":
-                if domain.rank == 0:
-                    print("free bc_name on ", bcname)
-            elif bc_name == "noslip":
-                bc = self._applybc(self.zero_vec, domain, functionspace, marker)
-                if domain.rank == 0:
-                    print("noslip bc_name on ", bcname)
-            elif bc_name == "slip":
-                if "y" in bcname:
-                    temp_func = functionspace.sub(1)
-                elif "z" in bcname:
-                    temp_func = functionspace.sub(2)
-                bc = self._applybc(self.zero_scalar, domain, temp_func, marker)
-                if domain.rank == 0:
-                    print(
-                        "Slip bc_name on ",
-                        bcname,
-                        "boundary normal velocity in ",
-                        bcname,
-                        "are set to 0.",
-                    )
-            else:
-                if domain.rank == 0:
-                    print("bc_name not recognized")
+            bc = self._build_vel_bc_by_type(bc_type, domain, self.V, marker_id, bc_location)
 
-                exit()
+            self.bcu.append(bc)
 
-            return bc
-
-        if self.ndim == 3:
-            # iterate over all noudaries
-            for bclocation in (
-                "bc_ywall_max",
-                "bc_ywall_min",
-                "bc_zwall_max",
-                "bc_zwall_min",
-            ):
-                if bclocation == "bc_ywall_max":
-                    temp_marker = domain.domain_markers["y_max"]["idx"]
-                    temp_bcname = "y max"
-                    bc_value = params.fluid.bc_ywall_max
-                elif bclocation == "bc_ywall_min":
-                    temp_marker = domain.domain_markers["y_min"]["idx"]
-                    temp_bcname = "y min"
-                    bc_value = params.fluid.bc_ywall_min
-                elif bclocation == "bc_zwall_max":
-                    temp_marker = domain.domain_markers["z_max"]["idx"]
-                    temp_bcname = "z max"
-                    bc_value = params.fluid.bc_zwall_max
-                elif bclocation == "bc_zwall_min":
-                    temp_marker = domain.domain_markers["z_min"]["idx"]
-                    temp_bcname = "z min"
-                    bc_value = params.fluid.bc_zwall_min
-
-                self.bcu.append(
-                    _apply_type_bc(bc_value, self.V, temp_marker, temp_bcname)
-                )
-
-        elif self.ndim == 2:
-            # iterate over all noudaries
-            for bclocation in "bc_ywall_min", "bc_ywall_max":
-                if bclocation == "bc_ywall_max":
-                    temp_marker = domain.domain_markers["y_max"]["idx"]
-                    temp_bcname = "y max"
-                    bc_value = params.fluid.bc_ywall_max
-                elif bclocation == "bc_ywall_min":
-                    temp_marker = domain.domain_markers["y_min"]["idx"]
-                    temp_bcname = "y min"
-                    bc_value = params.fluid.bc_ywall_min
-
-                self.bcu.append(
-                    _apply_type_bc(bc_value, self.V, temp_marker, temp_bcname)
-                )
-
-        # self.bcu.append(self._noslip(self.zero_scalar,domain,self.V.sub(1),domain.geometry.y_min_marker))
-        # self.bcu.append(self._noslip(self.zero_scalar,domain,self.V.sub(1),domain.geometry.y_max_marker))
-
-        # # z_min and z_max wall BCs
-        # self.bcu.append(dolfinx.fem.dirichletbc(self.zero_vec,domain,self.V,domain.geometry.z_min_marker))
-        # self.bcu.append(dolfinx.fem.dirichletbc(self.zero_vec,domain,self.V,domain.geometry.z_max_marker))
-
-        # interior surface (obstacle)
-        self.bcu.append(
-            dolfinx.fem.dirichletbc(self.zero_vec, self.internal_surface_V_dofs, self.V)
-        )
+        # Set all interior surfaces to no slip
+        bc = self._build_vel_bc_by_type("noslip", domain, self.V, domain.domain_markers["internal_surface"]["idx"], "internal_surface")
+        self.bcu.append(bc)
 
         def inflow_profile_expression(x):
             """Define an inflow expression for use as boundary condition
@@ -546,7 +444,7 @@ class Flow:
                 np.ndarray: Value of velocity at each coordinate in input array
             """
             inflow_values = np.zeros(
-                (domain.msh.geometry.dim, x.shape[1]), dtype=PETSc.ScalarType
+                (domain.msh_fluid.geometry.dim, x.shape[1]), dtype=PETSc.ScalarType
             )
 
             H = 0.41
@@ -576,7 +474,7 @@ class Flow:
                     / (0.41**2)
                     # 16.0 * params.fluid.u_ref * x[1]  * inflow_dy / H**4
                 )
-            elif params.general.example == "panels":
+            elif params.general.example == "panels3d":
                 inflow_values[0] = (
                     (params.fluid.u_ref)
                     * np.log(((x[2]) - d0) / z0)
@@ -603,27 +501,29 @@ class Flow:
             d0 = 0.5
             if self.ndim == 3:
                 upper_cells = dolfinx.mesh.locate_entities(
-                    domain.msh, self.ndim, lambda x: x[2] > d0 + z0
+                    domain.msh_fluid, self.ndim, lambda x: x[2] > d0 + z0
                 )
                 lower_cells = dolfinx.mesh.locate_entities(
-                    domain.msh, self.ndim, lambda x: x[2] <= d0 + z0
+                    domain.msh_fluid, self.ndim, lambda x: x[2] <= d0 + z0
                 )
             elif self.ndim == 2:
                 upper_cells = dolfinx.mesh.locate_entities(
-                    domain.msh, self.ndim, lambda x: x[1] > d0 + z0
+                    domain.msh_fluid, self.ndim, lambda x: x[1] > d0 + z0
                 )
                 lower_cells = dolfinx.mesh.locate_entities(
-                    domain.msh, self.ndim, lambda x: x[1] <= d0 + z0
+                    domain.msh_fluid, self.ndim, lambda x: x[1] <= d0 + z0
                 )
 
             self.inflow_profile.interpolate(
                 lambda x: np.zeros(
-                    (domain.msh.geometry.dim, x.shape[1]), dtype=PETSc.ScalarType
+                    (domain.msh_fluid.geometry.dim, x.shape[1]), dtype=PETSc.ScalarType
                 )
             )
             self.inflow_profile.interpolate(inflow_profile_expression, upper_cells)
 
-        self.bcu.append(dolfinx.fem.dirichletbc(self.inflow_profile, self.x_min_V_dofs))
+        dofs = dolfinx.fem.locate_dofs_topological(self.V, self.facet_dim, self.x_min_facets)
+
+        self.bcu.append(dolfinx.fem.dirichletbc(self.inflow_profile, dofs))
 
     def _build_pressure_boundary_conditions(self, domain, params):
         """Build all boundary conditions on pressure
@@ -637,8 +537,10 @@ class Flow:
         # Define pressure boundary conditions
         self.bcp = []
 
+        dofs = dolfinx.fem.locate_dofs_topological(self.Q, self.facet_dim, self.x_max_facets)
+
         self.bcp.append(
-            dolfinx.fem.dirichletbc(self.zero_scalar, self.x_max_Q_dofs, self.Q)
+            dolfinx.fem.dirichletbc(self.zero_scalar, dofs, self.Q)
         )
 
     def build_forms(self, domain, params):
@@ -658,9 +560,9 @@ class Flow:
 
         """
         # Define fluid properties
-        self.dpdx = dolfinx.fem.Constant(domain.msh, (0.0, 0.0, 0.0))
-        self.dt_c = dolfinx.fem.Constant(domain.msh, (params.solver.dt))
-        nu = dolfinx.fem.Constant(domain.msh, (params.fluid.nu))
+        self.dpdx = dolfinx.fem.Constant(domain.msh_fluid, (0.0, 0.0, 0.0))
+        self.dt_c = dolfinx.fem.Constant(domain.msh_fluid, (params.solver.dt))
+        nu = dolfinx.fem.Constant(domain.msh_fluid, (params.fluid.nu))
 
         # Define trial and test functions for velocity
         self.u = ufl.TrialFunction(self.V)
@@ -697,7 +599,7 @@ class Flow:
 
         if use_eddy_viscosity:
             # By default, don't use any eddy viscosity
-            filter_scale = ufl.CellVolume(domain.msh) ** (1.0 / domain.msh.topology.dim)
+            filter_scale = ufl.CellVolume(domain.msh_fluid) ** (1.0 / domain.msh_fluid.topology.dim)
 
             # Strain rate tensor, 0.5*(du_i/dx_j + du_j/dx_i)
             Sij = ufl.sym(ufl.nabla_grad(U_AB))
@@ -712,7 +614,7 @@ class Flow:
             self.nu_T = Cs**2 * filter_scale**2 * strainMag
 
         else:
-            self.nu_T = dolfinx.fem.Constant(domain.msh, 0.0)
+            self.nu_T = dolfinx.fem.Constant(domain.msh_fluid, 0.0)
 
         # ================================================================#
         # DEFINE VARIATIONAL FORMS
@@ -746,9 +648,9 @@ class Flow:
 
         fractional_step_scheme = "IPCS"
         U = 0.5 * (self.u_k1 + self.u)
-        n = ufl.FacetNormal(domain.msh)
+        n = ufl.FacetNormal(domain.msh_fluid)
         f = dolfinx.fem.Constant(
-            domain.msh, (PETSc.ScalarType(0), PETSc.ScalarType(0), PETSc.ScalarType(0))
+            domain.msh_fluid, (PETSc.ScalarType(0), PETSc.ScalarType(0), PETSc.ScalarType(0))
         )
         # Define variational problem for step 1: tentative velocity
         self.F1 = (
@@ -794,7 +696,7 @@ class Flow:
         # self.L4 = ufl.inner(self.stress, ufl.TestFunction(self.T))*ufl.dx
 
         # Create a dolfinx.fem.form for projecting CFL calculation onto DG function space
-        cell_diam = ufl.CellDiameter(domain.msh)
+        cell_diam = ufl.CellDiameter(domain.msh_fluid)
         cfl_form = ufl.sqrt(ufl.inner(self.u_k, self.u_k)) * self.dt_c / cell_diam
 
         self.cfl_vec = dolfinx.fem.Function(self.DG)
@@ -807,7 +709,7 @@ class Flow:
 
         # Set up the functions to ensure a dolfinx.fem.constant flux through the outlet
         outlet_cells = dolfinx.mesh.locate_entities(
-            domain.msh, self.ndim, lambda x: x[0] > params.domain.x_max - 1
+            domain.msh_fluid, self.ndim, lambda x: x[0] > params.domain.x_max - 1
         )
         self.flux_plane = dolfinx.fem.Function(self.V)
         self.flux_plane.interpolate(
@@ -816,7 +718,7 @@ class Flow:
         )
 
         # self.flux_plane = Expression('x[0] < cutoff ? 0.0 : 1.0', cutoff=domain.x_range[1]-1.0, degree=1)
-        self.flux_dx = ufl.Measure("dx", domain=domain.msh)  # not needed ?
+        self.flux_dx = ufl.Measure("dx", domain=domain.msh_fluid)  # not needed ?
 
         # self.vol = dolfinx.fem.petsc.assemble_matrix(self.flux_plane*self.flux_dx)
         # form1 = dolfinx.fem.form(self.flux_plane*self.flux_dx)
