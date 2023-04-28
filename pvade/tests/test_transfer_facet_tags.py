@@ -8,7 +8,7 @@ from pvade.geometry.MeshManager import FSIDomain
 
 @pytest.mark.unit
 @pytest.mark.parametrize(
-    "subdomain_name, marker_name",
+    "sub_domain_name, marker_name",
     [
         ("fluid", "x_min"),
         ("structure", "x_min"),
@@ -26,7 +26,7 @@ from pvade.geometry.MeshManager import FSIDomain
         ("structure", "internal_surface"),
     ],
 )
-def test_transfer_facet_tags(subdomain_name, marker_name):
+def test_transfer_facet_tags(sub_domain_name, marker_name):
     input_path = "pvade/tests/inputs_test/"
 
     # Get the path to the input file from the command line
@@ -40,7 +40,7 @@ def test_transfer_facet_tags(subdomain_name, marker_name):
     domain.build(params)
 
     # Get the sub-domain object
-    sub_domain = getattr(domain, subdomain_name)
+    sub_domain = getattr(domain, sub_domain_name)
 
     idx = domain.domain_markers[marker_name]["idx"]
 

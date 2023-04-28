@@ -105,12 +105,12 @@ class FSIDomain:
 
         """
 
-        for marker_key in ["fluid", "structure"]:
+        for sub_domain_name in ["fluid", "structure"]:
             if self.rank == 0:
-                print(f"Creating {marker_key} submesh")
+                print(f"Creating {sub_domain_name} submesh")
 
             # Get the idx associated with either "fluid" or "structure"
-            marker_id = self.domain_markers[marker_key]["idx"]
+            marker_id = self.domain_markers[sub_domain_name]["idx"]
 
             # Find all cells where cell tag = marker_id
             submesh_cells = self.cell_tags.find(marker_id)
@@ -130,7 +130,7 @@ class FSIDomain:
             sub_domain.vertex_map = vertex_map
             sub_domain.geom_map = geom_map
 
-            setattr(self, marker_key, sub_domain)
+            setattr(self, sub_domain_name, sub_domain)
 
     def _transfer_mesh_tags_to_submeshes(self, params):
         facet_dim = self.ndim - 1
@@ -146,9 +146,9 @@ class FSIDomain:
 
         cell_to_facet = self.msh.topology.connectivity(self.ndim, facet_dim)
 
-        for marker_key in ["fluid", "structure"]:
+        for sub_domain_name in ["fluid", "structure"]:
             # Get the sub-domain object
-            sub_domain = getattr(self, marker_key)
+            sub_domain = getattr(self, sub_domain_name)
 
             # Initialize facets and create connectivity between cells and facets
             sub_domain.msh.topology.create_entities(facet_dim)
@@ -182,62 +182,6 @@ class FSIDomain:
                 np.arange(sub_num_facets, dtype=np.int32),
                 np.ones(sub_num_facets),
             )
-
-            mesh_filename = os.path.join(
-                params.general.output_dir_mesh, f"mesh_{marker_key}.xdmf"
-            )
-
-            with dolfinx.io.XDMFFile(self.comm, mesh_filename, "w") as fp:
-                fp.write_mesh(sub_domain.msh)
-                sub_domain.msh.topology.create_connectivity(facet_dim, self.ndim)
-                fp.write_meshtags(sub_domain.facet_tags)
-
-        for marker_key in ["fluid", "structure"]:
-            # Get the sub-domain object
-            sub_domain = getattr(self, marker_key)
-
-            internal_facets_from_tag = sub_domain.facet_tags.find(3)
-
-            tol = 0
-
-            def internal_surface(x):
-                x_mid = np.logical_and(
-                    params.domain.x_min + tol < x[0], x[0] < params.domain.x_max - tol
-                )
-                y_mid = np.logical_and(
-                    params.domain.y_min + tol < x[1], x[1] < params.domain.y_max - tol
-                )
-                if self.ndim == 3:
-                    z_mid = np.logical_and(
-                        params.domain.z_min + tol < x[2],
-                        x[2] < params.domain.z_max - tol,
-                    )
-
-                    return np.logical_and(x_mid, np.logical_and(y_mid, z_mid))
-
-                elif self.ndim == 2:
-                    return np.logical_and(x_mid, y_mid)
-
-            def x_min_wall(x):
-                """Identify entities on the x_min wall
-
-                Args:
-                    x (np.ndarray): An array of coordinates
-
-                Returns:
-                    bool: An array mask, true for points on x_min wall
-                """
-                return np.isclose(x[1], params.domain.y_min)
-
-            internal_facets = dolfinx.mesh.locate_entities_boundary(
-                sub_domain.msh, self.ndim - 1, x_min_wall
-            )
-
-            print(
-                f"from tag, nn = {len(internal_facets_from_tag)} vs from og, nn = {len(internal_facets)}"
-            )
-
-            assert np.allclose(internal_facets_from_tag, internal_facets)
 
     def read(self, read_path, params):
         """Read the mesh from an external file.
@@ -398,19 +342,19 @@ class FSIDomain:
                 fp.write_meshtags(self.cell_tags)
                 fp.write_meshtags(self.facet_tags)
 
-            # mesh_filename = os.path.join(params.general.output_dir_mesh, "mesh_structure.xdmf")
+            for sub_domain_name in ["fluid", "structure"]:
+                mesh_filename = os.path.join(
+                    params.general.output_dir_mesh, f"mesh_{sub_domain_name}.xdmf"
+                )
 
-            # with dolfinx.io.XDMFFile(self.comm, mesh_filename, "w") as fp:
-            #     fp.write_mesh(self.msh_structure)
-            #     # fp.write_meshtags(self.cell_tags)
-            #     # fp.write_meshtags(self.facet_tags)
+                sub_domain = getattr(self, sub_domain_name)
 
-            # mesh_filename = os.path.join(params.general.output_dir_mesh, "mesh_fluid.xdmf")
-
-            # with dolfinx.io.XDMFFile(self.comm, mesh_filename, "w") as fp:
-            #     fp.write_mesh(self.msh_fluid)
-            #     # fp.write_meshtags(self.cell_tags)
-            #     # fp.write_meshtags(self.facet_tags)
+                with dolfinx.io.XDMFFile(self.comm, mesh_filename, "w") as fp:
+                    fp.write_mesh(sub_domain.msh)
+                    sub_domain.msh.topology.create_connectivity(
+                        self.ndim - 1, self.ndim
+                    )
+                    fp.write_meshtags(sub_domain.facet_tags)
 
             print("Done.")
 
