@@ -77,7 +77,9 @@ def build_vel_bc_by_type(bc_type, domain, functionspace, bc_location):
         elif bc_location in ["z_min", "z_max"]:
             sub_id = 2
 
-        dofs = get_facet_dofs_by_gmsh_tag(domain, functionspace.sub(sub_id), bc_location)
+        dofs = get_facet_dofs_by_gmsh_tag(
+            domain, functionspace.sub(sub_id), bc_location
+        )
 
         bc = dolfinx.fem.dirichletbc(zero_scalar, dofs, functionspace.sub(sub_id))
 
