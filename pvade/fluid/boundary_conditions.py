@@ -3,6 +3,8 @@ from petsc4py import PETSc
 
 import numpy as np
 
+import warnings
+
 
 def get_facet_dofs_by_gmsh_tag(domain, functionspace, location):
     """Associate degrees of freedom with marker functions
@@ -32,8 +34,8 @@ def get_facet_dofs_by_gmsh_tag(domain, functionspace, location):
     elif isinstance(location, int):
         found_entities = domain.fluid.facet_tags.find(location)
 
-    if len(found_entities) == 0:
-        warnings.warn(f"Found no facets using location = {location}.")
+    # if len(found_entities) == 0:
+    #     warnings.warn(f"Found no facets using location = {location}.")
 
     dofs = dolfinx.fem.locate_dofs_topological(functionspace, facet_dim, found_entities)
 
@@ -56,12 +58,13 @@ def build_vel_bc_by_type(bc_type, domain, functionspace, bc_location):
     if domain.rank == 0:
         print(f"Setting '{bc_type}' BC on {bc_location}")
 
-    dofs = get_facet_dofs_by_gmsh_tag(domain, functionspace, bc_location)
-
     if bc_type == "noslip":
         zero_vec = dolfinx.fem.Constant(
             domain.fluid.msh, PETSc.ScalarType((0.0, 0.0, 0.0))
         )
+
+        dofs = get_facet_dofs_by_gmsh_tag(domain, functionspace, bc_location)
+
         bc = dolfinx.fem.dirichletbc(zero_vec, dofs, functionspace)
 
     elif bc_type == "slip":
@@ -73,6 +76,8 @@ def build_vel_bc_by_type(bc_type, domain, functionspace, bc_location):
             sub_id = 1
         elif bc_location in ["z_min", "z_max"]:
             sub_id = 2
+
+        dofs = get_facet_dofs_by_gmsh_tag(domain, functionspace.sub(sub_id), bc_location)
 
         bc = dolfinx.fem.dirichletbc(zero_scalar, dofs, functionspace.sub(sub_id))
 
@@ -227,6 +232,29 @@ def build_velocity_boundary_conditions(domain, params, functionspace):
     bcu.append(bc)
 
     # Set the inflow boundary condition
+
+    '''
+    def inflow_profile_expression(x):
+        """Define an inflow expression for use as boundary condition
+
+        Args:
+            x (np.ndarray): Array of coordinates
+
+        Returns:
+            np.ndarray: Value of velocity at each coordinate in input array
+        """
+        inflow_values = np.zeros(
+            (domain.fluid.msh.geometry.dim, x.shape[1]), dtype=PETSc.ScalarType
+        )
+
+        inflow_values[0] = 0.01
+
+        return inflow_values
+
+    inflow_function = dolfinx.fem.Function(functionspace)
+    inflow_function.interpolate(inflow_profile_expression)
+    '''
+
     inflow_function = get_inflow_profile_function(domain, params, functionspace)
     dofs = get_facet_dofs_by_gmsh_tag(domain, functionspace, "x_min")
     bcu.append(dolfinx.fem.dirichletbc(inflow_function, dofs))
@@ -248,7 +276,7 @@ def build_pressure_boundary_conditions(domain, params, functionspace):
 
     zero_scalar = dolfinx.fem.Constant(domain.fluid.msh, PETSc.ScalarType(0.0))
 
-    dofs = get_facet_dofs_by_gmsh_tag(domain, functionspace, "x_min")
+    dofs = get_facet_dofs_by_gmsh_tag(domain, functionspace, "x_max")
     bcp.append(dolfinx.fem.dirichletbc(zero_scalar, dofs, functionspace))
 
     return bcp
