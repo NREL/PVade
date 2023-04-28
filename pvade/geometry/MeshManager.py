@@ -332,30 +332,32 @@ class FSIDomain:
             # Save the *.msh file and *.vtk file (the latter is for visualization only)
             print(f"Writing Mesh to {params.general.output_dir_mesh}...")
 
-            if os.path.exists(params.general.output_dir_mesh) == False:
-                os.makedirs(params.general.output_dir_mesh)
+        if os.path.exists(params.general.output_dir_mesh) == False:
+            os.makedirs(params.general.output_dir_mesh)
 
-            mesh_filename = os.path.join(params.general.output_dir_mesh, "mesh.xdmf")
+        mesh_filename = os.path.join(params.general.output_dir_mesh, "mesh.xdmf")
 
-            with dolfinx.io.XDMFFile(self.comm, mesh_filename, "w") as fp:
-                fp.write_mesh(self.msh)
-                fp.write_meshtags(self.cell_tags)
-                fp.write_meshtags(self.facet_tags)
+        with dolfinx.io.XDMFFile(self.comm, mesh_filename, "w") as fp:
+            fp.write_mesh(self.msh)
+            fp.write_meshtags(self.cell_tags)
+            fp.write_meshtags(self.facet_tags)
 
-            for sub_domain_name in ["fluid", "structure"]:
-                mesh_filename = os.path.join(
-                    params.general.output_dir_mesh, f"mesh_{sub_domain_name}.xdmf"
-                )
+        # TODO: This will fail if no structure mesh exists
+        # for sub_domain_name in ["fluid", "structure"]:
+        #     mesh_filename = os.path.join(
+        #         params.general.output_dir_mesh, f"mesh_{sub_domain_name}.xdmf"
+        #     )
 
-                sub_domain = getattr(self, sub_domain_name)
+        #     sub_domain = getattr(self, sub_domain_name)
 
-                with dolfinx.io.XDMFFile(self.comm, mesh_filename, "w") as fp:
-                    fp.write_mesh(sub_domain.msh)
-                    sub_domain.msh.topology.create_connectivity(
-                        self.ndim - 1, self.ndim
-                    )
-                    fp.write_meshtags(sub_domain.facet_tags)
+        #     with dolfinx.io.XDMFFile(self.comm, mesh_filename, "w") as fp:
+        #         fp.write_mesh(sub_domain.msh)
+        #         sub_domain.msh.topology.create_connectivity(
+        #             self.ndim - 1, self.ndim
+        #         )
+        #         fp.write_meshtags(sub_domain.facet_tags)
 
+        if self.rank == 0:
             print("Done.")
 
     def test_mesh_functionspace(self):
