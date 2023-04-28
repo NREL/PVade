@@ -1,7 +1,7 @@
 import pytest
 import os
 
-from pvade.FlowManager import Flow
+from pvade.fluid.FlowManager import Flow
 from pvade.DataStream import DataStream
 from pvade.Parameters import SimParams
 from pvade.Utilities import get_input_file, write_metrics
