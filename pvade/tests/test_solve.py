@@ -1,6 +1,8 @@
 import pytest
 import os
 
+import numpy as np
+
 from pvade.fluid.FlowManager import Flow
 from pvade.DataStream import DataStream
 from pvade.Parameters import SimParams
@@ -14,6 +16,7 @@ import tqdm.autonotebook
 
 input_path = "pvade/tests/inputs_test/"
 
+solve_iter = 10
 
 @pytest.mark.unit
 def test_flow_3dpanels():
@@ -33,7 +36,20 @@ def test_flow_3dpanels():
     # # # Build the fluid forms
     flow.build_forms(domain, params)
     dataIO = DataStream(domain, flow, params)
-    flow.solve(params)
+
+    for t_step in range(solve_iter):
+        flow.solve(params)
+
+        max_velocity = np.amax(flow.u_k.x.array)
+        max_pressure = np.amax(flow.p_k.x.array)
+
+        print("max_velocity = ", max_velocity)
+        print("max_pressure = ", max_pressure)
+
+    max_velocity_truth =  16.78961717598599
+    max_pressure_truth =  161.00087027677822
+    assert np.isclose(max_velocity_truth, max_velocity)
+    assert np.isclose(max_pressure_truth, max_pressure)
 
 
 @pytest.mark.unit
@@ -54,8 +70,20 @@ def test_flow_2dpanels():
     # # # Build the fluid forms
     flow.build_forms(domain, params)
     dataIO = DataStream(domain, flow, params)
-    flow.solve(params)
 
+    for t_step in range(solve_iter):
+        flow.solve(params)
+
+        max_velocity = np.amax(flow.u_k.x.array)
+        max_pressure = np.amax(flow.p_k.x.array)
+
+        print("max_velocity = ", max_velocity)
+        print("max_pressure = ", max_pressure)
+
+    max_velocity_truth =  3.4734894184978726
+    max_pressure_truth =  1.698213865642233
+    assert np.isclose(max_velocity_truth, max_velocity)
+    assert np.isclose(max_pressure_truth, max_pressure)
 
 @pytest.mark.unit
 def test_flow_2dcylinder():
@@ -75,8 +103,20 @@ def test_flow_2dcylinder():
     # # # Build the fluid forms
     flow.build_forms(domain, params)
     dataIO = DataStream(domain, flow, params)
-    flow.solve(params)
 
+    for t_step in range(solve_iter):
+        flow.solve(params)
+
+        max_velocity = np.amax(flow.u_k.x.array)
+        max_pressure = np.amax(flow.p_k.x.array)
+
+        print("max_velocity = ", max_velocity)
+        print("max_pressure = ", max_pressure)
+
+    max_velocity_truth =  1.8113852701695827
+    max_pressure_truth =  1.3044593668958533
+    assert np.isclose(max_velocity_truth, max_velocity)
+    assert np.isclose(max_pressure_truth, max_pressure)
 
 @pytest.mark.unit
 def test_flow_3dcylinder():
@@ -96,4 +136,17 @@ def test_flow_3dcylinder():
     # # # Build the fluid forms
     flow.build_forms(domain, params)
     dataIO = DataStream(domain, flow, params)
-    flow.solve(params)
+
+    for t_step in range(solve_iter):
+        flow.solve(params)
+
+        max_velocity = np.amax(flow.u_k.x.array)
+        max_pressure = np.amax(flow.p_k.x.array)
+
+        print("max_velocity = ", max_velocity)
+        print("max_pressure = ", max_pressure)
+
+    max_velocity_truth =  0.6242970092279582
+    max_pressure_truth =  0.30929163498498147
+    assert np.isclose(max_velocity_truth, max_velocity)
+    assert np.isclose(max_pressure_truth, max_pressure)

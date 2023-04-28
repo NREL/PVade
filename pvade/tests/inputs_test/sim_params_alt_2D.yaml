@@ -10,7 +10,7 @@ domain:
   x_max: 50
   y_min: 0
   y_max: 20
-  l_char: 0.9
+  l_char: 2.0
 pv_array:
   num_rows: 3
   elevation: 1.5
