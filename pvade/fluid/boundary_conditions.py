@@ -85,14 +85,8 @@ def build_vel_bc_by_type(bc_type, domain, functionspace, bc_location):
 
 class InflowVelocity:
     def __init__(self, geom_dim, params):
-        self.params = params
-
-        # IMPORTANT: this is distinct from ndim because a mesh can
-        # be 2D but have 3 componenets of position, e.g., a mesh
-        # with triangular elements can still have a z dimension = 0.
-        # This only gets used in making sure the inflow value
-        # numpy array has the correct size
         self.geom_dim = geom_dim
+        self.params = params
 
     def __call__(self, x):
         """Define an inflow expression for use as boundary condition
