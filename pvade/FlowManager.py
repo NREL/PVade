@@ -114,6 +114,11 @@ class Flow:
 
         Args:
             domain (:obj:`pvade.geometry.MeshManager.Domain`): A Domain object
+            functionspace (dolfinx.fem.FunctionSpace): The dolfinx function space on which the boundary condition will be applied
+            location (str, int): A string identifier of the boundary condition location, e.g., "x_min" or the equivalent integer tag, e.g., 1
+
+        Returns:
+            list: A list of the degrees of freedom associated with this tag and functionspace
 
         """
 
@@ -133,50 +138,31 @@ class Flow:
 
         return dofs
 
-    def _get_dirichlet_bc(self, bc_value, domain, functionspace, bc_location):
-        """Apply a single boundary condition
-
-        This function builds a single Dirichlet boundary condition given the value, gmsh marker, and function space.
-
-        Args:
-            bc_value (float, dolfinx.fem.Function): Scalar or function set on the dof
-            domain (:obj:`pvade.geometry.MeshManager.Domain`): A Domain object
-            functionspace (:obj:`dolfinx.dolfinx.fem.FunctionSpace`): The function space on which the boundary condition will be acting
-            marker (int): boundary tag created in gmsh
-
-        Returns:
-            :obj:`dolfinx.fem.dolfinx.fem.dirichletbc`: Dirichlet boundary conditions
-
-        """
-
-        dofs = self.get_facet_dofs_by_gmsh_tag(domain, functionspace, bc_location)
-
-        bc = dolfinx.fem.dirichletbc(bc_value, dofs, functionspace)
-
-        return bc
-
     def _build_vel_bc_by_type(self, bc_type, domain, functionspace, bc_location):
-        """Summary
+        """Build a dirichlet bc
 
         Args:
-            bc_type (TYPE): Description
-            functionspace (TYPE): Description
-            marker (TYPE): Description
-            bc_location (TYPE): Description
+            bc_type (str): The type of simple boundary condition to apply, "slip" or "noslip"
+            domain (:obj:`pvade.geometry.MeshManager.Domain`): A Domain object
+            functionspace (dolfinx.fem.FunctionSpace): The dolfinx function space on which the boundary condition will be applied
+            bc_location (str, int): A string identifier of the boundary condition location, e.g., "x_min" or the equivalent integer tag, e.g., 1
 
         Returns:
-            TYPE: Description
+            dolfinx.fem.dirichletbc: A dolfinx dirichlet boundary condition
         """
 
         if self.rank == 0:
             print(f"Setting '{bc_type}' BC on {bc_location}")
 
+        dofs = self.get_facet_dofs_by_gmsh_tag(domain, functionspace, bc_location)
+
         if bc_type == "noslip":
-            bc = self._get_dirichlet_bc(
-                self.zero_vec, domain, functionspace, bc_location
-            )
+            bc_value = self.zero_vec
+            bc = dolfinx.fem.dirichletbc(bc_value, dofs, functionspace)
 
         elif bc_type == "slip":
+            bc_value = self.zero_scalar
+
             if bc_location in ["x_min", "x_max"]:
                 sub_id = 0
             elif bc_location in ["y_min", "y_max"]:
@@ -184,9 +170,7 @@ class Flow:
             elif bc_location in ["z_min", "z_max"]:
                 sub_id = 2
 
-            bc = self._get_dirichlet_bc(
-                self.zero_scalar, domain, functionspace.sub(sub_id), bc_location
-            )
+            bc = dolfinx.fem.dirichletbc(bc_value, dofs, functionspace.sub(sub_id))
 
         else:
             if domain.rank == 0:
