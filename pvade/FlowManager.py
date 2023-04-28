@@ -9,6 +9,8 @@ from mpi4py import MPI
 import numpy as np
 import scipy.interpolate as interp
 
+import warnings
+
 
 class Flow:
     """This class solves the CFD problem"""
@@ -52,6 +54,7 @@ class Flow:
 
         # Store the dimension of the problem for convenience
         self.ndim = domain.fluid.msh.topology.dim
+        self.facet_dim = self.ndim - 1
 
         # find hmin in mesh
         num_cells = domain.fluid.msh.topology.index_map(self.ndim).size_local
@@ -90,153 +93,17 @@ class Flow:
             params (:obj:`pvade.Parameters.SimParams`): A SimParams object
 
         """
-        self.facet_dim = self.ndim - 1
 
         self.zero_scalar = dolfinx.fem.Constant(domain.fluid.msh, PETSc.ScalarType(0.0))
         self.zero_vec = dolfinx.fem.Constant(
             domain.fluid.msh, PETSc.ScalarType((0.0, 0.0, 0.0))
         )
 
-        # TODO: These two functions can be eliminated if using dof tags?
-        # TODO: Is there any reason to keep them
-        self._locate_boundary_entities(domain, params)
-        # self._locate_boundary_dofs()
-        # self._locate_boundary_dofs_tags(domain)
-
         self._build_velocity_boundary_conditions(domain, params)
 
         self._build_pressure_boundary_conditions(domain, params)
 
-    def _locate_boundary_entities(self, domain, params):
-        """Find facet entities on boundaries
-
-        This function builds a complete list of the facets on the x_min,
-        x_max, y_min, y_max, z_min, and z_max walls plus all internal
-        surfaces. It makes use of the ``x_min_facets =
-        dolfinx.mesh.locate_entities_boundary()`` function from dolfinx.
-
-        Args:
-            domain (:obj:`pvade.geometry.MeshManager.Domain`): A Domain object
-            params (:obj:`pvade.Parameters.SimParams`): A SimParams object
-
-        """
-
-        def x_min_wall(x):
-            """Identify entities on the x_min wall
-
-            Args:
-                x (np.ndarray): An array of coordinates
-
-            Returns:
-                bool: An array mask, true for points on x_min wall
-            """
-            return np.isclose(x[0], params.domain.x_min)
-
-        def x_max_wall(x):
-            """Identify entities on the x_max wall
-
-            Args:
-                x (np.ndarray): An array of coordinates
-
-            Returns:
-                bool: An array mask, true for points on x_max wall
-            """
-            return np.isclose(x[0], params.domain.x_max)
-
-        def y_min_wall(x):
-            """Identify entities on the y_min wall
-
-            Args:
-                x (np.ndarray): An array of coordinates
-
-            Returns:
-                bool: An array mask, true for points on y_min wall
-            """
-            return np.isclose(x[1], params.domain.y_min)
-
-        def y_max_wall(x):
-            """Identify entities on the y_max wall
-
-            Args:
-                x (np.ndarray): An array of coordinates
-
-            Returns:
-                bool: An array mask, true for points on y_max wall
-            """
-            return np.isclose(x[1], params.domain.y_max)
-
-        if self.ndim == 3:
-
-            def z_min_wall(x):
-                """Identify entities on the z_min wall
-
-                Args:
-                    x (np.ndarray): An array of coordinates
-
-                Returns:
-                    bool: An array mask, true for points on z_min wall
-                """
-                return np.isclose(x[2], params.domain.z_min)
-
-            def z_max_wall(x):
-                """Identify entities on the z_max wall
-
-                Args:
-                    x (np.ndarray): An array of coordinates
-
-                Returns:
-                    bool: An array mask, true for points on z_max wall
-                """
-                return np.isclose(x[2], params.domain.z_max)
-
-        def internal_surface(x):
-            """Identify entities on the internal surfaces
-
-            Args:
-                x (np.ndarray): An array of coordinates
-
-            Returns:
-                bool: An array mask, true for points on internal surfaces
-            """
-            x_mid = np.logical_and(
-                params.domain.x_min < x[0], x[0] < params.domain.x_max
-            )
-            y_mid = np.logical_and(
-                params.domain.y_min < x[1], x[1] < params.domain.y_max
-            )
-            if self.ndim == 3:
-                z_mid = np.logical_and(
-                    params.domain.z_min < x[2], x[2] < params.domain.z_max
-                )
-                return np.logical_and(x_mid, np.logical_and(y_mid, z_mid))
-            elif self.ndim == 2:
-                return np.logical_and(x_mid, y_mid)
-
-        self.x_min_facets = dolfinx.mesh.locate_entities_boundary(
-            domain.fluid.msh, self.facet_dim, x_min_wall
-        )
-        self.x_max_facets = dolfinx.mesh.locate_entities_boundary(
-            domain.fluid.msh, self.facet_dim, x_max_wall
-        )
-        self.y_min_facets = dolfinx.mesh.locate_entities_boundary(
-            domain.fluid.msh, self.facet_dim, y_min_wall
-        )
-        self.y_max_facets = dolfinx.mesh.locate_entities_boundary(
-            domain.fluid.msh, self.facet_dim, y_max_wall
-        )
-        if self.ndim == 3:
-            self.z_min_facets = dolfinx.mesh.locate_entities_boundary(
-                domain.fluid.msh, self.facet_dim, z_min_wall
-            )
-            self.z_max_facets = dolfinx.mesh.locate_entities_boundary(
-                domain.fluid.msh, self.facet_dim, z_max_wall
-            )
-
-        self.internal_surface_facets = dolfinx.mesh.locate_entities_boundary(
-            domain.fluid.msh, self.facet_dim, internal_surface
-        )
-
-    def _locate_boundary_dofs_tags(self, domain):
+    def get_facet_dofs_by_gmsh_tag(self, domain, functionspace, location):
         """Associate degrees of freedom with marker functions
 
         This function uses the marker information in the gmsh specification to
@@ -250,96 +117,23 @@ class Flow:
 
         """
 
-        self.x_min_V_dofs = dolfinx.fem.locate_dofs_topological(
-            self.V,
-            self.facet_dim,
-            domain.fluid.facet_tags.find(domain.domain_markers["x_min"]["idx"]),
-        )
-
-        self.x_max_V_dofs = dolfinx.fem.locate_dofs_topological(
-            self.V,
-            self.facet_dim,
-            domain.fluid.facet_tags.find(domain.domain_markers["x_max"]["idx"]),
-        )
-
-        self.y_min_V_dofs = dolfinx.fem.locate_dofs_topological(
-            self.V,
-            self.facet_dim,
-            domain.fluid.facet_tags.find(domain.domain_markers["y_min"]["idx"]),
-        )
-
-        self.y_max_V_dofs = dolfinx.fem.locate_dofs_topological(
-            self.V,
-            self.facet_dim,
-            domain.fluid.facet_tags.find(domain.domain_markers["y_max"]["idx"]),
-        )
-        if self.ndim == 3:
-            self.z_min_V_dofs = dolfinx.fem.locate_dofs_topological(
-                self.V,
-                self.facet_dim,
-                domain.fluid.facet_tags.find(domain.domain_markers["z_min"]["idx"]),
+        if isinstance(location, str):
+            found_entities = domain.fluid.facet_tags.find(
+                domain.domain_markers[location]["idx"]
             )
+        elif isinstance(location, int):
+            found_entities = domain.fluid.facet_tags.find(location)
 
-            self.z_max_V_dofs = dolfinx.fem.locate_dofs_topological(
-                self.V,
-                self.facet_dim,
-                domain.fluid.facet_tags.find(domain.domain_markers["z_max"]["idx"]),
-            )
+        if len(found_entities) == 0:
+            warnings.warn(f"Found no facets using location = {location}.")
 
-        self.internal_surface_V_dofs = dolfinx.fem.locate_dofs_topological(
-            self.V,
-            self.facet_dim,
-            domain.fluid.facet_tags.find(
-                domain.domain_markers["internal_surface"]["idx"]
-            ),
+        dofs = dolfinx.fem.locate_dofs_topological(
+            functionspace, self.facet_dim, found_entities
         )
 
-        self.x_min_Q_dofs = dolfinx.fem.locate_dofs_topological(
-            self.Q,
-            self.facet_dim,
-            domain.fluid.facet_tags.find(domain.domain_markers["x_min"]["idx"]),
-        )
+        return dofs
 
-        self.x_max_Q_dofs = dolfinx.fem.locate_dofs_topological(
-            self.Q,
-            self.facet_dim,
-            domain.fluid.facet_tags.find(domain.domain_markers["x_max"]["idx"]),
-        )
-
-        self.y_min_Q_dofs = dolfinx.fem.locate_dofs_topological(
-            self.Q,
-            self.facet_dim,
-            domain.fluid.facet_tags.find(domain.domain_markers["y_min"]["idx"]),
-        )
-
-        self.y_max_Q_dofs = dolfinx.fem.locate_dofs_topological(
-            self.Q,
-            self.facet_dim,
-            domain.fluid.facet_tags.find(domain.domain_markers["y_max"]["idx"]),
-        )
-
-        if self.ndim == 3:
-            self.z_min_Q_dofs = dolfinx.fem.locate_dofs_topological(
-                self.Q,
-                self.facet_dim,
-                domain.fluid.facet_tags.find(domain.domain_markers["z_min"]["idx"]),
-            )
-
-            self.z_max_Q_dofs = dolfinx.fem.locate_dofs_topological(
-                self.Q,
-                self.facet_dim,
-                domain.fluid.facet_tags.find(domain.domain_markers["z_max"]["idx"]),
-            )
-
-        self.internal_surface_Q_dofs = dolfinx.fem.locate_dofs_topological(
-            self.Q,
-            self.facet_dim,
-            domain.fluid.facet_tags.find(
-                domain.domain_markers["internal_surface"]["idx"]
-            ),
-        )
-
-    def _get_dirichlet_bc(self, bc_value, domain, functionspace, marker, bc_location):
+    def _get_dirichlet_bc(self, bc_value, domain, functionspace, bc_location):
         """Apply a single boundary condition
 
         This function builds a single Dirichlet boundary condition given the value, gmsh marker, and function space.
@@ -355,28 +149,13 @@ class Flow:
 
         """
 
-        identify_by_gmsh_marker = True
+        dofs = self.get_facet_dofs_by_gmsh_tag(domain, functionspace, bc_location)
 
-        if identify_by_gmsh_marker:
-            facets = domain.fluid.facet_tags.find(marker)
-            print(f"Got marker id = {marker}")
-
-        else:
-            facets = getattr(self, f"{bc_location}_facets")
-
-        print(f"about to locate dofs, nn = {len(facets)}")
-        dofs = dolfinx.fem.locate_dofs_topological(
-            functionspace, self.facet_dim, facets
-        )
-
-        print(f"about to dirichlet bc")
         bc = dolfinx.fem.dirichletbc(bc_value, dofs, functionspace)
 
         return bc
 
-    def _build_vel_bc_by_type(
-        self, bc_type, domain, functionspace, marker, bc_location
-    ):
+    def _build_vel_bc_by_type(self, bc_type, domain, functionspace, bc_location):
         """Summary
 
         Args:
@@ -394,7 +173,7 @@ class Flow:
 
         if bc_type == "noslip":
             bc = self._get_dirichlet_bc(
-                self.zero_vec, domain, functionspace, marker, bc_location
+                self.zero_vec, domain, functionspace, bc_location
             )
 
         elif bc_type == "slip":
@@ -406,7 +185,7 @@ class Flow:
                 sub_id = 2
 
             bc = self._get_dirichlet_bc(
-                self.zero_scalar, domain, functionspace.sub(sub_id), marker, bc_location
+                self.zero_scalar, domain, functionspace.sub(sub_id), bc_location
             )
 
         else:
@@ -435,26 +214,16 @@ class Flow:
         elif self.ndim == 3:
             bc_location_list = ["y_min", "y_max", "z_min", "z_max"]
 
-        # Iterate over all boundaries
+        # Iterate over all user-prescribed boundaries
         for bc_location in bc_location_list:
             bc_type = getattr(params.fluid, f"bc_{bc_location}")
 
-            marker_id = domain.domain_markers[bc_location]["idx"]
-
-            bc = self._build_vel_bc_by_type(
-                bc_type, domain, self.V, marker_id, bc_location
-            )
+            bc = self._build_vel_bc_by_type(bc_type, domain, self.V, bc_location)
 
             self.bcu.append(bc)
 
         # Set all interior surfaces to no slip
-        bc = self._build_vel_bc_by_type(
-            "noslip",
-            domain,
-            self.V,
-            domain.domain_markers["internal_surface"]["idx"],
-            "internal_surface",
-        )
+        bc = self._build_vel_bc_by_type("noslip", domain, self.V, "internal_surface")
         self.bcu.append(bc)
 
         def inflow_profile_expression(x):
@@ -544,13 +313,8 @@ class Flow:
             )
             self.inflow_profile.interpolate(inflow_profile_expression, upper_cells)
 
-        # facets = domain.fluid.facet_tags.find(1)
-        facets = self.x_min_facets
-
-        dofs = dolfinx.fem.locate_dofs_topological(self.V, self.facet_dim, facets)
-
+        dofs = self.get_facet_dofs_by_gmsh_tag(domain, self.V, "x_min")
         self.bcu.append(dolfinx.fem.dirichletbc(self.inflow_profile, dofs))
-        # self.bcu.append(dolfinx.fem.dirichletbc(self.inflow_profile, self.x_min_V_dofs))
 
     def _build_pressure_boundary_conditions(self, domain, params):
         """Build all boundary conditions on pressure
@@ -564,13 +328,8 @@ class Flow:
         # Define pressure boundary conditions
         self.bcp = []
 
-        # facets = domain.fluid.facet_tags.find(2)
-        facets = self.x_max_facets
-
-        dofs = dolfinx.fem.locate_dofs_topological(self.Q, self.facet_dim, facets)
-
+        dofs = self.get_facet_dofs_by_gmsh_tag(domain, self.Q, "x_min")
         self.bcp.append(dolfinx.fem.dirichletbc(self.zero_scalar, dofs, self.Q))
-        # self.bcp.append(dolfinx.fem.dirichletbc(self.zero_scalar, self.x_max_Q_dofs, self.Q))
 
     def build_forms(self, domain, params):
         """Builds all variational statements
