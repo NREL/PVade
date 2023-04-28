@@ -18,6 +18,7 @@ input_path = "pvade/tests/inputs_test/"
 
 solve_iter = 10
 
+
 @pytest.mark.unit
 def test_flow_3dpanels():
     # Get the path to the input file from the command line
@@ -46,8 +47,8 @@ def test_flow_3dpanels():
         print("max_velocity = ", max_velocity)
         print("max_pressure = ", max_pressure)
 
-    max_velocity_truth =  16.78961717598599
-    max_pressure_truth =  161.00087027677822
+    max_velocity_truth = 16.78961717598599
+    max_pressure_truth = 161.00087027677822
     assert np.isclose(max_velocity_truth, max_velocity)
     assert np.isclose(max_pressure_truth, max_pressure)
 
@@ -80,10 +81,11 @@ def test_flow_2dpanels():
         print("max_velocity = ", max_velocity)
         print("max_pressure = ", max_pressure)
 
-    max_velocity_truth =  3.4734894184978726
-    max_pressure_truth =  1.698213865642233
+    max_velocity_truth = 3.4734894184978726
+    max_pressure_truth = 1.698213865642233
     assert np.isclose(max_velocity_truth, max_velocity)
     assert np.isclose(max_pressure_truth, max_pressure)
+
 
 @pytest.mark.unit
 def test_flow_2dcylinder():
@@ -113,10 +115,11 @@ def test_flow_2dcylinder():
         print("max_velocity = ", max_velocity)
         print("max_pressure = ", max_pressure)
 
-    max_velocity_truth =  1.8113852701695827
-    max_pressure_truth =  1.3044593668958533
+    max_velocity_truth = 1.8113852701695827
+    max_pressure_truth = 1.3044593668958533
     assert np.isclose(max_velocity_truth, max_velocity)
     assert np.isclose(max_pressure_truth, max_pressure)
+
 
 @pytest.mark.unit
 def test_flow_3dcylinder():
@@ -146,7 +149,7 @@ def test_flow_3dcylinder():
         print("max_velocity = ", max_velocity)
         print("max_pressure = ", max_pressure)
 
-    max_velocity_truth =  0.6242970092279582
-    max_pressure_truth =  0.30929163498498147
+    max_velocity_truth = 0.6242970092279582
+    max_pressure_truth = 0.30929163498498147
     assert np.isclose(max_velocity_truth, max_velocity)
     assert np.isclose(max_pressure_truth, max_pressure)
