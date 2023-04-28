@@ -25,7 +25,7 @@ def test_flow_3dpanels():
 
     # Initialize the domain and construct the initial mesh
     domain = FSIDomain(params)
-    domain.read("pvade/tests/test_mesh/panels3d")
+    domain.read("pvade/tests/test_mesh/panels3d", params)
     # Initialize the function spaces for the flow
     flow = Flow(domain)
     # # # Specify the boundary conditions
@@ -46,7 +46,7 @@ def test_flow_2dpanels():
 
     # Initialize the domain and construct the initial mesh
     domain = FSIDomain(params)
-    domain.read("pvade/tests/test_mesh/panels2d")
+    domain.read("pvade/tests/test_mesh/panels2d", params)
     # Initialize the function spaces for the flow
     flow = Flow(domain)
     # # # Specify the boundary conditions
@@ -67,7 +67,7 @@ def test_flow_2dcylinder():
 
     # Initialize the domain and construct the initial mesh
     domain = FSIDomain(params)
-    domain.read("pvade/tests/test_mesh/cylinder2d")
+    domain.read("pvade/tests/test_mesh/cylinder2d", params)
     # Initialize the function spaces for the flow
     flow = Flow(domain)
     # # # Specify the boundary conditions
@@ -88,7 +88,7 @@ def test_flow_3dcylinder():
 
     # Initialize the domain and construct the initial mesh
     domain = FSIDomain(params)
-    domain.read("pvade/tests/test_mesh/cylinder3d")
+    domain.read("pvade/tests/test_mesh/cylinder3d", params)
     # Initialize the function spaces for the flow
     flow = Flow(domain)
     # # # Specify the boundary conditions

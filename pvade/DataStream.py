@@ -41,14 +41,14 @@ class DataStream:
         self.rank = params.rank
         self.num_procs = params.num_procs
 
-        self.ndim = domain.msh_fluid.topology.dim
+        self.ndim = domain.fluid.msh.topology.dim
 
         self.results_filename = f"{params.general.output_dir_sol}/solution.xdmf"
         self.log_filename = f"{params.general.output_dir_sol}/log.txt"
 
         with XDMFFile(self.comm, self.results_filename, "w") as xdmf_file:
             tt = 0.0
-            xdmf_file.write_mesh(domain.msh_fluid)
+            xdmf_file.write_mesh(domain.fluid.msh)
             xdmf_file.write_function(flow.u_k, 0.0)
             xdmf_file.write_function(flow.p_k, 0.0)
 

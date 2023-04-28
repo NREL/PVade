@@ -91,20 +91,155 @@ class FSIDomain:
         self.cell_tags.name = "cell_tags"
         self.facet_tags.name = "facet_tags"
 
-        # Create submeshes (if necessary, based on whether there are "structure" tags)
-        if len(self.domain_markers["structure"]["gmsh_tags"]) > 0:
-            for marker_key in ["fluid", "structure"]:
-                if self.rank == 0:
-                    print(f"Creating {marker_key} submesh")
-                marker_id = self.domain_markers[marker_key]["idx"]
-                submesh_cells = self.cell_tags.find(marker_id)
-                submesh = dolfinx.mesh.create_submesh(
-                    self.msh, self.ndim, submesh_cells
+        self._create_submeshes_from_parent()
+
+        self._transfer_mesh_tags_to_submeshes(params)
+
+    def _create_submeshes_from_parent(self):
+        """Create submeshes from a parent mesh by cell tags.
+
+        This function uses the cell tags to identify meshes that
+        are part of the structure or fluid domain and saves them
+        as separate mesh entities inside a new object such that meshes
+        are accessed like domain.fluid.msh or domain.structure.msh.
+
+        """
+
+        for marker_key in ["fluid", "structure"]:
+            if self.rank == 0:
+                print(f"Creating {marker_key} submesh")
+
+            # Get the idx associated with either "fluid" or "structure"
+            marker_id = self.domain_markers[marker_key]["idx"]
+
+            # Find all cells where cell tag = marker_id
+            submesh_cells = self.cell_tags.find(marker_id)
+
+            # Use those found cells to construct a new mesh
+            submesh, entity_map, vertex_map, geom_map = dolfinx.mesh.create_submesh(
+                self.msh, self.ndim, submesh_cells
+            )
+
+            class FSISubDomain:
+                pass
+
+            sub_domain = FSISubDomain()
+
+            sub_domain.msh = submesh
+            sub_domain.entity_map = entity_map
+            sub_domain.vertex_map = vertex_map
+            sub_domain.geom_map = geom_map
+
+            setattr(self, marker_key, sub_domain)
+
+    def _transfer_mesh_tags_to_submeshes(self, params):
+        facet_dim = self.ndim - 1
+
+        f_map = self.msh.topology.index_map(facet_dim)
+
+        # Get the total number of facets in the parent mesh
+        num_facets = f_map.size_local + f_map.num_ghosts
+        all_values = np.zeros(num_facets, dtype=np.int32)
+
+        # Assign non-zero facet tags using the facet tag indices
+        all_values[self.facet_tags.indices] = self.facet_tags.values
+
+        cell_to_facet = self.msh.topology.connectivity(self.ndim, facet_dim)
+
+        for marker_key in ["fluid", "structure"]:
+            # Get the sub-domain object
+            sub_domain = getattr(self, marker_key)
+
+            # Initialize facets and create connectivity between cells and facets
+            sub_domain.msh.topology.create_entities(facet_dim)
+            sub_f_map = sub_domain.msh.topology.index_map(facet_dim)
+            sub_domain.msh.topology.create_connectivity(self.ndim, facet_dim)
+
+            sub_cell_to_facet = sub_domain.msh.topology.connectivity(
+                self.ndim, facet_dim
+            )
+
+            sub_num_facets = sub_f_map.size_local + sub_f_map.num_ghosts
+            sub_values = np.empty(sub_num_facets, dtype=np.int32)
+
+            for k, entity in enumerate(sub_domain.entity_map):
+                child_facets = sub_cell_to_facet.links(k)
+                parent_facets = cell_to_facet.links(entity)
+
+                for child, parent in zip(child_facets, parent_facets):
+                    sub_values[child] = all_values[parent]
+
+            sub_domain.facet_tags = dolfinx.mesh.meshtags(
+                sub_domain.msh,
+                sub_domain.msh.topology.dim - 1,
+                np.arange(sub_num_facets, dtype=np.int32),
+                sub_values,
+            )
+
+            sub_domain.cell_tags = dolfinx.mesh.meshtags(
+                sub_domain.msh,
+                sub_domain.msh.topology.dim,
+                np.arange(sub_num_facets, dtype=np.int32),
+                np.ones(sub_num_facets),
+            )
+
+            mesh_filename = os.path.join(
+                params.general.output_dir_mesh, f"mesh_{marker_key}.xdmf"
+            )
+
+            with dolfinx.io.XDMFFile(self.comm, mesh_filename, "w") as fp:
+                fp.write_mesh(sub_domain.msh)
+                sub_domain.msh.topology.create_connectivity(facet_dim, self.ndim)
+                fp.write_meshtags(sub_domain.facet_tags)
+
+        for marker_key in ["fluid", "structure"]:
+            # Get the sub-domain object
+            sub_domain = getattr(self, marker_key)
+
+            internal_facets_from_tag = sub_domain.facet_tags.find(3)
+
+            tol = 0
+
+            def internal_surface(x):
+                x_mid = np.logical_and(
+                    params.domain.x_min + tol < x[0], x[0] < params.domain.x_max - tol
                 )
+                y_mid = np.logical_and(
+                    params.domain.y_min + tol < x[1], x[1] < params.domain.y_max - tol
+                )
+                if self.ndim == 3:
+                    z_mid = np.logical_and(
+                        params.domain.z_min + tol < x[2],
+                        x[2] < params.domain.z_max - tol,
+                    )
 
-                setattr(self, f"msh_{marker_key}", submesh[0])
+                    return np.logical_and(x_mid, np.logical_and(y_mid, z_mid))
 
-    def read(self, read_path):
+                elif self.ndim == 2:
+                    return np.logical_and(x_mid, y_mid)
+
+            def x_min_wall(x):
+                """Identify entities on the x_min wall
+
+                Args:
+                    x (np.ndarray): An array of coordinates
+
+                Returns:
+                    bool: An array mask, true for points on x_min wall
+                """
+                return np.isclose(x[1], params.domain.y_min)
+
+            internal_facets = dolfinx.mesh.locate_entities_boundary(
+                sub_domain.msh, self.ndim - 1, x_min_wall
+            )
+
+            print(
+                f"from tag, nn = {len(internal_facets_from_tag)} vs from og, nn = {len(internal_facets)}"
+            )
+
+            assert np.allclose(internal_facets_from_tag, internal_facets)
+
+    def read(self, read_path, params):
         """Read the mesh from an external file.
         The User can load an existing mesh file (mesh.xdmf)
         and use it to solve the CFD/CSD problem
@@ -123,14 +258,9 @@ class FSIDomain:
 
             self.facet_tags = xdmf.read_meshtags(self.msh, "facet_tags")
 
-        for marker_key in ["fluid", "structure"]:
-            if self.rank == 0:
-                print(f"Creating {marker_key} submesh")
-            marker_id = self.domain_markers[marker_key]["idx"]
-            submesh_cells = self.cell_tags.find(marker_id)
-            submesh = dolfinx.mesh.create_submesh(self.msh, self.ndim, submesh_cells)
+        self._create_submeshes_from_parent()
 
-            setattr(self, f"msh_{marker_key}", submesh[0])
+        self._transfer_mesh_tags_to_submeshes(params)
 
         if self.rank == 0:
             print("Done.")
@@ -267,6 +397,20 @@ class FSIDomain:
                 fp.write_mesh(self.msh)
                 fp.write_meshtags(self.cell_tags)
                 fp.write_meshtags(self.facet_tags)
+
+            # mesh_filename = os.path.join(params.general.output_dir_mesh, "mesh_structure.xdmf")
+
+            # with dolfinx.io.XDMFFile(self.comm, mesh_filename, "w") as fp:
+            #     fp.write_mesh(self.msh_structure)
+            #     # fp.write_meshtags(self.cell_tags)
+            #     # fp.write_meshtags(self.facet_tags)
+
+            # mesh_filename = os.path.join(params.general.output_dir_mesh, "mesh_fluid.xdmf")
+
+            # with dolfinx.io.XDMFFile(self.comm, mesh_filename, "w") as fp:
+            #     fp.write_mesh(self.msh_fluid)
+            #     # fp.write_meshtags(self.cell_tags)
+            #     # fp.write_meshtags(self.facet_tags)
 
             print("Done.")
 
