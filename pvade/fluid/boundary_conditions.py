@@ -93,7 +93,7 @@ def build_vel_bc_by_type(bc_type, domain, functionspace, bc_location):
 class InflowVelocity:
     def __init__(self, geom_dim, params):
         """Inflow velocity object
-        
+
         Args:
             geom_dim (int): The geometric dimension (as opposed to the topological dimension, usually this is 3)
             params (:obj:`pvade.Parameters.SimParams`): A SimParams object
