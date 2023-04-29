@@ -92,6 +92,12 @@ def build_vel_bc_by_type(bc_type, domain, functionspace, bc_location):
 
 class InflowVelocity:
     def __init__(self, geom_dim, params):
+        """Inflow velocity object
+        
+        Args:
+            geom_dim (int): The geometric dimension (as opposed to the topological dimension, usually this is 3)
+            params (:obj:`pvade.Parameters.SimParams`): A SimParams object
+        """
         self.geom_dim = geom_dim
         self.params = params
 
@@ -234,29 +240,6 @@ def build_velocity_boundary_conditions(domain, params, functionspace):
     bcu.append(bc)
 
     # Set the inflow boundary condition
-
-    '''
-    def inflow_profile_expression(x):
-        """Define an inflow expression for use as boundary condition
-
-        Args:
-            x (np.ndarray): Array of coordinates
-
-        Returns:
-            np.ndarray: Value of velocity at each coordinate in input array
-        """
-        inflow_values = np.zeros(
-            (domain.fluid.msh.geometry.dim, x.shape[1]), dtype=PETSc.ScalarType
-        )
-
-        inflow_values[0] = 0.01
-
-        return inflow_values
-
-    inflow_function = dolfinx.fem.Function(functionspace)
-    inflow_function.interpolate(inflow_profile_expression)
-    '''
-
     inflow_function = get_inflow_profile_function(domain, params, functionspace)
     dofs = get_facet_dofs_by_gmsh_tag(domain, functionspace, "x_min")
     bcu.append(dolfinx.fem.dirichletbc(inflow_function, dofs))
