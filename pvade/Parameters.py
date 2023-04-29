@@ -44,8 +44,8 @@ class SimParams:
         self.num_procs = self.comm.Get_size()
 
         # Open the schema file for reading and load its contents into a dictionary
-        pvopt_dir = os.path.dirname(os.path.abspath(__file__))
-        with open(os.path.join(pvopt_dir, "input_schema.yaml"), "r") as fp:
+        pvade_dir = os.path.dirname(os.path.abspath(__file__))
+        with open(os.path.join(pvade_dir, "input_schema.yaml"), "r") as fp:
             self.schema_dict = yaml.safe_load(fp)
 
         # Flatten the schema dictionary to make navigation and CLI parsing easier
