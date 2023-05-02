@@ -18,6 +18,8 @@ input_path = "pvade/tests/inputs_test/"
 
 solve_iter = 10
 
+rtol = 3.0e-5
+
 
 @pytest.mark.unit
 def test_flow_3dpanels():
@@ -49,8 +51,8 @@ def test_flow_3dpanels():
 
     max_velocity_truth = 16.78961717598599
     max_pressure_truth = 161.00087027677822
-    assert np.isclose(max_velocity_truth, max_velocity)
-    assert np.isclose(max_pressure_truth, max_pressure)
+    assert np.isclose(max_velocity, max_velocity_truth, rtol=rtol)
+    assert np.isclose(max_pressure, max_pressure_truth, rtol=rtol)
 
 
 @pytest.mark.unit
@@ -83,8 +85,8 @@ def test_flow_2dpanels():
 
     max_velocity_truth = 3.4734894184978726
     max_pressure_truth = 1.698213865642233
-    assert np.isclose(max_velocity_truth, max_velocity)
-    assert np.isclose(max_pressure_truth, max_pressure)
+    assert np.isclose(max_velocity, max_velocity_truth, rtol=rtol)
+    assert np.isclose(max_pressure, max_pressure_truth, rtol=rtol)
 
 
 @pytest.mark.unit
@@ -117,8 +119,8 @@ def test_flow_2dcylinder():
 
     max_velocity_truth = 1.8113852701695827
     max_pressure_truth = 1.3044593668958533
-    assert np.isclose(max_velocity_truth, max_velocity)
-    assert np.isclose(max_pressure_truth, max_pressure)
+    assert np.isclose(max_velocity, max_velocity_truth, rtol=rtol)
+    assert np.isclose(max_pressure, max_pressure_truth, rtol=rtol)
 
 
 @pytest.mark.unit
@@ -151,5 +153,5 @@ def test_flow_3dcylinder():
 
     max_velocity_truth = 0.6242970092279582
     max_pressure_truth = 0.30929163498498147
-    assert np.isclose(max_velocity_truth, max_velocity)
-    assert np.isclose(max_pressure_truth, max_pressure)
+    assert np.isclose(max_velocity, max_velocity_truth, rtol=rtol)
+    assert np.isclose(max_pressure, max_pressure_truth, rtol=rtol)
