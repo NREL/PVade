@@ -160,6 +160,7 @@ properties:
       solver3_pc:
         default: hypre
   fluid:
+    additionalProperties: False
     type: object
     required:
       - turbulence_model
