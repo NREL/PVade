@@ -10,7 +10,7 @@ domain:
   x_max: 50
   y_min: 0
   y_max: 20
-  l_char: 0.9
+  l_char: 2.0
 pv_array:
   num_rows: 3
   elevation: 1.5
@@ -39,8 +39,8 @@ fluid:
   dpdx_val: 0.0
   turbulence_model: none
   periodic: false 
-  bc_ywall_max: slip # slip noslip free
-  bc_ywall_min: noslip # slip noslip free
+  bc_y_max: slip # slip noslip free
+  bc_y_min: noslip # slip noslip free
   # c_s: 0.325
 structure:
   youngs: 1.0e+09

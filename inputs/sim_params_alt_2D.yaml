@@ -38,8 +38,8 @@ fluid:
   dpdx_val: 0.0
   turbulence_model: none
   periodic: false 
-  bc_ywall_max: slip # slip noslip free
-  bc_ywall_min: noslip # slip noslip free
+  bc_y_max: slip # slip noslip free
+  bc_y_min: noslip # slip noslip free
   # c_s: 0.325
 structure:
   youngs: 1.0e+09

@@ -1,8 +1,8 @@
-from pvade.FlowManager import Flow
+from pvade.fluid.FlowManager import Flow
 from pvade.DataStream import DataStream
 from pvade.Parameters import SimParams
 from pvade.Utilities import get_input_file, write_metrics
-from pvade.geometry.MeshManager3d import FSIDomain
+from pvade.geometry.MeshManager import FSIDomain
 
 from dolfinx.common import TimingType, list_timings
 import cProfile
@@ -12,8 +12,8 @@ import tqdm.autonotebook
 
 def main():
     # Get the path to the input file from the command line
-    # input_file = get_input_file()
-    input_file = "inputs/2d_cyld.yaml"  # get_input_file()
+    input_file = get_input_file()
+    # input_file = "inputs/2d_cyld.yaml"  # get_input_file()
 
     # Load the parameters object specified by the input file
     params = SimParams(input_file)

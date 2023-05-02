@@ -62,39 +62,53 @@ class TemplateDomainCreation:
         # Surfaces are the entities with dimension 1 less than the mesh dimension
         # i.e., surfaces have dim=2 (facets) on a 3d mesh
         # and dim=1 (lines) on a 2d mesh
-        surf_ids = self.gmsh_model.occ.getEntities(self.ndim - 1)
+        surf_tag_list = self.gmsh_model.occ.getEntities(self.ndim - 1)
 
-        for surf in surf_ids:
-            tag = surf[1]
+        for surf_tag in surf_tag_list:
+            surf_id = surf_tag[1]
 
-            com = self.gmsh_model.occ.getCenterOfMass(self.ndim - 1, tag)
+            com = self.gmsh_model.occ.getCenterOfMass(self.ndim - 1, surf_id)
 
             if np.isclose(com[0], params.domain.x_min):
-                domain_markers["x_min"]["gmsh_tags"].append(tag)
+                domain_markers["x_min"]["gmsh_tags"].append(surf_id)
 
             elif np.allclose(com[0], params.domain.x_max):
-                domain_markers["x_max"]["gmsh_tags"].append(tag)
+                domain_markers["x_max"]["gmsh_tags"].append(surf_id)
 
             elif np.allclose(com[1], params.domain.y_min):
-                domain_markers["y_min"]["gmsh_tags"].append(tag)
+                domain_markers["y_min"]["gmsh_tags"].append(surf_id)
 
             elif np.allclose(com[1], params.domain.y_max):
-                domain_markers["y_max"]["gmsh_tags"].append(tag)
+                domain_markers["y_max"]["gmsh_tags"].append(surf_id)
 
             elif self.ndim == 3 and np.allclose(com[2], params.domain.z_min):
-                domain_markers["z_min"]["gmsh_tags"].append(tag)
+                domain_markers["z_min"]["gmsh_tags"].append(surf_id)
 
             elif self.ndim == 3 and np.allclose(com[2], params.domain.z_max):
-                domain_markers["z_max"]["gmsh_tags"].append(tag)
+                domain_markers["z_max"]["gmsh_tags"].append(surf_id)
 
             else:
-                domain_markers["internal_surface"]["gmsh_tags"].append(tag)
+                domain_markers["internal_surface"]["gmsh_tags"].append(surf_id)
 
-        # self.gmsh_model.addPhysicalGroup(self.ndim, [1], domain_marker_idx["fluid"])
-        # self.gmsh_model.setPhysicalName(self.ndim, domain_marker_idx["fluid"], "fluid")
-        # TODO: this is a hack to add fluid tags, need to loop through cells
-        # as we do for facets and mark fluid and structure
-        domain_markers["fluid"]["gmsh_tags"].append(1)
+        # Volumes are the entities with dimension equal to the mesh dimension
+        vol_tag_list = self.gmsh_model.occ.getEntities(self.ndim)
+
+        if len(vol_tag_list) > 1:
+            for vol_tag in vol_tag_list:
+                vol_id = vol_tag[1]
+
+                if vol_id <= params.pv_array.num_rows:
+                    # This is a panel volume, vol_id = [1, 2, ..., num_panels]
+                    domain_markers["structure"]["gmsh_tags"].append(vol_id)
+
+                else:
+                    # This is the fluid around the panels, vol_id = num_panels+1
+                    domain_markers["fluid"]["gmsh_tags"].append(vol_id)
+
+        else:
+            vol_tag = vol_tag_list[0]
+            vol_id = vol_tag[1]
+            domain_markers["fluid"]["gmsh_tags"].append(vol_id)
 
         for key, data in domain_markers.items():
             if len(data["gmsh_tags"]) > 0:

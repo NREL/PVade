@@ -2,7 +2,7 @@ import pytest
 import os
 import sys
 
-from pvade.geometry.MeshManager3d import FSIDomain
+from pvade.geometry.MeshManager import FSIDomain
 from pvade.DataStream import DataStream
 from pvade.Parameters import SimParams
 from pvade.Utilities import get_input_file, write_metrics

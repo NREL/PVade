@@ -1,5 +1,5 @@
 general:
-  example: panels
+  example: panels3d
   output_dir_mesh: output/panels/mesh
   output_dir_sol: output/panels/solution
   create_mesh: True 
@@ -32,18 +32,18 @@ solver:
   solver1_pc: jacobi
   solver2_pc: jacobi
   solver3_pc: jacobi
-  save_text_interval: 0.1
-  save_xdmf_interval: 0.1
+  save_text_interval: 0.01
+  save_xdmf_interval: 0.01
 fluid:
   u_ref: 8.0
   nu: 0.01
   dpdx_val: 0.0
   turbulence_model: none
   periodic: false 
-  bc_ywall_max: slip # slip noslip free
-  bc_ywall_min: slip # slip noslip free
-  bc_zwall_max: slip # slip noslip free
-  bc_zwall_min: noslip # slip noslip free
+  bc_y_max: slip # slip noslip free
+  bc_y_min: slip # slip noslip free
+  bc_z_max: slip # slip noslip free
+  bc_z_min: noslip # slip noslip free
   use_eddy_viscosity: True
   # c_s: 0.325
 structure:

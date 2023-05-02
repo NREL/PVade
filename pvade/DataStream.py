@@ -33,7 +33,7 @@ class DataStream:
 
         Args:
             domain (:obj:`pvade.geometry.MeshManager.Domain`): A Domain object
-            flow (:obj:`pvade.FlowManager.Flow`): A Flow object
+            flow (:obj:`pvade.fluid.FlowManager.Flow`): A Flow object
             params (:obj:`pvade.Parameters.SimParams`): A SimParams object
 
         """
@@ -41,14 +41,14 @@ class DataStream:
         self.rank = params.rank
         self.num_procs = params.num_procs
 
-        self.ndim = domain.msh.topology.dim
+        self.ndim = domain.fluid.msh.topology.dim
 
         self.results_filename = f"{params.general.output_dir_sol}/solution.xdmf"
         self.log_filename = f"{params.general.output_dir_sol}/log.txt"
 
         with XDMFFile(self.comm, self.results_filename, "w") as xdmf_file:
             tt = 0.0
-            xdmf_file.write_mesh(domain.msh)
+            xdmf_file.write_mesh(domain.fluid.msh)
             xdmf_file.write_function(flow.u_k, 0.0)
             xdmf_file.write_function(flow.p_k, 0.0)
 
@@ -62,7 +62,7 @@ class DataStream:
         This function appends the state of the flow at time `tt` to an existing XDMF file.
 
         Args:
-            flow (:obj:`pvade.FlowManager.Flow`): A Flow object
+            flow (:obj:`pvade.fluid.FlowManager.Flow`): A Flow object
             tt (float): The time at which the current solution exists
 
         """
