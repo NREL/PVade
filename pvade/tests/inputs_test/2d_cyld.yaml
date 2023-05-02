@@ -34,6 +34,7 @@ solver:
   save_text_interval: 0.1
   save_xdmf_interval: 0.1  
 fluid:
+  use_eddy_viscosity: False
   u_ref: 2.5
   nu: 0.001 # Establish re = 20 with diam = 0.1 and u_bar = u_ref * (4/9)
   dpdx: 0.0
@@ -42,7 +43,6 @@ fluid:
   # c_s: 0.325
   bc_y_max: noslip # slip noslip free
   bc_y_min: noslip # slip noslip free
-  use_eddy_viscosity: false
 structure:
   youngs: 1.0e+09
 # Boundary_conditions: 
