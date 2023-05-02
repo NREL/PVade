@@ -42,6 +42,7 @@ fluid:
   # c_s: 0.325
   bc_y_max: noslip # slip noslip free
   bc_y_min: noslip # slip noslip free
+  use_eddy_viscosity: false
 structure:
   youngs: 1.0e+09
 # Boundary_conditions: 
