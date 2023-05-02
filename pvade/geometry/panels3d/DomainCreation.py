@@ -21,7 +21,8 @@ class DomainCreation(TemplateDomainCreation):
         super().__init__(params)
 
     def build(self, params):
-        """This function creates the computational domain for a flow around a 3D cylinder.
+        """This function creates the computational domain for a 3d simulation involving N panels.
+            The panels are set at a distance apart, rotated at an angle theta and are elevated with a distance H from the ground.
 
         Returns:
             The function returns gmsh.model which contains the geometric description of the computational domain
@@ -30,26 +31,54 @@ class DomainCreation(TemplateDomainCreation):
         self.x_span = params.domain.x_max - params.domain.x_min
         self.y_span = params.domain.y_max - params.domain.y_min
         self.z_span = params.domain.z_max - params.domain.z_min
+        tracker_angle_rad = np.radians(params.pv_array.tracker_angle)
+
+        ndim = 3
 
         # Create the fluid domain extent
-        domain = self.gmsh_model.occ.addBox(
+        domain_id = self.gmsh_model.occ.addBox(
             params.domain.x_min,
             params.domain.y_min,
             params.domain.z_min,
             self.x_span,
             self.y_span,
             self.z_span,
+            0,
         )
 
-        self.cyld_radius = 0.05
-        height = 100.0
+        domain_tag = (ndim, domain_id)
 
-        cylinder = self.gmsh_model.occ.addCylinder(
-            0.5, -height / 2.0, 0.2, 0.0, height, 0.0, self.cyld_radius
-        )
+        domain_tag_list = []
+        domain_tag_list.append(domain_tag)
 
-        # Remove each panel from the overall domain
-        self.gmsh_model.occ.cut([(3, domain)], [(3, cylinder)])
+        panel_tag_list = []
+
+        for k in range(params.pv_array.num_rows):
+            panel_id = self.gmsh_model.occ.addBox(
+                -0.5 * params.pv_array.panel_length,
+                0.0,
+                -0.5 * params.pv_array.panel_thickness,
+                params.pv_array.panel_length,
+                params.pv_array.panel_width,
+                params.pv_array.panel_thickness,
+            )
+
+            panel_tag = (ndim, panel_id)
+            panel_tag_list.append(panel_tag)
+
+            # Rotate the panel currently centered at (0, 0, 0)
+            self.gmsh_model.occ.rotate([panel_tag], 0, 0, 0, 0, 1, 0, tracker_angle_rad)
+
+            # Translate the panel [panel_loc, 0, elev]
+            self.gmsh_model.occ.translate(
+                [panel_tag],
+                k * params.pv_array.spacing[0],
+                0,
+                params.pv_array.elevation,
+            )
+
+        # Fragment all panels from the overall domain
+        self.gmsh_model.occ.fragment(domain_tag_list, panel_tag_list)
 
         self.gmsh_model.occ.synchronize()
 
@@ -67,14 +96,18 @@ class DomainCreation(TemplateDomainCreation):
 
         factor = params.domain.l_char
 
-        self.cyld_radius = params.domain.cyld_radius
-        resolution = factor * self.cyld_radius / 10
-        self.gmsh_model.mesh.field.setNumber(threshold, "LcMin", resolution)
-        self.gmsh_model.mesh.field.setNumber(threshold, "LcMax", 20 * resolution)
-        self.gmsh_model.mesh.field.setNumber(
-            threshold, "DistMin", 0.5 * self.cyld_radius
+        resolution = factor * 10 * params.pv_array.panel_thickness / 2
+        half_panel = params.pv_array.panel_length * np.cos(
+            params.pv_array.tracker_angle
         )
-        self.gmsh_model.mesh.field.setNumber(threshold, "DistMax", self.cyld_radius)
+        self.gmsh_model.mesh.field.setNumber(threshold, "LcMin", resolution * 0.5)
+        self.gmsh_model.mesh.field.setNumber(threshold, "LcMax", 5 * resolution)
+        self.gmsh_model.mesh.field.setNumber(
+            threshold, "DistMin", params.pv_array.spacing[0]
+        )
+        self.gmsh_model.mesh.field.setNumber(
+            threshold, "DistMax", params.pv_array.spacing + half_panel
+        )
 
         # Define a distance field from the immersed panels
         zmin_dist = self.gmsh_model.mesh.field.add("Distance")

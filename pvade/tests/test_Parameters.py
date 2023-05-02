@@ -46,7 +46,6 @@ def create_bad_params():
 
 @pytest.mark.unit
 def test_parameters(create_params):
-
     params = SimParams(filename)
 
     assert params.general.output_dir_sol == "path/to/solution/dir"
