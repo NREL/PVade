@@ -88,4 +88,5 @@ if __name__ == "__main__":
             profiler.print_stats(sort="cumtime")
             sys.stdout = sys.__stdout__
 
-        write_metrics()
+        if not params.general.mesh_only:
+            write_metrics()
