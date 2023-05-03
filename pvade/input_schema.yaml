@@ -270,7 +270,7 @@ properties:
           - "smagorinsky"
           - "wale"
       c_s:
-        default: 0.6
+        default: 0.17
         minimum: 0.0
         type: "number"
         description: "The Smagorinsky coefficient."

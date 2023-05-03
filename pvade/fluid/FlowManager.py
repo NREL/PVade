@@ -171,7 +171,7 @@ class Flow:
                 strainMag = (2.0 * ufl.inner(Sij, Sij)) ** 0.5
 
                 # Smagorinsky dolfinx.fem.constant, typically close to 0.17
-                Cs = 0.17
+                Cs = params.fluid.c_s
 
                 # Eddy viscosity
                 self.nu_T = Cs**2 * filter_scale**2 * strainMag
