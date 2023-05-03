@@ -25,7 +25,7 @@ properties:
         type: boolean
         description: If true, exit the PVade run immediately after generating the mesh without solving
   domain:
-    # additionalProperties: False
+    additionalProperties: False
     type: object
     # required:
     # - x_min

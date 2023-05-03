@@ -8,7 +8,6 @@ domain:
   y_min: 0.0
   y_max: 0.41
   l_char: .05
-  cyld_radius: 0.05
 pv_array:
   num_rows: 1 # not used
   elevation: 1.5 # not used

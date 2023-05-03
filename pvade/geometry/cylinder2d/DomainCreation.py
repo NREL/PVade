@@ -30,7 +30,7 @@ class DomainCreation(TemplateDomainCreation):
 
         # All ranks create a Gmsh model object
         c_x = c_y = 0.2
-        r = params.domain.cyld_radius
+        r = 0.05
 
         rectangle = self.gmsh_model.occ.addRectangle(
             params.domain.x_min,
