@@ -105,7 +105,7 @@ properties:
         type: number
         description: The vertical distance between the center of the panel and the ground.
         units: meter
-      spacing:
+      stream_spacing:
         default: [7.0]
         minimum: 1.0
         maximum: 10.0

@@ -72,7 +72,7 @@ class DomainCreation(TemplateDomainCreation):
             # Translate the panel [panel_loc, 0, elev]
             self.gmsh_model.occ.translate(
                 [panel_tag],
-                k * params.pv_array.spacing[0],
+                k * params.pv_array.stream_spacing[0],
                 0,
                 params.pv_array.elevation,
             )
@@ -101,10 +101,10 @@ class DomainCreation(TemplateDomainCreation):
         self.gmsh_model.mesh.field.setNumber(threshold, "LcMin", resolution * 0.5)
         self.gmsh_model.mesh.field.setNumber(threshold, "LcMax", 5 * resolution)
         self.gmsh_model.mesh.field.setNumber(
-            threshold, "DistMin", params.pv_array.spacing[0]
+            threshold, "DistMin", params.pv_array.stream_spacing[0]
         )
         self.gmsh_model.mesh.field.setNumber(
-            threshold, "DistMax", params.pv_array.spacing + half_panel
+            threshold, "DistMax", params.pv_array.stream_spacing + half_panel
         )
 
         # Define a distance field from the immersed panels
