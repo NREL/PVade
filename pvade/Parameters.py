@@ -224,6 +224,13 @@ class SimParams:
         for key, value in vars(command_line_inputs).items():
             if key not in ignore_list and value is not None:
                 path_to_input = key.split(".")
+
+                if isinstance(value, str):
+                    if value.lower() == "true":
+                        value = True
+                    elif value.lower() == "false":
+                        value = False
+
                 self._set_nested_dict_value(self.input_dict, path_to_input, value)
 
                 if self.rank == 0:
