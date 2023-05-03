@@ -54,6 +54,9 @@ class SimParams:
         # Initialize the single dict that will hold and combine ALL inputs
         self.input_dict = {}
 
+        # Assign all default parameters using the flattened schema
+        self._initialize_params_to_default()
+
         if input_file_path is not None:
             # Assert that the file exists
             assert os.path.isfile(
@@ -73,13 +76,6 @@ class SimParams:
             # - Print a warning if the value set from the file isn't in the schema
             # - Print the values that don't fit
             # - everything you expect to store in parameters should be in the yaml schema
-
-        else:
-            # Assign all default parameters using the flattened schema
-
-            # We can still support this, but maybe not the official getting
-            # started strategy(provide a yaml file for demos)
-            self._initialize_params_to_default()
 
         # Override any previous value with a command line input
         self._set_user_params_from_cli()
@@ -153,9 +149,7 @@ class SimParams:
 
         for key, val in flat_input_file_dict.items():
             path_to_input = key.split(".")
-            self._set_nested_dict_value(
-                self.input_dict, path_to_input, val[0], error_on_missing_key=False
-            )
+            self._set_nested_dict_value(self.input_dict, path_to_input, val[0])
 
     def _initialize_params_to_default(self):
         """Initialize values to default
@@ -230,9 +224,7 @@ class SimParams:
         for key, value in vars(command_line_inputs).items():
             if key not in ignore_list and value is not None:
                 path_to_input = key.split(".")
-                self._set_nested_dict_value(
-                    self.input_dict, path_to_input, value, error_on_missing_key=False
-                )
+                self._set_nested_dict_value(self.input_dict, path_to_input, value)
 
                 if self.rank == 0:
                     print(f"| Setting {key} = {value} from command line.")

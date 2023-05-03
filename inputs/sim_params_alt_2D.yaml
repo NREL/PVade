@@ -1,7 +1,7 @@
 general:
   geometry_module: panels2d
   output_dir: output/panels2d
-  mesh_only: False
+  mesh_only: false
 domain:
   x_min: -10
   x_max: 50

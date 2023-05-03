@@ -30,7 +30,7 @@ solver:
 fluid:
   u_ref: 0.8
   nu: 0.001
-  turbulence_model: none
+  turbulence_model: null
   periodic: false 
   bc_y_max: slip # slip noslip free
   bc_y_min: noslip # slip noslip free

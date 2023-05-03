@@ -1,7 +1,7 @@
 general:
   geometry_module: cylinder3d
   output_dir: output/cylinder3d
-  mesh_only: False
+  mesh_only: false
 domain:
   x_min: 0.0
   x_max: 2.5
