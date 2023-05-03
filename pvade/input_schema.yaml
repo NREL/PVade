@@ -181,25 +181,25 @@ properties:
       solver3_pc:
         default: hypre
   fluid:
-    # additionalProperties: False
+    additionalProperties: False
     type: object
-    required:
-      - turbulence_model
-    if:
-      properties:
-        turbulence_model:
-          const: smagorinsky
-    then:
-      required:
-        - c_s
-    else:
-      if:
-        properties:
-          turbulence_model:
-            const: wale
-      then:
-        required:
-          - c_w
+    # required:
+    #   - turbulence_model
+    # if:
+    #   properties:
+    #     turbulence_model:
+    #       const: smagorinsky
+    # then:
+    #   required:
+    #     - c_s
+    # else:
+    #   if:
+    #     properties:
+    #       turbulence_model:
+    #         const: wale
+    #   then:
+    #     required:
+    #       - c_w
     properties:
       u_ref:
         default: 8.0
@@ -238,7 +238,39 @@ properties:
         minimum: 0.0
         type: number
         description: The WALE coefficient.
-        
+      bc_y_min:
+        default: noslip
+        type: string
+        description: The type of boundary to set on the y_min wall.
+        enum:
+          - slip
+          - noslip
+      bc_y_max:
+        default: noslip
+        type: string
+        description: The type of boundary to set on the y_max wall.
+        enum:
+          - slip
+          - noslip
+      bc_z_min:
+        default: noslip
+        type: string
+        description: The type of boundary to set on the z_min wall.
+        enum:
+          - slip
+          - noslip
+      bc_z_max:
+        default: noslip
+        type: string
+        description: The type of boundary to set on the z_max wall.
+        enum:
+          - slip
+          - noslip
+      periodic:
+        default: False
+        type: boolean
+        description: Control whether periodic boundary conditions are set on the y_min/y_max walls.
+
   structure:
     # additionalProperties: False
     type: object

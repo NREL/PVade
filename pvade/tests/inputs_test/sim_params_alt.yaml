@@ -30,16 +30,13 @@ solver:
   save_text_interval: 0.1
   save_xdmf_interval: 0.1
 fluid:
-  use_eddy_viscosity: True
   u_ref: 8.0
   nu: 0.01
-  dpdx_val: 0.0
-  turbulence_model: none
+  turbulence_model: smagorinsky
   periodic: false 
   bc_y_max: slip # slip noslip free
   bc_y_min: slip # slip noslip free
   bc_z_max: slip # slip noslip free
   bc_z_min: noslip # slip noslip free
-  # c_s: 0.325
 structure:
   youngs: 1.0e+09

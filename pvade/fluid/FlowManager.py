@@ -157,9 +157,7 @@ class Flow:
         # Adams-Bashforth velocity
         U_AB = 1.5 * self.u_k1 - 0.5 * self.u_k2
 
-        use_eddy_viscosity = params.fluid.use_eddy_viscosity
-
-        if use_eddy_viscosity:
+        if params.fluid.turbulence_model == "smagorinsky":
             # By default, don't use any eddy viscosity
             filter_scale = ufl.CellVolume(domain.fluid.msh) ** (
                 1.0 / domain.fluid.msh.topology.dim

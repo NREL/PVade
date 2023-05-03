@@ -30,11 +30,9 @@ solver:
 fluid:
   u_ref: 0.8
   nu: 0.001
-  dpdx_val: 0.0
-  turbulence_model: none
+  turbulence_model: smagorinsky
   periodic: false 
   bc_y_max: slip # slip noslip free
   bc_y_min: noslip # slip noslip free
-  # c_s: 0.325
 structure:
   youngs: 1.0e+09

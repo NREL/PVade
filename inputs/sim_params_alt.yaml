@@ -32,14 +32,11 @@ solver:
 fluid:
   u_ref: 8.0
   nu: 0.01
-  dpdx_val: 0.0
   turbulence_model: none
   periodic: false 
   bc_y_max: slip # slip noslip free
   bc_y_min: slip # slip noslip free
   bc_z_max: slip # slip noslip free
   bc_z_min: noslip # slip noslip free
-  use_eddy_viscosity: True
-  # c_s: 0.325
 structure:
   youngs: 1.0e+09
