@@ -181,26 +181,44 @@ properties:
         default: "cg"
         type: "string"
         description: "The solver to use for fluid solve 1 of 3"
+        enum:
+          - "cg"
+          - "gmres"
       solver2_ksp:
         default: "cg"
         type: "string"
         description: "The solver to use for fluid solve 2 of 3"
+        enum:
+          - "cg"
+          - "gmres"
       solver3_ksp:
         default: "cg"
         type: "string"
         description: "The solver to use for fluid solve 3 of 3"
+        enum:
+          - "cg"
+          - "gmres"
       solver1_pc:
         default: "hypre"
         type: "string"
         description: "The preconditioner to use for fluid solve 1 of 3"
+        enum:
+          - "jacobi"
+          - "hypre"
       solver2_pc:
         default: "hypre"
         type: "string"
         description: "The preconditioner to use for fluid solve 2 of 3"
+        enum:
+          - "jacobi"
+          - "hypre"
       solver3_pc:
         default: "hypre"
         type: "string"
         description: "The preconditioner to use for fluid solve 3 of 3"
+        enum:
+          - "jacobi"
+          - "hypre"
   fluid:
     additionalProperties: false
     type: "object"

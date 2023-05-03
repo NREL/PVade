@@ -21,7 +21,7 @@ def main():
     # Initialize the domain and construct the initial mesh
     domain = FSIDomain(params)
 
-    if hasattr(params.general, "input_mesh_file"):
+    if params.general.input_mesh_file is not None:
         domain.read(params.general.input_mesh_file, params)
     else:
         domain.build(params)
