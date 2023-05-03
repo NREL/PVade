@@ -272,7 +272,7 @@ properties:
         description: Control whether periodic boundary conditions are set on the y_min/y_max walls.
 
   structure:
-    # additionalProperties: False
+    additionalProperties: False
     type: object
     # required:
     properties:
