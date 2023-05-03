@@ -20,17 +20,16 @@ def main():
 
     # Initialize the domain and construct the initial mesh
     domain = FSIDomain(params)
-    if params.general.create_mesh == True:
-        domain.build(params)
-        domain.write_mesh_file(params)
-    elif params.general.read_mesh == True:
+
+    if hasattr(params.general, "input_mesh_file"):
         domain.read()
     else:
-        raise ValueError(f"Error in creating/loading mesh, please correct inputs")
+        domain.build(params)
+        domain.write_mesh_file(params)
 
     if params.general.mesh_only == True:
         list_timings(params.comm, [TimingType.wall])
-        exit()
+        return params
 
     # Check to ensure mesh node matching for periodic simulations
     # if domain.periodic_simulation:

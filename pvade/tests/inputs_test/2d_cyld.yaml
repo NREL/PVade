@@ -1,9 +1,6 @@
 general:
-  example: cylinder2d
-  output_dir_mesh: output/cylinder2d/mesh
-  output_dir_sol: output/cylinder2d/solution
-  create_mesh: True
-  read_mesh: false
+  geometry_module: cylinder2d
+  output_dir: output/cylinder2d
   mesh_only: False
 domain:
   x_min: 0.0

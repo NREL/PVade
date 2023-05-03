@@ -403,7 +403,5 @@ class SimParams:
             self.solver.save_text_interval / self.solver.dt
         )
 
-        if hasattr(self.domain, "z_min"):
-            self.domain.dim = 3
-        else:
-            self.domain.dim = 2
+        self.general.output_dir_mesh = os.path.join(self.general.output_dir, "mesh")
+        self.general.output_dir_sol = os.path.join(self.general.output_dir, "solution")

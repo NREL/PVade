@@ -1,9 +1,6 @@
 general:
-  example: panels3d
-  output_dir_mesh: output/panels/mesh
-  output_dir_sol: output/panels/solution
-  create_mesh: True 
-  read_mesh: False
+  geometry_module: panels3d
+  output_dir: output/panels3d
   mesh_only: True
 domain:
   x_min: -10

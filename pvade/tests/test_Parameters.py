@@ -11,8 +11,8 @@ def create_params():
     # Create the file
     with open(filename, "w") as fp:
         fp.write("general:\n")
-        fp.write("  example: test_name\n")
-        fp.write("  output_dir_sol: path/to/solution/dir\n")
+        fp.write("  geometry_module: test_name\n")
+        fp.write("  output_dir: path/to/solution/dir\n")
         fp.write("domain:\n")
         fp.write("  x_min: 0.0\n")
         fp.write("  x_max: 2.5\n")
@@ -34,8 +34,8 @@ def create_bad_params():
     # Create the file
     with open(filename, "w") as fp:
         fp.write("generalTYPO:\n")
-        fp.write("  example: test_name\n")
-        fp.write("  output_dir_sol: path/to/solution/dir\n")
+        fp.write("  geometry_module: test_name\n")
+        fp.write("  output_dir: path/to/solution/dir\n")
 
     # Run the actual test
     yield
@@ -48,7 +48,7 @@ def create_bad_params():
 def test_parameters(create_params):
     params = SimParams(filename)
 
-    assert params.general.output_dir_sol == "path/to/solution/dir"
+    assert params.general.output_dir == "path/to/solution/dir"
 
     assert params.domain.x_min == pytest.approx(0.0)
 

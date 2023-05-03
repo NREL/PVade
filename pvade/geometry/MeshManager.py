@@ -56,10 +56,10 @@ class FSIDomain:
         """This function call builds the geometry, marks the boundaries and creates a mesh using Gmsh."""
 
         domain_creation_module = (
-            f"pvade.geometry.{params.general.example}.DomainCreation"
+            f"pvade.geometry.{params.general.geometry_module}.DomainCreation"
         )
         try:
-            # This is equivalent to "import pvade.geometry.{params.general.example}.DomainCreation as dcm"
+            # This is equivalent to "import pvade.geometry.{params.general.geometry_module}.DomainCreation as dcm"
             dcm = import_module(domain_creation_module)
         except:
             raise ValueError(f"Could not import {domain_creation_module}")

@@ -1,11 +1,10 @@
-title: PV Wind Schema
-description: Definitions for a PV wind simulation/optimization
-type: object
+title: PVade Schema
+description: Definitions for a PVade simulation
 additionalProperties: False
+type: object
 properties:
-  problem: 
-    type: string
   general:
+    additionalProperties: False
     type: object
     # required:
     properties:
@@ -13,7 +12,20 @@ properties:
         default: output/
         type: string
         description: The folder that will contain the output files for this run, formatted as a single string.
+      geometry_module:
+        default: panels3d
+        type: string
+        description: The name of the directory in pvade/geometry/ that contains a DomainCreation.py file for generating the CAD description, prescribing mesh refinement, etc.
+      input_mesh_file:
+        default: Null
+        type: string
+        description: The path to the input mesh.xdmf file to be used in the simulation
+      mesh_only:
+        default: False
+        type: boolean
+        description: If true, exit the PVade run immediately after generating the mesh without solving
   domain:
+    # additionalProperties: False
     type: object
     # required:
     # - x_min
@@ -69,6 +81,7 @@ properties:
         description: The characteristic length to use when building the mesh.
         units: meter
   pv_array:
+    # additionalProperties: False
     type: object
     properties:
       num_rows:
@@ -121,6 +134,7 @@ properties:
         description: The orientation of the panels, positive indicates the upstream edge is closer to the ground and negative indicates the downstream edge is closer to the ground.
         units: degree
   solver:
+    # additionalProperties: False
     type: object
     properties:
       dt:
@@ -160,7 +174,7 @@ properties:
       solver3_pc:
         default: hypre
   fluid:
-    additionalProperties: False
+    # additionalProperties: False
     type: object
     required:
       - turbulence_model
@@ -219,6 +233,7 @@ properties:
         description: The WALE coefficient.
         
   structure:
+    # additionalProperties: False
     type: object
     # required:
     properties:
