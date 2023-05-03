@@ -183,7 +183,7 @@ class FSIDomain:
                 np.ones(sub_num_facets),
             )
 
-    def read(self, read_path, params):
+    def read(self, input_mesh_file, params):
         """Read the mesh from an external file.
         The User can load an existing mesh file (mesh.xdmf)
         and use it to solve the CFD/CSD problem
@@ -191,9 +191,7 @@ class FSIDomain:
         if self.rank == 0:
             print("Reading the mesh from file ...")
 
-        path_to_mesh = os.path.join(read_path, "mesh.xdmf")
-
-        with dolfinx.io.XDMFFile(self.comm, path_to_mesh, "r") as xdmf:
+        with dolfinx.io.XDMFFile(self.comm, input_mesh_file, "r") as xdmf:
             self.msh = xdmf.read_mesh(name="mesh_total")
             self.cell_tags = xdmf.read_meshtags(self.msh, name="cell_tags")
 

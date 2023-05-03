@@ -19,7 +19,7 @@ properties:
       input_mesh_file:
         default: Null
         type: string
-        description: The path to the input mesh.xdmf file to be used in the simulation
+        description: The path to the input mesh.xdmf file to be used in the simulation, e.g., /inputs/case_1/mesh.xdmf
       mesh_only:
         default: False
         type: boolean

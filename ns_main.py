@@ -22,7 +22,7 @@ def main():
     domain = FSIDomain(params)
 
     if hasattr(params.general, "input_mesh_file"):
-        domain.read()
+        domain.read(params.general.input_mesh_file, params)
     else:
         domain.build(params)
         domain.write_mesh_file(params)

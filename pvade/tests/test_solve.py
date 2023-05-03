@@ -24,14 +24,14 @@ rtol = 3.0e-5
 @pytest.mark.unit
 def test_flow_3dpanels():
     # Get the path to the input file from the command line
-    input_file = input_path + "sim_params_alt.yaml"  # get_input_file()
+    input_file = os.path.join(input_path, "sim_params_alt.yaml")  # get_input_file()
 
     # Load the parameters object specified by the input file
     params = SimParams(input_file)
 
     # Initialize the domain and construct the initial mesh
     domain = FSIDomain(params)
-    domain.read("pvade/tests/test_mesh/panels3d", params)
+    domain.read("pvade/tests/test_mesh/panels3d/mesh.xdmf", params)
     # Initialize the function spaces for the flow
     flow = Flow(domain)
     # # # Specify the boundary conditions
@@ -58,14 +58,14 @@ def test_flow_3dpanels():
 @pytest.mark.unit
 def test_flow_2dpanels():
     # Get the path to the input file from the command line
-    input_file = input_path + "sim_params_alt_2D.yaml"  # get_input_file()
+    input_file = os.path.join(input_path, "sim_params_alt_2D.yaml")  # get_input_file()
 
     # Load the parameters object specified by the input file
     params = SimParams(input_file)
 
     # Initialize the domain and construct the initial mesh
     domain = FSIDomain(params)
-    domain.read("pvade/tests/test_mesh/panels2d", params)
+    domain.read("pvade/tests/test_mesh/panels2d/mesh.xdmf", params)
     # Initialize the function spaces for the flow
     flow = Flow(domain)
     # # # Specify the boundary conditions
@@ -92,14 +92,14 @@ def test_flow_2dpanels():
 @pytest.mark.unit
 def test_flow_2dcylinder():
     # Get the path to the input file from the command line
-    input_file = input_path + "2d_cyld.yaml"  # get_input_file()
+    input_file = os.path.join(input_path, "2d_cyld.yaml")  # get_input_file()
 
     # Load the parameters object specified by the input file
     params = SimParams(input_file)
 
     # Initialize the domain and construct the initial mesh
     domain = FSIDomain(params)
-    domain.read("pvade/tests/test_mesh/cylinder2d", params)
+    domain.read("pvade/tests/test_mesh/cylinder2d/mesh.xdmf", params)
     # Initialize the function spaces for the flow
     flow = Flow(domain)
     # # # Specify the boundary conditions
@@ -126,14 +126,14 @@ def test_flow_2dcylinder():
 @pytest.mark.unit
 def test_flow_3dcylinder():
     # Get the path to the input file from the command line
-    input_file = input_path + "3d_cyld.yaml"  # get_input_file()
+    input_file = os.path.join(input_path, "3d_cyld.yaml")  # get_input_file()
 
     # Load the parameters object specified by the input file
     params = SimParams(input_file)
 
     # Initialize the domain and construct the initial mesh
     domain = FSIDomain(params)
-    domain.read("pvade/tests/test_mesh/cylinder3d", params)
+    domain.read("pvade/tests/test_mesh/cylinder3d/mesh.xdmf", params)
     # Initialize the function spaces for the flow
     flow = Flow(domain)
     # # # Specify the boundary conditions
