@@ -21,8 +21,6 @@ pv_array:
 solver:
   dt: 0.005
   t_final: 10.0
-  save_text_every: 0.01
-  save_vtk_every: 0.01
   solver1_ksp: cg
   solver2_ksp: cg
   solver3_ksp: cg

@@ -141,7 +141,7 @@ properties:
         description: The orientation of the panels, sign convention follows the right-hand rule about the positive y-axis, that is, a positive angle indicates the upstream edge is further from the ground and negative indicates the downstream edge is further from the ground.
         units: degree
   solver:
-    # additionalProperties: False
+    additionalProperties: False
     type: object
     properties:
       dt:
