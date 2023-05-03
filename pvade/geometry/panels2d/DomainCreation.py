@@ -44,12 +44,12 @@ class DomainCreation(TemplateDomainCreation):
             # self.z_span,
         )
 
-        for panel_id in range(params.pv_array.num_rows):
+        for panel_id in range(params.pv_array.stream_rows):
             panel_box = self.gmsh_model.occ.addRectangle(
-                -0.5 * params.pv_array.panel_length,
+                -0.5 * params.pv_array.panel_chord,
                 -0.5 * params.pv_array.panel_thickness,
                 0,
-                params.pv_array.panel_length,
+                params.pv_array.panel_chord,
                 params.pv_array.panel_thickness,
             )
 

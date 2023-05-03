@@ -9,11 +9,11 @@ domain:
   y_max: 20
   l_char: 2.0
 pv_array:
-  num_rows: 3
+  stream_rows: 3
   elevation: 1.5
   spacing: [7.0]
-  panel_length: 2.0
-  panel_width: 7.0
+  panel_chord: 2.0
+  panel_span: 7.0
   panel_thickness: 0.1
   tracker_angle: 30.0
 solver:

@@ -53,13 +53,13 @@ class DomainCreation(TemplateDomainCreation):
 
         panel_tag_list = []
 
-        for k in range(params.pv_array.num_rows):
+        for k in range(params.pv_array.stream_rows):
             panel_id = self.gmsh_model.occ.addBox(
-                -0.5 * params.pv_array.panel_length,
+                -0.5 * params.pv_array.panel_chord,
                 0.0,
                 -0.5 * params.pv_array.panel_thickness,
-                params.pv_array.panel_length,
-                params.pv_array.panel_width,
+                params.pv_array.panel_chord,
+                params.pv_array.panel_span,
                 params.pv_array.panel_thickness,
             )
 
@@ -97,9 +97,7 @@ class DomainCreation(TemplateDomainCreation):
         factor = params.domain.l_char
 
         resolution = factor * 10 * params.pv_array.panel_thickness / 2
-        half_panel = params.pv_array.panel_length * np.cos(
-            params.pv_array.tracker_angle
-        )
+        half_panel = params.pv_array.panel_chord * np.cos(params.pv_array.tracker_angle)
         self.gmsh_model.mesh.field.setNumber(threshold, "LcMin", resolution * 0.5)
         self.gmsh_model.mesh.field.setNumber(threshold, "LcMax", 5 * resolution)
         self.gmsh_model.mesh.field.setNumber(

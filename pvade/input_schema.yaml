@@ -81,15 +81,22 @@ properties:
         description: The characteristic length to use when building the mesh.
         units: meter
   pv_array:
-    # additionalProperties: False
+    additionalProperties: False
     type: object
     properties:
-      num_rows:
+      stream_rows:
         default: 3
         minimum: 1
         maximum: 10
         type: integer
-        description: The number of panel rows in the array.
+        description: The number of panel rows in the streamwise direction.
+        units: None
+      span_rows:
+        default: 3
+        minimum: 1
+        maximum: 10
+        type: integer
+        description: The number of panel rows in the spanwise direction.
         units: None
       elevation:
         default: 1.5
@@ -105,14 +112,14 @@ properties:
         type: array
         description: The separation between panel rows in the streamwise direction.
         units: meter
-      panel_length:
+      panel_chord:
         default: 2.0
         minimum: 0.0
         maximum: 10.0
         type: number
-        description: The length of the panels in the streamwise direction.
+        description: The length of the panels from the leading to the trailing edge.
         units: meter
-      panel_width:
+      panel_span:
         default: 7.0
         minimum: 1.0
         # maximum: 10.0
@@ -131,7 +138,7 @@ properties:
         minimum: -90.0
         maximum: 90.0
         type: number
-        description: The orientation of the panels, positive indicates the upstream edge is closer to the ground and negative indicates the downstream edge is closer to the ground.
+        description: The orientation of the panels, sign convention follows the right-hand rule about the positive y-axis, that is, a positive angle indicates the upstream edge is further from the ground and negative indicates the downstream edge is further from the ground.
         units: degree
   solver:
     # additionalProperties: False

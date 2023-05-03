@@ -11,11 +11,11 @@ domain:
   z_max: 0.41
   l_char: 2.0 #.02
 pv_array:
-  num_rows: 1 # not used
+  stream_rows: 1 # not used
   elevation: 1.5 # not used
   spacing: [7.0] # not used
-  panel_length: 2.0 # not used
-  panel_width: 7.0 # not used
+  panel_chord: 2.0 # not used
+  panel_span: 7.0 # not used
   panel_thickness: 0.1 # not used
   tracker_angle: 30.0 # not used
 solver:
