@@ -130,7 +130,7 @@ class TemplateDomainCreation:
             for vol_tag in vol_tag_list:
                 vol_id = vol_tag[1]
 
-                if vol_id <= params.pv_array.num_rows:
+                if vol_id <= params.pv_array.stream_rows:
                     # This is a panel volume, vol_id = [1, 2, ..., num_panels]
                     domain_markers["structure"]["gmsh_tags"].append(vol_id)
                     # domain_markers[f"panel_{vol_id-1}"]["gmsh_tags"].append(vol_id)

@@ -123,7 +123,7 @@ class InflowVelocity:
         u_hub = self.params.fluid.u_ref
         z_hub = self.params.pv_array.elevation
 
-        if self.params.general.example == "cylinder3d":
+        if self.params.general.geometry_module == "cylinder3d":
             inflow_values[0] = (
                 16.0
                 * self.params.fluid.u_ref
@@ -133,7 +133,7 @@ class InflowVelocity:
                 * inflow_dz
                 / H**4
             )
-        elif self.params.general.example == "cylinder2d":
+        elif self.params.general.geometry_module == "cylinder2d":
             inflow_values[0] = (
                 4
                 * (self.params.fluid.u_ref)
@@ -142,13 +142,13 @@ class InflowVelocity:
                 * (0.41 - x[1])
                 / (0.41**2)
             )
-        elif self.params.general.example == "panels3d":
+        elif self.params.general.geometry_module == "panels3d":
             inflow_values[0] = (
                 (self.params.fluid.u_ref)
                 * np.log(((x[2]) - d0) / z0)
                 / (np.log((z_hub - d0) / z0))
             )
-        elif self.params.general.example == "panels2d":
+        elif self.params.general.geometry_module == "panels2d":
             inflow_values[0] = (
                 (self.params.fluid.u_ref)
                 * np.log(((x[1]) - d0) / z0)
@@ -174,7 +174,7 @@ def get_inflow_profile_function(domain, params, functionspace):
 
     inflow_velocity = InflowVelocity(geom_dim, params)
 
-    if params.general.example in ["cylinder3d", "cylinder2d"]:
+    if params.general.geometry_module in ["cylinder3d", "cylinder2d"]:
         inflow_function.interpolate(inflow_velocity)
 
     else:
