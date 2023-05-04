@@ -54,9 +54,6 @@ class SimParams:
         # Initialize the single dict that will hold and combine ALL inputs
         self.input_dict = {}
 
-        # Assign all default parameters using the flattened schema
-        self._initialize_params_to_default()
-
         if input_file_path is not None:
             # Assert that the file exists
             assert os.path.isfile(
@@ -82,6 +79,9 @@ class SimParams:
 
         # Check that the complete parameter spec conforms to the schema
         self._validate_inputs()
+
+        # Fill in unassigned values with default parameters using the flattened schema
+        self._initialize_params_to_default(override_existing=False)
 
         # Store the nested dictionary as attributes on this object for easy
         # access e.g., params.domain.x_max instead of params['domain']
@@ -151,7 +151,7 @@ class SimParams:
             path_to_input = key.split(".")
             self._set_nested_dict_value(self.input_dict, path_to_input, val[0])
 
-    def _initialize_params_to_default(self):
+    def _initialize_params_to_default(self, override_existing=True):
         """Initialize values to default
 
         This method uses the `default` entry associated with each parameter in
@@ -168,7 +168,7 @@ class SimParams:
                 self.input_dict,
                 path_to_input,
                 val["default"],
-                error_on_missing_key=False,
+                override_existing=override_existing,
             )
 
     def _set_user_params_from_cli(self):
@@ -280,7 +280,12 @@ class SimParams:
             self._rec_settattr(self, path_to_input, val[0], error_on_missing_key=False)
 
     def _set_nested_dict_value(
-        self, parent_obj, path_to_input, value, error_on_missing_key=True
+        self,
+        parent_obj,
+        path_to_input,
+        value,
+        error_on_missing_key=False,
+        override_existing=True,
     ):
         """Set a nested value in a dictionary
 
@@ -308,7 +313,12 @@ class SimParams:
             assert (
                 key in parent_obj
             ), f"Could not find option '{key}' in set of valid inputs."
-        parent_obj[key] = value
+
+        if override_existing:
+            parent_obj[key] = value
+        elif key not in parent_obj:
+            # If only filling in places with no current value, test if key is not in parent_obj
+            parent_obj[key] = value
 
     def _rec_settattr(
         self, parent_obj, path_to_input, value, error_on_missing_key=True
