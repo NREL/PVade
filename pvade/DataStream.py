@@ -26,7 +26,7 @@ class DataStream:
 
     """
 
-    def __init__(self, domain, flow, params):
+    def __init__(self, domain, flow, elasticity, params):
         """Initialize the DataStream object
 
         This initializes an object that manages the I/O for all of PVade.
@@ -37,10 +37,13 @@ class DataStream:
             params (:obj:`pvade.Parameters.SimParams`): A SimParams object
 
         """
+        
         self.comm = params.comm
         self.rank = params.rank
         self.num_procs = params.num_procs
 
+
+        # fluid vars 
         self.ndim = domain.fluid.msh.topology.dim
 
         self.results_filename = f"{params.general.output_dir_sol}/solution.xdmf"
@@ -56,6 +59,21 @@ class DataStream:
             with open(self.log_filename, "w") as fp:
                 fp.write("Run Started.\n")
 
+        # structure 
+        self.ndim_str = domain.structure.msh.topology.dim
+
+        self.results_filename_str = f"{params.general.output_dir_sol}/solution_str.xdmf"
+        self.log_filename_str = f"{params.general.output_dir_sol}/log_str.txt"
+
+        with XDMFFile(self.comm, self.results_filename_str, "w") as xdmf_file:
+            tt = 0.0
+            xdmf_file.write_mesh(domain.structure.msh)
+            xdmf_file.write_function(elasticity.uh, 0.0)
+            xdmf_file.write_function(elasticity.sigma_vm_h, 0.0)
+        if self.rank == 0:
+            with open(self.log_filename_str, "w") as fp:
+                fp.write("Run Started.\n")
+
     def save_XDMF_files(self, flow, tt):
         """Write additional timestep to XDMF file
 
@@ -69,6 +87,21 @@ class DataStream:
         with XDMFFile(self.comm, self.results_filename, "a") as xdmf_file:
             xdmf_file.write_function(flow.u_k, tt)
             xdmf_file.write_function(flow.p_k, tt)
+
+    def save_XDMF_files_str(self, elasticity, tt):
+        """Write additional timestep to XDMF file
+
+        This function appends the state of the flow at time `tt` to an existing XDMF file.
+
+        Args:
+            flow (:obj:`pvade.fluid.FlowManager.Flow`): A Flow object
+            tt (float): The time at which the current solution exists
+
+        """
+        with XDMFFile(self.comm, self.results_filename_str, "a") as xdmf_file:
+            xdmf_file.write_function(elasticity.uh, tt)
+            xdmf_file.write_function(elasticity.sigma_vm_h, tt)
+        
 
     def print_and_log(self, string_to_print):
         if self.rank == 0:

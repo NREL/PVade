@@ -10,10 +10,12 @@ import sys
 import tqdm.autonotebook
 
 
+from pvade.structure.ElasticityManager import Elasticity
+
 def main():
     # Get the path to the input file from the command line
-    input_file = get_input_file()
-    # input_file = "inputs/2d_cyld.yaml"  # get_input_file()
+    # input_file = get_input_file()
+    input_file = "inputs/sim_params_alt.yaml"  # get_input_file()
 
     # Load the parameters object specified by the input file
     params = SimParams(input_file)
@@ -24,7 +26,7 @@ def main():
         domain.build(params)
         domain.write_mesh_file(params)
     elif params.general.read_mesh == True:
-        domain.read()
+        domain.read(params.general.output_dir_mesh,params)
     else:
         raise ValueError(f"Error in creating/loading mesh, please correct inputs")
 
@@ -45,7 +47,17 @@ def main():
     # # # Build the fluid forms
     flow.build_forms(domain, params)
 
-    dataIO = DataStream(domain, flow, params)
+    
+
+
+    # intitalize structure 
+    elasticity = Elasticity(domain)
+    elasticity.build_boundary_conditions(domain, params)
+    # # # Build the fluid forms
+    elasticity.build_forms(domain, params)
+
+
+    dataIO = DataStream(domain, flow,elasticity, params)
 
     if domain.rank == 0:
         progress = tqdm.autonotebook.tqdm(
@@ -58,16 +70,17 @@ def main():
 
         # Solve the fluid problem at each timestep
         flow.solve(params)
-
+        elasticity.solve(params,dataIO)
         # adjust pressure to avoid dissipation of pressure profile
         # flow.adjust_dpdx_for_constant_flux(params)
         if (k + 1) % params.solver.save_xdmf_interval_n == 0:
             if domain.rank == 0:
                 print(
-                    f"Time {params.solver.dt*(k+1):.2f} of {params.solver.t_final:.2f}, CFL = {flow.cfl_max}"
+                    f"Time {params.solver.dt*(k+1):.2f} of {params.solver.t_final:.2f}, CFL = {flow.cfl_max}, deformation norm = {elasticity.unorm} "
                 )
 
             dataIO.save_XDMF_files(flow, (k + 1) * params.solver.dt)
+            dataIO.save_XDMF_files_str(elasticity, (k + 1) * params.solver.dt)
 
     list_timings(params.comm, [TimingType.wall])
 

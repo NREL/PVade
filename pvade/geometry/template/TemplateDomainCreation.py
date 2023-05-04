@@ -63,12 +63,42 @@ class TemplateDomainCreation:
         # i.e., surfaces have dim=2 (facets) on a 3d mesh
         # and dim=1 (lines) on a 2d mesh
         surf_tag_list = self.gmsh_model.occ.getEntities(self.ndim - 1)
-
+       
+        panel_id = 0 
+        count = 0  
         for surf_tag in surf_tag_list:
             surf_id = surf_tag[1]
-
             com = self.gmsh_model.occ.getCenterOfMass(self.ndim - 1, surf_id)
+            print (com)
 
+            #sturctures tagging
+            
+            if surf_id < surf_tag_list[0][1]+6*(params.pv_array.num_rows):
+                tags =  np.arange(start=surf_tag_list[0][1], stop=surf_tag_list[5][1]+1, step=1)+6*(panel_id)
+                # tags = np.array([1,2,3,4,5,6])
+                if surf_id == tags[0]:
+                        domain_markers[f"bottom_{panel_id}"]["gmsh_tags"].append(surf_id)
+                        # dom_tags[f"x_right_pannel_{panel_id}"] = [tag]
+                elif surf_id == tags[1]:
+                        domain_markers[f"top_{panel_id}"]["gmsh_tags"].append(surf_id)
+                        # dom_tags[f"x_left_pannel_{panel_id}"] = [tag]
+                elif surf_id == tags[2]:
+                        domain_markers[f"left_{panel_id}"]["gmsh_tags"].append(surf_id)
+                        # dom_tags[f"y_right_pannel_{panel_id}"] = [tag]
+                elif surf_id == tags[3]:
+                        domain_markers[f"right_{panel_id}"]["gmsh_tags"].append(surf_id)
+                        # dom_tags[f"y_left_pannel_{panel_id}"] = [tag]
+                elif surf_id == tags[4]:
+                        domain_markers[f"back_{panel_id}"]["gmsh_tags"].append(surf_id)
+                        # dom_tags[f"z_right_pannel_{panel_id}"] = [tag]
+                elif surf_id == tags[5]:
+                        domain_markers[f"front_{panel_id}"]["gmsh_tags"].append(surf_id)
+                        # dom_tags[f"z_left_pannel_{panel_id}"] = [tag]
+                count = count + 1
+                if count == 6: 
+                    panel_id = panel_id + 1 
+                    count = 0   
+            
             if np.isclose(com[0], params.domain.x_min):
                 domain_markers["x_min"]["gmsh_tags"].append(surf_id)
 
@@ -88,7 +118,10 @@ class TemplateDomainCreation:
                 domain_markers["z_max"]["gmsh_tags"].append(surf_id)
 
             else:
-                domain_markers["internal_surface"]["gmsh_tags"].append(surf_id)
+                print("test")
+                # domain_markers["internal_surface"]["gmsh_tags"].append(surf_id)
+
+            
 
         # Volumes are the entities with dimension equal to the mesh dimension
         vol_tag_list = self.gmsh_model.occ.getEntities(self.ndim)
@@ -100,6 +133,7 @@ class TemplateDomainCreation:
                 if vol_id <= params.pv_array.num_rows:
                     # This is a panel volume, vol_id = [1, 2, ..., num_panels]
                     domain_markers["structure"]["gmsh_tags"].append(vol_id)
+                    # domain_markers[f"panel_{vol_id-1}"]["gmsh_tags"].append(vol_id)
 
                 else:
                     # This is the fluid around the panels, vol_id = num_panels+1
@@ -111,13 +145,16 @@ class TemplateDomainCreation:
             domain_markers["fluid"]["gmsh_tags"].append(vol_id)
 
         for key, data in domain_markers.items():
+            
             if len(data["gmsh_tags"]) > 0:
+                print(key)
                 # Cells (i.e., entities of dim = msh.topology.dim)
                 if data["entity"] == "cell":
                     self.gmsh_model.addPhysicalGroup(
                         self.ndim, data["gmsh_tags"], data["idx"]
                     )
                     self.gmsh_model.setPhysicalName(self.ndim, data["idx"], key)
+                    print(key)
 
                 # Facets (i.e., entities of dim = msh.topology.dim - 1)
                 if data["entity"] == "facet":
@@ -125,5 +162,6 @@ class TemplateDomainCreation:
                         self.ndim - 1, data["gmsh_tags"], data["idx"]
                     )
                     self.gmsh_model.setPhysicalName(self.ndim - 1, data["idx"], key)
+                    print(key)
 
         return domain_markers

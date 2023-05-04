@@ -28,11 +28,11 @@ def get_facet_dofs_by_gmsh_tag(domain, functionspace, location):
     facet_dim = domain.ndim - 1
 
     if isinstance(location, str):
-        found_entities = domain.fluid.facet_tags.find(
+        found_entities = domain.structure.facet_tags.find(
             domain.domain_markers[location]["idx"]
         )
     elif isinstance(location, int):
-        found_entities = domain.fluid.facet_tags.find(location)
+        found_entities = domain.structure.facet_tags.find(location)
 
     # if len(found_entities) == 0:
     #     warnings.warn(f"Found no facets using location = {location}.")
@@ -236,16 +236,8 @@ def build_velocity_boundary_conditions(domain, params, functionspace):
         bcu.append(bc)
 
     # Set all interior surfaces to no slip
-    for panel_id in range(params.pv_array.num_rows):
-        for location in f"bottom_{panel_id}",\
-                        f"top_{panel_id}",\
-                        f"left_{panel_id}",\
-                        f"right_{panel_id}",\
-                        f"front_{panel_id}",\
-                        f"back_{panel_id}":
-            # bc = build_vel_bc_by_type("noslip", domain, functionspace, "internal_surface")
-            bc = build_vel_bc_by_type("noslip", domain, functionspace, location)
-            bcu.append(bc)
+    bc = build_vel_bc_by_type("noslip", domain, functionspace, "internal_surface")
+    bcu.append(bc)
 
     # Set the inflow boundary condition
     inflow_function = get_inflow_profile_function(domain, params, functionspace)
@@ -273,3 +265,13 @@ def build_pressure_boundary_conditions(domain, params, functionspace):
     bcp.append(dolfinx.fem.dirichletbc(zero_scalar, dofs, functionspace))
 
     return bcp
+
+def build_structure_boundary_conditions(domain, params, functionspace):
+    facet_dim = domain.ndim - 1
+    zero_vec = dolfinx.fem.Constant(domain.structure.msh, PETSc.ScalarType((0.0, 0.0, 0.0)))
+    bc = []
+    for num_panel in range(params.pv_array.num_rows):
+        dofs = get_facet_dofs_by_gmsh_tag(domain, functionspace, f"bottom_{num_panel}")
+        bc.append(dolfinx.fem.dirichletbc(zero_vec, dofs, functionspace))
+
+    return bc

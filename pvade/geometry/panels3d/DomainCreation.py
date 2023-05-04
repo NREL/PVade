@@ -67,7 +67,7 @@ class DomainCreation(TemplateDomainCreation):
             panel_tag_list.append(panel_tag)
 
             # Rotate the panel currently centered at (0, 0, 0)
-            self.gmsh_model.occ.rotate([panel_tag], 0, 0, 0, 0, 1, 0, tracker_angle_rad)
+            self.gmsh_model.occ.rotate([panel_tag], 0, 0, 0, 0, -1, 0, tracker_angle_rad)
 
             # Translate the panel [panel_loc, 0, elev]
             self.gmsh_model.occ.translate(
@@ -85,12 +85,29 @@ class DomainCreation(TemplateDomainCreation):
     def set_length_scales(self, params, domain_markers):
         res_min = params.domain.l_char
 
-        # Define a distance field from the immersed panels
-        distance = self.gmsh_model.mesh.field.add("Distance", 1)
-        self.gmsh_model.mesh.field.setNumbers(
-            distance, "FacesList", domain_markers["internal_surface"]["gmsh_tags"]
-        )
+        
+        # self.gmsh_model.mesh.field.setNumbers(
+            # distance, "FacesList", domain_markers["internal_surface"]["gmsh_tags"]
+        # )
 
+        # thresholds = []
+        # distances= []
+        internal_surface_tags=[]
+        for panel_id in range(params.pv_array.num_rows):
+            internal_surface_tags.append(domain_markers[f"bottom_{panel_id}"]["gmsh_tags"][0])    
+            internal_surface_tags.append(domain_markers[f"top_{panel_id}"]["gmsh_tags"][0])
+            internal_surface_tags.append(domain_markers[f"left_{panel_id}"]["gmsh_tags"][0])
+            internal_surface_tags.append(domain_markers[f"right_{panel_id}"]["gmsh_tags"][0])
+            internal_surface_tags.append(domain_markers[f"front_{panel_id}"]["gmsh_tags"][0])
+            internal_surface_tags.append(domain_markers[f"back_{panel_id}"]["gmsh_tags"][0])
+
+
+        # Define a distance field from the immersed panels
+        distance = self.gmsh_model.mesh.field.add("Distance")
+        self.gmsh_model.mesh.field.setNumbers(
+            distance, "FacesList", internal_surface_tags
+        )
+        
         threshold = self.gmsh_model.mesh.field.add("Threshold")
         self.gmsh_model.mesh.field.setNumber(threshold, "IField", distance)
 
@@ -108,6 +125,9 @@ class DomainCreation(TemplateDomainCreation):
         self.gmsh_model.mesh.field.setNumber(
             threshold, "DistMax", params.pv_array.spacing + half_panel
         )
+
+
+
 
         # Define a distance field from the immersed panels
         zmin_dist = self.gmsh_model.mesh.field.add("Distance")
@@ -139,6 +159,6 @@ class DomainCreation(TemplateDomainCreation):
 
         minimum = self.gmsh_model.mesh.field.add("Min")
         self.gmsh_model.mesh.field.setNumbers(
-            minimum, "FieldsList", [threshold, xy_thre, zmin_thre]
+            minimum, "FieldsList", [threshold,xy_thre, zmin_thre]
         )
         self.gmsh_model.mesh.field.setAsBackgroundMesh(minimum)

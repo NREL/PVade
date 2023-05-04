@@ -29,12 +29,12 @@ class FSIDomain:
         self.rank = params.rank
         self.num_procs = params.num_procs
 
-        self._get_domain_markers()
+        self._get_domain_markers(params)
 
-    def _get_domain_markers(self):
+    def _get_domain_markers(self,params):
         self.domain_markers = {}
 
-        # Facet Markers
+        # Fluid Facet Markers
         self.domain_markers["x_min"] = {"idx": 1, "entity": "facet", "gmsh_tags": []}
         self.domain_markers["x_max"] = {"idx": 2, "entity": "facet", "gmsh_tags": []}
         self.domain_markers["y_min"] = {"idx": 3, "entity": "facet", "gmsh_tags": []}
@@ -51,6 +51,21 @@ class FSIDomain:
         # Cell Markers
         self.domain_markers["fluid"] = {"idx": 8, "entity": "cell", "gmsh_tags": []}
         self.domain_markers["structure"] = {"idx": 9, "entity": "cell", "gmsh_tags": []}
+
+        # Structure Facet Markers
+        for panel_id in range(params.pv_array.num_rows):
+            marker = 9 + np.array([1,2,3,4,5,6])+6*(panel_id)
+            panel_marker = 100*(panel_id+1) 
+            self.domain_markers[f"bottom_{panel_id}"] = {"idx": marker[0], "entity": "facet", "gmsh_tags": []}
+            self.domain_markers[f"top_{panel_id}"]    = {"idx": marker[1], "entity": "facet", "gmsh_tags": []}
+            self.domain_markers[f"left_{panel_id}"]   = {"idx": marker[2], "entity": "facet", "gmsh_tags": []}
+            self.domain_markers[f"right_{panel_id}"]  = {"idx": marker[3], "entity": "facet", "gmsh_tags": []}
+            self.domain_markers[f"back_{panel_id}"]   = {"idx": marker[4], "entity": "facet", "gmsh_tags": []}
+            self.domain_markers[f"front_{panel_id}"]  = {"idx": marker[5], "entity": "facet", "gmsh_tags": []}
+            # Cell Markers 
+            self.domain_markers[f"panel_{panel_id}"] = {"idx": panel_marker, "entity": "cell", "gmsh_tags": []}
+
+
 
     def build(self, params):
         """This function call builds the geometry, marks the boundaries and creates a mesh using Gmsh."""
@@ -336,7 +351,7 @@ class FSIDomain:
             os.makedirs(params.general.output_dir_mesh)
 
         mesh_filename = os.path.join(params.general.output_dir_mesh, "mesh.xdmf")
-
+        gmsh.write(os.path.join(params.general.output_dir_mesh, "mesh.msh"))
         with dolfinx.io.XDMFFile(self.comm, mesh_filename, "w") as fp:
             fp.write_mesh(self.msh)
             fp.write_meshtags(self.cell_tags)
