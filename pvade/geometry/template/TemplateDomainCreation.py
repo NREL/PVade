@@ -73,7 +73,7 @@ class TemplateDomainCreation:
 
             #sturctures tagging
             
-            if surf_id < surf_tag_list[0][1]+6*(params.pv_array.num_rows):
+            if surf_id < surf_tag_list[0][1]+6*(params.pv_array.stream_rows):
                 tags =  np.arange(start=surf_tag_list[0][1], stop=surf_tag_list[5][1]+1, step=1)+6*(panel_id)
                 # tags = np.array([1,2,3,4,5,6])
                 if surf_id == tags[0]:

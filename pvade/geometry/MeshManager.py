@@ -53,7 +53,7 @@ class FSIDomain:
         self.domain_markers["structure"] = {"idx": 9, "entity": "cell", "gmsh_tags": []}
 
         # Structure Facet Markers
-        for panel_id in range(params.pv_array.num_rows):
+        for panel_id in range(params.pv_array.stream_rows):
             marker = 9 + np.array([1,2,3,4,5,6])+6*(panel_id)
             panel_marker = 100*(panel_id+1) 
             self.domain_markers[f"bottom_{panel_id}"] = {"idx": marker[0], "entity": "facet", "gmsh_tags": []}

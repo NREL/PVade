@@ -93,7 +93,7 @@ class DomainCreation(TemplateDomainCreation):
         # thresholds = []
         # distances= []
         internal_surface_tags=[]
-        for panel_id in range(params.pv_array.num_rows):
+        for panel_id in range(params.pv_array.stream_rows):
             internal_surface_tags.append(domain_markers[f"bottom_{panel_id}"]["gmsh_tags"][0])    
             internal_surface_tags.append(domain_markers[f"top_{panel_id}"]["gmsh_tags"][0])
             internal_surface_tags.append(domain_markers[f"left_{panel_id}"]["gmsh_tags"][0])

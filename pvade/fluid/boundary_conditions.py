@@ -236,7 +236,7 @@ def build_velocity_boundary_conditions(domain, params, functionspace):
         bcu.append(bc)
 
     # Set all interior surfaces to no slip
-    for panel_id in range(params.pv_array.num_rows):
+    for panel_id in range(params.pv_array.stream_rows):
         for location in f"bottom_{panel_id}",\
                         f"top_{panel_id}",\
                         f"left_{panel_id}",\

@@ -38,7 +38,7 @@ def test_flow_3dpanels():
     flow.build_boundary_conditions(domain, params)
     # # # Build the fluid forms
     flow.build_forms(domain, params)
-    dataIO = DataStream(domain, flow, params)
+    # dataIO = DataStream(domain, flow, None, params)
 
     for t_step in range(solve_iter):
         flow.solve(params)
@@ -72,7 +72,7 @@ def test_flow_2dpanels():
     flow.build_boundary_conditions(domain, params)
     # # # Build the fluid forms
     flow.build_forms(domain, params)
-    dataIO = DataStream(domain, flow, params)
+    # dataIO = DataStream(domain, flow, None, params)
 
     for t_step in range(solve_iter):
         flow.solve(params)
@@ -106,7 +106,7 @@ def test_flow_2dcylinder():
     flow.build_boundary_conditions(domain, params)
     # # # Build the fluid forms
     flow.build_forms(domain, params)
-    dataIO = DataStream(domain, flow, params)
+    # dataIO = DataStream(domain, flow, None, params)
 
     for t_step in range(solve_iter):
         flow.solve(params)
@@ -140,7 +140,7 @@ def test_flow_3dcylinder():
     flow.build_boundary_conditions(domain, params)
     # # # Build the fluid forms
     flow.build_forms(domain, params)
-    dataIO = DataStream(domain, flow, params)
+    # dataIO = DataStream(domain, flow, None, params)
 
     for t_step in range(solve_iter):
         flow.solve(params)
