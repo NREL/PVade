@@ -94,7 +94,7 @@ properties:
         description: "The number of panel rows in the streamwise direction."
         units: "unitless"
       span_rows:
-        default: 3
+        default: 1
         minimum: 1
         maximum: 10
         type: "integer"
@@ -247,6 +247,13 @@ properties:
         type: "number"
         description: "The velocity of the wind as measured at the panel elevation."
         units: "meter/second"
+      wind_dir:
+        default: 270.0
+        minimum: 0.0
+        maximum: 360.0
+        type: "number"
+        description: "The direction of the wind in degrees, 0 deg indicates wind blowing from North to South, 90 deg indicates wind blowing from East to West, and so on in a clockwise fashion."
+        units: "degrees"
       nu:
         default: 1.8e-05
         minimum: 1.0e-06
