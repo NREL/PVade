@@ -53,10 +53,18 @@ class DomainCreation(TemplateDomainCreation):
 
         panel_tag_list = []
 
+        xy_center_of_array = [
+            0.5
+            * (params.pv_array.stream_spacing[0] * (params.pv_array.stream_rows - 1)),
+            0.5 * (params.pv_array.span_spacing[0] * (params.pv_array.span_rows - 1)),
+        ]
+
+        print(xy_center_of_array)
+
         for k in range(params.pv_array.stream_rows):
             panel_id = self.gmsh_model.occ.addBox(
                 -0.5 * params.pv_array.panel_chord,
-                0.0,
+                -0.5 * params.pv_array.panel_span,
                 -0.5 * params.pv_array.panel_thickness,
                 params.pv_array.panel_chord,
                 params.pv_array.panel_span,
@@ -75,6 +83,19 @@ class DomainCreation(TemplateDomainCreation):
                 k * params.pv_array.stream_spacing[0],
                 0,
                 params.pv_array.elevation,
+            )
+
+            array_rotation = (params.fluid.wind_dir + 90.0) % 360.0
+            array_rotation = np.radians(array_rotation)
+            self.gmsh_model.occ.rotate(
+                [panel_tag],
+                xy_center_of_array[0],
+                xy_center_of_array[1],
+                0,
+                0,
+                0,
+                1,
+                array_rotation,
             )
 
         # Fragment all panels from the overall domain
