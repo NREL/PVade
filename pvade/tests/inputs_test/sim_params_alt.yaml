@@ -1,9 +1,6 @@
 general:
-  example: panels3d
-  output_dir_mesh: output/panels/mesh
-  output_dir_sol: output/panels/solution
-  create_mesh: True 
-  read_mesh: False
+  geometry_module: panels3d
+  output_dir: output/panels3d
   mesh_only: True
 domain:
   x_min: -10
@@ -14,18 +11,16 @@ domain:
   z_max: 20
   l_char: 20
 pv_array:
-  num_rows: 7
+  stream_rows: 7
   elevation: 1.5
-  spacing: [7.0]
-  panel_length: 2.0
-  panel_width: 7.0
+  stream_spacing: [7.0]
+  panel_chord: 2.0
+  panel_span: 7.0
   panel_thickness: 0.1
   tracker_angle: 30.0
 solver:
   dt: 0.005
   t_final: 10.0
-  save_text_every: 0.01
-  save_vtk_every: 0.01
   solver1_ksp: cg
   solver2_ksp: cg
   solver3_ksp: cg
@@ -35,16 +30,13 @@ solver:
   save_text_interval: 0.1
   save_xdmf_interval: 0.1
 fluid:
-  use_eddy_viscosity: True
   u_ref: 8.0
   nu: 0.01
-  dpdx_val: 0.0
-  turbulence_model: none
+  turbulence_model: smagorinsky
   periodic: false 
   bc_y_max: slip # slip noslip free
   bc_y_min: slip # slip noslip free
   bc_z_max: slip # slip noslip free
   bc_z_min: noslip # slip noslip free
-  # c_s: 0.325
 structure:
   youngs: 1.0e+09

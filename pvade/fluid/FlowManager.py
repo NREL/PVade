@@ -157,25 +157,24 @@ class Flow:
         # Adams-Bashforth velocity
         U_AB = 1.5 * self.u_k1 - 0.5 * self.u_k2
 
-        use_eddy_viscosity = params.fluid.use_eddy_viscosity
+        if params.fluid.turbulence_model is not None:
+            if params.fluid.turbulence_model == "smagorinsky":
+                # By default, don't use any eddy viscosity
+                filter_scale = ufl.CellVolume(domain.fluid.msh) ** (
+                    1.0 / domain.fluid.msh.topology.dim
+                )
 
-        if use_eddy_viscosity:
-            # By default, don't use any eddy viscosity
-            filter_scale = ufl.CellVolume(domain.fluid.msh) ** (
-                1.0 / domain.fluid.msh.topology.dim
-            )
+                # Strain rate tensor, 0.5*(du_i/dx_j + du_j/dx_i)
+                Sij = ufl.sym(ufl.nabla_grad(U_AB))
 
-            # Strain rate tensor, 0.5*(du_i/dx_j + du_j/dx_i)
-            Sij = ufl.sym(ufl.nabla_grad(U_AB))
+                # ufl.sqrt(Sij*Sij)
+                strainMag = (2.0 * ufl.inner(Sij, Sij)) ** 0.5
 
-            # ufl.sqrt(Sij*Sij)
-            strainMag = (2.0 * ufl.inner(Sij, Sij)) ** 0.5
+                # Smagorinsky dolfinx.fem.constant, typically close to 0.17
+                Cs = params.fluid.c_s
 
-            # Smagorinsky dolfinx.fem.constant, typically close to 0.17
-            Cs = 0.17
-
-            # Eddy viscosity
-            self.nu_T = Cs**2 * filter_scale**2 * strainMag
+                # Eddy viscosity
+                self.nu_T = Cs**2 * filter_scale**2 * strainMag
 
         else:
             self.nu_T = dolfinx.fem.Constant(domain.fluid.msh, 0.0)
