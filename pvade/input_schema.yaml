@@ -317,10 +317,32 @@ properties:
     type: "object"
     # required:
     properties:
-      youngs:
-        default:  190.0e+9
+      elasticity_modulus:
+        default: 190.0e+9
         minimum: 1.0e+9
         maximum: 500.0e+9
         type: "number"
         description: "The effective Young's modulus of the panel structure."
-        units: "Pascal"
+        units: "Pascal"  
+      poissons_ratio: 
+        default: 0.3
+        minimum: 0.1
+        maximum: 0.9
+        type: "number"
+        description: "poissons ratio of the panel structure."
+        units: "None"
+      body_force_x: 
+        default:  100
+        type: "number"
+        description: "Body force applied on strucrure in the x direction"
+        units: "Newton"
+      body_force_y: 
+        default:  100
+        type: "number"
+        description: "Body force applied on strucrure in the y direction"
+        units: "Newton"
+      body_force_z: 
+        default:  100
+        type: "number"
+        description: "Body force applied on strucrure in the z direction"
+        units: "Newton"

@@ -53,17 +53,21 @@ class FSIDomain:
         self.domain_markers["structure"] = {"idx": 9, "entity": "cell", "gmsh_tags": []}
 
         # Structure Facet Markers
-        for panel_id in range(params.pv_array.stream_rows):
-            marker = 9 + np.array([1,2,3,4,5,6])+6*(panel_id)
-            panel_marker = 100*(panel_id+1) 
-            self.domain_markers[f"bottom_{panel_id}"] = {"idx": marker[0], "entity": "facet", "gmsh_tags": []}
-            self.domain_markers[f"top_{panel_id}"]    = {"idx": marker[1], "entity": "facet", "gmsh_tags": []}
-            self.domain_markers[f"left_{panel_id}"]   = {"idx": marker[2], "entity": "facet", "gmsh_tags": []}
-            self.domain_markers[f"right_{panel_id}"]  = {"idx": marker[3], "entity": "facet", "gmsh_tags": []}
-            self.domain_markers[f"back_{panel_id}"]   = {"idx": marker[4], "entity": "facet", "gmsh_tags": []}
-            self.domain_markers[f"front_{panel_id}"]  = {"idx": marker[5], "entity": "facet", "gmsh_tags": []}
-            # Cell Markers 
-            self.domain_markers[f"panel_{panel_id}"] = {"idx": panel_marker, "entity": "cell", "gmsh_tags": []}
+        if params.general.geometry_module == "panels2d" or params.general.geometry_module == "panels3d":
+            for panel_id in range(params.pv_array.stream_rows):
+                marker = 9 + np.array([1,2,3,4,5,6])+6*(panel_id)
+                panel_marker = 100*(panel_id+1) 
+                self.domain_markers[f"bottom_{panel_id}"] = {"idx": marker[0], "entity": "facet", "gmsh_tags": []}
+                self.domain_markers[f"top_{panel_id}"]    = {"idx": marker[1], "entity": "facet", "gmsh_tags": []}
+                self.domain_markers[f"left_{panel_id}"]   = {"idx": marker[2], "entity": "facet", "gmsh_tags": []}
+                self.domain_markers[f"right_{panel_id}"]  = {"idx": marker[3], "entity": "facet", "gmsh_tags": []}
+                self.domain_markers[f"back_{panel_id}"]   = {"idx": marker[4], "entity": "facet", "gmsh_tags": []}
+                self.domain_markers[f"front_{panel_id}"]  = {"idx": marker[5], "entity": "facet", "gmsh_tags": []}
+                # Cell Markers 
+                self.domain_markers[f"panel_{panel_id}"] = {"idx": panel_marker, "entity": "cell", "gmsh_tags": []}
+        elif params.general.geometry_module == "cylinder3d" or params.general.geometry_module == "cylinder2d":
+            self.domain_markers[f"cylinder"] = {"idx": 100, "entity": "cell", "gmsh_tags": []}
+            self.domain_markers[f"cylinder_side"]  = {"idx": 10, "entity": "facet", "gmsh_tags": []}
 
 
 
@@ -95,9 +99,11 @@ class FSIDomain:
             self._generate_mesh()
 
         # All ranks receive their portion of the mesh from rank 0 (like an MPI scatter)
+
+        
+
         self.msh, self.cell_tags, self.facet_tags = dolfinx.io.gmshio.model_to_mesh(
-            self.geometry.gmsh_model, self.comm, 0
-        )
+            self.geometry.gmsh_model, self.comm, 0,partitioner=dolfinx.mesh.create_cell_partitioner(dolfinx.mesh.GhostMode.shared_facet))
 
         self.ndim = self.msh.topology.dim
 
@@ -109,6 +115,59 @@ class FSIDomain:
         self._create_submeshes_from_parent()
 
         self._transfer_mesh_tags_to_submeshes(params)
+
+
+
+        # def write_mesh(mesh, mesh_filename, cell_tags=None, facet_tags=None):
+        #     with dolfinx.io.XDMFFile(self.comm, mesh_filename, "w") as xdmf:
+        #         xdmf.write_mesh(mesh)
+        #         if cell_tags is not None:
+        #             xdmf.write_meshtags(cell_tags)
+        #         if facet_tags is not None:
+        #             xdmf.write_meshtags(facet_tags)
+
+        # def read_mesh(mesh_filename, mesh_name="mesh"):
+        #     with dolfinx.io.XDMFFile(self.comm, mesh_filename, "r") as xdmf:
+        #         mesh = xdmf.read_mesh(name=mesh_name)
+
+        #         try:
+        #             cell_tags = xdmf.read_meshtags(mesh, name="cell_tags")
+        #         except:
+        #             cell_tags = None
+
+        #         ndim = mesh.topology.dim
+        #         mesh.topology.create_connectivity(ndim - 1, ndim)
+
+        #         try:
+        #             facet_tags = xdmf.read_meshtags(mesh, "facet_tags")
+        #         except:
+        #             facet_tags = None
+
+        #     return mesh, cell_tags, facet_tags
+
+        for sub_domain_name in ["fluid", "structure"]:
+            mesh_filename = os.path.join(params.general.output_dir_mesh, f"temp_{sub_domain_name}.xdmf")
+            sub_domain = getattr(self, sub_domain_name)
+            sub_domain.msh.name = "temp_mesh"
+
+            # Write this submesh to immediately read it
+            with dolfinx.io.XDMFFile(self.comm, mesh_filename, "w") as xdmf:
+                xdmf.write_mesh(sub_domain.msh)
+                xdmf.write_meshtags(sub_domain.cell_tags)
+                sub_domain.msh.topology.create_connectivity(self.ndim-1, self.ndim)
+                xdmf.write_meshtags(sub_domain.facet_tags)
+
+            # Read the just-written mesh
+            with dolfinx.io.XDMFFile(self.comm, mesh_filename, "r") as xdmf:
+                submesh = xdmf.read_mesh(name=sub_domain.msh.name)
+                cell_tags = xdmf.read_meshtags(submesh, name="cell_tags")
+                ndim = submesh.topology.dim
+                submesh.topology.create_connectivity(ndim - 1, ndim)
+                facet_tags = xdmf.read_meshtags(submesh, name="facet_tags")
+
+            sub_domain.msh = submesh
+            sub_domain.facet_tags = facet_tags
+            sub_domain.cell_tags = cell_tags
 
     def _create_submeshes_from_parent(self):
         """Create submeshes from a parent mesh by cell tags.
@@ -166,6 +225,7 @@ class FSIDomain:
             sub_domain = getattr(self, sub_domain_name)
 
             # Initialize facets and create connectivity between cells and facets
+            # sub_domain.msh.topology.create_connectivity_all()
             sub_domain.msh.topology.create_entities(facet_dim)
             sub_f_map = sub_domain.msh.topology.index_map(facet_dim)
             sub_domain.msh.topology.create_connectivity(self.ndim, facet_dim)
@@ -184,20 +244,26 @@ class FSIDomain:
                 for child, parent in zip(child_facets, parent_facets):
                     sub_values[child] = all_values[parent]
 
-            sub_domain.facet_tags = dolfinx.mesh.meshtags(
-                sub_domain.msh,
-                sub_domain.msh.topology.dim - 1,
-                np.arange(sub_num_facets, dtype=np.int32),
-                sub_values,
-            )
+            # sub_domain.facet_tags = dolfinx.mesh.meshtags(
+            #     sub_domain.msh,
+            #     sub_domain.msh.topology.dim - 1,
+            #     np.arange(sub_num_facets, dtype=np.int32),
+            #     sub_values,
+            # )
 
-            sub_domain.cell_tags = dolfinx.mesh.meshtags(
-                sub_domain.msh,
-                sub_domain.msh.topology.dim,
-                np.arange(sub_num_facets, dtype=np.int32),
-                np.ones(sub_num_facets),
-            )
-
+            # sub_domain.cell_tags = dolfinx.mesh.meshtags(
+            #     sub_domain.msh,
+            #     sub_domain.msh.topology.dim,
+            #     np.arange(sub_num_facets, dtype=np.int32),
+            #     np.ones(sub_num_facets),
+            # )
+            sub_cell_map = sub_domain.msh.topology.index_map(self.ndim) 
+            sub_num_cells = sub_cell_map.size_local + sub_cell_map.num_ghosts 
+            sub_domain.cell_tags = dolfinx.mesh.meshtags( sub_domain.msh, sub_domain.msh.topology.dim, np.arange(sub_num_cells, dtype=np.int32), np.ones(sub_num_cells, dtype=np.int32), ) 
+            sub_domain.cell_tags.name = "cell_tags" 
+            sub_domain.facet_tags = dolfinx.mesh.meshtags( sub_domain.msh, sub_domain.msh.topology.dim - 1, np.arange(sub_num_facets, dtype=np.int32), sub_values, ) 
+            sub_domain.facet_tags.name = "facet_tags"
+            
     def read(self, input_mesh_file, params):
         """Read the mesh from an external file.
         The User can load an existing mesh file (mesh.xdmf)

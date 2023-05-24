@@ -37,18 +37,18 @@ def main():
     # if domain.periodic_simulation:
     # domain.check_mesh_periodicity(params)
 
+    # # Initialize the function spaces for the flow
+    # flow = Flow(domain)
 
-    fluid_analysis = True
-    # Initialize the function spaces for the flow
-    flow = Flow(domain,fluid_analysis)
-
-    # # # Specify the boundary conditions
+    # # # # Specify the boundary conditions
     # flow.build_boundary_conditions(domain, params)
 
-    # # # Build the fluid forms
-    flow.build_forms(domain, params)
+    # # # # Build the fluid forms
+    # flow.build_forms(domain, params)
 
-    
+
+    fluid_analysis = False
+    flow = Flow(domain,fluid_analysis)
 
 
     # intitalize structure 
@@ -58,7 +58,7 @@ def main():
     elasticity = Elasticity(domain,structural_analysis)
 
     if structural_analysis == True:
-        # elasticity.build_boundary_conditions(domain, params)
+        elasticity.build_boundary_conditions(domain, params)
         # # # Build the fluid forms
         elasticity.build_forms(domain, params)
 
@@ -71,28 +71,13 @@ def main():
         )
 
     
-
-    for k in range(params.solver.t_steps):
+    if structural_analysis == True:
+        elasticity.solve(params,dataIO)
+    
+    if structural_analysis == True:
         if domain.rank == 0:
-            progress.update(1)
-        # Solve the fluid problem at each timestep
-        flow.solve(params)
-        if structural_analysis == True:
-            elasticity.solve(params,dataIO)
-        dataIO.fluid_struct(domain, flow,elasticity, params)
-        # adjust pressure to avoid dissipation of pressure profile
-        # flow.adjust_dpdx_for_constant_flux(params)
-        if (k + 1) % params.solver.save_xdmf_interval_n == 0:
-            if domain.rank == 0:
-                print(
-                    f"Time {params.solver.dt*(k+1):.2f} of {params.solver.t_final:.2f}, CFL = {flow.cfl_max}"
-                )
-            dataIO.save_XDMF_files(flow, (k + 1) * params.solver.dt)
-            
-            if structural_analysis == True:
-                if domain.rank == 0:
-                    print("deformation norm =", {elasticity.unorm}) 
-                dataIO.save_XDMF_files_str(elasticity, (k + 1) * params.solver.dt)
+            print("deformation norm =", {elasticity.unorm}) 
+        dataIO.save_XDMF_files_str(elasticity, 1)
     
 
     list_timings(params.comm, [TimingType.wall])

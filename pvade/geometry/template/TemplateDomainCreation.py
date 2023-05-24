@@ -69,57 +69,94 @@ class TemplateDomainCreation:
         for surf_tag in surf_tag_list:
             surf_id = surf_tag[1]
             com = self.gmsh_model.occ.getCenterOfMass(self.ndim - 1, surf_id)
-            print (com)
+            # print (com)
 
             #sturctures tagging
-            
-            if surf_id < surf_tag_list[0][1]+6*(params.pv_array.stream_rows):
-                tags =  np.arange(start=surf_tag_list[0][1], stop=surf_tag_list[5][1]+1, step=1)+6*(panel_id)
-                # tags = np.array([1,2,3,4,5,6])
-                if surf_id == tags[0]:
-                        domain_markers[f"bottom_{panel_id}"]["gmsh_tags"].append(surf_id)
-                        # dom_tags[f"x_right_pannel_{panel_id}"] = [tag]
-                elif surf_id == tags[1]:
-                        domain_markers[f"top_{panel_id}"]["gmsh_tags"].append(surf_id)
-                        # dom_tags[f"x_left_pannel_{panel_id}"] = [tag]
-                elif surf_id == tags[2]:
-                        domain_markers[f"left_{panel_id}"]["gmsh_tags"].append(surf_id)
-                        # dom_tags[f"y_right_pannel_{panel_id}"] = [tag]
-                elif surf_id == tags[3]:
-                        domain_markers[f"right_{panel_id}"]["gmsh_tags"].append(surf_id)
-                        # dom_tags[f"y_left_pannel_{panel_id}"] = [tag]
-                elif surf_id == tags[4]:
-                        domain_markers[f"back_{panel_id}"]["gmsh_tags"].append(surf_id)
-                        # dom_tags[f"z_right_pannel_{panel_id}"] = [tag]
-                elif surf_id == tags[5]:
-                        domain_markers[f"front_{panel_id}"]["gmsh_tags"].append(surf_id)
-                        # dom_tags[f"z_left_pannel_{panel_id}"] = [tag]
-                count = count + 1
-                if count == 6: 
-                    panel_id = panel_id + 1 
-                    count = 0   
+            num_of_panel_facets = self.ndim * 2
+            domain_facets = self.ndim * 2
+              
             
             if np.isclose(com[0], params.domain.x_min):
                 domain_markers["x_min"]["gmsh_tags"].append(surf_id)
+                # print("x_min found")
 
             elif np.allclose(com[0], params.domain.x_max):
                 domain_markers["x_max"]["gmsh_tags"].append(surf_id)
+                # print("x_max found")
 
             elif np.allclose(com[1], params.domain.y_min):
                 domain_markers["y_min"]["gmsh_tags"].append(surf_id)
+                # print("y_min found")
 
             elif np.allclose(com[1], params.domain.y_max):
                 domain_markers["y_max"]["gmsh_tags"].append(surf_id)
+                # print("y_max found")
 
             elif self.ndim == 3 and np.allclose(com[2], params.domain.z_min):
                 domain_markers["z_min"]["gmsh_tags"].append(surf_id)
+                # print("z_min found")
 
             elif self.ndim == 3 and np.allclose(com[2], params.domain.z_max):
                 domain_markers["z_max"]["gmsh_tags"].append(surf_id)
+                # print("z_max found")
 
             else:
-                print("test")
-                # domain_markers["internal_surface"]["gmsh_tags"].append(surf_id)
+                if params.general.geometry_module == "cylinder3d":
+                     domain_markers[f"cylinder_side"]["gmsh_tags"].append(surf_id)   
+                elif params.general.geometry_module == "panels3d":
+                # tgging in 3d starts with all panels then moves to domain boundaries 
+                    if surf_id < surf_tag_list[0][1]+num_of_panel_facets*(params.pv_array.stream_rows):
+                        tags =  np.arange(start=surf_tag_list[0][1], stop=surf_tag_list[5][1]+1, step=1)+6*(panel_id)
+                        # tags = np.array([1,2,3,4,5,6])
+                        if surf_id == tags[0]:
+                                domain_markers[f"bottom_{panel_id}"]["gmsh_tags"].append(surf_id)
+                                # dom_tags[f"x_right_pannel_{panel_id}"] = [tag]
+                        elif surf_id == tags[1]:
+                                domain_markers[f"top_{panel_id}"]["gmsh_tags"].append(surf_id)
+                                # dom_tags[f"x_left_pannel_{panel_id}"] = [tag]
+                        elif surf_id == tags[2]:
+                                domain_markers[f"left_{panel_id}"]["gmsh_tags"].append(surf_id)
+                                # dom_tags[f"y_right_pannel_{panel_id}"] = [tag]
+                        elif surf_id == tags[3]:
+                                domain_markers[f"right_{panel_id}"]["gmsh_tags"].append(surf_id)
+                                # dom_tags[f"y_left_pannel_{panel_id}"] = [tag]
+                        elif surf_id == tags[4]:
+                                domain_markers[f"back_{panel_id}"]["gmsh_tags"].append(surf_id)
+                                # dom_tags[f"z_right_pannel_{panel_id}"] = [tag]
+                        elif surf_id == tags[5]:
+                                domain_markers[f"front_{panel_id}"]["gmsh_tags"].append(surf_id)
+                                # dom_tags[f"z_left_pannel_{panel_id}"] = [tag]
+                        count = count + 1
+                        if count == num_of_panel_facets: 
+                            panel_id = panel_id + 1 
+                            count = 0           
+                    elif params.general.geometry_module == "panels2d": 
+                        # tgging in 2d starts with domain boundary then moves to panels
+                        if surf_id >= surf_tag_list[0][1]+num_of_panel_facets*(params.pv_array.stream_rows):
+                            tags =  np.arange(start=surf_tag_list[0][1]+domain_facets, stop=surf_tag_list[num_of_panel_facets][1]+domain_facets, step=1)+6*(panel_id)
+                            # tags = np.array([1,2,3,4,5,6])
+                            if surf_id == tags[0]:
+                                    domain_markers[f"bottom_{panel_id}"]["gmsh_tags"].append(surf_id)
+                                    # dom_tags[f"x_right_pannel_{panel_id}"] = [tag]
+                            elif surf_id == tags[1]:
+                                    domain_markers[f"top_{panel_id}"]["gmsh_tags"].append(surf_id)
+                                    # dom_tags[f"x_left_pannel_{panel_id}"] = [tag]
+                            elif surf_id == tags[2]:
+                                    domain_markers[f"left_{panel_id}"]["gmsh_tags"].append(surf_id)
+                                    # dom_tags[f"y_right_pannel_{panel_id}"] = [tag]
+                            elif surf_id == tags[3]:
+                                    domain_markers[f"right_{panel_id}"]["gmsh_tags"].append(surf_id)
+                                    # dom_tags[f"y_left_pannel_{panel_id}"] = [tag]
+                            # elif surf_id == tags[4]:
+                            #         domain_markers[f"back_{panel_id}"]["gmsh_tags"].append(surf_id)
+                            #         # dom_tags[f"z_right_pannel_{panel_id}"] = [tag]
+                            # elif surf_id == tags[5]:
+                            #         domain_markers[f"front_{panel_id}"]["gmsh_tags"].append(surf_id)
+                            #         # dom_tags[f"z_left_pannel_{panel_id}"] = [tag]            
+                            count = count + 1
+                            if count == num_of_panel_facets: 
+                                panel_id = panel_id + 1 
+                                count = 0 
 
             
 
@@ -147,14 +184,14 @@ class TemplateDomainCreation:
         for key, data in domain_markers.items():
             
             if len(data["gmsh_tags"]) > 0:
-                print(key)
+                # print(key)
                 # Cells (i.e., entities of dim = msh.topology.dim)
                 if data["entity"] == "cell":
                     self.gmsh_model.addPhysicalGroup(
                         self.ndim, data["gmsh_tags"], data["idx"]
                     )
                     self.gmsh_model.setPhysicalName(self.ndim, data["idx"], key)
-                    print(key)
+                    # print(key)
 
                 # Facets (i.e., entities of dim = msh.topology.dim - 1)
                 if data["entity"] == "facet":
@@ -162,6 +199,6 @@ class TemplateDomainCreation:
                         self.ndim - 1, data["gmsh_tags"], data["idx"]
                     )
                     self.gmsh_model.setPhysicalName(self.ndim - 1, data["idx"], key)
-                    print(key)
+                    # print(key)
 
         return domain_markers

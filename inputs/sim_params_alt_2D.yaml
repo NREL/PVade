@@ -9,7 +9,7 @@ domain:
   y_max: 20
   l_char: 0.9
 pv_array:
-  stream_rows: 3
+  stream_rows: 1
   elevation: 1.5
   stream_spacing: [7.0]
   panel_chord: 2.0
@@ -30,7 +30,7 @@ solver:
 fluid:
   u_ref: 0.8
   nu: 0.001
-  turbulence_model: smagorinsky
+  turbulence_model: 
   periodic: false 
   bc_y_max: slip # slip noslip free
   bc_y_min: noslip # slip noslip free

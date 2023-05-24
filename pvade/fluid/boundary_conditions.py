@@ -143,6 +143,7 @@ class InflowVelocity:
                 / (0.41**2)
             )
         elif self.params.general.geometry_module == "panels3d":
+            # inflow_values[0] = x[2]
             inflow_values[0] = (
                 (self.params.fluid.u_ref)
                 * np.log(((x[2]) - d0) / z0)
@@ -237,13 +238,18 @@ def build_velocity_boundary_conditions(domain, params, functionspace):
 
     # Set all interior surfaces to no slip
     for panel_id in range(params.pv_array.stream_rows):
-        for location in f"bottom_{panel_id}",\
-                        f"top_{panel_id}",\
-                        f"left_{panel_id}",\
-                        f"right_{panel_id}",\
-                        f"front_{panel_id}",\
-                        f"back_{panel_id}":
-            # bc = build_vel_bc_by_type("noslip", domain, functionspace, "internal_surface")
+        if params.general.geometry_module == "panels2d" or params.general.geometry_module == "panels3d":
+            for location in f"bottom_{panel_id}",\
+                            f"top_{panel_id}",\
+                            f"left_{panel_id}",\
+                            f"right_{panel_id}",\
+                            f"front_{panel_id}",\
+                            f"back_{panel_id}":
+                # bc = build_vel_bc_by_type("noslip", domain, functionspace, "internal_surface")
+                bc = build_vel_bc_by_type("noslip", domain, functionspace, location)
+                bcu.append(bc)
+        elif params.general.geometry_module == "cylinder3d" or params.general.geometry_module == "cylinder2d":
+            location = f"cylinder_side"
             bc = build_vel_bc_by_type("noslip", domain, functionspace, location)
             bcu.append(bc)
 

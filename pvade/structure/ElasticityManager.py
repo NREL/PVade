@@ -19,7 +19,7 @@ from contextlib import ExitStack
 class Elasticity:
     """This class solves the CFD problem"""
 
-    def __init__(self, domain):
+    def __init__(self, domain,structural_analysis):
         """Initialize the fluid solver
 
         This method initialize the Flow object, namely, it creates all the
@@ -32,6 +32,7 @@ class Elasticity:
             domain (:obj:`pvade.geometry.MeshManager.Domain`): A Domain object
 
         """
+        self.structural_analysis = structural_analysis
         # Store the comm and mpi info for convenience
         self.comm = domain.comm
         self.rank = domain.rank
@@ -39,7 +40,7 @@ class Elasticity:
 
 
 
-        P1 = ufl.VectorElement("Lagrange", domain.structure.msh.ufl_cell(), 1)
+        P1 = ufl.VectorElement("Lagrange", domain.structure.msh.ufl_cell(), 2)
         self.V = dolfinx.fem.FunctionSpace(domain.structure.msh, P1)
 
         self.W = dolfinx.fem.FunctionSpace(domain.structure.msh, ("Discontinuous Lagrange", 0))
@@ -52,7 +53,7 @@ class Elasticity:
 
         if self.rank == 0:
             # print(f"hmin = {self.hmin}")
-            print(f"Total num dofs = {self.num_V_dofs}")
+            print(f"Total num dofs on structure = {self.num_V_dofs}")
 
     def build_boundary_conditions(self, domain, params):
         """Build the boundary conditions
@@ -94,8 +95,8 @@ class Elasticity:
 
         """
         # Define structural properties
-        self.E = 1.0e9
-        self.ν = 0.3
+        self.E =1.0e9# params.structure.elasticity_modulus#1.0e9
+        self.ν = 0.3#params.structure.poissons_ratio #0.3
         self.μ = self.E / (2.0 * (1.0 + self.ν))
         self.λ = self.E * self.ν / ((1.0 + self.ν) * (1.0 - 2.0 * self.ν))
 
@@ -103,10 +104,18 @@ class Elasticity:
         self.u = ufl.TrialFunction(self.V)
         self.v = ufl.TestFunction(self.V)
 
+
+        P3 = ufl.TensorElement("Lagrange", domain.structure.msh.ufl_cell(), 2)
+        self.T = dolfinx.fem.FunctionSpace(domain.structure.msh, P3)
+
+        self.stress = dolfinx.fem.Function(self.T, name="stress_fluid")
         
+
+
         self.sigma_vm_h = dolfinx.fem.Function(self.W, name="Stress")
 
         self.uh = dolfinx.fem.Function(self.V,  name="Deformation") 
+        self.uh_exp = dolfinx.fem.Function(self.V,  name="Deformation") 
 
         def σ(v):
             """Return an expression for the stress σ given a displacement field"""
@@ -120,10 +129,16 @@ class Elasticity:
         #     domain.structure.msh,
         #     (PETSc.ScalarType(0), PETSc.ScalarType(0), PETSc.ScalarType(0)),
         # )
-        self.f = ufl.as_vector((0*self.ρ * self.ω**2 * x[0], self.ρ * self.ω**2 * x[1], 0.0))   
-
+        # self.f = ufl.as_vector((0*self.ρ * self.ω**2 * x[0], self.ρ * self.ω**2 * x[1], 0.0))   
+        # self.T = dolfinx.fem.Constant(domain.structure.msh, PETSc.ScalarType((0, 1.e-3, 0)))
+        self.f = dolfinx.fem.Constant(domain.structure.msh, PETSc.ScalarType((0,100,100)))
+        # self.f = dolfinx.fem.Constant(domain.structure.msh, PETSc.ScalarType((params.structure.body_force_x, \
+                                                                            #   params.structure.body_force_y, \
+                                                                                # params.structure.body_force_z)))
+        self.ds = ufl.Measure("ds", domain=domain.structure.msh)
+        n = ufl.FacetNormal(domain.structure.msh)
         self.a = dolfinx.fem.form( ufl.inner(σ(self.u), ufl.grad(self.v)) * ufl.dx)
-        self.L = dolfinx.fem.form( ufl.inner(self.f, self.v) * ufl.dx)
+        self.L = dolfinx.fem.form(ufl.dot(self.f, self.v) * ufl.dx + ufl.dot(ufl.dot(self.stress,n), self.v) * self.ds)
 
 
     def _assemble_system(self, params):
@@ -219,7 +234,7 @@ class Elasticity:
             if self.rank == 0:
                 print("Starting Strutural Solution")
 
-            self._assemble_system(params)
+        self._assemble_system(params)
 
         dolfinx.fem.petsc.apply_lifting(self.b, [self.a], bcs=[self.bc])
         self.b.ghostUpdate(
