@@ -295,7 +295,8 @@ with XDMFFile(msh.comm, "out_elasticity/mesh.xdmf", "w") as file:
  
 ω, ρ = 300.0, 10.0
 x = ufl.SpatialCoordinate(msh)
-f = ufl.as_vector((0*ρ * ω**2 * x[0], ρ * ω**2 * x[1], 0.0))
+# f = ufl.as_vector((0*ρ * ω**2 * x[0], ρ * ω**2 * x[1], 0*ρ * ω**2 * x[0]))
+
 
 # Set the elasticity parameters and create a function that computes and
 # expression for the stress given a displacement field.
@@ -314,13 +315,17 @@ def σ(v):
 
 # A function space space is created and the elasticity variational
 # problem defined:
-
+T = fem.Constant(msh, PETSc.ScalarType((0, 1.e-3, 0)))
+f = fem.Constant(msh, PETSc.ScalarType((0, 0, -ρ*9.81)))
+ds = ufl.Measure("ds", domain=msh)
 
 V = VectorFunctionSpace(msh, ("Lagrange", 1))
 u = ufl.TrialFunction(V)
 v = ufl.TestFunction(V)
 a = form(inner(σ(u), grad(v)) * dx)
-L = form(inner(f, v) * dx)
+# L =   form(inner(t, v) * ds)
+L = form(ufl.dot(f, v) * ufl.dx + ufl.dot(T, v) * ds)
+# L = ufl.dot(f, v) * ufl.dx + ufl.dot(t, v) * ufl.ds
 
 # A homogeneous (zero) boundary condition is created on $x_0 = 0$ and
 # $x_1 = 1$ by finding all boundary facets on $x_0 = 0$ and $x_1 = 1$,
@@ -337,7 +342,7 @@ L = form(inner(f, v) * dx)
 zero_vec = fem.Constant(msh, PETSc.ScalarType((0.0, 0.0, 0.0)))
 bc = []
 for num_panel in range(num_rows):
-    for marker in np.array([1,3])+6*num_panel:#range(6*num_rows): 
+    for marker in np.array([1])+6*num_panel:#range(6*num_rows): 
         dofs = locate_dofs_topological(V, 2, ft.find(marker))
         bc.append(dirichletbc(zero_vec, dofs, V))
 
@@ -450,12 +455,23 @@ sigma_vm = ufl.sqrt((3 / 2) * inner(sigma_dev, sigma_dev))
 # that is interpolated into the
 # {py:class}`Function<dolfinx.fem.Function>` `sigma_vm_h`.
 
+
+
+
+
 # +
 W = FunctionSpace(msh, ("Discontinuous Lagrange", 0))
 sigma_vm_expr = Expression(sigma_vm, W.element.interpolation_points())
 sigma_vm_h = Function(W)
 sigma_vm_h.interpolate(sigma_vm_expr)
 # -
+
+
+n = ufl.FacetNormal(msh)
+
+traction_vec = ufl.dot(sigma_dev,n)
+
+
 
 # Save displacement field `uh` and the Von Mises stress `sigma_vm_h` in
 # XDMF format files.
@@ -464,6 +480,7 @@ sigma_vm_h.interpolate(sigma_vm_expr)
 with XDMFFile(msh.comm, "out_elasticity/displacements.xdmf", "w") as file:
     file.write_mesh(msh)
     file.write_function(uh)
+    file.write_function(traction_vec)
 
 # Save solution to XDMF format
 with XDMFFile(msh.comm, "out_elasticity/von_mises_stress.xdmf", "w") as file:

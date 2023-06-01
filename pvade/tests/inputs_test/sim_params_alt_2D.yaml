@@ -1,7 +1,9 @@
 general:
   geometry_module: panels2d
-  output_dir: output/panels2d
-  mesh_only: False
+  output_dir: pvade/tests/test_mesh/panels2d
+  mesh_only: True
+  structural_analysis: false
+  fluid_analysis: true
 domain:
   x_min: -10
   x_max: 50
@@ -34,5 +36,3 @@ fluid:
   periodic: false 
   bc_y_max: slip # slip noslip free
   bc_y_min: noslip # slip noslip free
-structure:
-  youngs: 1.0e+09

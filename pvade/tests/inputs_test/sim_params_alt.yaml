@@ -1,7 +1,9 @@
 general:
   geometry_module: panels3d
-  output_dir: output/panels3d
+  output_dir: pvade/tests/test_mesh/panels3d
   mesh_only: True
+  structural_analysis: false
+  fluid_analysis: true
 domain:
   x_min: -10
   x_max: 50
@@ -17,7 +19,7 @@ pv_array:
   panel_chord: 2.0
   panel_span: 7.0
   panel_thickness: 0.1
-  tracker_angle: 30.0
+  tracker_angle: -30.0
 solver:
   dt: 0.005
   t_final: 10.0
@@ -32,11 +34,9 @@ solver:
 fluid:
   u_ref: 8.0
   nu: 0.01
-  turbulence_model: smagorinsky
+  turbulence_model: null
   periodic: false 
   bc_y_max: slip # slip noslip free
   bc_y_min: slip # slip noslip free
   bc_z_max: slip # slip noslip free
   bc_z_min: noslip # slip noslip free
-structure:
-  youngs: 1.0e+09

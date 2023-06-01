@@ -8,6 +8,10 @@ properties:
     type: "object"
     # required:
     properties:
+      test:
+        default: false
+        type: "boolean"
+        description: "test if interpolation is done correctly"
       output_dir:
         default: "output/"
         type: "string"
@@ -26,6 +30,15 @@ properties:
         default: false
         type: "boolean"
         description: "If true, exit the PVade run immediately after generating the mesh without solving"
+      structural_analysis:
+        default: False 
+        type: "boolean"
+        description: "If true, conduct a structure analysis"
+      fluid_analysis:
+        default: true
+        type: "boolean"
+        description: "If true, conduct a fluid analysis"
+
   domain:
     additionalProperties: false
     type: "object"
@@ -180,45 +193,59 @@ properties:
       solver1_ksp:
         default: "cg"
         type: "string"
-        description: "The solver to use for fluid solve 1 of 3"
+        description: "The solver to use for fluid solve 1 of 4"
         enum:
           - "cg"
           - "gmres"
       solver2_ksp:
         default: "cg"
         type: "string"
-        description: "The solver to use for fluid solve 2 of 3"
+        description: "The solver to use for fluid solve 2 of 4"
         enum:
           - "cg"
           - "gmres"
       solver3_ksp:
         default: "cg"
         type: "string"
-        description: "The solver to use for fluid solve 3 of 3"
+        description: "The solver to use for fluid solve 3 of 4"
         enum:
           - "cg"
           - "gmres"
+      solver4_ksp:
+        default: "cg"
+        type: "string"
+        description: "The solver to use for fluid solve 4 of 4"
+        enum:
+          - "cg"
+          - "gmres"    
       solver1_pc:
         default: "hypre"
         type: "string"
-        description: "The preconditioner to use for fluid solve 1 of 3"
+        description: "The preconditioner to use for fluid solve 1 of 4"
         enum:
           - "jacobi"
           - "hypre"
       solver2_pc:
         default: "hypre"
         type: "string"
-        description: "The preconditioner to use for fluid solve 2 of 3"
+        description: "The preconditioner to use for fluid solve 2 of 4"
         enum:
           - "jacobi"
           - "hypre"
       solver3_pc:
         default: "hypre"
         type: "string"
-        description: "The preconditioner to use for fluid solve 3 of 3"
+        description: "The preconditioner to use for fluid solve 3 of 4"
         enum:
           - "jacobi"
           - "hypre"
+      solver4_pc:
+        default: "hypre"
+        type: "string"
+        description: "The preconditioner to use for fluid solve 3 of 4"
+        enum:
+          - "jacobi"
+          - "hypre"    
   fluid:
     additionalProperties: false
     type: "object"

@@ -31,34 +31,33 @@ def main():
 
     if params.general.mesh_only == True:
         list_timings(params.comm, [TimingType.wall])
-        return params
+        elasticity, flow = [],[]
+        return  params, elasticity, flow
 
     # Check to ensure mesh node matching for periodic simulations
     # if domain.periodic_simulation:
     # domain.check_mesh_periodicity(params)
 
 
-    fluid_analysis = True
+    fluid_analysis = params.general.fluid_analysis
     # Initialize the function spaces for the flow
     flow = Flow(domain,fluid_analysis)
 
-    # # # Specify the boundary conditions
-    # flow.build_boundary_conditions(domain, params)
-
-    # # # Build the fluid forms
-    flow.build_forms(domain, params)
-
-    
-
-
-    # intitalize structure 
-    # apply only for 3d panels 
-    structural_analysis = True
-
+    structural_analysis = params.general.structural_analysis
     elasticity = Elasticity(domain,structural_analysis)
 
+
+    if fluid_analysis == True:
+        # # # Specify the boundary conditions
+        flow.build_boundary_conditions(domain, params)
+        # # # Build the fluid forms
+        flow.build_forms(domain, params)
+
+    
+    
+
     if structural_analysis == True:
-        # elasticity.build_boundary_conditions(domain, params)
+        elasticity.build_boundary_conditions(domain, params)
         # # # Build the fluid forms
         elasticity.build_forms(domain, params)
 
@@ -76,18 +75,21 @@ def main():
         if domain.rank == 0:
             progress.update(1)
         # Solve the fluid problem at each timestep
-        flow.solve(params)
+        if fluid_analysis == True:
+            flow.solve(params)
         if structural_analysis == True:
             elasticity.solve(params,dataIO)
-        dataIO.fluid_struct(domain, flow,elasticity, params)
+            if fluid_analysis == True:
+                dataIO.fluid_struct(domain, flow,elasticity, params)
         # adjust pressure to avoid dissipation of pressure profile
         # flow.adjust_dpdx_for_constant_flux(params)
         if (k + 1) % params.solver.save_xdmf_interval_n == 0:
-            if domain.rank == 0:
-                print(
-                    f"Time {params.solver.dt*(k+1):.2f} of {params.solver.t_final:.2f}, CFL = {flow.cfl_max}"
-                )
-            dataIO.save_XDMF_files(flow, (k + 1) * params.solver.dt)
+            if fluid_analysis == True:
+                if domain.rank == 0:
+                    print(
+                        f"Time {params.solver.dt*(k+1):.2f} of {params.solver.t_final:.2f}, CFL = {flow.cfl_max}"
+                    )
+                dataIO.save_XDMF_files(flow, (k + 1) * params.solver.dt)
             
             if structural_analysis == True:
                 if domain.rank == 0:

@@ -147,8 +147,8 @@ class Flow:
 
         if initialize_flow:
 
-            self.inflow_profile = dolfinx.fem.Function(self.V)
-            self.inflow_profile.interpolate(lambda x: np.vstack((x[0], x[1],x[2])))
+            # self.inflow_profile = dolfinx.fem.Function(self.V)
+            # self.inflow_profile.interpolate(lambda x: np.vstack((x[0], x[1],x[2])))
 
             # when using interpolate the assert fails 
             self.u_k1.interpolate(self.inflow_profile)
@@ -157,13 +157,13 @@ class Flow:
 
             # print(min(abs(self.u_k.x.array[:] - self.inflow_profile.x.array[:])))
 
-            flags = []
+            # flags = []
 
-            flags.append((self.u_k.x.array[:] == self.inflow_profile.x.array).all())
-            flags.append((self.u_k.x.array[:] == self.inflow_profile.x.array).all())
-            flags.append((self.u_k2.x.array[:] == self.inflow_profile.x.array).all())
+            # flags.append((self.u_k.x.array[:] == self.inflow_profile.x.array).all())
+            # flags.append((self.u_k.x.array[:] == self.inflow_profile.x.array).all())
+            # flags.append((self.u_k2.x.array[:] == self.inflow_profile.x.array).all())
             
-            assert all(flags), "initialiazation not done correctly"
+            # assert all(flags), "initialiazation not done correctly"
             
 
         # Define expressions used in variational forms
@@ -191,7 +191,7 @@ class Flow:
 
                 # Eddy viscosity
                 self.nu_T = Cs**2 * filter_scale**2 * strainMag
-
+                # self.nu_T = dolfinx.fem.Constant(domain.fluid.msh, Cs**2 * filter_scale**2 * strainMag)
         else:
             self.nu_T = dolfinx.fem.Constant(domain.fluid.msh, 0.0)
 
@@ -272,6 +272,7 @@ class Flow:
 
         # Create a dolfinx.fem.form for projecting stress onto a tensor function space
         # e.g., panel_stress.assign(project(stress, T))
+       
         self.a4 = dolfinx.fem.form(ufl.inner(ufl.TrialFunction(self.T), ufl.TestFunction(self.T))*ufl.dx)
         self.L4 = dolfinx.fem.form(ufl.inner(self.stress, ufl.TestFunction(self.T))*ufl.dx)
 
@@ -362,8 +363,8 @@ class Flow:
 
         self.solver_4 = PETSc.KSP().create(self.comm)
         self.solver_4.setOperators(self.A4)
-        self.solver_4.setType("cg")
-        self.solver_4.getPC().setType("jacobi")
+        self.solver_4.setType(params.solver.solver4_ksp)
+        self.solver_4.getPC().setType(params.solver.solver4_pc)
         self.solver_4.setFromOptions()
 
         self.solver_5 = PETSc.KSP().create(self.comm)

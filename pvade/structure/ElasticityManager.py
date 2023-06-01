@@ -40,7 +40,7 @@ class Elasticity:
 
 
 
-        P1 = ufl.VectorElement("Lagrange", domain.structure.msh.ufl_cell(), 2)
+        P1 = ufl.VectorElement("Lagrange", domain.structure.msh.ufl_cell(), 1)
         self.V = dolfinx.fem.FunctionSpace(domain.structure.msh, P1)
 
         self.W = dolfinx.fem.FunctionSpace(domain.structure.msh, ("Discontinuous Lagrange", 0))
@@ -95,8 +95,8 @@ class Elasticity:
 
         """
         # Define structural properties
-        self.E =1.0e9# params.structure.elasticity_modulus#1.0e9
-        self.ν = 0.3#params.structure.poissons_ratio #0.3
+        self.E = params.structure.elasticity_modulus#1.0e9
+        self.ν = params.structure.poissons_ratio #0.3
         self.μ = self.E / (2.0 * (1.0 + self.ν))
         self.λ = self.E * self.ν / ((1.0 + self.ν) * (1.0 - 2.0 * self.ν))
 
@@ -115,7 +115,7 @@ class Elasticity:
         self.sigma_vm_h = dolfinx.fem.Function(self.W, name="Stress")
 
         self.uh = dolfinx.fem.Function(self.V,  name="Deformation") 
-        self.uh_exp = dolfinx.fem.Function(self.V,  name="Deformation") 
+        # self.uh_exp = dolfinx.fem.Function(self.V,  name="Deformation") 
 
         def σ(v):
             """Return an expression for the stress σ given a displacement field"""
@@ -123,7 +123,7 @@ class Elasticity:
 
         # source term ($f = \rho \omega^2 [x_0, \, x_1]$)
         self.ω, self.ρ = 300.0, 10.0
-        x = ufl.SpatialCoordinate(domain.structure.msh)
+        # x = ufl.SpatialCoordinate(domain.structure.msh)
         # self.f = ufl.as_vector((0*self.ρ * self.ω**2 * x[0], self.ρ * self.ω**2 * x[1], 0.0))
         # self.f_structure = dolfinx.fem.Constant(
         #     domain.structure.msh,
@@ -131,10 +131,10 @@ class Elasticity:
         # )
         # self.f = ufl.as_vector((0*self.ρ * self.ω**2 * x[0], self.ρ * self.ω**2 * x[1], 0.0))   
         # self.T = dolfinx.fem.Constant(domain.structure.msh, PETSc.ScalarType((0, 1.e-3, 0)))
-        self.f = dolfinx.fem.Constant(domain.structure.msh, PETSc.ScalarType((0,100,100)))
-        # self.f = dolfinx.fem.Constant(domain.structure.msh, PETSc.ScalarType((params.structure.body_force_x, \
-                                                                            #   params.structure.body_force_y, \
-                                                                                # params.structure.body_force_z)))
+        # self.f = dolfinx.fem.Constant(domain.structure.msh, PETSc.ScalarType((0,100,100)))
+        self.f = dolfinx.fem.Constant(domain.structure.msh, PETSc.ScalarType((params.structure.body_force_x, \
+                                                                              params.structure.body_force_y, \
+                                                                                params.structure.body_force_z)))
         self.ds = ufl.Measure("ds", domain=domain.structure.msh)
         n = ufl.FacetNormal(domain.structure.msh)
         self.a = dolfinx.fem.form( ufl.inner(σ(self.u), ufl.grad(self.v)) * ufl.dx)

@@ -2,7 +2,9 @@ general:
   geometry_module: panels3d
   output_dir: output/structure/panels3d
   mesh_only: False
-  # input_mesh_file: output/panels3d/mesh/mesh.xdmf
+  structural_analysis: true
+  fluid_analysis: false
+  input_mesh_file: output/structure/panels3d/mesh/mesh.xdmf
 domain:
   x_min: -10
   x_max: 50
@@ -20,16 +22,16 @@ pv_array:
   panel_thickness: 0.1
   tracker_angle: -30.0
 solver:
-  dt: 0.005
-  t_final: 10.0
+  dt: 1
+  t_final: 1
   solver1_ksp: cg
   solver2_ksp: cg
   solver3_ksp: cg
   solver1_pc: jacobi
   solver2_pc: jacobi
   solver3_pc: jacobi
-  save_text_interval: 0.01
-  save_xdmf_interval: 0.01
+  save_text_interval: 1
+  save_xdmf_interval: 1
 fluid:
   u_ref: 8.0
   nu: 0.01
