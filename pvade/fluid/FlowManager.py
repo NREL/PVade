@@ -136,12 +136,12 @@ class Flow:
 
         # Define functions for velocity solutions
         self.u_k = dolfinx.fem.Function(self.V, name="velocity ")
-        self.u_k1 = dolfinx.fem.Function(self.V, name="velocity (t-1)")
-        self.u_k2 = dolfinx.fem.Function(self.V, name="velocity (t-2)")
+        self.u_k1 = dolfinx.fem.Function(self.V)
+        self.u_k2 = dolfinx.fem.Function(self.V)
 
         # Define functions for pressure solutions
         self.p_k = dolfinx.fem.Function(self.Q, name="pressure")
-        self.p_k1 = dolfinx.fem.Function(self.Q, name="pressure (t-1)")
+        self.p_k1 = dolfinx.fem.Function(self.Q)
 
         initialize_flow = True
 
@@ -191,7 +191,7 @@ class Flow:
 
                 # Eddy viscosity
                 self.nu_T = Cs**2 * filter_scale**2 * strainMag
-                # self.nu_T = dolfinx.fem.Constant(domain.fluid.msh, Cs**2 * filter_scale**2 * strainMag)
+                # self.nu_T = dolfinx.fem.Constant(domain.fluid.msh, 0.0)
         else:
             self.nu_T = dolfinx.fem.Constant(domain.fluid.msh, 0.0)
 
@@ -236,7 +236,7 @@ class Flow:
         self.F1 = (
             (1.0 / self.dt_c) * ufl.inner(self.u - self.u_k1, self.v) * ufl.dx
             + ufl.inner(ufl.dot(U_AB, ufl.nabla_grad(U_CN)), self.v) * ufl.dx
-            + (nu + self.nu_T) * ufl.inner(ufl.grad(U_CN), ufl.grad(self.v)) * ufl.dx
+            + (nu+  self.nu_T) * ufl.inner(ufl.grad(U_CN), ufl.grad(self.v)) * ufl.dx
             + ufl.inner(ufl.grad(self.p_k1), self.v) * ufl.dx
             - ufl.inner(self.dpdx, self.v) * ufl.dx
         )
