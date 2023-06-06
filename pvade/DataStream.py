@@ -201,5 +201,6 @@ class DataStream:
                 fp.write(f"{string_to_print}\n")
 
     def fluid_struct(self, domain, flow, elasticity, params):
+        # print("tst")
         elasticity.stress.interpolate(flow.panel_stress)
         
