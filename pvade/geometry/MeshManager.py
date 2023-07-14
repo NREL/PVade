@@ -54,7 +54,7 @@ class FSIDomain:
 
         # Structure Facet Markers
         if params.general.geometry_module == "panels2d" or params.general.geometry_module == "panels3d":
-            for panel_id in range(params.pv_array.stream_rows):
+            for panel_id in range(params.pv_array.stream_rows * params.pv_array.span_rows):
                 marker = 9 + np.array([1,2,3,4,5,6])+6*(panel_id)
                 panel_marker = 100*(panel_id+1) 
                 self.domain_markers[f"bottom_{panel_id}"] = {"idx": marker[0], "entity": "facet", "gmsh_tags": []}
@@ -87,7 +87,13 @@ class FSIDomain:
 
         # Only rank 0 builds the geometry and meshes the domain
         if self.rank == 0:
-            self.geometry.build(params)
+            if params.general.geometry_module == "panels3d" and params.general.fluid_analysis == True and params.general.structural_analysis == True :
+                self.geometry.build_FSI(params)
+            elif params.general.geometry_module == "panels3d" and params.general.fluid_analysis == False and params.general.structural_analysis == True :
+                self.geometry.build_structure(params)
+            else :
+                self.geometry.build_fsi(params)
+                
             self.domain_markers = self.geometry.mark_surfaces(
                 params, self.domain_markers
             )
@@ -112,9 +118,10 @@ class FSIDomain:
         self.cell_tags.name = "cell_tags"
         self.facet_tags.name = "facet_tags"
 
-        self._create_submeshes_from_parent()
 
-        self._transfer_mesh_tags_to_submeshes(params)
+        if params.general.geometry_module == "panels3d" and params.general.fluid_analysis == True and params.general.structural_analysis == True :
+            self._create_submeshes_from_parent()
+            self._transfer_mesh_tags_to_submeshes(params)
 
 
 
@@ -145,29 +152,70 @@ class FSIDomain:
 
         #     return mesh, cell_tags, facet_tags
 
-        for sub_domain_name in ["fluid", "structure"]:
-            mesh_filename = os.path.join(params.general.output_dir_mesh, f"temp_{sub_domain_name}.xdmf")
-            sub_domain = getattr(self, sub_domain_name)
-            sub_domain.msh.name = "temp_mesh"
 
-            # Write this submesh to immediately read it
-            with dolfinx.io.XDMFFile(self.comm, mesh_filename, "w") as xdmf:
-                xdmf.write_mesh(sub_domain.msh)
-                xdmf.write_meshtags(sub_domain.cell_tags)
-                sub_domain.msh.topology.create_connectivity(self.ndim-1, self.ndim)
-                xdmf.write_meshtags(sub_domain.facet_tags)
+        if params.general.fluid_analysis == True and params.general.structural_analysis == True :
+            sub_domain_list = ["fluid", "structure"]
+            for sub_domain_name in sub_domain_list:
+                mesh_filename = os.path.join(params.general.output_dir_mesh, f"temp_{sub_domain_name}.xdmf")
+                sub_domain = getattr(self, sub_domain_name)
+                sub_domain.msh.name = "temp_mesh"
 
-            # Read the just-written mesh
-            with dolfinx.io.XDMFFile(self.comm, mesh_filename, "r") as xdmf:
-                submesh = xdmf.read_mesh(name=sub_domain.msh.name)
-                cell_tags = xdmf.read_meshtags(submesh, name="cell_tags")
-                ndim = submesh.topology.dim
-                submesh.topology.create_connectivity(ndim - 1, ndim)
-                facet_tags = xdmf.read_meshtags(submesh, name="facet_tags")
+                # Write this submesh to immediately read it
+                with dolfinx.io.XDMFFile(self.comm, mesh_filename, "w") as xdmf:
+                    xdmf.write_mesh(sub_domain.msh)
+                    xdmf.write_meshtags(sub_domain.cell_tags)
+                    sub_domain.msh.topology.create_connectivity(self.ndim-1, self.ndim)
+                    xdmf.write_meshtags(sub_domain.facet_tags)
 
-            sub_domain.msh = submesh
-            sub_domain.facet_tags = facet_tags
-            sub_domain.cell_tags = cell_tags
+                # Read the just-written mesh
+                with dolfinx.io.XDMFFile(self.comm, mesh_filename, "r") as xdmf:
+                    submesh = xdmf.read_mesh(name=sub_domain.msh.name)
+                    cell_tags = xdmf.read_meshtags(submesh, name="cell_tags")
+                    ndim = submesh.topology.dim
+                    submesh.topology.create_connectivity(ndim - 1, ndim)
+                    facet_tags = xdmf.read_meshtags(submesh, name="facet_tags")
+
+                sub_domain.msh = submesh
+                sub_domain.facet_tags = facet_tags
+                sub_domain.cell_tags = cell_tags
+        elif params.general.geometry_module == "panels3d" and params.general.fluid_analysis == False and params.general.structural_analysis == True :
+                sub_domain_name = "structure"
+
+                mesh_filename = os.path.join(params.general.output_dir_mesh, f"temp_{sub_domain_name}.xdmf")
+                # sub_domain = getattr(self, sub_domain_list[0])
+                # sub_domain.msh.name = "temp_mesh"
+
+                # self.msh.name  = "temp_mesh"
+
+                # Write this submesh to immediately read it
+                with dolfinx.io.XDMFFile(self.comm, mesh_filename, "w") as xdmf:
+                    xdmf.write_mesh(self.msh)
+                    xdmf.write_meshtags(self.cell_tags)
+                    self.msh.topology.create_connectivity(self.ndim-1, self.ndim)
+                    xdmf.write_meshtags(self.facet_tags)
+
+                # Read the just-written mesh
+                with dolfinx.io.XDMFFile(self.comm, mesh_filename, "r") as xdmf:
+                    mesh = xdmf.read_mesh(name=self.msh.name)
+                    cell_tags = xdmf.read_meshtags(mesh, name="cell_tags")
+                    ndim = mesh.topology.dim
+                    mesh.topology.create_connectivity(ndim - 1, ndim)
+                    facet_tags = xdmf.read_meshtags(mesh, name="facet_tags")
+
+
+                class FSISubDomain:
+                    pass
+
+                sub_domain = FSISubDomain()
+
+                sub_domain.msh = mesh
+                sub_domain.facet_tags = facet_tags
+                sub_domain.cell_tags = cell_tags
+
+                setattr(self, sub_domain_name, sub_domain)
+
+        
+
 
     def _create_submeshes_from_parent(self):
         """Create submeshes from a parent mesh by cell tags.

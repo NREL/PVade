@@ -20,7 +20,7 @@ class DomainCreation(TemplateDomainCreation):
         """
         super().__init__(params)
 
-    def build(self, params):
+    def build_FSI(self, params):
         """This function creates the computational domain for a 3d simulation involving N panels.
             The panels are set at a distance apart, rotated at an angle theta and are elevated with a distance H from the ground.
 
@@ -53,32 +53,95 @@ class DomainCreation(TemplateDomainCreation):
 
         panel_tag_list = []
 
-        for k in range(params.pv_array.stream_rows):
-            panel_id = self.gmsh_model.occ.addBox(
-                -0.5 * params.pv_array.panel_chord,
-                0.0,
-                -0.5 * params.pv_array.panel_thickness,
-                params.pv_array.panel_chord,
-                params.pv_array.panel_span,
-                params.pv_array.panel_thickness,
-            )
+        for j in range(params.pv_array.span_rows):
+            for k in range(params.pv_array.stream_rows):
+                panel_id = self.gmsh_model.occ.addBox(
+                    -0.5 * params.pv_array.panel_chord,
+                    0.0,
+                    -0.5 * params.pv_array.panel_thickness,
+                    params.pv_array.panel_chord,
+                    params.pv_array.panel_span,
+                    params.pv_array.panel_thickness,
+                )
 
-            panel_tag = (ndim, panel_id)
-            panel_tag_list.append(panel_tag)
+                panel_tag = (ndim, panel_id)
+                panel_tag_list.append(panel_tag)
 
-            # Rotate the panel currently centered at (0, 0, 0)
-            self.gmsh_model.occ.rotate([panel_tag], 0, 0, 0, 0, 1, 0, tracker_angle_rad)
+                # Rotate the panel currently centered at (0, 0, 0)
+                self.gmsh_model.occ.rotate([panel_tag], 0, 0, 0, 0, 1, 0, tracker_angle_rad)
 
-            # Translate the panel [panel_loc, 0, elev]
-            self.gmsh_model.occ.translate(
-                [panel_tag],
-                k * params.pv_array.stream_spacing[0],
-                0,
-                params.pv_array.elevation,
-            )
+                # Translate the panel [panel_loc, 0, elev]
+                self.gmsh_model.occ.translate(
+                    [panel_tag],
+                    k * params.pv_array.stream_spacing[0],
+                    j * params.pv_array.span_spacing[0],
+                    params.pv_array.elevation,
+                )
 
         # Fragment all panels from the overall domain
         self.gmsh_model.occ.fragment(domain_tag_list, panel_tag_list)
+
+        self.gmsh_model.occ.synchronize()
+
+    def build_structure(self, params):
+        """This function creates the computational domain for a 3d simulation involving N panels.
+            The panels are set at a distance apart, rotated at an angle theta and are elevated with a distance H from the ground.
+
+        Returns:
+            The function returns gmsh.model which contains the geometric description of the computational domain
+        """
+        # # Compute and store some useful geometric quantities
+        # self.x_span = params.domain.x_max - params.domain.x_min
+        # self.y_span = params.domain.y_max - params.domain.y_min
+        # self.z_span = params.domain.z_max - params.domain.z_min
+        tracker_angle_rad = np.radians(params.pv_array.tracker_angle)
+
+        ndim = 3
+
+        # # Create the fluid domain extent
+        # domain_id = self.gmsh_model.occ.addBox(
+        #     params.domain.x_min,
+        #     params.domain.y_min,
+        #     params.domain.z_min,
+        #     self.x_span,
+        #     self.y_span,
+        #     self.z_span,
+        #     0,
+        # )
+
+        # domain_tag = (ndim, domain_id)
+
+        # domain_tag_list = []
+        # domain_tag_list.append(domain_tag)
+
+        panel_tag_list = []
+        for j in range(params.pv_array.span_rows):
+            for k in range(params.pv_array.stream_rows):
+                panel_id = self.gmsh_model.occ.addBox(
+                    -0.5 * params.pv_array.panel_chord,
+                    0.0,
+                    -0.5 * params.pv_array.panel_thickness,
+                    params.pv_array.panel_chord,
+                    params.pv_array.panel_span,
+                    params.pv_array.panel_thickness,
+                )
+
+                panel_tag = (ndim, panel_id)
+                panel_tag_list.append(panel_tag)
+
+                # Rotate the panel currently centered at (0, 0, 0)
+                self.gmsh_model.occ.rotate([panel_tag], 0, 0, 0, 0, 1, 0, tracker_angle_rad)
+
+                # Translate the panel [panel_loc, 0, elev]
+                self.gmsh_model.occ.translate(
+                    [panel_tag],
+                    k * params.pv_array.stream_spacing[0],
+                    j * params.pv_array.span_spacing[0],
+                    params.pv_array.elevation,
+                )
+
+        # Fragment all panels from the overall domain
+        # self.gmsh_model.occ.fragment(domain_tag_list, panel_tag_list)
 
         self.gmsh_model.occ.synchronize()
 
@@ -93,7 +156,8 @@ class DomainCreation(TemplateDomainCreation):
         # thresholds = []
         # distances= []
         internal_surface_tags=[]
-        for panel_id in range(params.pv_array.stream_rows):
+        
+        for panel_id in range(params.pv_array.stream_rows * params.pv_array.span_rows):
             internal_surface_tags.append(domain_markers[f"bottom_{panel_id}"]["gmsh_tags"][0])    
             internal_surface_tags.append(domain_markers[f"top_{panel_id}"]["gmsh_tags"][0])
             internal_surface_tags.append(domain_markers[f"left_{panel_id}"]["gmsh_tags"][0])

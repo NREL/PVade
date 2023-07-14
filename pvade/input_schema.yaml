@@ -150,7 +150,7 @@ properties:
         units: "meter"
       panel_thickness:
         default: 0.1
-        minimum: 0.01
+        minimum: 0.0001
         maximum: 1.0
         type: "number"
         description: "The thickness of the panel."
@@ -346,7 +346,7 @@ properties:
     properties:
       elasticity_modulus:
         default: 190.0e+9
-        minimum: 1.0e+9
+        minimum: 1.0e+2
         maximum: 500.0e+9
         type: "number"
         description: "The effective Young's modulus of the panel structure."

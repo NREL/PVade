@@ -39,6 +39,8 @@ class Elasticity:
         self.num_procs = domain.num_procs
 
 
+        # domain.structure.msh = dolfinx.mesh.refine(domain.structure.msh,None)
+        # domain.structure.msh = dolfinx.mesh.refine(domain.structure.msh)
 
         P1 = ufl.VectorElement("Lagrange", domain.structure.msh.ufl_cell(), 1)
         self.V = dolfinx.fem.FunctionSpace(domain.structure.msh, P1)
@@ -51,8 +53,24 @@ class Elasticity:
             self.V.dofmap.index_map_bs * self.V.dofmap.index_map.size_global
         )
 
+        # Store the dimension of the problem for convenience
+        self.ndim = domain.structure.msh.topology.dim
+        self.facet_dim = self.ndim - 1
+
+        # find hmin in mesh
+        num_cells = domain.structure.msh.topology.index_map(self.ndim).size_local
+        h = dolfinx.cpp.mesh.h(domain.structure.msh, self.ndim, range(num_cells))
+
+        # This value of hmin is local to the mesh portion owned by the process
+        hmin_local = np.amin(h)
+
+        # collect the minimum hmin from all processes
+        self.hmin = np.zeros(1)
+        self.comm.Allreduce(hmin_local, self.hmin, op=MPI.MIN)
+        self.hmin = self.hmin[0]
+        
         if self.rank == 0:
-            # print(f"hmin = {self.hmin}")
+            print(f"hmin on structure = {self.hmin}")
             print(f"Total num dofs on structure = {self.num_V_dofs}")
 
     def build_boundary_conditions(self, domain, params):

@@ -105,7 +105,8 @@ class TemplateDomainCreation:
                      domain_markers[f"cylinder_side"]["gmsh_tags"].append(surf_id)   
                 elif params.general.geometry_module == "panels3d":
                 # tgging in 3d starts with all panels then moves to domain boundaries 
-                    if surf_id < surf_tag_list[0][1]+num_of_panel_facets*(params.pv_array.stream_rows):
+                # false panels start after boundary 
+                    if surf_id < surf_tag_list[0][1]+num_of_panel_facets*(params.pv_array.stream_rows*params.pv_array.span_rows):
                         tags =  np.arange(start=surf_tag_list[0][1], stop=surf_tag_list[5][1]+1, step=1)+6*(panel_id)
                         # tags = np.array([1,2,3,4,5,6])
                         if surf_id == tags[0]:
@@ -130,7 +131,7 @@ class TemplateDomainCreation:
                         if count == num_of_panel_facets: 
                             panel_id = panel_id + 1 
                             count = 0           
-                    elif params.general.geometry_module == "panels2d": 
+                elif params.general.geometry_module == "panels2d": 
                         # tgging in 2d starts with domain boundary then moves to panels
                         if surf_id >= surf_tag_list[0][1]+num_of_panel_facets*(params.pv_array.stream_rows):
                             tags =  np.arange(start=surf_tag_list[0][1]+domain_facets, stop=surf_tag_list[num_of_panel_facets][1]+domain_facets, step=1)+6*(panel_id)
@@ -167,7 +168,7 @@ class TemplateDomainCreation:
             for vol_tag in vol_tag_list:
                 vol_id = vol_tag[1]
 
-                if vol_id <= params.pv_array.stream_rows:
+                if vol_id <= (params.pv_array.stream_rows*params.pv_array.span_rows):
                     # This is a panel volume, vol_id = [1, 2, ..., num_panels]
                     domain_markers["structure"]["gmsh_tags"].append(vol_id)
                     # domain_markers[f"panel_{vol_id-1}"]["gmsh_tags"].append(vol_id)

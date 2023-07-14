@@ -20,6 +20,11 @@ def main():
     # Load the parameters object specified by the input file
     params = SimParams(input_file)
 
+
+
+    fluid_analysis = params.general.fluid_analysis
+    structural_analysis = params.general.structural_analysis
+
     # Initialize the domain and construct the initial mesh
     domain = FSIDomain(params)
 
@@ -39,15 +44,15 @@ def main():
     # domain.check_mesh_periodicity(params)
 
 
-    fluid_analysis = params.general.fluid_analysis
-    # Initialize the function spaces for the flow
+    
     flow = Flow(domain,fluid_analysis)
-
-    structural_analysis = params.general.structural_analysis
     elasticity = Elasticity(domain,structural_analysis)
+    
+    
 
 
     if fluid_analysis == True:
+        flow = Flow(domain,fluid_analysis)
         # # # Specify the boundary conditions
         flow.build_boundary_conditions(domain, params)
         # # # Build the fluid forms
@@ -57,6 +62,7 @@ def main():
     
 
     if structural_analysis == True:
+        
         elasticity.build_boundary_conditions(domain, params)
         # # # Build the fluid forms
         elasticity.build_forms(domain, params)
@@ -94,6 +100,7 @@ def main():
             if structural_analysis == True:
                 if domain.rank == 0:
                     print("deformation norm =", {elasticity.unorm}) 
+                    print("max deformation =", {max(elasticity.uh.x.array[:])}) 
                 dataIO.save_XDMF_files_str(elasticity, (k + 1) * params.solver.dt)
     
 

@@ -140,7 +140,7 @@ class DataStream:
             with XDMFFile(self.comm, self.results_filename_stress, "w") as xdmf_file:
                 tt = 0.0
                 xdmf_file.write_mesh(domain.structure.msh)
-                xdmf_file.write_function(elasticity.uh, 0.0)
+                # xdmf_file.write_function(elasticity.uh, 0.0)
                 xdmf_file.write_function(elasticity.sigma_vm_h, 0.0)
 
         if self.comm.rank == 0 and self.comm.size > 1 and params.general.test == True:
@@ -190,7 +190,7 @@ class DataStream:
         
         with XDMFFile(self.comm, self.results_filename_stress, "a") as xdmf_file:
             xdmf_file.write_function(elasticity.sigma_vm_h, tt)
-            xdmf_file.write_function(elasticity.uh, tt)
+            # xdmf_file.write_function(elasticity.uh, tt)
         
 
     def print_and_log(self, string_to_print):

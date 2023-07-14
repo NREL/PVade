@@ -33,56 +33,61 @@ class Flow:
             domain (:obj:`pvade.geometry.MeshManager.Domain`): A Domain object
 
         """
-        # Store the comm and mpi info for convenience
-        self.comm = domain.comm
-        self.rank = domain.rank
-        self.num_procs = domain.num_procs
         self.fluid_analysis = fluid_analysis
-        # Pressure (Scalar)
-        P1 = ufl.FiniteElement("Lagrange", domain.fluid.msh.ufl_cell(), 1)
-        self.Q = dolfinx.fem.FunctionSpace(domain.fluid.msh, P1)
 
-        # Velocity (Vector)
-        P2 = ufl.VectorElement("Lagrange", domain.fluid.msh.ufl_cell(), 2)
-        self.V = dolfinx.fem.FunctionSpace(domain.fluid.msh, P2)
+        if fluid_analysis == False:
+            pass
+        else:
+            # Store the comm and mpi info for convenience
+            self.comm = domain.comm
+            self.rank = domain.rank
+            self.num_procs = domain.num_procs
+            
+            # Pressure (Scalar)
+            P1 = ufl.FiniteElement("Lagrange", domain.fluid.msh.ufl_cell(), 1)
+            self.Q = dolfinx.fem.FunctionSpace(domain.fluid.msh, P1)
 
-        # Stress (Tensor)
-        P3 = ufl.TensorElement("Lagrange", domain.fluid.msh.ufl_cell(), 2)
-        self.T = dolfinx.fem.FunctionSpace(domain.fluid.msh, P3)
+            # Velocity (Vector)
+            P2 = ufl.VectorElement("Lagrange", domain.fluid.msh.ufl_cell(), 2)
+            self.V = dolfinx.fem.FunctionSpace(domain.fluid.msh, P2)
 
-        P4 = ufl.FiniteElement("DG", domain.fluid.msh.ufl_cell(), 0)
+            # Stress (Tensor)
+            P3 = ufl.TensorElement("Lagrange", domain.fluid.msh.ufl_cell(), 2)
+            self.T = dolfinx.fem.FunctionSpace(domain.fluid.msh, P3)
 
-        self.DG = dolfinx.fem.FunctionSpace(domain.fluid.msh, P4)
+            P4 = ufl.FiniteElement("DG", domain.fluid.msh.ufl_cell(), 0)
 
-        self.first_call_to_solver = True
-        self.first_call_to_surface_pressure = True
+            self.DG = dolfinx.fem.FunctionSpace(domain.fluid.msh, P4)
 
-        # Store the dimension of the problem for convenience
-        self.ndim = domain.fluid.msh.topology.dim
-        self.facet_dim = self.ndim - 1
+            self.first_call_to_solver = True
+            self.first_call_to_surface_pressure = True
 
-        # find hmin in mesh
-        num_cells = domain.fluid.msh.topology.index_map(self.ndim).size_local
-        h = dolfinx.cpp.mesh.h(domain.fluid.msh, self.ndim, range(num_cells))
+            # Store the dimension of the problem for convenience
+            self.ndim = domain.fluid.msh.topology.dim
+            self.facet_dim = self.ndim - 1
 
-        # This value of hmin is local to the mesh portion owned by the process
-        hmin_local = np.amin(h)
+            # find hmin in mesh
+            num_cells = domain.fluid.msh.topology.index_map(self.ndim).size_local
+            h = dolfinx.cpp.mesh.h(domain.fluid.msh, self.ndim, range(num_cells))
 
-        # collect the minimum hmin from all processes
-        self.hmin = np.zeros(1)
-        self.comm.Allreduce(hmin_local, self.hmin, op=MPI.MIN)
-        self.hmin = self.hmin[0]
+            # This value of hmin is local to the mesh portion owned by the process
+            hmin_local = np.amin(h)
 
-        self.num_Q_dofs = (
-            self.Q.dofmap.index_map_bs * self.Q.dofmap.index_map.size_global
-        )
-        self.num_V_dofs = (
-            self.V.dofmap.index_map_bs * self.V.dofmap.index_map.size_global
-        )
+            # collect the minimum hmin from all processes
+            self.hmin = np.zeros(1)
+            self.comm.Allreduce(hmin_local, self.hmin, op=MPI.MIN)
+            self.hmin = self.hmin[0]
 
-        if self.rank == 0:
-            print(f"hmin on fluid  = {self.hmin}")
-            print(f"Total num dofs on fluid= {self.num_Q_dofs + self.num_V_dofs}")
+            self.num_Q_dofs = (
+                self.Q.dofmap.index_map_bs * self.Q.dofmap.index_map.size_global
+            )
+            self.num_V_dofs = (
+                self.V.dofmap.index_map_bs * self.V.dofmap.index_map.size_global
+            )
+
+            if self.rank == 0:
+                print(f"hmin on fluid  = {self.hmin}")
+                print(f"Total num dofs on fluid= {self.num_Q_dofs + self.num_V_dofs}")
 
     def build_boundary_conditions(self, domain, params):
         """Build the boundary conditions

@@ -270,9 +270,31 @@ def build_structure_boundary_conditions(domain, params, functionspace):
     facet_dim = domain.ndim - 1
     zero_vec = dolfinx.fem.Constant(domain.structure.msh, PETSc.ScalarType((0.0, 0.0, 0.0)))
     bc = []
-    for num_panel in range(params.pv_array.stream_rows):
-        for location in f"left_{num_panel}", f"right_{num_panel}":
+    for num_panel in range(params.pv_array.stream_rows*params.pv_array.span_rows):
+        for location in  f"left_{num_panel}" , f"right_{num_panel}":
+        # for location in f"left_{num_panel}":
+        # location = f"top_{num_panel}"
             dofs = get_facet_dofs_by_gmsh_tag(domain, functionspace, location)
             bc.append(dolfinx.fem.dirichletbc(zero_vec, dofs, functionspace))
+    
 
+    # x = functionspace.tabulate_dof_coordinates()
+    # val = np.amax(x[:,0])
+    # print(np.amax(x[:,0]))
+
+    # length_in_z = np.sin(params.pv_array.tracker_angle) * params.pv_array.panel_chord
+    # min_point = params.pv_array.elevation - length_in_z/2
+
+    # point_of_attachement = ( min_point + 0.5*length_in_z) 
+
+
+    # def connection_point_up(x):
+    #     return np.isclose(x[0], val) 
+    #     # return abs(x[2]- point_of_attachement) < 1.e-6
+    #     return np.isclose(x[2], 1.5) 
+    
+    
+    # facet_uppoint = dolfinx.mesh.locate_entities(domain.structure.msh, 1, connection_point_up)
+    # dofs_disp = dolfinx.fem.locate_dofs_topological(functionspace, 1, [facet_uppoint])
+    # # bc.append(dolfinx.fem.dirichletbc(zero_vec, dofs_disp, functionspace))
     return bc

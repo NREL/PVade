@@ -75,7 +75,7 @@ comm = MPI.COMM_WORLD
 rank = comm.Get_rank()
 num_procs = 0
 
-msh =  dolfinx.mesh.create_rectangle(MPI.COMM_WORLD, [[0, 0],[1, 1]], [N,N],
+msh =  dolfinx.mesh.create_rectangle(MPI.COMM_WORLD, [[0, 0],[10, 1]], [N,N],
                                       CellType.quadrilateral,\
                                             GhostMode.shared_facet)
 
@@ -127,7 +127,7 @@ def boundary_bottom(x):
 def boundary_left(x):
     return np.isclose(x[0], 0.0) 
 def boundary_right(x):
-    return np.isclose(x[0], 1.0) 
+    return np.isclose(x[0], 10.0) 
 
 def connection_point_up(x):
     return np.isclose(x[1], 0.76) 
@@ -142,6 +142,7 @@ facets_top = dolfinx.mesh.locate_entities_boundary(msh, fdim, boundary_top)
 facets_bottom = dolfinx.mesh.locate_entities_boundary(msh, fdim, boundary_bottom)
 facets_left = dolfinx.mesh.locate_entities_boundary(msh, fdim, boundary_left)
 facets_right = dolfinx.mesh.locate_entities_boundary(msh, fdim, boundary_right)
+
 # Q, _ = V.sub(0).collapse()
 
 facet_uppoint = dolfinx.mesh.locate_entities(msh, 1, connection_point_up)
@@ -158,7 +159,7 @@ def f1(x):
 
 R, _ = V.sub(0).collapse()
 # dofs_disp = fem.locate_dofs_topological((V.sub(0),R), fdim, [facets_top,facets_bottom,facets_left,facets_right])
-dofs_disp = fem.locate_dofs_topological((V.sub(0),R), 1, [facet_downpoint,facet_uppoint])
+dofs_disp = fem.locate_dofs_topological((V.sub(0),R), 1, [facet_uppoint])
 f_h2 = fem.Function(R)
 f_h2.interpolate(f2)
 
@@ -184,12 +185,12 @@ bc_dis = fem.dirichletbc(f_h2, dofs_disp, V.sub(0))
 Q, _ = V.sub(1).collapse()
 f_h1 = fem.Function(Q)
 f_h1.interpolate(f1)
-dofs_rot = fem.locate_dofs_topological((V.sub(1),Q), fdim, [facet_uppoint,facet_downpoint])
+dofs_rot = fem.locate_dofs_topological((V.sub(1),Q), fdim, [facets_right])
 zero_vector = dolfinx.fem.Constant(msh, PETSc.ScalarType((0.0,0.0,0.0)))
 bc_rot = fem.dirichletbc(f_h1, dofs_rot, V.sub(1))
 
 
-bc = [bc_dis]#,bc_rot]
+bc = [bc_dis,bc_rot]
 # Some useful functions for implementing generalized constitutive relations are now
 # defined::
 
@@ -257,37 +258,38 @@ with io.XDMFFile(msh.comm, "out_mixed_poisson/u.xdmf", "w") as file:
     file.write_function(rot_h)
 
 print("Kirchhoff deflection:", -1.265319087e-3*float(f/D))
-print("Reissner-Mindlin FE deflection:", min(disp_h.x.array[:])) # point evaluation for quads
+print("Reissner-Mindlin FE deflection:", -np.min(disp_h.vector.array[:])) # point evaluation for quads
                                                                         # is not implemented in fenics 2017.2
 
-print(disp_h.x.array)
+
+
 
 
 # We then solve for the solution and export the relevant fields to XDMF files ::
 
 # solve(a == L, u, bc)
 
-(w, theta) = fem.split(u)
+# (w, theta) = fem.split(u)
 
-Vw = FunctionSpace(mesh, We)
-Vt = FunctionSpace(mesh, Te)
-ww = u.sub(0, True)
-ww.rename("Deflection", "")
-tt = u.sub(1, True)
-tt.rename("Rotation", "")
+# Vw = FunctionSpace(mesh, We)
+# Vt = FunctionSpace(mesh, Te)
+# ww = u.sub(0, True)
+# ww.rename("Deflection", "")
+# tt = u.sub(1, True)
+# tt.rename("Rotation", "")
 
-file_results = XDMFFile("RM_results.xdmf")
-file_results.parameters["flush_output"] = True
-file_results.parameters["functions_share_mesh"] = True
-file_results.write(ww, 0.)
-file_results.write(tt, 0.)
+# file_results = XDMFFile("RM_results.xdmf")
+# file_results.parameters["flush_output"] = True
+# file_results.parameters["functions_share_mesh"] = True
+# file_results.write(ww, 0.)
+# file_results.write(tt, 0.)
 
-# The solution is compared to the Kirchhoff analytical solution::
+# # The solution is compared to the Kirchhoff analytical solution::
 
-print("Kirchhoff deflection:", -1.265319087e-3*float(f/D))
-print("Reissner-Mindlin FE deflection:", -min(ww.vector().get_local())) # point evaluation for quads
-                                                                        # is not implemented in fenics 2017.2
+# print("Kirchhoff deflection:", -1.265319087e-3*float(f/D))
+# print("Reissner-Mindlin FE deflection:", -min(ww.vector().get_local())) # point evaluation for quads
+#                                                                         # is not implemented in fenics 2017.2
 
-# For :math:`h=0.001` and 50 quads per side, one finds :math:`w_{FE} = 1.38182\text{e-5}` for linear quads
-# and :math:`w_{FE} = 1.38176\text{e-5}` for quadratic quads against :math:`w_{\text{Kirchhoff}} = 1.38173\text{e-5}` for
-# the thin plate solution.
+# # For :math:`h=0.001` and 50 quads per side, one finds :math:`w_{FE} = 1.38182\text{e-5}` for linear quads
+# # and :math:`w_{FE} = 1.38176\text{e-5}` for quadratic quads against :math:`w_{\text{Kirchhoff}} = 1.38173\text{e-5}` for
+# # the thin plate solution.
