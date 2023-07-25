@@ -73,8 +73,8 @@ class DomainCreation(TemplateDomainCreation):
                 # Translate the panel [panel_loc, 0, elev]
                 self.gmsh_model.occ.translate(
                     [panel_tag],
-                    k * params.pv_array.stream_spacing[0],
-                    j * params.pv_array.span_spacing[0],
+                    k * params.pv_array.stream_spacing,
+                    j * params.pv_array.span_spacing,
                     params.pv_array.elevation,
                 )
 
