@@ -123,14 +123,14 @@ properties:
       stream_spacing:
         default: 7.0
         minimum: 1.0
-        maximum: 10.0
+        maximum: 32.0
         type: "number"
         description: "The separation between panel rows in the streamwise direction."
         units: "meter"
       span_spacing:
         default: 7.0
         minimum: 1.0
-        maximum: 10.0
+        maximum: 32.0
         type: "number"
         description: "The separation between panel rows in the spanwise direction."
         units: "meter"
