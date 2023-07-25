@@ -121,17 +121,17 @@ properties:
         description: "The vertical distance between the center of the panel and the ground."
         units: "meter"
       stream_spacing:
-        default: [7.0]
+        default: 7.0
         minimum: 1.0
         maximum: 10.0
-        type: "array"
+        type: "number"
         description: "The separation between panel rows in the streamwise direction."
         units: "meter"
       span_spacing:
-        default: [7.0]
+        default: 7.0
         minimum: 1.0
         maximum: 10.0
-        type: "array"
+        type: "number"
         description: "The separation between panel rows in the spanwise direction."
         units: "meter"
       panel_chord:
