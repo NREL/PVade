@@ -93,10 +93,17 @@ class FSIDomain:
                 self.geometry.build_structure(params)
             else :
                 self.geometry.build_fsi(params)
-                
-            self.domain_markers = self.geometry.mark_surfaces(
-                params, self.domain_markers
-            )
+            
+            if hasattr(self.geometry, "domain_markers"):
+                # If the "build" process created domain markers, use those directly...
+                self.domain_markers = self.geometry.domain_markers
+
+            else:
+                # otherwise, call the method mark_surfaces to identify them after the fact
+                self.domain_markers = self.geometry.mark_surfaces(
+                    params, self.domain_markers
+                )
+
             self.geometry.set_length_scales(params, self.domain_markers)
 
             if params.fluid.periodic:
