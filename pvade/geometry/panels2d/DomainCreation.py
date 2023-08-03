@@ -55,7 +55,7 @@ class DomainCreation(TemplateDomainCreation):
 
             # Rotate the panel currently centered at (0, 0, 0)
             self.gmsh_model.occ.rotate(
-                [(2, panel_box)], 0, 0, 0, 0, 0, -1, tracker_angle_rad
+                [(2, panel_box)], 0, 0, 0, 0, 0, 1, tracker_angle_rad
             )
 
             # Translate the panel [panel_loc, 0, elev]

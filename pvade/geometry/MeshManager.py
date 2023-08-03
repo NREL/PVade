@@ -109,7 +109,8 @@ class FSIDomain:
         
 
         self.msh, self.cell_tags, self.facet_tags = dolfinx.io.gmshio.model_to_mesh(
-            self.geometry.gmsh_model, self.comm, 0,partitioner=dolfinx.mesh.create_cell_partitioner(dolfinx.mesh.GhostMode.shared_facet))
+            self.geometry.gmsh_model, self.comm, 0, partitioner=dolfinx.mesh.create_cell_partitioner(dolfinx.mesh.GhostMode.shared_facet)
+            )
 
         self.ndim = self.msh.topology.dim
 
@@ -123,34 +124,9 @@ class FSIDomain:
             self._create_submeshes_from_parent()
             self._transfer_mesh_tags_to_submeshes(params)
 
+        self._save_submeshes_for_reload_hack(params)
 
-
-        # def write_mesh(mesh, mesh_filename, cell_tags=None, facet_tags=None):
-        #     with dolfinx.io.XDMFFile(self.comm, mesh_filename, "w") as xdmf:
-        #         xdmf.write_mesh(mesh)
-        #         if cell_tags is not None:
-        #             xdmf.write_meshtags(cell_tags)
-        #         if facet_tags is not None:
-        #             xdmf.write_meshtags(facet_tags)
-
-        # def read_mesh(mesh_filename, mesh_name="mesh"):
-        #     with dolfinx.io.XDMFFile(self.comm, mesh_filename, "r") as xdmf:
-        #         mesh = xdmf.read_mesh(name=mesh_name)
-
-        #         try:
-        #             cell_tags = xdmf.read_meshtags(mesh, name="cell_tags")
-        #         except:
-        #             cell_tags = None
-
-        #         ndim = mesh.topology.dim
-        #         mesh.topology.create_connectivity(ndim - 1, ndim)
-
-        #         try:
-        #             facet_tags = xdmf.read_meshtags(mesh, "facet_tags")
-        #         except:
-        #             facet_tags = None
-
-        #     return mesh, cell_tags, facet_tags
+    def _save_submeshes_for_reload_hack(self, params):
 
 
         if params.general.fluid_analysis == True and params.general.structural_analysis == True :
@@ -214,8 +190,6 @@ class FSIDomain:
 
                 setattr(self, sub_domain_name, sub_domain)
 
-        
-
 
     def _create_submeshes_from_parent(self):
         """Create submeshes from a parent mesh by cell tags.
@@ -244,6 +218,8 @@ class FSIDomain:
 
             class FSISubDomain:
                 pass
+
+            submesh.topology.create_connectivity(3, 2)
 
             sub_domain = FSISubDomain()
 
@@ -292,12 +268,24 @@ class FSIDomain:
                 for child, parent in zip(child_facets, parent_facets):
                     sub_values[child] = all_values[parent]
 
-            # sub_domain.facet_tags = dolfinx.mesh.meshtags(
-            #     sub_domain.msh,
-            #     sub_domain.msh.topology.dim - 1,
-            #     np.arange(sub_num_facets, dtype=np.int32),
-            #     sub_values,
-            # )
+            sub_cell_map = sub_domain.msh.topology.index_map(self.ndim)
+            sub_num_cells = sub_cell_map.size_local + sub_cell_map.num_ghosts
+
+            sub_domain.cell_tags = dolfinx.mesh.meshtags(
+                sub_domain.msh,
+                sub_domain.msh.topology.dim,
+                np.arange(sub_num_cells, dtype=np.int32),
+                np.ones(sub_num_cells, dtype=np.int32),
+            )
+            sub_domain.cell_tags.name = "cell_tags"
+
+            sub_domain.facet_tags = dolfinx.mesh.meshtags(
+                sub_domain.msh,
+                sub_domain.msh.topology.dim - 1,
+                np.arange(sub_num_facets, dtype=np.int32),
+                sub_values,
+            )
+            sub_domain.facet_tags.name = "facet_tags"
 
             # sub_domain.cell_tags = dolfinx.mesh.meshtags(
             #     sub_domain.msh,
@@ -513,3 +501,56 @@ class FSIDomain:
         coords = points[:]
 
         print(f"Rank {self.rank} owns {num_nodes_owned_by_proc} nodes\n{coords}")
+
+
+    def test_submesh_transfer(self, params):
+        P2 = ufl.VectorElement("Lagrange", self.msh.ufl_cell(), 2)
+        # P2 = ufl.FiniteElement("Lagrange", self.fluid.msh.ufl_cell(), 1)
+
+        V_fluid = dolfinx.fem.FunctionSpace(self.fluid.msh, P2)
+        V_struc = dolfinx.fem.FunctionSpace(self.structure.msh, P2)
+        V_all = dolfinx.fem.FunctionSpace(self.msh, P2)
+
+        u_all = dolfinx.fem.Function(V_all)
+        u_fluid = dolfinx.fem.Function(V_fluid)
+        u_struc = dolfinx.fem.Function(V_struc)
+
+        u_fluid.x.array[:] = -5.0
+        u_struc.x.array[:] = -5.0
+
+        from petsc4py import PETSc
+
+        def fluid_function_value_setter(x):
+
+            fluid_function_vals = np.zeros((3, x.shape[1]), dtype=PETSc.ScalarType)
+
+            fluid_function_vals[0, :] = x[0]
+            fluid_function_vals[1, :] = x[1]
+            fluid_function_vals[2, :] = x[2]
+
+            return fluid_function_vals
+
+        u_fluid.interpolate(fluid_function_value_setter)
+
+        mesh_filename = os.path.join(params.general.output_dir_sol, "transfer_fluid.xdmf")
+        with dolfinx.io.XDMFFile(self.comm, mesh_filename, "w") as fp:
+            fp.write_mesh(self.fluid.msh)
+            fp.write_function(u_fluid, 0)
+
+        u_struc.interpolate(u_fluid)
+
+        mesh_filename = os.path.join(params.general.output_dir_sol, "transfer_struc.xdmf")
+        with dolfinx.io.XDMFFile(self.comm, mesh_filename, "w") as fp:
+            fp.write_mesh(self.structure.msh)
+            fp.write_function(u_struc, 0)
+
+        u_fluid.interpolate(u_struc)
+
+        mesh_filename = os.path.join(params.general.output_dir_sol, "transfer_fluid.xdmf")
+        with dolfinx.io.XDMFFile(self.comm, mesh_filename, "a") as fp:
+            # fp.write_mesh(self.fluid.msh)
+            fp.write_function(u_fluid, 1)
+
+        with dolfinx.io.VTKFile(self.comm, self.results_filename_vtk, "w") as file:
+            file.write_mesh(domain.structure.msh)
+            file.write_function(elasticity.uh, 0.0)

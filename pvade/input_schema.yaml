@@ -274,6 +274,14 @@ properties:
         type: "number"
         description: "The velocity of the wind as measured at the panel elevation."
         units: "meter/second"
+      wind_direction:
+        default: 270.0
+        minimum: 0.0
+        maximum: 360.0
+        type: "number"
+        description: "The direction of the wind in degrees. 0 indicates a wind blowing from North to South, 
+        90 degrees from East to West, 180 from South to North, and 270 (default) from West to East."
+        units: "degrees"
       nu:
         default: 1.8e-05
         minimum: 1.0e-06
