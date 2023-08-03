@@ -134,6 +134,15 @@ properties:
         type: "number"
         description: "The separation between panel rows in the spanwise direction."
         units: "meter"
+      span_fixation_pts:
+        default: 3.5
+        minimum: 1.0
+        # maximum: 32.0
+        type:
+          - "number"
+          - "array"
+        description: "If a single number, the uniform distance between linear fixation points embedded in the structural mesh, if an array, the location of each such fixation point along the panel span, all points in the range [0, panel_span]."
+        units: "meter"
       panel_chord:
         default: 2.0
         minimum: 0.0
