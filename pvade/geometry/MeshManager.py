@@ -94,6 +94,7 @@ class FSIDomain:
             else :
                 self.geometry.build_fsi(params)
             
+            # Build the domain markers for each surface and cell
             if hasattr(self.geometry, "domain_markers"):
                 # If the "build" process created domain markers, use those directly...
                 self.domain_markers = self.geometry.domain_markers
@@ -111,10 +112,14 @@ class FSIDomain:
 
             self._generate_mesh()
 
+        # When finished, rank 0 needs to tell other ranks about how the domain_markers dictionary was created
+        # and what values it holds. This is important now since the number of indices "idx" generated in the
+        # geometry module differs from what's prescribed in the init of this class.
+        # TODO: GET RID OF THE DEFAULT DICTIONARY INITIALIZATION AND LET EACH GEOMETRY MODULE
+        # CREATE THEIR OWN AND JUST HAVE RANK 0 ALWAYS BROADCAST IT.
+        self.domain_markers = self.comm.bcast(self.domain_markers, root=0)
+
         # All ranks receive their portion of the mesh from rank 0 (like an MPI scatter)
-
-        
-
         self.msh, self.cell_tags, self.facet_tags = dolfinx.io.gmshio.model_to_mesh(
             self.geometry.gmsh_model, self.comm, 0, partitioner=dolfinx.mesh.create_cell_partitioner(dolfinx.mesh.GhostMode.shared_facet)
             )
@@ -300,12 +305,14 @@ class FSIDomain:
             #     np.arange(sub_num_facets, dtype=np.int32),
             #     np.ones(sub_num_facets),
             # )
-            sub_cell_map = sub_domain.msh.topology.index_map(self.ndim) 
-            sub_num_cells = sub_cell_map.size_local + sub_cell_map.num_ghosts 
-            sub_domain.cell_tags = dolfinx.mesh.meshtags( sub_domain.msh, sub_domain.msh.topology.dim, np.arange(sub_num_cells, dtype=np.int32), np.ones(sub_num_cells, dtype=np.int32), ) 
-            sub_domain.cell_tags.name = "cell_tags" 
-            sub_domain.facet_tags = dolfinx.mesh.meshtags( sub_domain.msh, sub_domain.msh.topology.dim - 1, np.arange(sub_num_facets, dtype=np.int32), sub_values, ) 
-            sub_domain.facet_tags.name = "facet_tags"
+
+            # IS THIS REDUNDANT? SEEMS LIKE WE DO IT ABOVE
+            # sub_cell_map = sub_domain.msh.topology.index_map(self.ndim) 
+            # sub_num_cells = sub_cell_map.size_local + sub_cell_map.num_ghosts 
+            # sub_domain.cell_tags = dolfinx.mesh.meshtags( sub_domain.msh, sub_domain.msh.topology.dim, np.arange(sub_num_cells, dtype=np.int32), np.ones(sub_num_cells, dtype=np.int32), ) 
+            # sub_domain.cell_tags.name = "cell_tags" 
+            # sub_domain.facet_tags = dolfinx.mesh.meshtags( sub_domain.msh, sub_domain.msh.topology.dim - 1, np.arange(sub_num_facets, dtype=np.int32), sub_values, ) 
+            # sub_domain.facet_tags.name = "facet_tags"
             
     def read(self, input_mesh_file, params):
         """Read the mesh from an external file.
