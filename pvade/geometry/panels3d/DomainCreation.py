@@ -27,7 +27,9 @@ class DomainCreation(TemplateDomainCreation):
         if not hasattr(self, "domain_markers"):
 
             self.domain_markers = {}
-            self.domain_markers["_current_idx"] = 0
+            # Must start indexing at 1, if starting at 0, things marked "0" 
+            # are indistinguishable from things which receive no marking (and have default value of 0)
+            self.domain_markers["_current_idx"] = 1
 
         assert isinstance(gmsh_tags, list)
         assert entity_type in ["cell", "facet"]
