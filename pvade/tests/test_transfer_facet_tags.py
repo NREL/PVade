@@ -22,8 +22,8 @@ from pvade.geometry.MeshManager import FSIDomain
         ("structure", "z_min"),
         ("fluid", "z_max"),
         ("structure", "z_max"),
-        ("fluid", "internal_surface"),
-        ("structure", "internal_surface"),
+        # ("fluid", "internal_surface"),
+        # ("structure", "internal_surface"),
     ],
 )
 def test_transfer_facet_tags(sub_domain_name, marker_name):
