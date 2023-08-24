@@ -5,9 +5,9 @@ import time
 import ufl
 import dolfinx
 import meshio
+import warnings
 
 from importlib import import_module
-
 
 # from pvade.geometry.panels.DomainCreation   import *
 class FSIDomain:
@@ -92,7 +92,7 @@ class FSIDomain:
             elif params.general.geometry_module == "panels3d" and params.general.fluid_analysis == False and params.general.structural_analysis == True :
                 self.geometry.build_structure(params)
             else :
-                self.geometry.build_fsi(params)
+                self.geometry.build_FSI(params)
             
             # Build the domain markers for each surface and cell
             if hasattr(self.geometry, "domain_markers"):
@@ -140,67 +140,70 @@ class FSIDomain:
 
     def _save_submeshes_for_reload_hack(self, params):
 
+        self.write_mesh_files(params)
+        self.read_mesh_files(params.general.output_dir_mesh, params)
 
-        if params.general.fluid_analysis == True and params.general.structural_analysis == True :
-            sub_domain_list = ["fluid", "structure"]
-            for sub_domain_name in sub_domain_list:
-                mesh_filename = os.path.join(params.general.output_dir_mesh, f"temp_{sub_domain_name}.xdmf")
-                sub_domain = getattr(self, sub_domain_name)
-                sub_domain.msh.name = "temp_mesh"
+        # if params.general.fluid_analysis == True and params.general.structural_analysis == True :
+        #     sub_domain_list = ["fluid", "structure"]
+        #     for sub_domain_name in sub_domain_list:
+        #         mesh_filename = os.path.join(params.general.output_dir_mesh, f"temp_{sub_domain_name}.xdmf")
+        #         sub_domain = getattr(self, sub_domain_name)
+        #         sub_domain.msh.name = "temp_mesh"
 
-                # Write this submesh to immediately read it
-                with dolfinx.io.XDMFFile(self.comm, mesh_filename, "w") as xdmf:
-                    xdmf.write_mesh(sub_domain.msh)
-                    xdmf.write_meshtags(sub_domain.cell_tags)
-                    sub_domain.msh.topology.create_connectivity(self.ndim-1, self.ndim)
-                    xdmf.write_meshtags(sub_domain.facet_tags)
+        #         # Write this submesh to immediately read it
+        #         with dolfinx.io.XDMFFile(self.comm, mesh_filename, "w") as xdmf:
+        #             xdmf.write_mesh(sub_domain.msh)
+        #             xdmf.write_meshtags(sub_domain.cell_tags)
+        #             sub_domain.msh.topology.create_connectivity(self.ndim-1, self.ndim)
+        #             xdmf.write_meshtags(sub_domain.facet_tags)
 
-                # Read the just-written mesh
-                with dolfinx.io.XDMFFile(self.comm, mesh_filename, "r") as xdmf:
-                    submesh = xdmf.read_mesh(name=sub_domain.msh.name)
-                    cell_tags = xdmf.read_meshtags(submesh, name="cell_tags")
-                    ndim = submesh.topology.dim
-                    submesh.topology.create_connectivity(ndim - 1, ndim)
-                    facet_tags = xdmf.read_meshtags(submesh, name="facet_tags")
+        #         # Read the just-written mesh
+        #         with dolfinx.io.XDMFFile(self.comm, mesh_filename, "r") as xdmf:
+        #             submesh = xdmf.read_mesh(name=sub_domain.msh.name)
+        #             cell_tags = xdmf.read_meshtags(submesh, name="cell_tags")
+        #             ndim = submesh.topology.dim
+        #             submesh.topology.create_connectivity(ndim - 1, ndim)
+        #             facet_tags = xdmf.read_meshtags(submesh, name="facet_tags")
 
-                sub_domain.msh = submesh
-                sub_domain.facet_tags = facet_tags
-                sub_domain.cell_tags = cell_tags
-        elif params.general.geometry_module == "panels3d" and params.general.fluid_analysis == False and params.general.structural_analysis == True :
-                sub_domain_name = "structure"
+        #         sub_domain.msh = submesh
+        #         sub_domain.facet_tags = facet_tags
+        #         sub_domain.cell_tags = cell_tags
 
-                mesh_filename = os.path.join(params.general.output_dir_mesh, f"temp_{sub_domain_name}.xdmf")
-                # sub_domain = getattr(self, sub_domain_list[0])
-                # sub_domain.msh.name = "temp_mesh"
+        # elif params.general.geometry_module == "panels3d" and params.general.fluid_analysis == False and params.general.structural_analysis == True :
+        #         sub_domain_name = "structure"
 
-                # self.msh.name  = "temp_mesh"
+        #         mesh_filename = os.path.join(params.general.output_dir_mesh, f"temp_{sub_domain_name}.xdmf")
+        #         # sub_domain = getattr(self, sub_domain_list[0])
+        #         # sub_domain.msh.name = "temp_mesh"
 
-                # Write this submesh to immediately read it
-                with dolfinx.io.XDMFFile(self.comm, mesh_filename, "w") as xdmf:
-                    xdmf.write_mesh(self.msh)
-                    xdmf.write_meshtags(self.cell_tags)
-                    self.msh.topology.create_connectivity(self.ndim-1, self.ndim)
-                    xdmf.write_meshtags(self.facet_tags)
+        #         # self.msh.name  = "temp_mesh"
 
-                # Read the just-written mesh
-                with dolfinx.io.XDMFFile(self.comm, mesh_filename, "r") as xdmf:
-                    mesh = xdmf.read_mesh(name=self.msh.name)
-                    cell_tags = xdmf.read_meshtags(mesh, name="cell_tags")
-                    ndim = mesh.topology.dim
-                    mesh.topology.create_connectivity(ndim - 1, ndim)
-                    facet_tags = xdmf.read_meshtags(mesh, name="facet_tags")
+        #         # Write this submesh to immediately read it
+        #         with dolfinx.io.XDMFFile(self.comm, mesh_filename, "w") as xdmf:
+        #             xdmf.write_mesh(self.msh)
+        #             xdmf.write_meshtags(self.cell_tags)
+        #             self.msh.topology.create_connectivity(self.ndim-1, self.ndim)
+        #             xdmf.write_meshtags(self.facet_tags)
+
+        #         # Read the just-written mesh
+        #         with dolfinx.io.XDMFFile(self.comm, mesh_filename, "r") as xdmf:
+        #             mesh = xdmf.read_mesh(name=self.msh.name)
+        #             cell_tags = xdmf.read_meshtags(mesh, name="cell_tags")
+        #             ndim = mesh.topology.dim
+        #             mesh.topology.create_connectivity(ndim - 1, ndim)
+        #             facet_tags = xdmf.read_meshtags(mesh, name="facet_tags")
 
 
-                class FSISubDomain:
-                    pass
+        #         class FSISubDomain:
+        #             pass
 
-                sub_domain = FSISubDomain()
+        #         sub_domain = FSISubDomain()
 
-                sub_domain.msh = mesh
-                sub_domain.facet_tags = facet_tags
-                sub_domain.cell_tags = cell_tags
+        #         sub_domain.msh = mesh
+        #         sub_domain.facet_tags = facet_tags
+        #         sub_domain.cell_tags = cell_tags
 
-                setattr(self, sub_domain_name, sub_domain)
+        #         setattr(self, sub_domain_name, sub_domain)
 
 
     def _create_submeshes_from_parent(self):
@@ -314,30 +317,6 @@ class FSIDomain:
             # sub_domain.facet_tags = dolfinx.mesh.meshtags( sub_domain.msh, sub_domain.msh.topology.dim - 1, np.arange(sub_num_facets, dtype=np.int32), sub_values, ) 
             # sub_domain.facet_tags.name = "facet_tags"
             
-    def read(self, input_mesh_file, params):
-        """Read the mesh from an external file.
-        The User can load an existing mesh file (mesh.xdmf)
-        and use it to solve the CFD/CSD problem
-        """
-        if self.rank == 0:
-            print("Reading the mesh from file ...")
-
-        with dolfinx.io.XDMFFile(self.comm, input_mesh_file, "r") as xdmf:
-            self.msh = xdmf.read_mesh(name="mesh_total")
-            self.cell_tags = xdmf.read_meshtags(self.msh, name="cell_tags")
-
-            self.ndim = self.msh.topology.dim
-            self.msh.topology.create_connectivity(self.ndim - 1, self.ndim)
-
-            self.facet_tags = xdmf.read_meshtags(self.msh, "facet_tags")
-
-        self._create_submeshes_from_parent()
-
-        self._transfer_mesh_tags_to_submeshes(params)
-
-        if self.rank == 0:
-            print("Done.")
-
     def _enforce_periodicity(self):
         # TODO: Make this a generic mapping depending on which walls are marked for peridic BCs
         # TODO: Copy code to enforce periodicity from old generate_and_convert_3d_meshes.py
@@ -449,45 +428,95 @@ class FSIDomain:
         self.geometry.gmsh_model.mesh.optimize("Netgen")
         self.geometry.gmsh_model.mesh.generate(3)
 
-    def write_mesh_file(self, params):
-        """TODO: when saving a mesh file using only dolfinx functions
-        it's possible certain elements of the data aren't preserved
-        and that the mesh won't be able to be properly read in later
-        on. MAKE SURE YOU CAN SAVE A MESH USING ONLY DOLFINX FUNCTIONS
-        AND THEN READ IN THAT SAME MESH WITHOUT A LOSS OF CAPABILITY.
+    def write_mesh_files(self, params):
+
+        # Attempt to save both the fluid and structure subdomains
+        sub_domain_list = ["fluid", "structure"]
+
+        for sub_domain_name in sub_domain_list:
+            try:
+                if self.rank == 0:
+                    print(f"Beginning write of {sub_domain_name} mesh.")
+
+                # Get the fluid or structure object from self
+                sub_domain = getattr(self, sub_domain_name)
+
+            except:
+                if self.rank == 0:
+                    print(f"Could not find subdomain {sub_domain_name}, not writing this mesh.") 
+
+            else:
+                # Write this subdomain mesh to a file
+                mesh_name = f"{sub_domain_name}_mesh.xdmf"
+                mesh_filename = os.path.join(params.general.output_dir_mesh, mesh_name)
+
+                # Write this submesh
+                with dolfinx.io.XDMFFile(self.comm, mesh_filename, "w") as xdmf:
+                    sub_domain.msh.name = mesh_name
+                    xdmf.write_mesh(sub_domain.msh)
+                    xdmf.write_meshtags(sub_domain.cell_tags)
+                    sub_domain.msh.topology.create_connectivity(self.ndim-1, self.ndim)
+                    xdmf.write_meshtags(sub_domain.facet_tags)
+
+                # Write a gmsh copy too
+                gmsh_mesh_name = f"{sub_domain_name}_mesh.msh"
+                gmsh_mesh_filename = os.path.join(params.general.output_dir_mesh, gmsh_mesh_name)
+                gmsh.write(gmsh_mesh_filename)
+
+                if self.rank == 0:
+                    print(f"Finished writing {sub_domain_name} mesh.")
+
+    def read_mesh_files(self, read_mesh_dir, params):
+        """Read the mesh from an external file.
+        The User can load an existing mesh file (mesh.xdmf)
+        and use it to solve the CFD/CSD problem
         """
 
-        if self.rank == 0:
-            # Save the *.msh file and *.vtk file (the latter is for visualization only)
-            print(f"Writing Mesh to {params.general.output_dir_mesh}...")
+        sub_domain_list = ["fluid", "structure"]
 
-        if os.path.exists(params.general.output_dir_mesh) == False:
-            os.makedirs(params.general.output_dir_mesh)
+        for sub_domain_name in sub_domain_list:
+            mesh_name = f"{sub_domain_name}_mesh.xdmf"
+            mesh_filename = os.path.join(read_mesh_dir, mesh_name)
 
-        mesh_filename = os.path.join(params.general.output_dir_mesh, "mesh.xdmf")
-        gmsh.write(os.path.join(params.general.output_dir_mesh, "mesh.msh"))
-        with dolfinx.io.XDMFFile(self.comm, mesh_filename, "w") as fp:
-            fp.write_mesh(self.msh)
-            fp.write_meshtags(self.cell_tags)
-            fp.write_meshtags(self.facet_tags)
+            try:
+                if self.rank == 0:
+                    print("Reading {sub_domain_name} mesh.")
 
-        # TODO: This will fail if no structure mesh exists
-        # for sub_domain_name in ["fluid", "structure"]:
-        #     mesh_filename = os.path.join(
-        #         params.general.output_dir_mesh, f"mesh_{sub_domain_name}.xdmf"
-        #     )
+                # Read the subdomain mesh
+                with dolfinx.io.XDMFFile(self.comm, mesh_filename, "r") as xdmf:
+                    submesh = xdmf.read_mesh(name=mesh_name)
+                    cell_tags = xdmf.read_meshtags(submesh, name="cell_tags")
+                    ndim = submesh.topology.dim
+                    submesh.topology.create_connectivity(ndim - 1, ndim)
+                    facet_tags = xdmf.read_meshtags(submesh, name="facet_tags")
 
-        #     sub_domain = getattr(self, sub_domain_name)
+            except:
+                if self.rank == 0:
+                    print(f"Could not find subdomain {sub_domain_name} mesh file, not reading this mesh.") 
 
-        #     with dolfinx.io.XDMFFile(self.comm, mesh_filename, "w") as fp:
-        #         fp.write_mesh(sub_domain.msh)
-        #         sub_domain.msh.topology.create_connectivity(
-        #             self.ndim - 1, self.ndim
-        #         )
-        #         fp.write_meshtags(sub_domain.facet_tags)
+            else:
+                class FSISubDomain:
+                    pass
 
-        if self.rank == 0:
-            print("Done.")
+                submesh.topology.create_connectivity(3, 2)
+
+                sub_domain = FSISubDomain()
+
+                sub_domain.msh = submesh
+                sub_domain.cell_tags = cell_tags
+                sub_domain.facet_tags = facet_tags
+
+                # These elements do not need to be created when reading a mesh
+                # they are only used in the transfer of facet tags, and since
+                # those can be read directly from a file, we don't need these
+                sub_domain.entity_map = None
+                sub_domain.vertex_map = None
+                sub_domain.geom_map = None
+
+                setattr(self, sub_domain_name, sub_domain)
+
+                if self.rank == 0:
+                    print("Finished read {sub_domain_name} mesh.")
 
     def test_mesh_functionspace(self):
         P2 = ufl.VectorElement("Lagrange", self.msh.ufl_cell(), 2)
