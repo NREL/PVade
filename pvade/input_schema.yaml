@@ -20,12 +20,12 @@ properties:
         default: "panels3d"
         type: "string"
         description: "The name of the directory in pvade/geometry/ that contains a DomainCreation.py file for generating the CAD description, prescribing mesh refinement, etc."
-      input_mesh_file:
+      input_mesh_dir:
         default: null
         type:
           - "string"
           - "null"
-        description: "The path to the input mesh.xdmf file to be used in the simulation, e.g., /inputs/case_1/mesh.xdmf"
+        description: "The path to the directory containing fluid_mesh.xdmf and structure_mesh.xdmf to be used in the simulation, e.g., /inputs/case_1/"
       mesh_only:
         default: false
         type: "boolean"
