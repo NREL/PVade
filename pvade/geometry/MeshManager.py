@@ -5,7 +5,7 @@ import time
 import ufl
 import dolfinx
 import meshio
-import warnings
+import yaml
 
 from importlib import import_module
 
@@ -466,6 +466,14 @@ class FSIDomain:
                 if self.rank == 0:
                     print(f"Finished writing {sub_domain_name} mesh.")
 
+        # Finally, dump a yaml file of the domain_markers
+        # necessary for setting BCs in case this mesh directory is read for a new run
+        yaml_name = "domain_markers.yaml"
+        yaml_filename = os.path.join(params.general.output_dir_mesh, yaml_name)
+
+        with open(yaml_filename, "w") as fp:
+            yaml.dump(self.domain_markers, fp)
+
     def read_mesh_files(self, read_mesh_dir, params):
         """Read the mesh from an external file.
         The User can load an existing mesh file (mesh.xdmf)
@@ -480,7 +488,7 @@ class FSIDomain:
 
             try:
                 if self.rank == 0:
-                    print("Reading {sub_domain_name} mesh.")
+                    print(f"Reading {sub_domain_name} mesh.")
 
                 # Read the subdomain mesh
                 with dolfinx.io.XDMFFile(self.comm, mesh_filename, "r") as xdmf:
@@ -516,7 +524,15 @@ class FSIDomain:
                 setattr(self, sub_domain_name, sub_domain)
 
                 if self.rank == 0:
-                    print("Finished read {sub_domain_name} mesh.")
+                    print(f"Finished read {sub_domain_name} mesh.")
+
+        self.ndim = submesh.topology.dim
+
+        yaml_name = "domain_markers.yaml"
+        yaml_filename = os.path.join(read_mesh_dir, yaml_name)
+
+        with open(yaml_filename, "r") as fp:
+            self.domain_markers = yaml.safe_load(fp)
 
     def test_mesh_functionspace(self):
         P2 = ufl.VectorElement("Lagrange", self.msh.ufl_cell(), 2)
