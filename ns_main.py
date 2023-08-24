@@ -28,11 +28,11 @@ def main():
     # Initialize the domain and construct the initial mesh
     domain = FSIDomain(params)
 
-    if params.general.input_mesh_file is not None:
-        domain.read(params.general.input_mesh_file, params)
+    if params.general.input_mesh_dir is not None:
+        domain.read_mesh_files(params.general.input_mesh_dir, params)
     else:
         domain.build(params)
-        domain.write_mesh_file(params)
+        domain.write_mesh_files(params)
 
     if params.general.mesh_only == True:
         list_timings(params.comm, [TimingType.wall])
@@ -42,6 +42,8 @@ def main():
     # Check to ensure mesh node matching for periodic simulations
     # if domain.periodic_simulation:
     # domain.check_mesh_periodicity(params)
+    # domain.move_mesh(0.0)
+    # sys.exit()
 
 
     
