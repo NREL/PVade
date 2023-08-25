@@ -42,7 +42,7 @@ def main():
     # Check to ensure mesh node matching for periodic simulations
     # if domain.periodic_simulation:
     # domain.check_mesh_periodicity(params)
-    # domain.move_mesh(0.0)
+    domain.move_mesh(params, 0.0)
     # sys.exit()
 
 
@@ -91,13 +91,15 @@ def main():
                 dataIO.fluid_struct(domain, flow,elasticity, params)
         # adjust pressure to avoid dissipation of pressure profile
         # flow.adjust_dpdx_for_constant_flux(params)
+            domain.move_mesh(params, k*params.solver.dt)
+
         if (k + 1) % params.solver.save_xdmf_interval_n == 0:
             if fluid_analysis == True:
                 if domain.rank == 0:
                     print(
                         f"Time {params.solver.dt*(k+1):.2f} of {params.solver.t_final:.2f}, CFL = {flow.cfl_max}"
                     )
-                dataIO.save_XDMF_files(flow, (k + 1) * params.solver.dt)
+                dataIO.save_XDMF_files(flow, domain, (k + 1) * params.solver.dt)
             
             if structural_analysis == True:
                 if domain.rank == 0:
