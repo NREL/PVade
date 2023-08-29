@@ -271,7 +271,8 @@ def build_structure_boundary_conditions(domain, params, functionspace):
     zero_vec = dolfinx.fem.Constant(domain.structure.msh, PETSc.ScalarType((0.0, 0.0, 0.0)))
     bc = []
     for num_panel in range(params.pv_array.stream_rows*params.pv_array.span_rows):
-        for location in  f"left_{num_panel}" , f"right_{num_panel}":
+        for location in  f"left_{num_panel}" , f"right_{num_panel}", \
+            f"top_{num_panel}" , f"bottom_{num_panel}":
         # for location in f"left_{num_panel}":
         # location = f"top_{num_panel}"
             dofs = get_facet_dofs_by_gmsh_tag(domain, functionspace, location)

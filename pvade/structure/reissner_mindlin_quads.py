@@ -69,13 +69,13 @@ from dolfinx import fem, io, mesh
 
 dtype = PETSc.ScalarType
 
-N = 50
+N = 100
 # Get MPI communicators
 comm = MPI.COMM_WORLD
 rank = comm.Get_rank()
 num_procs = 0
 
-msh =  dolfinx.mesh.create_rectangle(MPI.COMM_WORLD, [[0, 0],[10, 1]], [N,N],
+msh =  dolfinx.mesh.create_rectangle(MPI.COMM_WORLD, [[0, 0],[1, 1]], [N,N],
                                       CellType.quadrilateral,\
                                             GhostMode.shared_facet)
 
@@ -94,7 +94,7 @@ nu = fem.Constant(msh,0.3)
 # with a shear correction factor :math:`\kappa = 5/6` for a homogeneous plate
 # of thickness :math:`h`::
 
-thick = 1e-3
+thick = 0.1
 D = E*thick**3/(1-nu**2)/12.
 F = E/2/(1+nu)*thick*5./6.
 
@@ -127,7 +127,7 @@ def boundary_bottom(x):
 def boundary_left(x):
     return np.isclose(x[0], 0.0) 
 def boundary_right(x):
-    return np.isclose(x[0], 10.0) 
+    return np.isclose(x[0], 1.0) 
 
 def connection_point_up(x):
     return np.isclose(x[1], 0.76) 
@@ -158,8 +158,8 @@ def f1(x):
 
 
 R, _ = V.sub(0).collapse()
-# dofs_disp = fem.locate_dofs_topological((V.sub(0),R), fdim, [facets_top,facets_bottom,facets_left,facets_right])
-dofs_disp = fem.locate_dofs_topological((V.sub(0),R), 1, [facet_uppoint])
+dofs_disp = fem.locate_dofs_topological((V.sub(0),R), fdim, [facets_top,facets_bottom,facets_left,facets_right])
+# dofs_disp = fem.locate_dofs_topological((V.sub(0),R), 1, [facets_top, facets_bottom,facets_left,facets_right])
 f_h2 = fem.Function(R)
 f_h2.interpolate(f2)
 
@@ -185,7 +185,7 @@ bc_dis = fem.dirichletbc(f_h2, dofs_disp, V.sub(0))
 Q, _ = V.sub(1).collapse()
 f_h1 = fem.Function(Q)
 f_h1.interpolate(f1)
-dofs_rot = fem.locate_dofs_topological((V.sub(1),Q), fdim, [facets_right])
+dofs_rot = fem.locate_dofs_topological((V.sub(1),Q), fdim, [facets_top, facets_bottom,facets_left,facets_right])
 zero_vector = dolfinx.fem.Constant(msh, PETSc.ScalarType((0.0,0.0,0.0)))
 bc_rot = fem.dirichletbc(f_h1, dofs_rot, V.sub(1))
 
@@ -216,7 +216,7 @@ def shear_force(disp, rot):
 # quadrilaterals, the shear energy is integrated as if it were constant (1 Gauss point instead of 2x2)
 # and for quadratic (:math:`d=2`) quadrilaterals, as if it were quadratic (2x2 Gauss points instead of 3x3)::
 
-u = Function(V)
+u = Function(V, name = "deformation_z")
 u_ = ufl.TestFunction(V)
 du = ufl.TrialFunction(V)
 
@@ -231,7 +231,7 @@ x = ufl.SpatialCoordinate(msh)
 # inflow_values = np.zeros((2, x.shape[1]), dtype=PETSc.ScalarType)
 # inflow_function.interpolate(inflow_values)
 
-f = -thick**3
+f = 100 #-thick**3
 # f = 10.0 * ufl.exp(-((x[0] - 0.5) * (x[0] - 0.5) + (x[1] - 0.5) * (x[1] - 0.5)) / 0.02)  
 L = ufl.inner(f, disp) * ufl.dx
 a = ufl.inner(bending_moment(disp, rot), curv(_disp, _rot))*ufl.dx \

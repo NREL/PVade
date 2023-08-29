@@ -2,7 +2,7 @@ general:
   test: False
   geometry_module: panels3d
   output_dir: output/panels3d
-  mesh_only: False
+  mesh_only: True
   # input_mesh_file: output/panels3d/mesh/mesh.xdmf
   structural_analysis: True
   fluid_analysis: False
@@ -10,23 +10,23 @@ domain:
   x_min: -10
   x_max: 100
   y_min: -20
-  y_max: 39 # 20+39 39 is panel to panel 
+  y_max: 39 # 20+19 19 is panel to panel 
   z_min: 0
   z_max: 20
-  l_char: .5
+  l_char: 10.
 pv_array:
-  stream_rows: 7
-  elevation: 1.5
-  stream_spacing: [7.0]
-  panel_chord: 2.0
-  panel_span: 7.0
-  panel_thickness: 0.1
+  stream_rows: 3
+  elevation: 4.66
+  stream_spacing: 9.7536
+  panel_chord: 5.703
+  panel_span: 6.830
+  panel_thickness: 0.01237
   tracker_angle: -30
-  span_spacing: [12.0] 
-  span_rows: 2
+  span_spacing: 9.79
+  span_rows: 3
 solver:
-  dt: .1 #0.0025
-  t_final: 1 # 10.0
+  dt: 0.0025
+  t_final: 10.0
   solver1_ksp: cg
   solver2_ksp: cg
   solver3_ksp: cg
@@ -35,8 +35,8 @@ solver:
   solver2_pc: jacobi
   solver3_pc: jacobi
   solver4_pc: jacobi
-  save_text_interval: .1 #0.01
-  save_xdmf_interval: .1 #0.01
+  save_text_interval: 0.01
+  save_xdmf_interval: 0.01
 fluid:
   u_ref: 16.0
   nu: 0.01
@@ -51,4 +51,4 @@ structure:
   poissons_ratio: 0.3
   body_force_x: 0
   body_force_y: 0
-  body_force_z: 0 #100
+  body_force_z: 100 #100

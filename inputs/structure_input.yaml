@@ -4,23 +4,25 @@ general:
   mesh_only: False
   structural_analysis: true
   fluid_analysis: false
-  input_mesh_file: output/structure/panels3d/mesh/mesh.xdmf
+  # input_mesh_file: output/structure/panels3d/mesh/mesh.xdmf
 domain:
   x_min: -10
-  x_max: 50
+  x_max: 100
   y_min: -20
-  y_max: 27
+  y_max: 39 # 20+19 19 is panel to panel 
   z_min: 0
   z_max: 20
-  l_char: 1
+  l_char: .1
 pv_array:
   stream_rows: 1
-  elevation: 1.5
-  stream_spacing: [7.0]
-  panel_chord: 1.0
-  panel_span: 1.0
-  panel_thickness: 0.1
+  elevation: 4.66
+  stream_spacing: 9.7536
+  panel_chord: 1 #
+  panel_span: 1 #6.830
+  panel_thickness: 0.1 #0.01237
   tracker_angle: 0
+  span_spacing: 9.79
+  span_rows: 1
 solver:
   dt: 1
   t_final: 1
@@ -46,4 +48,4 @@ structure:
   poissons_ratio: 0.3
   body_force_x: 0
   body_force_y: 0
-  body_force_z: 30
+  body_force_z: 100
