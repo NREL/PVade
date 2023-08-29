@@ -2,7 +2,7 @@ general:
   geometry_module: panels3d
   output_dir: pvade/tests/test_mesh/panels3d
   mesh_only: True
-  structural_analysis: false
+  structural_analysis: true
   fluid_analysis: true
 domain:
   x_min: -10
@@ -15,7 +15,7 @@ domain:
 pv_array:
   stream_rows: 7
   elevation: 1.5
-  stream_spacing: [7.0]
+  stream_spacing: 7.0
   panel_chord: 2.0
   panel_span: 7.0
   panel_thickness: 0.1

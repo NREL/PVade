@@ -61,6 +61,7 @@ def test_flow_3dpanels():
 
         print("max_velocity = ", max_velocity)
         print("max_pressure = ", max_pressure)
+        assert not np.any(np.isnan(flow.p_k.x.array))
 
     max_velocity_truth = 16.78961717598599
     max_pressure_truth = 161.00087027677822

@@ -20,12 +20,12 @@ properties:
         default: "panels3d"
         type: "string"
         description: "The name of the directory in pvade/geometry/ that contains a DomainCreation.py file for generating the CAD description, prescribing mesh refinement, etc."
-      input_mesh_file:
+      input_mesh_dir:
         default: null
         type:
           - "string"
           - "null"
-        description: "The path to the input mesh.xdmf file to be used in the simulation, e.g., /inputs/case_1/mesh.xdmf"
+        description: "The path to the directory containing fluid_mesh.xdmf and structure_mesh.xdmf to be used in the simulation, e.g., /inputs/case_1/"
       mesh_only:
         default: false
         type: "boolean"
@@ -133,6 +133,15 @@ properties:
         maximum: 32.0
         type: "number"
         description: "The separation between panel rows in the spanwise direction."
+        units: "meter"
+      span_fixation_pts:
+        default: 3.5
+        minimum: 1.0
+        # maximum: 32.0
+        type:
+          - "number"
+          - "array"
+        description: "If a single number, the uniform distance between linear fixation points embedded in the structural mesh, if an array, the location of each such fixation point along the panel span, all points in the range [0, panel_span]."
         units: "meter"
       panel_chord:
         default: 2.0
@@ -274,6 +283,14 @@ properties:
         type: "number"
         description: "The velocity of the wind as measured at the panel elevation."
         units: "meter/second"
+      wind_direction:
+        default: 270.0
+        minimum: 0.0
+        maximum: 360.0
+        type: "number"
+        description: "The direction of the wind in degrees. 0 indicates a wind blowing from North to South, 
+        90 degrees from East to West, 180 from South to North, and 270 (default) from West to East."
+        units: "degrees"
       nu:
         default: 1.8e-05
         minimum: 1.0e-06

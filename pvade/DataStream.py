@@ -62,6 +62,7 @@ class DataStream:
                 xdmf_file.write_function(flow.u_k, 0.0)
                 xdmf_file.write_function(flow.p_k, 0.0)
                 xdmf_file.write_function(flow.inflow_profile, 0.0)
+                xdmf_file.write_function(domain.total_mesh_displacement, 0.0)
 
             if self.rank == 0:
                 with open(self.log_filename, "w") as fp:
@@ -161,7 +162,7 @@ class DataStream:
             print(f"all values match with np = {self.comm.size}")
         
         # exit()
-    def save_XDMF_files(self, flow, tt):
+    def save_XDMF_files(self, flow, domain, tt):
         """Write additional timestep to XDMF file
 
         This function appends the state of the flow at time `tt` to an existing XDMF file.
@@ -174,6 +175,7 @@ class DataStream:
         with XDMFFile(self.comm, self.results_filename, "a") as xdmf_file:
             xdmf_file.write_function(flow.u_k, tt)
             xdmf_file.write_function(flow.p_k, tt)
+            xdmf_file.write_function(domain.total_mesh_displacement, tt)
 
     def save_XDMF_files_str(self, elasticity, tt):
         """Write additional timestep to XDMF file

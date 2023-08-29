@@ -34,6 +34,16 @@ def get_facet_dofs_by_gmsh_tag(domain, functionspace, location):
     elif isinstance(location, int):
         found_entities = domain.fluid.facet_tags.find(location)
 
+    debugging = False
+
+    if debugging:
+        global_found_entities = domain.comm.gather(found_entities, root=0)
+
+        if domain.rank == 0:
+            flattened = np.hstack(global_found_entities)
+            nnn = np.size(flattened)
+            print(f"{location}, global_entities = ", nnn)
+
     # if len(found_entities) == 0:
     #     warnings.warn(f"Found no facets using location = {location}.")
 

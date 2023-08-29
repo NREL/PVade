@@ -13,7 +13,7 @@ domain:
 pv_array:
   stream_rows: 1 # not used
   elevation: 1.5 # not used
-  stream_spacing: [7.0] # not used
+  stream_spacing: 7.0 # not used
   panel_chord: 2.0 # not used
   panel_span: 7.0 # not used
   panel_thickness: 0.1 # not used
