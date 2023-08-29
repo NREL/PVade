@@ -459,6 +459,12 @@ class Flow:
         """
         # Step 0: Re-assemble A1 since using an implicit convective term
         # Step 2: Pressure correction step
+
+        self.A2.zeroEntries()
+        self.A2 = dolfinx.fem.petsc.assemble_matrix(self.A2, self.a2, bcs=self.bcp)
+        self.A2.assemble()
+        self.solver_2.setOperators(self.A2)
+
         with self.b2.localForm() as loc:
             loc.set(0)
 
@@ -485,6 +491,12 @@ class Flow:
             params (:obj:`pvade.Parameters.SimParams`): A SimParams object
         """
         # Step 3: Velocity correction step
+
+        self.A3.zeroEntries()
+        self.A3 = dolfinx.fem.petsc.assemble_matrix(self.A3, self.a3)
+        self.A3.assemble()
+        self.solver_3.setOperators(self.A3)
+
         with self.b3.localForm() as loc:
             loc.set(0)
 
@@ -506,6 +518,11 @@ class Flow:
         Args:
             params (:obj:`pvade.Parameters.SimParams`): A SimParams object
         """
+        self.A4.zeroEntries()
+        self.A4 = dolfinx.fem.petsc.assemble_matrix(self.A4, self.a4)
+        self.A4.assemble()
+        self.solver_4.setOperators(self.A4)
+
         # Step 3: Velocity correction step
         with self.b4.localForm() as loc:
             loc.set(0)
@@ -530,6 +547,12 @@ class Flow:
         Args:
             None
         """
+
+        self.A5.zeroEntries()
+        self.A5 = dolfinx.fem.petsc.assemble_matrix(self.A5, self.a5)
+        self.A5.assemble()
+        self.solver_5.setOperators(self.A5)
+
         with self.b5.localForm() as loc:
             loc.set(0)
 

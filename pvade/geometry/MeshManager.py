@@ -6,6 +6,7 @@ import ufl
 import dolfinx
 import meshio
 import yaml
+from petsc4py import PETSc
 
 from importlib import import_module
 
@@ -28,6 +29,7 @@ class FSIDomain:
         self.comm = params.comm
         self.rank = params.rank
         self.num_procs = params.num_procs
+        self.first_move_mesh = True
 
         self._get_domain_markers(params)
 
@@ -613,3 +615,216 @@ class FSIDomain:
         with dolfinx.io.VTKFile(self.comm, self.results_filename_vtk, "w") as file:
             file.write_mesh(domain.structure.msh)
             file.write_function(elasticity.uh, 0.0)
+
+
+
+
+    def move_mesh(self, params, tt):
+
+        if self.first_move_mesh:
+            # Build a function space for the rotation (a vector of degree 1)
+            vec_el_1 = ufl.VectorElement("Lagrange", self.fluid.msh.ufl_cell(), 1)
+            self.V1 = dolfinx.fem.FunctionSpace(self.fluid.msh, vec_el_1)
+
+            self.mesh_motion = dolfinx.fem.Function(self.V1, name="mesh_displacement")
+            self.mesh_motion_bc = dolfinx.fem.Function(self.V1, name="mesh_displacement_bc")
+            self.total_mesh_displacement = dolfinx.fem.Function(self.V1, name="total_mesh_disp")
+
+            # Build a function space for the distance (a scalar of degree 1)
+            scalar_el_1 = ufl.FiniteElement("Lagrange", self.fluid.msh.ufl_cell(), 1)
+            self.Q1 = dolfinx.fem.FunctionSpace(self.fluid.msh, scalar_el_1)
+
+            self.distance = dolfinx.fem.Function(self.Q1)
+
+            def _all_panel_surfaces(x):
+                eps = 1.0e-5
+
+                x_mid = np.logical_and(params.domain.x_min + eps < x[0], x[0] < params.domain.x_max - eps)
+                y_mid = np.logical_and(params.domain.y_min + eps < x[1], x[1] < params.domain.y_max - eps)
+                z_mid = np.logical_and(params.domain.z_min + eps < x[2], x[2] < params.domain.z_max - eps)
+
+                all_panel_bool = np.logical_and(x_mid,  np.logical_and(y_mid, z_mid))
+
+                return all_panel_bool
+
+            def _all_domain_edges(x):
+                eps = 1.0e-5
+
+                x_edge = np.logical_or(x[0] < params.domain.x_min + eps,  params.domain.x_max - eps < x[0])
+                y_edge = np.logical_or(x[1] < params.domain.y_min + eps,  params.domain.y_max - eps < x[1])
+                z_edge = np.logical_or(x[2] < params.domain.z_min + eps,  params.domain.z_max - eps < x[2])
+
+                all_domain_bool = np.logical_or(x_edge, np.logical_or(y_edge, z_edge))
+
+                return all_domain_bool
+
+            self.facet_dim = self.ndim - 1
+
+            all_surface_facets = dolfinx.mesh.locate_entities_boundary(
+                self.fluid.msh, self.facet_dim, _all_panel_surfaces
+            )
+
+            all_edge_facets = dolfinx.mesh.locate_entities_boundary(
+                self.fluid.msh, self.facet_dim, _all_domain_edges
+            )
+
+            self.all_surface_V_dofs = dolfinx.fem.locate_dofs_topological(
+                self.V1, self.facet_dim, all_surface_facets
+            )
+
+            self.all_edge_V_dofs = dolfinx.fem.locate_dofs_topological(
+                self.V1, self.facet_dim, all_edge_facets
+            )
+
+
+        def mesh_motion_expression(x, tt):
+            motion_array = np.zeros((self.fluid.msh.geometry.dim, x.shape[1]))
+
+            x_new = np.sin(tt/params.solver.t_final*2.0*np.pi)
+            x_old = np.sin((tt-params.solver.dt)/params.solver.t_final*2.0*np.pi)
+
+            dx = x_new - x_old
+            motion_array[0, :] += dx
+
+            # for k in range(params.pv_array.num_rows):
+
+            #     panel_x_center = (k*params.pv_array.spacing[0])
+            #     panel_z_center = params.pv_array.elevation
+
+            #     x_shift = np.copy(x)
+            #     x_shift[0, :] -= panel_x_center
+            #     x_shift[2, :] -= panel_z_center
+
+            #     num_cycles_to_complete = 1
+            #     time_per_cycle = params.solver.t_final/num_cycles_to_complete
+
+            #     amplitude_degrees = 15.0
+
+            #     theta_old = np.radians(amplitude_degrees)*np.sin(2.0*np.pi*(tt-params.solver.dt)/time_per_cycle)
+            #     theta_new = np.radians(amplitude_degrees)*np.sin(2.0*np.pi*tt/time_per_cycle)
+
+            #     theta = theta_new - theta_old
+
+            #     if k % 2 == 1:
+            #         theta *= -1.0
+
+            #     # theta = np.radians(15.0)
+
+            #     # Rz = np.array([[np.cos(theta), -np.sin(theta), 0.0],
+            #     #                [np.sin(theta),  np.cos(theta), 0.0],
+            #     #                [          0.0,            0.0, 1.0]])
+
+            #     Ry = np.array([[ np.cos(theta), 0.0, np.sin(theta)],
+            #                    [          0.0,  1.0,           0.0],
+            #                    [-np.sin(theta), 0.0, np.cos(theta)]])
+
+            #     x_rot = np.dot(Ry, x_shift)
+
+            #     x_delta = x_rot - x_shift
+
+            #     dist = x_shift[0, :]*x_shift[0, :] + x_shift[2, :]*x_shift[2, :]
+
+            #     mask = dist < (0.5*params.pv_array.spacing[0])**2
+
+            #     motion_array[:, mask] = x_delta[:, mask]
+
+            return motion_array
+
+        def mesh_motion_expression_helper(tt):
+
+            return lambda x: mesh_motion_expression(x, tt)
+
+        self.mesh_motion_bc.interpolate(mesh_motion_expression_helper(tt))
+
+
+        zero_vec = dolfinx.fem.Constant(self.fluid.msh, PETSc.ScalarType((0.0, 0.0, 0.0)))
+
+        self.bcx = []
+        self.bcx.append(dolfinx.fem.dirichletbc(self.mesh_motion_bc, self.all_surface_V_dofs))
+        self.bcx.append(dolfinx.fem.dirichletbc(zero_vec, self.all_edge_V_dofs, self.V1))
+
+        if self.first_move_mesh:
+            u = ufl.TrialFunction(self.V1)
+            v = ufl.TestFunction(self.V1)
+
+            self.a = dolfinx.fem.form(ufl.inner(ufl.grad(u), ufl.grad(v)) * ufl.dx)
+            self.L = dolfinx.fem.form(ufl.inner(zero_vec, v) * ufl.dx)
+
+            self.A = dolfinx.fem.petsc.assemble_matrix(self.a, bcs=self.bcx)
+            self.A.assemble()
+
+            self.b = dolfinx.fem.petsc.assemble_vector(self.L)
+
+            self.mesh_motion_solver = PETSc.KSP().create(self.comm)
+            self.mesh_motion_solver.setOperators(self.A)
+            self.mesh_motion_solver.setType("cg")
+            self.mesh_motion_solver.getPC().setType("jacobi")
+            self.mesh_motion_solver.setFromOptions()
+
+        self.A.zeroEntries()
+        self.A = dolfinx.fem.petsc.assemble_matrix(self.A, self.a, bcs=self.bcx)
+        self.A.assemble()
+
+        with self.b.localForm() as loc:
+            loc.set(0)
+
+        self.b = dolfinx.fem.petsc.assemble_vector(self.b, self.L)
+
+        dolfinx.fem.petsc.apply_lifting(self.b, [self.a], [self.bcx])
+
+        self.b.ghostUpdate(
+            addv=PETSc.InsertMode.ADD_VALUES, mode=PETSc.ScatterMode.REVERSE
+        )
+
+        dolfinx.fem.petsc.set_bc(self.b, self.bcx)
+
+        self.mesh_motion_solver.solve(self.b, self.mesh_motion.vector)
+        self.mesh_motion.x.scatter_forward()
+
+        vals = self.mesh_motion.vector.array.reshape(-1, 3)
+        nn = np.shape(vals)[0]
+
+        test_new_ghost_method = True
+
+        if test_new_ghost_method:
+            with self.mesh_motion.vector.localForm() as vals_local:
+                vals = vals_local.array
+                vals = vals.reshape(-1, 3)
+
+            self.fluid.msh.geometry.x[:, :] += vals[:, :]
+
+        else:
+            self.fluid.msh.geometry.x[:nn, :] += vals[:, :]
+
+
+
+        # bc_name = os.path.join(params.general.output_dir_sol, "dummy.xdmf")
+        # print(bc_name)
+
+        # if self.first_move_mesh:
+        #     with dolfinx.io.XDMFFile(self.comm, bc_name, "w") as xdmf_file:
+        #         xdmf_file.write_mesh(self.fluid.msh)
+        #         xdmf_file.write_function(self.mesh_motion, tt)
+
+        # else:
+        #     with dolfinx.io.XDMFFile(self.comm, bc_name, "a") as xdmf_file:
+        #         xdmf_file.write_function(self.mesh_motion, tt)
+
+
+        # if self.first_move_mesh:
+        #     self.total_mesh_displacement.vector.array[:] = self.fluid.msh.geometry.x[:nn, :].flatten()
+
+        self.total_mesh_displacement.vector.array[:] += self.mesh_motion.vector.array
+
+        # mesh_velocity = 0
+        # return mesh_velocity
+
+        # plt.figure(figsize=(10, 4), dpi=200)
+        # plt.scatter(self.fluid.msh.geometry.x[:, 0], self.fluid.msh.geometry.x[:, 2], s=0.5)
+        # plt.gca().set_aspect(1.0)
+        # plt.savefig(f'output/yo_{tt*1000:.0f}.png')
+        # plt.close()
+
+        self.first_move_mesh = False
+
+        # return self.mesh
