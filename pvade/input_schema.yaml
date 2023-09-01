@@ -141,6 +141,7 @@ properties:
         type:
           - "number"
           - "array"
+          - "null"
         description: "If a single number, the uniform distance between linear fixation points embedded in the structural mesh, if an array, the location of each such fixation point along the panel span, all points in the range [0, panel_span]."
         units: "meter"
       panel_chord:
