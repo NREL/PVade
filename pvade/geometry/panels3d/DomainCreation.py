@@ -50,6 +50,27 @@ class DomainCreation(TemplateDomainCreation):
             The function returns gmsh.model which contains the geometric description of the computational domain
         """
 
+        def Rx(theta):
+            rot_matrix = np.array([[1.0, 0.0, 0.0],
+                      [0.0, np.cos(theta), -np.sin(theta)],
+                      [0.0, np.sin(theta), np.cos(theta)]])
+
+            return rot_matrix
+
+        def Ry(theta):
+            rot_matrix = np.array([[np.cos(theta), 0.0, np.sin(theta)],
+                      [0.0, 1.0, 0.0],
+                      [-np.sin(theta), 0.0, np.cos(theta)]])
+
+            return rot_matrix
+
+        def Rz(theta):
+            rot_matrix = np.array([[np.cos(theta), -np.sin(theta), 0.0],
+                      [np.sin(theta), np.cos(theta), 0.0],
+                      [0.0, 0.0, 1.0]])
+
+            return rot_matrix
+
         # Compute and store some useful geometric quantities
         self.x_span = params.domain.x_max - params.domain.x_min
         self.y_span = params.domain.y_max - params.domain.y_min
@@ -118,40 +139,51 @@ class DomainCreation(TemplateDomainCreation):
                 panel_tag = (self.ndim, panel_id)
                 panel_tag_list.append(panel_tag)
 
+                numpy_pt_list = []
                 embedded_lines_tag_list = []
 
                 # Add a bisecting line to the bottom of the panel in the spanwise direction
                 pt_1 = self.gmsh_model.occ.addPoint(0, -half_span, -half_thickness)
                 pt_2 = self.gmsh_model.occ.addPoint(0,  half_span, -half_thickness)
+
+                numpy_pt_list.append([0, -half_span, -half_thickness,
+                                      0,  half_span, -half_thickness])
+
                 torque_tube_id = self.gmsh_model.occ.addLine(pt_1, pt_2)
                 torque_tube_tag = (1, torque_tube_id)
                 embedded_lines_tag_list.append(torque_tube_tag)
 
                 # Add lines in the streamwise direction to mimic sections of panel held rigid by motor
-                if not isinstance(params.pv_array.span_fixation_pts, list):
-    
-                    num_fixation_pts = int(np.floor(params.pv_array.panel_span/params.pv_array.span_fixation_pts))
-                    
-                    fixation_pts_list = []
-
-                    for k in range(1, num_fixation_pts+1):
-                        next_pt = k*params.pv_array.span_fixation_pts
+                if params.pv_array.span_fixation_pts is not None:
+                    if not isinstance(params.pv_array.span_fixation_pts, list):
+        
+                        num_fixation_pts = int(np.floor(params.pv_array.panel_span/params.pv_array.span_fixation_pts))
                         
-                        eps = 1e-9
-                        
-                        if next_pt > eps and next_pt < params.pv_array.panel_span-eps:
-                            fixation_pts_list.append(next_pt)
+                        fixation_pts_list = []
 
-                else:
-                    fixation_pts_list = params.pv_array.span_fixation_pts
+                        for k in range(1, num_fixation_pts+1):
+                            next_pt = k*params.pv_array.span_fixation_pts
+                            
+                            eps = 1e-9
+                            
+                            if next_pt > eps and next_pt < params.pv_array.panel_span-eps:
+                                fixation_pts_list.append(next_pt)
 
-                for fp in fixation_pts_list:
-                    pt_1 = self.gmsh_model.occ.addPoint(-half_chord, -half_span + fp, -half_thickness)
-                    pt_2 = self.gmsh_model.occ.addPoint(half_chord, -half_span + fp, -half_thickness)
-                    fixed_pt_id = self.gmsh_model.occ.addLine(pt_1, pt_2)
-                    fixed_pt_tag = (1, fixed_pt_id)
+                    else:
+                        fixation_pts_list = params.pv_array.span_fixation_pts
 
-                    embedded_lines_tag_list.append(fixed_pt_tag)
+                    for fp in fixation_pts_list:
+                        pt_1 = self.gmsh_model.occ.addPoint(-half_chord, -half_span + fp, -half_thickness)
+                        pt_2 = self.gmsh_model.occ.addPoint(half_chord, -half_span + fp, -half_thickness)
+
+                        # FIXME: don't add the fixation points into the numpy tagging for now
+                        # numpy_pt_list.append([-half_chord, -half_span + fp, -half_thickness,
+                        #                        half_chord, -half_span + fp, -half_thickness])
+
+                        fixed_pt_id = self.gmsh_model.occ.addLine(pt_1, pt_2)
+                        fixed_pt_tag = (1, fixed_pt_id)
+
+                        embedded_lines_tag_list.append(fixed_pt_tag)
 
                 # Store the result of fragmentation, it holds all the small surfaces we need to tag
                 panel_frags = self.gmsh_model.occ.fragment([panel_tag], embedded_lines_tag_list)
@@ -181,6 +213,16 @@ class DomainCreation(TemplateDomainCreation):
                 # Rotate the panel by its tracking angle along the y-axis (currently centered at (0, 0, 0))
                 self.gmsh_model.occ.rotate([panel_tag], 0, 0, 0, 0, 1, 0, tracker_angle_rad)
 
+                numpy_pt_panel_array = np.array(numpy_pt_list)
+                numpy_pt_panel_array = np.reshape(numpy_pt_panel_array, (-1, self.ndim))
+
+                numpy_pt_panel_array = np.dot(numpy_pt_panel_array, Ry(tracker_angle_rad).T)
+
+                # if not hasattr(self, "numpy_pt_array"):
+                #     numpy_pt_array = np.array(numpy_pt_list)
+                # else:
+                #     numpy_pt_array = np.vcat(numpy_pt_array, np.array(numpy_pt_list))
+
                 # Translate the panel by (x_center, y_center, elev)
                 self.gmsh_model.occ.translate(
                     [panel_tag],
@@ -189,8 +231,25 @@ class DomainCreation(TemplateDomainCreation):
                     params.pv_array.elevation,
                 )
 
+                numpy_pt_panel_array[:, 0] += xx
+                numpy_pt_panel_array[:, 1] += yy
+                numpy_pt_panel_array[:, 2] += params.pv_array.elevation
+
                 # Rotate the panel about the center of the full array as a proxy for changing wind direction (x_center, y_center, 0)
                 self.gmsh_model.occ.rotate([panel_tag], x_center_of_mass, y_center_of_mass, 0, 0, 0, 1, array_rotation_rad)
+
+                numpy_pt_panel_array[:, 0] -= x_center_of_mass
+                numpy_pt_panel_array[:, 1] -= y_center_of_mass
+
+                numpy_pt_panel_array = np.dot(numpy_pt_panel_array, Rz(array_rotation_rad).T)
+
+                numpy_pt_panel_array[:, 0] += x_center_of_mass
+                numpy_pt_panel_array[:, 1] += y_center_of_mass
+
+                if hasattr(self, "numpy_pt_total_array"):
+                    self.numpy_pt_total_array = np.vstack((self.numpy_pt_total_array, numpy_pt_panel_array))
+                else:
+                    self.numpy_pt_total_array = np.copy(numpy_pt_panel_array)
 
                 # Check that this panel still exists in the confines of the domain
                 bbox = self.gmsh_model.occ.get_bounding_box(panel_tag[0], panel_tag[1])
@@ -210,6 +269,12 @@ class DomainCreation(TemplateDomainCreation):
 
         self.gmsh_model.occ.synchronize()
 
+        self.numpy_pt_total_array = np.reshape(self.numpy_pt_total_array, (-1, int(2*self.ndim)))
+
+        # import matplotlib.pyplot as plt
+        # for k in self.numpy_pt_total_array:
+        #     plt.plot([k[0], k[3]], [k[1], k[4]])
+        # plt.show()
 
         # Surfaces are the entities with dimension equal to the mesh dimension -1
         surf_tag_list = self.gmsh_model.occ.getEntities(self.ndim-1)
