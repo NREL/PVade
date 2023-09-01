@@ -33,6 +33,8 @@ class FSIDomain:
 
         self._get_domain_markers(params)
 
+        self.numpy_pt_total_array = None
+
     def _get_domain_markers(self,params):
         self.domain_markers = {}
 
@@ -107,6 +109,8 @@ class FSIDomain:
                     params, self.domain_markers
                 )
 
+            self.numpy_pt_total_array = self.geometry.numpy_pt_total_array
+
             self.geometry.set_length_scales(params, self.domain_markers)
 
             if params.fluid.periodic:
@@ -120,6 +124,7 @@ class FSIDomain:
         # TODO: GET RID OF THE DEFAULT DICTIONARY INITIALIZATION AND LET EACH GEOMETRY MODULE
         # CREATE THEIR OWN AND JUST HAVE RANK 0 ALWAYS BROADCAST IT.
         self.domain_markers = self.comm.bcast(self.domain_markers, root=0)
+        self.numpy_pt_total_array = self.comm.bcast(self.numpy_pt_total_array, root=0)
 
         # All ranks receive their portion of the mesh from rank 0 (like an MPI scatter)
         self.msh, self.cell_tags, self.facet_tags = dolfinx.io.gmshio.model_to_mesh(
@@ -619,9 +624,13 @@ class FSIDomain:
 
 
 
-    def move_mesh(self, params, tt):
+    def move_mesh(self, elasticity, params, tt):
 
         if self.first_move_mesh:
+            # Save the un-moved coordinates for future reference 
+            self.fluid.msh.initial_position = self.fluid.msh.geometry.x[:, :]
+            self.structure.msh.initial_position = self.structure.msh.geometry.x[:, :]
+
             # Build a function space for the rotation (a vector of degree 1)
             vec_el_1 = ufl.VectorElement("Lagrange", self.fluid.msh.ufl_cell(), 1)
             self.V1 = dolfinx.fem.FunctionSpace(self.fluid.msh, vec_el_1)
@@ -635,6 +644,7 @@ class FSIDomain:
             self.Q1 = dolfinx.fem.FunctionSpace(self.fluid.msh, scalar_el_1)
 
             self.distance = dolfinx.fem.Function(self.Q1)
+            # TODO: Make this the minimum distance away from the panel surface
 
             def _all_panel_surfaces(x):
                 eps = 1.0e-5
@@ -734,19 +744,23 @@ class FSIDomain:
 
             return lambda x: mesh_motion_expression(x, tt)
 
-        self.mesh_motion_bc.interpolate(mesh_motion_expression_helper(tt))
+        # self.bcx.append(dolfinx.fem.dirichletbc(elasticity.uh, self.all_surface_V_dofs))
+        self.mesh_motion_bc.interpolate(elasticity.uh)
 
 
         zero_vec = dolfinx.fem.Constant(self.fluid.msh, PETSc.ScalarType((0.0, 0.0, 0.0)))
 
         self.bcx = []
         self.bcx.append(dolfinx.fem.dirichletbc(self.mesh_motion_bc, self.all_surface_V_dofs))
+
+        # print("uh_max", np.amax(elasticity.uh.x.array[:]))
         self.bcx.append(dolfinx.fem.dirichletbc(zero_vec, self.all_edge_V_dofs, self.V1))
 
         if self.first_move_mesh:
             u = ufl.TrialFunction(self.V1)
             v = ufl.TestFunction(self.V1)
 
+            # TODO: use the distance in the diffusion calculation
             self.a = dolfinx.fem.form(ufl.inner(ufl.grad(u), ufl.grad(v)) * ufl.dx)
             self.L = dolfinx.fem.form(ufl.inner(zero_vec, v) * ufl.dx)
 
@@ -786,15 +800,29 @@ class FSIDomain:
 
         test_new_ghost_method = True
 
+        # TODO: clean this up
+
         if test_new_ghost_method:
             with self.mesh_motion.vector.localForm() as vals_local:
                 vals = vals_local.array
                 vals = vals.reshape(-1, 3)
 
-            self.fluid.msh.geometry.x[:, :] += vals[:, :]
+            # self.fluid.msh.geometry.x[:nn, :] += vals[:, :]
+            self.fluid.msh.geometry.x[:, :] = self.fluid.msh.initial_position[:, :] + vals[:, :]
 
         else:
             self.fluid.msh.geometry.x[:nn, :] += vals[:, :]
+
+        if test_new_ghost_method:
+            with elasticity.uh.vector.localForm() as vals_local:
+                vals = vals_local.array
+                vals = vals.reshape(-1, 3)
+
+            # self.fluid.msh.geometry.x[:nn, :] += vals[:, :]
+            self.structure.msh.geometry.x[:, :] = self.structure.msh.initial_position[:, :] + vals[:, :]
+
+        else:
+            self.structure.msh.geometry.x[:nn, :] += vals[:, :]
 
 
 
@@ -814,7 +842,8 @@ class FSIDomain:
         # if self.first_move_mesh:
         #     self.total_mesh_displacement.vector.array[:] = self.fluid.msh.geometry.x[:nn, :].flatten()
 
-        self.total_mesh_displacement.vector.array[:] += self.mesh_motion.vector.array
+        # self.total_mesh_displacement.vector.array[:] += self.mesh_motion.vector.array
+        self.total_mesh_displacement.vector.array[:] = self.mesh_motion.vector.array
 
         # mesh_velocity = 0
         # return mesh_velocity
