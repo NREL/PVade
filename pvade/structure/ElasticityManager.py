@@ -178,7 +178,7 @@ class Elasticity:
         # Set solver options
         opts = PETSc.Options()
         opts["ksp_type"] = "cg"
-        opts["ksp_rtol"] = 1.0e-10
+        opts["ksp_rtol"] = 1.0e-6
         opts["pc_type"] = "gamg"
 
         # Use Chebyshev smoothing for multigrid
@@ -187,7 +187,7 @@ class Elasticity:
 
         # Improve estimate of eigenvalues for Chebyshev smoothing
         opts["mg_levels_esteig_ksp_type"] = "cg"
-        opts["mg_levels_ksp_chebyshev_esteig_steps"] = 20
+        opts["mg_levels_ksp_chebyshev_esteig_steps"] = 10
 
         # Create PETSc Krylov solver and turn convergence monitoring on
         self.solver = PETSc.KSP().create(self.comm)
