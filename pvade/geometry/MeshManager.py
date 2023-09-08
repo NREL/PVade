@@ -635,126 +635,71 @@ class FSIDomain:
             vec_el_1 = ufl.VectorElement("Lagrange", self.fluid.msh.ufl_cell(), 1)
             self.V1 = dolfinx.fem.FunctionSpace(self.fluid.msh, vec_el_1)
 
-            self.mesh_motion = dolfinx.fem.Function(self.V1, name="mesh_displacement")
-            self.mesh_motion_bc = dolfinx.fem.Function(self.V1, name="mesh_displacement_bc")
+            self.fluid_mesh_displacement = dolfinx.fem.Function(self.V1, name="fluid_mesh_displacement")
+            self.fluid_mesh_displacement_old = dolfinx.fem.Function(self.V1, name="fluid_mesh_displacement_old")
+            self.fluid_mesh_displacement_bc = dolfinx.fem.Function(self.V1, name="fluid_mesh_displacement_bc")
             self.total_mesh_displacement = dolfinx.fem.Function(self.V1, name="total_mesh_disp")
 
             # Build a function space for the distance (a scalar of degree 1)
             scalar_el_1 = ufl.FiniteElement("Lagrange", self.fluid.msh.ufl_cell(), 1)
             self.Q1 = dolfinx.fem.FunctionSpace(self.fluid.msh, scalar_el_1)
 
-            self.distance = dolfinx.fem.Function(self.Q1)
             # TODO: Make this the minimum distance away from the panel surface
+            self.distance = dolfinx.fem.Function(self.Q1)
 
-            def _all_panel_surfaces(x):
+            def _all_interior_surfaces(x):
                 eps = 1.0e-5
 
                 x_mid = np.logical_and(params.domain.x_min + eps < x[0], x[0] < params.domain.x_max - eps)
                 y_mid = np.logical_and(params.domain.y_min + eps < x[1], x[1] < params.domain.y_max - eps)
                 z_mid = np.logical_and(params.domain.z_min + eps < x[2], x[2] < params.domain.z_max - eps)
 
-                all_panel_bool = np.logical_and(x_mid,  np.logical_and(y_mid, z_mid))
+                all_interior_surfaces = np.logical_and(x_mid,  np.logical_and(y_mid, z_mid))
 
-                return all_panel_bool
+                return all_interior_surfaces
 
-            def _all_domain_edges(x):
+            def _all_exterior_surfaces(x):
                 eps = 1.0e-5
 
                 x_edge = np.logical_or(x[0] < params.domain.x_min + eps,  params.domain.x_max - eps < x[0])
                 y_edge = np.logical_or(x[1] < params.domain.y_min + eps,  params.domain.y_max - eps < x[1])
                 z_edge = np.logical_or(x[2] < params.domain.z_min + eps,  params.domain.z_max - eps < x[2])
 
-                all_domain_bool = np.logical_or(x_edge, np.logical_or(y_edge, z_edge))
+                all_exterior_surfaces = np.logical_or(x_edge, np.logical_or(y_edge, z_edge))
 
-                return all_domain_bool
+                return all_exterior_surfaces
 
             self.facet_dim = self.ndim - 1
 
-            all_surface_facets = dolfinx.mesh.locate_entities_boundary(
-                self.fluid.msh, self.facet_dim, _all_panel_surfaces
+            all_interior_facets = dolfinx.mesh.locate_entities_boundary(
+                self.fluid.msh, self.facet_dim, _all_interior_surfaces
             )
 
-            all_edge_facets = dolfinx.mesh.locate_entities_boundary(
-                self.fluid.msh, self.facet_dim, _all_domain_edges
+            all_exterior_facets = dolfinx.mesh.locate_entities_boundary(
+                self.fluid.msh, self.facet_dim, _all_exterior_surfaces
             )
 
-            self.all_surface_V_dofs = dolfinx.fem.locate_dofs_topological(
-                self.V1, self.facet_dim, all_surface_facets
+            self.all_interior_V_dofs = dolfinx.fem.locate_dofs_topological(
+                self.V1, self.facet_dim, all_interior_facets
             )
 
-            self.all_edge_V_dofs = dolfinx.fem.locate_dofs_topological(
-                self.V1, self.facet_dim, all_edge_facets
+            self.all_exterior_V_dofs = dolfinx.fem.locate_dofs_topological(
+                self.V1, self.facet_dim, all_exterior_facets
             )
 
 
-        def mesh_motion_expression(x, tt):
-            motion_array = np.zeros((self.fluid.msh.geometry.dim, x.shape[1]))
+        # Interpolate the elasticity displacement (lives on the structure mesh)
+        # field onto a function that lives on the fluid mesh
+        self.fluid_mesh_displacement_bc.interpolate(elasticity.uh_delta)
 
-            x_new = np.sin(tt/params.solver.t_final*2.0*np.pi)
-            x_old = np.sin((tt-params.solver.dt)/params.solver.t_final*2.0*np.pi)
-
-            dx = x_new - x_old
-            motion_array[0, :] += dx
-
-            # for k in range(params.pv_array.num_rows):
-
-            #     panel_x_center = (k*params.pv_array.spacing[0])
-            #     panel_z_center = params.pv_array.elevation
-
-            #     x_shift = np.copy(x)
-            #     x_shift[0, :] -= panel_x_center
-            #     x_shift[2, :] -= panel_z_center
-
-            #     num_cycles_to_complete = 1
-            #     time_per_cycle = params.solver.t_final/num_cycles_to_complete
-
-            #     amplitude_degrees = 15.0
-
-            #     theta_old = np.radians(amplitude_degrees)*np.sin(2.0*np.pi*(tt-params.solver.dt)/time_per_cycle)
-            #     theta_new = np.radians(amplitude_degrees)*np.sin(2.0*np.pi*tt/time_per_cycle)
-
-            #     theta = theta_new - theta_old
-
-            #     if k % 2 == 1:
-            #         theta *= -1.0
-
-            #     # theta = np.radians(15.0)
-
-            #     # Rz = np.array([[np.cos(theta), -np.sin(theta), 0.0],
-            #     #                [np.sin(theta),  np.cos(theta), 0.0],
-            #     #                [          0.0,            0.0, 1.0]])
-
-            #     Ry = np.array([[ np.cos(theta), 0.0, np.sin(theta)],
-            #                    [          0.0,  1.0,           0.0],
-            #                    [-np.sin(theta), 0.0, np.cos(theta)]])
-
-            #     x_rot = np.dot(Ry, x_shift)
-
-            #     x_delta = x_rot - x_shift
-
-            #     dist = x_shift[0, :]*x_shift[0, :] + x_shift[2, :]*x_shift[2, :]
-
-            #     mask = dist < (0.5*params.pv_array.spacing[0])**2
-
-            #     motion_array[:, mask] = x_delta[:, mask]
-
-            return motion_array
-
-        def mesh_motion_expression_helper(tt):
-
-            return lambda x: mesh_motion_expression(x, tt)
-
-        # self.bcx.append(dolfinx.fem.dirichletbc(elasticity.uh, self.all_surface_V_dofs))
-        self.mesh_motion_bc.interpolate(elasticity.uh)
-
-
+        # Set the boundary condition for the walls of the computational domain
         zero_vec = dolfinx.fem.Constant(self.fluid.msh, PETSc.ScalarType((0.0, 0.0, 0.0)))
 
         self.bcx = []
-        self.bcx.append(dolfinx.fem.dirichletbc(self.mesh_motion_bc, self.all_surface_V_dofs))
+        self.bcx.append(dolfinx.fem.dirichletbc(self.fluid_mesh_displacement_bc, self.all_interior_V_dofs))
 
         # print("uh_max", np.amax(elasticity.uh.x.array[:]))
-        self.bcx.append(dolfinx.fem.dirichletbc(zero_vec, self.all_edge_V_dofs, self.V1))
+        self.bcx.append(dolfinx.fem.dirichletbc(zero_vec, self.all_exterior_V_dofs, self.V1))
 
         if self.first_move_mesh:
             u = ufl.TrialFunction(self.V1)
@@ -779,6 +724,10 @@ class FSIDomain:
         self.A = dolfinx.fem.petsc.assemble_matrix(self.A, self.a, bcs=self.bcx)
         self.A.assemble()
 
+        # Copy the current displacement values into a storage array to compute
+        # finite differences, e.g., mesh vel = (new-old)/dt
+        self.fluid_mesh_displacement_old.vector.array[:] = self.fluid_mesh_displacement.vector.array[:]
+
         with self.b.localForm() as loc:
             loc.set(0)
 
@@ -792,68 +741,35 @@ class FSIDomain:
 
         dolfinx.fem.petsc.set_bc(self.b, self.bcx)
 
-        self.mesh_motion_solver.solve(self.b, self.mesh_motion.vector)
-        self.mesh_motion.x.scatter_forward()
+        self.mesh_motion_solver.solve(self.b, self.fluid_mesh_displacement.vector)
+        self.fluid_mesh_displacement.x.scatter_forward()
 
-        vals = self.mesh_motion.vector.array.reshape(-1, 3)
-        nn = np.shape(vals)[0]
+        # vals = self.fluid_mesh_displacement.vector.array.reshape(-1, 3)
+        # nn = np.shape(vals)[0]
 
-        test_new_ghost_method = True
+        # Obtain the vector of values for the mesh motion in a way that
+        # keeps the ghost values (needed for the mesh update)
+        with self.fluid_mesh_displacement.vector.localForm() as vals_local:
+            vals = vals_local.array
+            vals = vals.reshape(-1, 3)
 
-        # TODO: clean this up
+        # Move the mesh by those values: new = original + displacement
+        # self.fluid.msh.geometry.x[:, :] = self.fluid.msh.initial_position[:, :] + vals[:, :]
+        self.fluid.msh.geometry.x[:, :] += vals[:, :]
 
-        if test_new_ghost_method:
-            with self.mesh_motion.vector.localForm() as vals_local:
-                vals = vals_local.array
-                vals = vals.reshape(-1, 3)
+        # Obtain the vector of values for the mesh motion in a way that
+        # keeps the ghost values (needed for the mesh update)
+        with elasticity.uh_delta.vector.localForm() as vals_local:
+            vals = vals_local.array
+            vals = vals.reshape(-1, 3)
 
-            # self.fluid.msh.geometry.x[:nn, :] += vals[:, :]
-            self.fluid.msh.geometry.x[:, :] = self.fluid.msh.initial_position[:, :] + vals[:, :]
+        # Move the mesh by those values: new = original + displacement
+        # self.structure.msh.geometry.x[:, :] = self.structure.msh.initial_position[:, :] + vals[:, :]
+        self.structure.msh.geometry.x[:, :] += vals[:, :]
 
-        else:
-            self.fluid.msh.geometry.x[:nn, :] += vals[:, :]
+        # Save this mesh motion as the total mesh displacement
+        self.total_mesh_displacement.vector.array[:] += self.fluid_mesh_displacement.vector.array
 
-        if test_new_ghost_method:
-            with elasticity.uh.vector.localForm() as vals_local:
-                vals = vals_local.array
-                vals = vals.reshape(-1, 3)
-
-            # self.fluid.msh.geometry.x[:nn, :] += vals[:, :]
-            self.structure.msh.geometry.x[:, :] = self.structure.msh.initial_position[:, :] + vals[:, :]
-
-        else:
-            self.structure.msh.geometry.x[:nn, :] += vals[:, :]
-
-
-
-        # bc_name = os.path.join(params.general.output_dir_sol, "dummy.xdmf")
-        # print(bc_name)
-
-        # if self.first_move_mesh:
-        #     with dolfinx.io.XDMFFile(self.comm, bc_name, "w") as xdmf_file:
-        #         xdmf_file.write_mesh(self.fluid.msh)
-        #         xdmf_file.write_function(self.mesh_motion, tt)
-
-        # else:
-        #     with dolfinx.io.XDMFFile(self.comm, bc_name, "a") as xdmf_file:
-        #         xdmf_file.write_function(self.mesh_motion, tt)
-
-
-        # if self.first_move_mesh:
-        #     self.total_mesh_displacement.vector.array[:] = self.fluid.msh.geometry.x[:nn, :].flatten()
-
-        # self.total_mesh_displacement.vector.array[:] += self.mesh_motion.vector.array
-        self.total_mesh_displacement.vector.array[:] = self.mesh_motion.vector.array
-
-        # mesh_velocity = 0
-        # return mesh_velocity
-
-        # plt.figure(figsize=(10, 4), dpi=200)
-        # plt.scatter(self.fluid.msh.geometry.x[:, 0], self.fluid.msh.geometry.x[:, 2], s=0.5)
-        # plt.gca().set_aspect(1.0)
-        # plt.savefig(f'output/yo_{tt*1000:.0f}.png')
-        # plt.close()
 
         self.first_move_mesh = False
 
-        # return self.mesh
