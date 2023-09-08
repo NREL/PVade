@@ -240,7 +240,7 @@ class Flow:
         # Define variational problem for step 1: tentative velocity
         self.F1 = (
             (1.0 / self.dt_c) * ufl.inner(self.u - self.u_k1, self.v) * ufl.dx
-            + ufl.inner(ufl.dot(U_AB, ufl.nabla_grad(U_CN)), self.v) * ufl.dx
+            + ufl.inner(ufl.dot(U_AB-domain.fluid_mesh_displacement/self.dt_c, ufl.nabla_grad(U_CN)), self.v) * ufl.dx
             + (nu+  self.nu_T) * ufl.inner(ufl.grad(U_CN), ufl.grad(self.v)) * ufl.dx
             + ufl.inner(ufl.grad(self.p_k1), self.v) * ufl.dx
             - ufl.inner(self.dpdx, self.v) * ufl.dx
