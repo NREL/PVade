@@ -231,6 +231,10 @@ def build_velocity_boundary_conditions(domain, params, functionspace):
 
     bcu = []
 
+    mesh_vel = dolfinx.fem.Function(functionspace)
+    mesh_vel.interpolate(domain.fluid_mesh_displacement)
+    mesh_vel.vector.array[:] /= params.solver.dt
+
     # Generate list of locations to loop over
     if ndim == 2:
         bc_location_list = ["y_min", "y_max"]
@@ -246,7 +250,9 @@ def build_velocity_boundary_conditions(domain, params, functionspace):
 
         bcu.append(bc)
 
-    # Set all interior surfaces to no slip
+    # Set all interior surfaces to no slip *which sometimes means non-zero values*
+    use_surface_vel_from_fsi = True
+
     for panel_id in range(params.pv_array.stream_rows*params.pv_array.span_rows):
         if params.general.geometry_module == "panels2d" or params.general.geometry_module == "panels3d":
             for location in f"bottom_{panel_id}",\
@@ -255,9 +261,17 @@ def build_velocity_boundary_conditions(domain, params, functionspace):
                             f"right_{panel_id}",\
                             f"front_{panel_id}",\
                             f"back_{panel_id}":
-                # bc = build_vel_bc_by_type("noslip", domain, functionspace, "internal_surface")
-                bc = build_vel_bc_by_type("noslip", domain, functionspace, location)
+
+                if use_surface_vel_from_fsi:
+                    dofs = get_facet_dofs_by_gmsh_tag(domain, functionspace, location)
+                    bc = dolfinx.fem.dirichletbc(mesh_vel, dofs)
+
+                else:
+                    # bc = build_vel_bc_by_type("noslip", domain, functionspace, "internal_surface")
+                    bc = build_vel_bc_by_type("noslip", domain, functionspace, location)
+
                 bcu.append(bc)
+
         elif params.general.geometry_module == "cylinder3d" or params.general.geometry_module == "cylinder2d":
             location = f"cylinder_side"
             bc = build_vel_bc_by_type("noslip", domain, functionspace, location)
