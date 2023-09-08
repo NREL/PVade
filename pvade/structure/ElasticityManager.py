@@ -133,6 +133,9 @@ class Elasticity:
         self.sigma_vm_h = dolfinx.fem.Function(self.W, name="Stress")
 
         self.uh = dolfinx.fem.Function(self.V,  name="Deformation") 
+        self.uh_old = dolfinx.fem.Function(self.V,  name="Deformation_old")
+        self.uh_delta = dolfinx.fem.Function(self.V,  name="Deformation_change")
+
         # self.uh_exp = dolfinx.fem.Function(self.V,  name="Deformation") 
 
         def σ(v):
@@ -265,12 +268,19 @@ class Elasticity:
 
         ns = self.build_nullspace(self.V)
         self.A.setNearNullSpace(ns)
+
+        # Store the old displacement/position for finite differencing
+        self.uh_old.vector.array[:] = self.uh.vector.array[:] 
+
         # self.solver.setMonitor(lambda _, its, rnorm: print(f"Iteration: {its}, rel. residual: {rnorm}"))
         # Compute displacement 
         self.solver.solve(self.b, self.uh.vector)
         # self.solver.view()
         # Scatter forward the solution vector to update ghost values
-        self.uh.x.scatter_forward()      
+        self.uh.x.scatter_forward()
+
+        # Calculate the change in the displacement (new - old) this is what moves the mesh
+        self.uh_delta.vector.array[:] = self.uh.vector.array[:] - self.uh_old.vector.array[:]
 
         sigma_dev = σ(self.uh) - (1 / 3) * ufl.tr(σ(self.uh)) * ufl.Identity(len(self.uh))
         sigma_vm = ufl.sqrt((3 / 2) * ufl.inner(sigma_dev, sigma_dev))   
