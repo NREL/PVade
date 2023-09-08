@@ -145,6 +145,15 @@ class FSIDomain:
 
         self._save_submeshes_for_reload_hack(params)
 
+        # Create all forms that will eventually be used for mesh rotation/movement
+        # Build a function space for the rotation (a vector of degree 1)
+        vec_el_1 = ufl.VectorElement("Lagrange", self.fluid.msh.ufl_cell(), 1)
+        self.V1 = dolfinx.fem.FunctionSpace(self.fluid.msh, vec_el_1)
+
+        self.fluid_mesh_displacement = dolfinx.fem.Function(self.V1, name="fluid_mesh_displacement")
+        self.fluid_mesh_displacement_bc = dolfinx.fem.Function(self.V1, name="fluid_mesh_displacement_bc")
+        self.total_mesh_displacement = dolfinx.fem.Function(self.V1, name="total_mesh_disp")
+
     def _save_submeshes_for_reload_hack(self, params):
 
         self.write_mesh_files(params)
@@ -628,17 +637,8 @@ class FSIDomain:
 
         if self.first_move_mesh:
             # Save the un-moved coordinates for future reference 
-            self.fluid.msh.initial_position = self.fluid.msh.geometry.x[:, :]
-            self.structure.msh.initial_position = self.structure.msh.geometry.x[:, :]
-
-            # Build a function space for the rotation (a vector of degree 1)
-            vec_el_1 = ufl.VectorElement("Lagrange", self.fluid.msh.ufl_cell(), 1)
-            self.V1 = dolfinx.fem.FunctionSpace(self.fluid.msh, vec_el_1)
-
-            self.fluid_mesh_displacement = dolfinx.fem.Function(self.V1, name="fluid_mesh_displacement")
-            self.fluid_mesh_displacement_old = dolfinx.fem.Function(self.V1, name="fluid_mesh_displacement_old")
-            self.fluid_mesh_displacement_bc = dolfinx.fem.Function(self.V1, name="fluid_mesh_displacement_bc")
-            self.total_mesh_displacement = dolfinx.fem.Function(self.V1, name="total_mesh_disp")
+            # self.fluid.msh.initial_position = self.fluid.msh.geometry.x[:, :]
+            # self.structure.msh.initial_position = self.structure.msh.geometry.x[:, :]
 
             # Build a function space for the distance (a scalar of degree 1)
             scalar_el_1 = ufl.FiniteElement("Lagrange", self.fluid.msh.ufl_cell(), 1)
@@ -723,10 +723,6 @@ class FSIDomain:
         self.A.zeroEntries()
         self.A = dolfinx.fem.petsc.assemble_matrix(self.A, self.a, bcs=self.bcx)
         self.A.assemble()
-
-        # Copy the current displacement values into a storage array to compute
-        # finite differences, e.g., mesh vel = (new-old)/dt
-        self.fluid_mesh_displacement_old.vector.array[:] = self.fluid_mesh_displacement.vector.array[:]
 
         with self.b.localForm() as loc:
             loc.set(0)
