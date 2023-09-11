@@ -632,6 +632,58 @@ class FSIDomain:
 
 
 
+    def _calc_distance_to_panel_surface(self, params):
+
+        # Get the coordinates of each point from the mesh objects
+        fluid_pts = self.fluid.msh.geometry.x
+        local_structure_pts = self.structure.msh.geometry.x
+
+        # These are *local* to the process, and we need the *global* structure coordinates
+        # get the size of this chunk
+        local_num_pts = np.shape(local_structure_pts)[0]
+
+        # Initialize an array to hold the chunk sizes on each process
+        global_num_pts_list = np.zeros(self.num_procs, dtype=np.int64)
+
+        # Let each rank know how many nodes of the structure are held by all other ranks
+        self.comm.Allgather(np.array(local_num_pts, dtype=np.int64), global_num_pts_list)
+
+        # Sum them to allocate an array to hold all the coordinates
+        global_num_pts = int(np.sum(global_num_pts_list))
+        global_structure_pts = np.zeros((global_num_pts, self.ndim), dtype=np.float64)
+
+        # Gather all the coordinates from each process into a global array representing all the points of the structure
+        # After this step, local_structure_pts holds *every* node of the structure mesh
+        self.comm.Allgatherv(local_structure_pts.astype(np.float64), (global_structure_pts, self.ndim*global_num_pts_list))
+
+        from numba import jit
+
+        @jit(nopython=True)
+        def find_shortest_distances(fluid_pts, structure_pts):
+
+            vec = np.zeros(np.shape(fluid_pts)[0])
+
+            for k, pt in enumerate(fluid_pts):
+                delta_x = pt - structure_pts
+                dist_2 = np.sum(delta_x**2, axis=1)
+                # dist = np.linalg.norm(delta_x, axis=1)
+                min_dist = np.sqrt(np.amin(dist_2))
+                vec[k] = min_dist
+
+            return vec
+
+        vec = find_shortest_distances(fluid_pts, global_structure_pts)
+
+        self.distance = dolfinx.fem.Function(self.Q1)
+        nn = np.shape(self.distance.vector.array)[0]
+
+        self.distance.vector.array[:] = vec[0:nn]
+
+        dist_filename = os.path.join(params.general.output_dir_mesh, "distance_field.xdmf")
+        with dolfinx.io.XDMFFile(self.comm, dist_filename, "w") as xdmf_file:
+            xdmf_file.write_mesh(self.fluid.msh)
+            xdmf_file.write_function(self.distance, 0.0)
+
 
     def move_mesh(self, elasticity, params, tt):
 
@@ -644,8 +696,7 @@ class FSIDomain:
             scalar_el_1 = ufl.FiniteElement("Lagrange", self.fluid.msh.ufl_cell(), 1)
             self.Q1 = dolfinx.fem.FunctionSpace(self.fluid.msh, scalar_el_1)
 
-            # TODO: Make this the minimum distance away from the panel surface
-            self.distance = dolfinx.fem.Function(self.Q1)
+            self._calc_distance_to_panel_surface(params)
 
             def _all_interior_surfaces(x):
                 eps = 1.0e-5
@@ -706,7 +757,8 @@ class FSIDomain:
             v = ufl.TestFunction(self.V1)
 
             # TODO: use the distance in the diffusion calculation
-            self.a = dolfinx.fem.form(ufl.inner(ufl.grad(u), ufl.grad(v)) * ufl.dx)
+            # self.a = dolfinx.fem.form(ufl.inner(ufl.grad(u), ufl.grad(v)) * ufl.dx)
+            self.a = dolfinx.fem.form(1.0/self.distance**2 * ufl.inner(ufl.grad(u), ufl.grad(v)) * ufl.dx)
             self.L = dolfinx.fem.form(ufl.inner(zero_vec, v) * ufl.dx)
 
             self.A = dolfinx.fem.petsc.assemble_matrix(self.a, bcs=self.bcx)
