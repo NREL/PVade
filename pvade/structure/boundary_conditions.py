@@ -308,7 +308,7 @@ def build_structure_boundary_conditions(domain, params, functionspace):
         eps = 1e-3
 
         for k, pts in enumerate(domain.numpy_pt_total_array):
-            print(pts)
+            # print(pts)
 
             test_vecs = x[:, :].T - pts[0:3]
             truth_vec = pts[3:6] - pts[0:3]
@@ -317,7 +317,7 @@ def build_structure_boundary_conditions(domain, params, functionspace):
             cross_product_mag = np.linalg.norm(cross_product, axis=1)
 
             pinned_pts = cross_product_mag < eps
-            print(np.shape(cross_product), np.shape(cross_product_mag))
+            # print(np.shape(cross_product), np.shape(cross_product_mag))
 
             if k == 0:
                 total_pinned_pts = np.copy(pinned_pts)
@@ -328,7 +328,7 @@ def build_structure_boundary_conditions(domain, params, functionspace):
     
     facet_uppoint = dolfinx.mesh.locate_entities(domain.structure.msh, 1, connection_point_up)
     dofs_disp = dolfinx.fem.locate_dofs_topological(functionspace, 1, [facet_uppoint])
-    print(np.shape(dofs_disp), dofs_disp)
+    # print(np.shape(dofs_disp), dofs_disp)
     bc.append(dolfinx.fem.dirichletbc(zero_vec, dofs_disp, functionspace))
 
 
