@@ -663,11 +663,15 @@ class FSIDomain:
 
             vec = np.zeros(np.shape(fluid_pts)[0])
 
+            min_dist_cutoff = 1.0e-6
+
             for k, pt in enumerate(fluid_pts):
                 delta_x = pt - structure_pts
                 dist_2 = np.sum(delta_x**2, axis=1)
                 # dist = np.linalg.norm(delta_x, axis=1)
                 min_dist = np.sqrt(np.amin(dist_2))
+                if min_dist < min_dist_cutoff:
+                    min_dist = min_dist_cutoff
                 vec[k] = min_dist
 
             return vec
