@@ -641,7 +641,7 @@ class FSIDomain:
 
 
 
-    def _calc_distance_to_panel_surface(self, params):
+    def _calc_distance_to_panel_surface(self, params, min_dist_cutoff=1.0e-6):
 
         # Get the coordinates of each point from the mesh objects
         fluid_pts = self.fluid.msh.geometry.x
@@ -671,8 +671,6 @@ class FSIDomain:
         def find_shortest_distances(fluid_pts, structure_pts):
 
             vec = np.zeros(np.shape(fluid_pts)[0])
-
-            min_dist_cutoff = 1.0e-6
 
             for k, pt in enumerate(fluid_pts):
                 delta_x = pt - structure_pts
