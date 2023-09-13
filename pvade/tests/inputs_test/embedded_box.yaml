@@ -1,9 +1,6 @@
 general:
   geometry_module: panels3d
   output_dir: pvade/tests/test_mesh/embedded_box
-  mesh_only: True
-  structural_analysis: true
-  fluid_analysis: true
 domain:
   x_min: -1.0
   x_max: 1.0
@@ -20,7 +17,7 @@ pv_array:
   elevation: 0.0
   panel_chord: 1.2
   panel_span: 1.1
-  panel_thickness: 1.0 # not used
-  tracker_angle: 0.0 # not used
+  panel_thickness: 1.0
+  tracker_angle: 0.0
 
 
