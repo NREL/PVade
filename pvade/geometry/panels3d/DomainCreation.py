@@ -755,9 +755,9 @@ class DomainCreation(TemplateDomainCreation):
         threshold = self.gmsh_model.mesh.field.add("Threshold")
         self.gmsh_model.mesh.field.setNumber(threshold, "IField", distance)
 
-        # factor = params.domain.l_char
+        factor = params.domain.l_char
 
-        # resolution = factor * 10 * params.pv_array.panel_thickness / 2
+        resolution = factor * 10 * params.pv_array.panel_thickness / 2
         # half_panel = params.pv_array.panel_chord * np.cos(params.pv_array.tracker_angle)
         
         # self.gmsh_model.mesh.field.setNumber(threshold, "LcMin", resolution * 0.5)
