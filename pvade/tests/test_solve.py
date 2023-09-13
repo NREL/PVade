@@ -31,12 +31,11 @@ def test_flow_3dpanels():
 
     # Initialize the domain and construct the initial mesh
     domain = FSIDomain(params)
-    #domain.read("pvade/tests/test_mesh/panels3d/mesh/mesh.xdmf", params)
-    domain.build(params)
+    domain.read_mesh_files("pvade/tests/test_mesh/panels3d/mesh/", params)
 
     fluid_analysis = params.general.fluid_analysis
     # Initialize the function spaces for the flow
-    flow = Flow(domain,fluid_analysis)
+    flow = Flow(domain, fluid_analysis)
 
     # # # Specify the boundary conditions
     flow.build_boundary_conditions(domain, params)
@@ -63,8 +62,8 @@ def test_flow_3dpanels():
         print("max_pressure = ", max_pressure)
         assert not np.any(np.isnan(flow.p_k.x.array))
 
-    max_velocity_truth = 16.78961717598599
-    max_pressure_truth = 161.00087027677822
+    max_velocity_truth = 18.198961285088807
+    max_pressure_truth = 56.925361572846874
     assert np.isclose(max_velocity, max_velocity_truth, rtol=rtol)
     assert np.isclose(max_pressure, max_pressure_truth, rtol=rtol)
 
