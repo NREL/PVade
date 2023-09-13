@@ -29,7 +29,11 @@ class FSIDomain:
         self.comm = params.comm
         self.rank = params.rank
         self.num_procs = params.num_procs
-        self.first_move_mesh = True
+        if params.general.fluid_analysis == True:
+            self.first_move_mesh = True
+        else:
+            self.first_move_mesh = False
+        
 
         self._get_domain_markers(params)
 
@@ -109,6 +113,7 @@ class FSIDomain:
                     params, self.domain_markers
                 )
 
+            # if params.general.fluid_analysis == True:
             self.numpy_pt_total_array = self.geometry.numpy_pt_total_array
 
             self.geometry.set_length_scales(params, self.domain_markers)
@@ -139,20 +144,22 @@ class FSIDomain:
         self.facet_tags.name = "facet_tags"
 
 
-        if params.general.geometry_module == "panels3d" and params.general.fluid_analysis == True and params.general.structural_analysis == True :
-            self._create_submeshes_from_parent()
+        if params.general.geometry_module == "panels3d"  and params.general.structural_analysis == True :
+            self._create_submeshes_from_parent(params.general.fluid_analysis)
             self._transfer_mesh_tags_to_submeshes(params)
 
         self._save_submeshes_for_reload_hack(params)
 
-        # Create all forms that will eventually be used for mesh rotation/movement
-        # Build a function space for the rotation (a vector of degree 1)
-        vec_el_1 = ufl.VectorElement("Lagrange", self.fluid.msh.ufl_cell(), 1)
-        self.V1 = dolfinx.fem.FunctionSpace(self.fluid.msh, vec_el_1)
 
-        self.fluid_mesh_displacement = dolfinx.fem.Function(self.V1, name="fluid_mesh_displacement")
-        self.fluid_mesh_displacement_bc = dolfinx.fem.Function(self.V1, name="fluid_mesh_displacement_bc")
-        self.total_mesh_displacement = dolfinx.fem.Function(self.V1, name="total_mesh_disp")
+        if params.general.fluid_analysis == True:
+            # Create all forms that will eventually be used for mesh rotation/movement
+            # Build a function space for the rotation (a vector of degree 1)
+            vec_el_1 = ufl.VectorElement("Lagrange", self.fluid.msh.ufl_cell(), 1)
+            self.V1 = dolfinx.fem.FunctionSpace(self.fluid.msh, vec_el_1)
+
+            self.fluid_mesh_displacement = dolfinx.fem.Function(self.V1, name="fluid_mesh_displacement")
+            self.fluid_mesh_displacement_bc = dolfinx.fem.Function(self.V1, name="fluid_mesh_displacement_bc")
+            self.total_mesh_displacement = dolfinx.fem.Function(self.V1, name="total_mesh_disp")
 
     def _save_submeshes_for_reload_hack(self, params):
 
@@ -222,7 +229,7 @@ class FSIDomain:
         #         setattr(self, sub_domain_name, sub_domain)
 
 
-    def _create_submeshes_from_parent(self):
+    def _create_submeshes_from_parent(self,fluid_analysis):
         """Create submeshes from a parent mesh by cell tags.
 
         This function uses the cell tags to identify meshes that
@@ -232,7 +239,12 @@ class FSIDomain:
 
         """
 
-        for sub_domain_name in ["fluid", "structure"]:
+        if fluid_analysis == True:
+            submesh_list = ["fluid", "structure"]
+        else:
+            submesh_list = ["structure"]
+
+        for sub_domain_name in submesh_list:
             if self.rank == 0:
                 print(f"Creating {sub_domain_name} submesh")
 
@@ -275,7 +287,12 @@ class FSIDomain:
 
         cell_to_facet = self.msh.topology.connectivity(self.ndim, facet_dim)
 
-        for sub_domain_name in ["fluid", "structure"]:
+        if  params.general.fluid_analysis == True:
+            submesh_list = ["fluid", "structure"]
+        else:
+            submesh_list = ["structure"]
+        
+        for sub_domain_name in submesh_list:
             # Get the sub-domain object
             sub_domain = getattr(self, sub_domain_name)
 
@@ -547,8 +564,9 @@ class FSIDomain:
         yaml_name = "domain_markers.yaml"
         yaml_filename = os.path.join(read_mesh_dir, yaml_name)
 
-        with open(yaml_filename, "r") as fp:
-            self.domain_markers = yaml.safe_load(fp)
+        if params.general.fluid_analysis == True:
+            with open(yaml_filename, "r") as fp:
+                self.domain_markers = yaml.safe_load(fp)
 
     def test_mesh_functionspace(self):
         P2 = ufl.VectorElement("Lagrange", self.msh.ufl_cell(), 2)
