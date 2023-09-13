@@ -62,7 +62,7 @@ def test_move_mesh():
     params = SimParams(input_file)
 
     domain = FSIDomain(params)
-    domain.build(params)
+    domain.read_mesh_files(os.path.join(params.general.output_dir, "mesh"), params)
 
     # Create a dummy elasticity object that we can prescribe displacement values for
     class dummy_elasticity:
