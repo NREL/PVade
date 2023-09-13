@@ -1,6 +1,9 @@
 general:
   geometry_module: panels3d
   output_dir: pvade/tests/test_mesh/embedded_box
+  mesh_only: True
+  structural_analysis: True
+  fluid_analysis: True
 domain:
   x_min: -1.0
   x_max: 1.0
