@@ -550,6 +550,15 @@ class FSIDomain:
         with open(yaml_filename, "r") as fp:
             self.domain_markers = yaml.safe_load(fp)
 
+        # Create all forms that will eventually be used for mesh rotation/movement
+        # Build a function space for the rotation (a vector of degree 1)
+        vec_el_1 = ufl.VectorElement("Lagrange", self.fluid.msh.ufl_cell(), 1)
+        self.V1 = dolfinx.fem.FunctionSpace(self.fluid.msh, vec_el_1)
+
+        self.fluid_mesh_displacement = dolfinx.fem.Function(self.V1, name="fluid_mesh_displacement")
+        self.fluid_mesh_displacement_bc = dolfinx.fem.Function(self.V1, name="fluid_mesh_displacement_bc")
+        self.total_mesh_displacement = dolfinx.fem.Function(self.V1, name="total_mesh_disp")
+
     def test_mesh_functionspace(self):
         P2 = ufl.VectorElement("Lagrange", self.msh.ufl_cell(), 2)
         P1 = ufl.FiniteElement("Lagrange", self.msh.ufl_cell(), 1)
@@ -678,6 +687,10 @@ class FSIDomain:
 
         vec = find_shortest_distances(fluid_pts, global_structure_pts)
 
+        # Build a function space for the distance (a scalar of degree 1)
+        scalar_el_1 = ufl.FiniteElement("Lagrange", self.fluid.msh.ufl_cell(), 1)
+        self.Q1 = dolfinx.fem.FunctionSpace(self.fluid.msh, scalar_el_1)
+
         self.distance = dolfinx.fem.Function(self.Q1)
         nn = np.shape(self.distance.vector.array)[0]
 
@@ -695,10 +708,6 @@ class FSIDomain:
             # Save the un-moved coordinates for future reference 
             # self.fluid.msh.initial_position = self.fluid.msh.geometry.x[:, :]
             # self.structure.msh.initial_position = self.structure.msh.geometry.x[:, :]
-
-            # Build a function space for the distance (a scalar of degree 1)
-            scalar_el_1 = ufl.FiniteElement("Lagrange", self.fluid.msh.ufl_cell(), 1)
-            self.Q1 = dolfinx.fem.FunctionSpace(self.fluid.msh, scalar_el_1)
 
             self._calc_distance_to_panel_surface(params)
 
