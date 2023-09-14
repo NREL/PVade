@@ -10,7 +10,7 @@ dependencies:
   - jsonschema
   - jupyter
   - matplotlib
-  - meshio
+  # - meshio
   - numba
   - pandas
   - pytest
