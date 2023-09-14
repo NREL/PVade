@@ -9,11 +9,12 @@ from pathlib import Path
 import pytest
 import dolfinx
 from petsc4py import PETSc
-import json 
+import json
 
 # from dolfinx.fem import create_nonmatching_meshes_interpolation_data
 
-#hello
+# hello
+
 
 # test actions
 class DataStream:
@@ -43,13 +44,12 @@ class DataStream:
             params (:obj:`pvade.Parameters.SimParams`): A SimParams object
 
         """
-        
+
         self.comm = params.comm
         self.rank = params.rank
         self.num_procs = params.num_procs
 
-
-        # fluid vars 
+        # fluid vars
         if params.general.fluid_analysis == True:
             self.ndim = domain.fluid.msh.topology.dim
 
@@ -70,7 +70,10 @@ class DataStream:
 
         def store_vec_rank1(functionspace, vector):
             imap = vector.function_space.dofmap.index_map
-            local_range = np.asarray(imap.local_range, dtype=np.int32) * vector.function_space.dofmap.index_map_bs
+            local_range = (
+                np.asarray(imap.local_range, dtype=np.int32)
+                * vector.function_space.dofmap.index_map_bs
+            )
             size_global = imap.size_global * vector.function_space.dofmap.index_map_bs
 
             # Communicate ranges and local data
@@ -78,7 +81,7 @@ class DataStream:
             data = MPI.COMM_WORLD.gather(vector.vector.array, root=0)
             # print(data)
             # Communicate local dof coordinates
-            x = functionspace.tabulate_dof_coordinates()[:imap.size_local]
+            x = functionspace.tabulate_dof_coordinates()[: imap.size_local]
             x_glob = MPI.COMM_WORLD.gather(x, root=0)
 
             # Declare gathered parallel arrays
@@ -91,31 +94,27 @@ class DataStream:
             if self.comm.rank == 0:
                 # Create array with all values (received)
                 for r, d in zip(ranges, data):
-                    global_array[r[0]:r[1]] = d
+                    global_array[r[0] : r[1]] = d
 
-            return global_array  
-        
+            return global_array
+
         def mpi_print(s):
             print(f"Rank {self.rank}:\n {s} ")
-
-
-
 
         # elasticity.uh.interpolate(flow.u_k)
         # elasticity.uh.x.scatter_forward()
 
         # elasticity.uh_exp.interpolate(flow.inflow_profile)
 
-
         # mpi_print(f"size of uh {elasticity.uh.vector.size},size of uh_Exp {elasticity.uh_exp.vector.size}")
-    
+
         # for m in range(elasticity.uh.vector.size):
         #     if (store_vec_rank1(elasticity.V,elasticity.uh)[m] - store_vec_rank1(elasticity.V,elasticity.uh_exp)[m]) > 1.e-6:
         #         print("not the same vectors (struct)" )
 
         # solution_vec = np.sort(np.array(store_vec_rank1(elasticity.V,elasticity.uh)))
         # solution_vec = solution_vec.reshape((-1, 1))
-        # print(f"sie of vec: {solution_vec.size}, Global array: \n{solution_vec}\n")    
+        # print(f"sie of vec: {solution_vec.size}, Global array: \n{solution_vec}\n")
 
         # if self.comm.size == 1:
         #     np.savetxt('solution_1rank_output.txt', solution_vec, delimiter=',')
@@ -129,9 +128,12 @@ class DataStream:
         if elasticity.structural_analysis == True:
             self.ndim_str = domain.structure.msh.topology.dim
 
-            self.results_filename_def= f"{params.general.output_dir_sol}/solution_def.xdmf"
-            self.results_filename_stress= f"{params.general.output_dir_sol}/solution_stress.xdmf"
-            
+            self.results_filename_def = (
+                f"{params.general.output_dir_sol}/solution_def.xdmf"
+            )
+            self.results_filename_stress = (
+                f"{params.general.output_dir_sol}/solution_stress.xdmf"
+            )
 
             with XDMFFile(self.comm, self.results_filename_def, "w") as xdmf_file:
                 tt = 0.0
@@ -146,22 +148,27 @@ class DataStream:
 
         if self.comm.rank == 0 and self.comm.size > 1 and params.general.test == True:
             self.log_filename_str = f"{params.general.output_dir_sol}/log_str.txt"
-        
+
             with open(self.log_filename_str, "w") as fp:
                 fp.write(f"start , size of vec is {vec_check.size}\n")
                 fp.close()
 
             for n in range(solution_vec.size):
                 with open(self.log_filename_str, "a") as fp:
-                        fp.write(f"row {n}, {vec_check[n]} compared to  {solution_vec[n]}, diff is {abs(vec_check[n] - solution_vec[n])}\n")
-                        if abs(vec_check[n] - solution_vec[n]) > 1e-6 :
-                            fp.write("flag \n")
-                            fp.close()
-                            print(f"solution vec incorrect in {n}th entry \n {vec_check[n]} compared to  {solution_vec[n]} np = {self.comm.size} !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-                            exit()
+                    fp.write(
+                        f"row {n}, {vec_check[n]} compared to  {solution_vec[n]}, diff is {abs(vec_check[n] - solution_vec[n])}\n"
+                    )
+                    if abs(vec_check[n] - solution_vec[n]) > 1e-6:
+                        fp.write("flag \n")
+                        fp.close()
+                        print(
+                            f"solution vec incorrect in {n}th entry \n {vec_check[n]} compared to  {solution_vec[n]} np = {self.comm.size} !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+                        )
+                        exit()
             print(f"all values match with np = {self.comm.size}")
-        
+
         # exit()
+
     def save_XDMF_files(self, flow, domain, tt):
         """Write additional timestep to XDMF file
 
@@ -189,11 +196,10 @@ class DataStream:
         """
         with XDMFFile(self.comm, self.results_filename_def, "a") as xdmf_file:
             xdmf_file.write_function(elasticity.uh, tt)
-        
+
         with XDMFFile(self.comm, self.results_filename_stress, "a") as xdmf_file:
             xdmf_file.write_function(elasticity.sigma_vm_h, tt)
             # xdmf_file.write_function(elasticity.uh, tt)
-        
 
     def print_and_log(self, string_to_print):
         if self.rank == 0:
@@ -205,4 +211,3 @@ class DataStream:
     def fluid_struct(self, domain, flow, elasticity, params):
         # print("tst")
         elasticity.stress.interpolate(flow.panel_stress)
-        

@@ -253,15 +253,19 @@ def build_velocity_boundary_conditions(domain, params, functionspace):
     # Set all interior surfaces to no slip *which sometimes means non-zero values*
     use_surface_vel_from_fsi = True
 
-    for panel_id in range(params.pv_array.stream_rows*params.pv_array.span_rows):
-        if params.general.geometry_module == "panels2d" or params.general.geometry_module == "panels3d":
-            for location in f"bottom_{panel_id}",\
-                            f"top_{panel_id}",\
-                            f"left_{panel_id}",\
-                            f"right_{panel_id}",\
-                            f"front_{panel_id}",\
-                            f"back_{panel_id}":
-
+    for panel_id in range(params.pv_array.stream_rows * params.pv_array.span_rows):
+        if (
+            params.general.geometry_module == "panels2d"
+            or params.general.geometry_module == "panels3d"
+        ):
+            for location in (
+                f"bottom_{panel_id}",
+                f"top_{panel_id}",
+                f"left_{panel_id}",
+                f"right_{panel_id}",
+                f"front_{panel_id}",
+                f"back_{panel_id}",
+            ):
                 if use_surface_vel_from_fsi:
                     dofs = get_facet_dofs_by_gmsh_tag(domain, functionspace, location)
                     bc = dolfinx.fem.dirichletbc(mesh_vel, dofs)
@@ -272,7 +276,10 @@ def build_velocity_boundary_conditions(domain, params, functionspace):
 
                 bcu.append(bc)
 
-        elif params.general.geometry_module == "cylinder3d" or params.general.geometry_module == "cylinder2d":
+        elif (
+            params.general.geometry_module == "cylinder3d"
+            or params.general.geometry_module == "cylinder2d"
+        ):
             location = f"cylinder_side"
             bc = build_vel_bc_by_type("noslip", domain, functionspace, location)
             bcu.append(bc)

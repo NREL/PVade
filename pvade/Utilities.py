@@ -23,9 +23,9 @@ def get_input_file():
     return input_file_path
 
 
-def write_metrics(flow,elasticity):
+def write_metrics(flow, elasticity):
     with open("profiling.txt", "r") as output_file:
-         if flow.fluid_analysis == True:
+        if flow.fluid_analysis == True:
             # solver_line = [line for line in output_file if "(solve)" in line]
             solver_line = [line for line in output_file if "(solve)" in line]
             print(solver_line)
@@ -52,7 +52,7 @@ def write_metrics(flow,elasticity):
                 solver1_line[4],
                 " num calls = ",
                 solver1_line[0],
-        )
+            )
 
     with open("profiling.txt", "r") as output_file:
         if flow.fluid_analysis == True:

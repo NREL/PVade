@@ -10,6 +10,7 @@ from petsc4py import PETSc
 
 from importlib import import_module
 
+
 # from pvade.geometry.panels.DomainCreation   import *
 class FSIDomain:
     """
@@ -33,13 +34,12 @@ class FSIDomain:
             self.first_move_mesh = True
         else:
             self.first_move_mesh = False
-        
 
         self._get_domain_markers(params)
 
         self.numpy_pt_total_array = None
 
-    def _get_domain_markers(self,params):
+    def _get_domain_markers(self, params):
         self.domain_markers = {}
 
         # Fluid Facet Markers
@@ -61,23 +61,65 @@ class FSIDomain:
         self.domain_markers["structure"] = {"idx": 9, "entity": "cell", "gmsh_tags": []}
 
         # Structure Facet Markers
-        if params.general.geometry_module == "panels2d" or params.general.geometry_module == "panels3d":
-            for panel_id in range(params.pv_array.stream_rows * params.pv_array.span_rows):
-                marker = 9 + np.array([1,2,3,4,5,6])+6*(panel_id)
-                panel_marker = 100*(panel_id+1) 
-                self.domain_markers[f"bottom_{panel_id}"] = {"idx": marker[0], "entity": "facet", "gmsh_tags": []}
-                self.domain_markers[f"top_{panel_id}"]    = {"idx": marker[1], "entity": "facet", "gmsh_tags": []}
-                self.domain_markers[f"left_{panel_id}"]   = {"idx": marker[2], "entity": "facet", "gmsh_tags": []}
-                self.domain_markers[f"right_{panel_id}"]  = {"idx": marker[3], "entity": "facet", "gmsh_tags": []}
-                self.domain_markers[f"back_{panel_id}"]   = {"idx": marker[4], "entity": "facet", "gmsh_tags": []}
-                self.domain_markers[f"front_{panel_id}"]  = {"idx": marker[5], "entity": "facet", "gmsh_tags": []}
-                # Cell Markers 
-                self.domain_markers[f"panel_{panel_id}"] = {"idx": panel_marker, "entity": "cell", "gmsh_tags": []}
-        elif params.general.geometry_module == "cylinder3d" or params.general.geometry_module == "cylinder2d":
-            self.domain_markers[f"cylinder"] = {"idx": 100, "entity": "cell", "gmsh_tags": []}
-            self.domain_markers[f"cylinder_side"]  = {"idx": 10, "entity": "facet", "gmsh_tags": []}
-
-
+        if (
+            params.general.geometry_module == "panels2d"
+            or params.general.geometry_module == "panels3d"
+        ):
+            for panel_id in range(
+                params.pv_array.stream_rows * params.pv_array.span_rows
+            ):
+                marker = 9 + np.array([1, 2, 3, 4, 5, 6]) + 6 * (panel_id)
+                panel_marker = 100 * (panel_id + 1)
+                self.domain_markers[f"bottom_{panel_id}"] = {
+                    "idx": marker[0],
+                    "entity": "facet",
+                    "gmsh_tags": [],
+                }
+                self.domain_markers[f"top_{panel_id}"] = {
+                    "idx": marker[1],
+                    "entity": "facet",
+                    "gmsh_tags": [],
+                }
+                self.domain_markers[f"left_{panel_id}"] = {
+                    "idx": marker[2],
+                    "entity": "facet",
+                    "gmsh_tags": [],
+                }
+                self.domain_markers[f"right_{panel_id}"] = {
+                    "idx": marker[3],
+                    "entity": "facet",
+                    "gmsh_tags": [],
+                }
+                self.domain_markers[f"back_{panel_id}"] = {
+                    "idx": marker[4],
+                    "entity": "facet",
+                    "gmsh_tags": [],
+                }
+                self.domain_markers[f"front_{panel_id}"] = {
+                    "idx": marker[5],
+                    "entity": "facet",
+                    "gmsh_tags": [],
+                }
+                # Cell Markers
+                self.domain_markers[f"panel_{panel_id}"] = {
+                    "idx": panel_marker,
+                    "entity": "cell",
+                    "gmsh_tags": [],
+                }
+        elif (
+            params.general.geometry_module == "cylinder3d"
+            or params.general.geometry_module == "cylinder2d"
+        ):
+            self.domain_markers[f"cylinder"] = {
+                "idx": 100,
+                "entity": "cell",
+                "gmsh_tags": [],
+            }
+            self.domain_markers[f"cylinder_side"] = {
+                "idx": 10,
+                "entity": "facet",
+                "gmsh_tags": [],
+            }
 
     def build(self, params):
         """This function call builds the geometry, marks the boundaries and creates a mesh using Gmsh."""
@@ -95,13 +137,21 @@ class FSIDomain:
 
         # Only rank 0 builds the geometry and meshes the domain
         if self.rank == 0:
-            if params.general.geometry_module == "panels3d" and params.general.fluid_analysis == True and params.general.structural_analysis == True :
+            if (
+                params.general.geometry_module == "panels3d"
+                and params.general.fluid_analysis == True
+                and params.general.structural_analysis == True
+            ):
                 self.geometry.build_FSI(params)
-            elif params.general.geometry_module == "panels3d" and params.general.fluid_analysis == False and params.general.structural_analysis == True :
+            elif (
+                params.general.geometry_module == "panels3d"
+                and params.general.fluid_analysis == False
+                and params.general.structural_analysis == True
+            ):
                 self.geometry.build_structure(params)
-            else :
+            else:
                 self.geometry.build_FSI(params)
-            
+
             # Build the domain markers for each surface and cell
             if hasattr(self.geometry, "domain_markers"):
                 # If the "build" process created domain markers, use those directly...
@@ -133,8 +183,13 @@ class FSIDomain:
 
         # All ranks receive their portion of the mesh from rank 0 (like an MPI scatter)
         self.msh, self.cell_tags, self.facet_tags = dolfinx.io.gmshio.model_to_mesh(
-            self.geometry.gmsh_model, self.comm, 0, partitioner=dolfinx.mesh.create_cell_partitioner(dolfinx.mesh.GhostMode.shared_facet)
-            )
+            self.geometry.gmsh_model,
+            self.comm,
+            0,
+            partitioner=dolfinx.mesh.create_cell_partitioner(
+                dolfinx.mesh.GhostMode.shared_facet
+            ),
+        )
 
         self.ndim = self.msh.topology.dim
 
@@ -143,13 +198,11 @@ class FSIDomain:
         self.cell_tags.name = "cell_tags"
         self.facet_tags.name = "facet_tags"
 
-
-        if params.general.geometry_module == "panels3d"  :
+        if params.general.geometry_module == "panels3d":
             self._create_submeshes_from_parent(params)
             self._transfer_mesh_tags_to_submeshes(params)
 
         self._save_submeshes_for_reload_hack(params)
-
 
         if params.general.fluid_analysis == True:
             # Create all forms that will eventually be used for mesh rotation/movement
@@ -157,12 +210,17 @@ class FSIDomain:
             vec_el_1 = ufl.VectorElement("Lagrange", self.fluid.msh.ufl_cell(), 1)
             self.V1 = dolfinx.fem.FunctionSpace(self.fluid.msh, vec_el_1)
 
-            self.fluid_mesh_displacement = dolfinx.fem.Function(self.V1, name="fluid_mesh_displacement")
-            self.fluid_mesh_displacement_bc = dolfinx.fem.Function(self.V1, name="fluid_mesh_displacement_bc")
-            self.total_mesh_displacement = dolfinx.fem.Function(self.V1, name="total_mesh_disp")
+            self.fluid_mesh_displacement = dolfinx.fem.Function(
+                self.V1, name="fluid_mesh_displacement"
+            )
+            self.fluid_mesh_displacement_bc = dolfinx.fem.Function(
+                self.V1, name="fluid_mesh_displacement_bc"
+            )
+            self.total_mesh_displacement = dolfinx.fem.Function(
+                self.V1, name="total_mesh_disp"
+            )
 
     def _save_submeshes_for_reload_hack(self, params):
-
         self.write_mesh_files(params)
         self.read_mesh_files(params.general.output_dir_mesh, params)
 
@@ -216,7 +274,6 @@ class FSIDomain:
         #             mesh.topology.create_connectivity(ndim - 1, ndim)
         #             facet_tags = xdmf.read_meshtags(mesh, name="facet_tags")
 
-
         #         class FSISubDomain:
         #             pass
 
@@ -228,8 +285,7 @@ class FSIDomain:
 
         #         setattr(self, sub_domain_name, sub_domain)
 
-
-    def _create_submeshes_from_parent(self,params):
+    def _create_submeshes_from_parent(self, params):
         """Create submeshes from a parent mesh by cell tags.
 
         This function uses the cell tags to identify meshes that
@@ -240,12 +296,10 @@ class FSIDomain:
         """
         submesh_list = []
 
-
         if params.general.fluid_analysis == True:
-            submesh_list.append("fluid") 
+            submesh_list.append("fluid")
         if params.general.structural_analysis == True:
             submesh_list.append("structure")
-        
 
         for sub_domain_name in submesh_list:
             if self.rank == 0:
@@ -293,10 +347,10 @@ class FSIDomain:
         submesh_list = []
 
         if params.general.fluid_analysis == True:
-            submesh_list.append("fluid") 
+            submesh_list.append("fluid")
         if params.general.structural_analysis == True:
             submesh_list.append("structure")
-        
+
         for sub_domain_name in submesh_list:
             # Get the sub-domain object
             sub_domain = getattr(self, sub_domain_name)
@@ -348,13 +402,13 @@ class FSIDomain:
             # )
 
             # IS THIS REDUNDANT? SEEMS LIKE WE DO IT ABOVE
-            # sub_cell_map = sub_domain.msh.topology.index_map(self.ndim) 
-            # sub_num_cells = sub_cell_map.size_local + sub_cell_map.num_ghosts 
-            # sub_domain.cell_tags = dolfinx.mesh.meshtags( sub_domain.msh, sub_domain.msh.topology.dim, np.arange(sub_num_cells, dtype=np.int32), np.ones(sub_num_cells, dtype=np.int32), ) 
-            # sub_domain.cell_tags.name = "cell_tags" 
-            # sub_domain.facet_tags = dolfinx.mesh.meshtags( sub_domain.msh, sub_domain.msh.topology.dim - 1, np.arange(sub_num_facets, dtype=np.int32), sub_values, ) 
+            # sub_cell_map = sub_domain.msh.topology.index_map(self.ndim)
+            # sub_num_cells = sub_cell_map.size_local + sub_cell_map.num_ghosts
+            # sub_domain.cell_tags = dolfinx.mesh.meshtags( sub_domain.msh, sub_domain.msh.topology.dim, np.arange(sub_num_cells, dtype=np.int32), np.ones(sub_num_cells, dtype=np.int32), )
+            # sub_domain.cell_tags.name = "cell_tags"
+            # sub_domain.facet_tags = dolfinx.mesh.meshtags( sub_domain.msh, sub_domain.msh.topology.dim - 1, np.arange(sub_num_facets, dtype=np.int32), sub_values, )
             # sub_domain.facet_tags.name = "facet_tags"
-            
+
     def _enforce_periodicity(self):
         # TODO: Make this a generic mapping depending on which walls are marked for peridic BCs
         # TODO: Copy code to enforce periodicity from old generate_and_convert_3d_meshes.py
@@ -467,7 +521,6 @@ class FSIDomain:
         self.geometry.gmsh_model.mesh.generate(3)
 
     def write_mesh_files(self, params):
-
         # Attempt to save both the fluid and structure subdomains
         sub_domain_list = ["fluid", "structure"]
 
@@ -481,7 +534,9 @@ class FSIDomain:
 
             except:
                 if self.rank == 0:
-                    print(f"Could not find subdomain {sub_domain_name}, not writing this mesh.") 
+                    print(
+                        f"Could not find subdomain {sub_domain_name}, not writing this mesh."
+                    )
 
             else:
                 # Write this subdomain mesh to a file
@@ -493,12 +548,16 @@ class FSIDomain:
                     sub_domain.msh.name = mesh_name
                     xdmf.write_mesh(sub_domain.msh)
                     xdmf.write_meshtags(sub_domain.cell_tags)
-                    sub_domain.msh.topology.create_connectivity(self.ndim-1, self.ndim)
+                    sub_domain.msh.topology.create_connectivity(
+                        self.ndim - 1, self.ndim
+                    )
                     xdmf.write_meshtags(sub_domain.facet_tags)
 
                 # Write a gmsh copy too
                 gmsh_mesh_name = f"{sub_domain_name}_mesh.msh"
-                gmsh_mesh_filename = os.path.join(params.general.output_dir_mesh, gmsh_mesh_name)
+                gmsh_mesh_filename = os.path.join(
+                    params.general.output_dir_mesh, gmsh_mesh_name
+                )
                 gmsh.write(gmsh_mesh_filename)
 
                 if self.rank == 0:
@@ -538,9 +597,12 @@ class FSIDomain:
 
             except:
                 if self.rank == 0:
-                    print(f"Could not find subdomain {sub_domain_name} mesh file, not reading this mesh.") 
+                    print(
+                        f"Could not find subdomain {sub_domain_name} mesh file, not reading this mesh."
+                    )
 
             else:
+
                 class FSISubDomain:
                     pass
 
@@ -578,9 +640,15 @@ class FSIDomain:
         vec_el_1 = ufl.VectorElement("Lagrange", self.fluid.msh.ufl_cell(), 1)
         self.V1 = dolfinx.fem.FunctionSpace(self.fluid.msh, vec_el_1)
 
-        self.fluid_mesh_displacement = dolfinx.fem.Function(self.V1, name="fluid_mesh_displacement")
-        self.fluid_mesh_displacement_bc = dolfinx.fem.Function(self.V1, name="fluid_mesh_displacement_bc")
-        self.total_mesh_displacement = dolfinx.fem.Function(self.V1, name="total_mesh_disp")
+        self.fluid_mesh_displacement = dolfinx.fem.Function(
+            self.V1, name="fluid_mesh_displacement"
+        )
+        self.fluid_mesh_displacement_bc = dolfinx.fem.Function(
+            self.V1, name="fluid_mesh_displacement_bc"
+        )
+        self.total_mesh_displacement = dolfinx.fem.Function(
+            self.V1, name="total_mesh_disp"
+        )
 
     def test_mesh_functionspace(self):
         P2 = ufl.VectorElement("Lagrange", self.msh.ufl_cell(), 2)
@@ -609,7 +677,6 @@ class FSIDomain:
 
         print(f"Rank {self.rank} owns {num_nodes_owned_by_proc} nodes\n{coords}")
 
-
     def test_submesh_transfer(self, params):
         P2 = ufl.VectorElement("Lagrange", self.msh.ufl_cell(), 2)
         # P2 = ufl.FiniteElement("Lagrange", self.fluid.msh.ufl_cell(), 1)
@@ -628,7 +695,6 @@ class FSIDomain:
         from petsc4py import PETSc
 
         def fluid_function_value_setter(x):
-
             fluid_function_vals = np.zeros((3, x.shape[1]), dtype=PETSc.ScalarType)
 
             fluid_function_vals[0, :] = x[0]
@@ -639,21 +705,27 @@ class FSIDomain:
 
         u_fluid.interpolate(fluid_function_value_setter)
 
-        mesh_filename = os.path.join(params.general.output_dir_sol, "transfer_fluid.xdmf")
+        mesh_filename = os.path.join(
+            params.general.output_dir_sol, "transfer_fluid.xdmf"
+        )
         with dolfinx.io.XDMFFile(self.comm, mesh_filename, "w") as fp:
             fp.write_mesh(self.fluid.msh)
             fp.write_function(u_fluid, 0)
 
         u_struc.interpolate(u_fluid)
 
-        mesh_filename = os.path.join(params.general.output_dir_sol, "transfer_struc.xdmf")
+        mesh_filename = os.path.join(
+            params.general.output_dir_sol, "transfer_struc.xdmf"
+        )
         with dolfinx.io.XDMFFile(self.comm, mesh_filename, "w") as fp:
             fp.write_mesh(self.structure.msh)
             fp.write_function(u_struc, 0)
 
         u_fluid.interpolate(u_struc)
 
-        mesh_filename = os.path.join(params.general.output_dir_sol, "transfer_fluid.xdmf")
+        mesh_filename = os.path.join(
+            params.general.output_dir_sol, "transfer_fluid.xdmf"
+        )
         with dolfinx.io.XDMFFile(self.comm, mesh_filename, "a") as fp:
             # fp.write_mesh(self.fluid.msh)
             fp.write_function(u_fluid, 1)
@@ -662,10 +734,7 @@ class FSIDomain:
             file.write_mesh(domain.structure.msh)
             file.write_function(elasticity.uh, 0.0)
 
-
-
     def _calc_distance_to_panel_surface(self, params, min_dist_cutoff=1.0e-6):
-
         # Get the coordinates of each point from the mesh objects
         fluid_pts = self.fluid.msh.geometry.x
         local_structure_pts = self.structure.msh.geometry.x
@@ -678,7 +747,9 @@ class FSIDomain:
         global_num_pts_list = np.zeros(self.num_procs, dtype=np.int64)
 
         # Let each rank know how many nodes of the structure are held by all other ranks
-        self.comm.Allgather(np.array(local_num_pts, dtype=np.int64), global_num_pts_list)
+        self.comm.Allgather(
+            np.array(local_num_pts, dtype=np.int64), global_num_pts_list
+        )
 
         # Sum them to allocate an array to hold all the coordinates
         global_num_pts = int(np.sum(global_num_pts_list))
@@ -686,13 +757,15 @@ class FSIDomain:
 
         # Gather all the coordinates from each process into a global array representing all the points of the structure
         # After this step, local_structure_pts holds *every* node of the structure mesh
-        self.comm.Allgatherv(local_structure_pts.astype(np.float64), (global_structure_pts, self.ndim*global_num_pts_list))
+        self.comm.Allgatherv(
+            local_structure_pts.astype(np.float64),
+            (global_structure_pts, self.ndim * global_num_pts_list),
+        )
 
         from numba import jit
 
         @jit(nopython=True)
         def find_shortest_distances(fluid_pts, structure_pts):
-
             vec = np.zeros(np.shape(fluid_pts)[0])
 
             for k, pt in enumerate(fluid_pts):
@@ -717,16 +790,16 @@ class FSIDomain:
 
         self.distance.vector.array[:] = vec[0:nn]
 
-        dist_filename = os.path.join(params.general.output_dir_mesh, "distance_field.xdmf")
+        dist_filename = os.path.join(
+            params.general.output_dir_mesh, "distance_field.xdmf"
+        )
         with dolfinx.io.XDMFFile(self.comm, dist_filename, "w") as xdmf_file:
             xdmf_file.write_mesh(self.fluid.msh)
             xdmf_file.write_function(self.distance, 0.0)
 
-
     def move_mesh(self, elasticity, params, tt):
-
         if self.first_move_mesh:
-            # Save the un-moved coordinates for future reference 
+            # Save the un-moved coordinates for future reference
             # self.fluid.msh.initial_position = self.fluid.msh.geometry.x[:, :]
             # self.structure.msh.initial_position = self.structure.msh.geometry.x[:, :]
 
@@ -735,22 +808,38 @@ class FSIDomain:
             def _all_interior_surfaces(x):
                 eps = 1.0e-5
 
-                x_mid = np.logical_and(params.domain.x_min + eps < x[0], x[0] < params.domain.x_max - eps)
-                y_mid = np.logical_and(params.domain.y_min + eps < x[1], x[1] < params.domain.y_max - eps)
-                z_mid = np.logical_and(params.domain.z_min + eps < x[2], x[2] < params.domain.z_max - eps)
+                x_mid = np.logical_and(
+                    params.domain.x_min + eps < x[0], x[0] < params.domain.x_max - eps
+                )
+                y_mid = np.logical_and(
+                    params.domain.y_min + eps < x[1], x[1] < params.domain.y_max - eps
+                )
+                z_mid = np.logical_and(
+                    params.domain.z_min + eps < x[2], x[2] < params.domain.z_max - eps
+                )
 
-                all_interior_surfaces = np.logical_and(x_mid,  np.logical_and(y_mid, z_mid))
+                all_interior_surfaces = np.logical_and(
+                    x_mid, np.logical_and(y_mid, z_mid)
+                )
 
                 return all_interior_surfaces
 
             def _all_exterior_surfaces(x):
                 eps = 1.0e-5
 
-                x_edge = np.logical_or(x[0] < params.domain.x_min + eps,  params.domain.x_max - eps < x[0])
-                y_edge = np.logical_or(x[1] < params.domain.y_min + eps,  params.domain.y_max - eps < x[1])
-                z_edge = np.logical_or(x[2] < params.domain.z_min + eps,  params.domain.z_max - eps < x[2])
+                x_edge = np.logical_or(
+                    x[0] < params.domain.x_min + eps, params.domain.x_max - eps < x[0]
+                )
+                y_edge = np.logical_or(
+                    x[1] < params.domain.y_min + eps, params.domain.y_max - eps < x[1]
+                )
+                z_edge = np.logical_or(
+                    x[2] < params.domain.z_min + eps, params.domain.z_max - eps < x[2]
+                )
 
-                all_exterior_surfaces = np.logical_or(x_edge, np.logical_or(y_edge, z_edge))
+                all_exterior_surfaces = np.logical_or(
+                    x_edge, np.logical_or(y_edge, z_edge)
+                )
 
                 return all_exterior_surfaces
 
@@ -772,19 +861,26 @@ class FSIDomain:
                 self.V1, self.facet_dim, all_exterior_facets
             )
 
-
         # Interpolate the elasticity displacement (lives on the structure mesh)
         # field onto a function that lives on the fluid mesh
         self.fluid_mesh_displacement_bc.interpolate(elasticity.uh_delta)
 
         # Set the boundary condition for the walls of the computational domain
-        zero_vec = dolfinx.fem.Constant(self.fluid.msh, PETSc.ScalarType((0.0, 0.0, 0.0)))
+        zero_vec = dolfinx.fem.Constant(
+            self.fluid.msh, PETSc.ScalarType((0.0, 0.0, 0.0))
+        )
 
         self.bcx = []
-        self.bcx.append(dolfinx.fem.dirichletbc(self.fluid_mesh_displacement_bc, self.all_interior_V_dofs))
+        self.bcx.append(
+            dolfinx.fem.dirichletbc(
+                self.fluid_mesh_displacement_bc, self.all_interior_V_dofs
+            )
+        )
 
         # print("uh_max", np.amax(elasticity.uh.x.array[:]))
-        self.bcx.append(dolfinx.fem.dirichletbc(zero_vec, self.all_exterior_V_dofs, self.V1))
+        self.bcx.append(
+            dolfinx.fem.dirichletbc(zero_vec, self.all_exterior_V_dofs, self.V1)
+        )
 
         if self.first_move_mesh:
             u = ufl.TrialFunction(self.V1)
@@ -792,7 +888,9 @@ class FSIDomain:
 
             # TODO: use the distance in the diffusion calculation
             # self.a = dolfinx.fem.form(ufl.inner(ufl.grad(u), ufl.grad(v)) * ufl.dx)
-            self.a = dolfinx.fem.form(1.0/self.distance**2 * ufl.inner(ufl.grad(u), ufl.grad(v)) * ufl.dx)
+            self.a = dolfinx.fem.form(
+                1.0 / self.distance**2 * ufl.inner(ufl.grad(u), ufl.grad(v)) * ufl.dx
+            )
             self.L = dolfinx.fem.form(ufl.inner(zero_vec, v) * ufl.dx)
 
             self.A = dolfinx.fem.petsc.assemble_matrix(self.a, bcs=self.bcx)
@@ -850,8 +948,8 @@ class FSIDomain:
         self.structure.msh.geometry.x[:, :] += vals[:, :]
 
         # Save this mesh motion as the total mesh displacement
-        self.total_mesh_displacement.vector.array[:] += self.fluid_mesh_displacement.vector.array
-
+        self.total_mesh_displacement.vector.array[
+            :
+        ] += self.fluid_mesh_displacement.vector.array
 
         self.first_move_mesh = False
-

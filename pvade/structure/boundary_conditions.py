@@ -266,20 +266,22 @@ def build_pressure_boundary_conditions(domain, params, functionspace):
 
     return bcp
 
+
 def build_structure_boundary_conditions(domain, params, functionspace):
     facet_dim = domain.ndim - 1
-    zero_vec = dolfinx.fem.Constant(domain.structure.msh, PETSc.ScalarType((0.0, 0.0, 0.0)))
+    zero_vec = dolfinx.fem.Constant(
+        domain.structure.msh, PETSc.ScalarType((0.0, 0.0, 0.0))
+    )
     bc = []
-    for num_panel in range(params.pv_array.stream_rows*params.pv_array.span_rows):
-        for location in  f"left_{num_panel}" , f"right_{num_panel}":# ,\
+    for num_panel in range(params.pv_array.stream_rows * params.pv_array.span_rows):
+        for location in f"left_{num_panel}", f"right_{num_panel}":  # ,\
             # f"front_{num_panel}" , f"back_{num_panel}":
-        # for location in  [f"left_{num_panel}"]:# , f"right_{num_panel}":
-        # for location in  f"left_{num_panel}":
-        # for location in f"left_{num_panel}":
-        # location = f"top_{num_panel}"
+            # for location in  [f"left_{num_panel}"]:# , f"right_{num_panel}":
+            # for location in  f"left_{num_panel}":
+            # for location in f"left_{num_panel}":
+            # location = f"top_{num_panel}"
             dofs = get_facet_dofs_by_gmsh_tag(domain, functionspace, location)
             bc.append(dolfinx.fem.dirichletbc(zero_vec, dofs, functionspace))
-    
 
     # x = functionspace.tabulate_dof_coordinates()
     # val = np.amax(x[:,0])
@@ -288,21 +290,22 @@ def build_structure_boundary_conditions(domain, params, functionspace):
     # length_in_z = np.sin(params.pv_array.tracker_angle) * params.pv_array.panel_chord
     # min_point = params.pv_array.elevation - length_in_z/2
 
-    # point_of_attachement = ( min_point + 0.5*length_in_z) 
+    # point_of_attachement = ( min_point + 0.5*length_in_z)
 
     # print(domain.numpy_pt_total_array)
 
-
-
     def old_connection_point_up(x):
-        
         eps = 1e-6
         # spot = params.pv_array.elevation-0.5*params.pv_array.panel_thickness
-        spot = params.pv_array.elevation-0.5*params.pv_array.panel_thickness*np.cos(np.radians(params.pv_array.tracker_angle))
+        spot = (
+            params.pv_array.elevation
+            - 0.5
+            * params.pv_array.panel_thickness
+            * np.cos(np.radians(params.pv_array.tracker_angle))
+        )
         print(spot)
-        test = np.logical_and(x[2] > spot-eps, x[2] < spot + eps)
+        test = np.logical_and(x[2] > spot - eps, x[2] < spot + eps)
         return test
-
 
     def connection_point_up(x):
         eps = 1e-3
@@ -325,13 +328,13 @@ def build_structure_boundary_conditions(domain, params, functionspace):
                 total_pinned_pts = np.logical_or(pinned_pts, total_pinned_pts)
 
         return total_pinned_pts
-    
-    facet_uppoint = dolfinx.mesh.locate_entities(domain.structure.msh, 1, connection_point_up)
+
+    facet_uppoint = dolfinx.mesh.locate_entities(
+        domain.structure.msh, 1, connection_point_up
+    )
     dofs_disp = dolfinx.fem.locate_dofs_topological(functionspace, 1, [facet_uppoint])
     # print(np.shape(dofs_disp), dofs_disp)
-    
-    
-    # bc.append(dolfinx.fem.dirichletbc(zero_vec, dofs_disp, functionspace))
 
+    # bc.append(dolfinx.fem.dirichletbc(zero_vec, dofs_disp, functionspace))
 
     return bc

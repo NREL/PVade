@@ -20,7 +20,7 @@ from pvade.fluid.boundary_conditions import (
 class Flow:
     """This class solves the CFD problem"""
 
-    def __init__(self, domain,fluid_analysis):
+    def __init__(self, domain, fluid_analysis):
         """Initialize the fluid solver
 
         This method initialize the Flow object, namely, it creates all the
@@ -42,7 +42,7 @@ class Flow:
             self.comm = domain.comm
             self.rank = domain.rank
             self.num_procs = domain.num_procs
-            
+
             # Pressure (Scalar)
             P1 = ufl.FiniteElement("Lagrange", domain.fluid.msh.ufl_cell(), 1)
             self.Q = dolfinx.fem.FunctionSpace(domain.fluid.msh, P1)
@@ -151,11 +151,10 @@ class Flow:
         initialize_flow = True
 
         if initialize_flow:
-
             # self.inflow_profile = dolfinx.fem.Function(self.V)
             # self.inflow_profile.interpolate(lambda x: np.vstack((x[0], x[1],x[2])))
 
-            # when using interpolate the assert fails 
+            # when using interpolate the assert fails
             self.u_k1.interpolate(self.inflow_profile)
             self.u_k2.interpolate(self.inflow_profile)
             self.u_k.interpolate(self.inflow_profile)
@@ -167,9 +166,8 @@ class Flow:
             # flags.append((self.u_k.x.array[:] == self.inflow_profile.x.array).all())
             # flags.append((self.u_k.x.array[:] == self.inflow_profile.x.array).all())
             # flags.append((self.u_k2.x.array[:] == self.inflow_profile.x.array).all())
-            
+
             # assert all(flags), "initialiazation not done correctly"
-            
 
         # Define expressions used in variational forms
         # Crank-Nicolson velocity
@@ -240,8 +238,15 @@ class Flow:
         # Define variational problem for step 1: tentative velocity
         self.F1 = (
             (1.0 / self.dt_c) * ufl.inner(self.u - self.u_k1, self.v) * ufl.dx
-            + ufl.inner(ufl.dot(U_AB-domain.fluid_mesh_displacement/self.dt_c, ufl.nabla_grad(U_CN)), self.v) * ufl.dx
-            + (nu+  self.nu_T) * ufl.inner(ufl.grad(U_CN), ufl.grad(self.v)) * ufl.dx
+            + ufl.inner(
+                ufl.dot(
+                    U_AB - domain.fluid_mesh_displacement / self.dt_c,
+                    ufl.nabla_grad(U_CN),
+                ),
+                self.v,
+            )
+            * ufl.dx
+            + (nu + self.nu_T) * ufl.inner(ufl.grad(U_CN), ufl.grad(self.v)) * ufl.dx
             + ufl.inner(ufl.grad(self.p_k1), self.v) * ufl.dx
             - ufl.inner(self.dpdx, self.v) * ufl.dx
         )
@@ -277,9 +282,13 @@ class Flow:
 
         # Create a dolfinx.fem.form for projecting stress onto a tensor function space
         # e.g., panel_stress.assign(project(stress, T))
-       
-        self.a4 = dolfinx.fem.form(ufl.inner(ufl.TrialFunction(self.T), ufl.TestFunction(self.T))*ufl.dx)
-        self.L4 = dolfinx.fem.form(ufl.inner(self.stress, ufl.TestFunction(self.T))*ufl.dx)
+
+        self.a4 = dolfinx.fem.form(
+            ufl.inner(ufl.TrialFunction(self.T), ufl.TestFunction(self.T)) * ufl.dx
+        )
+        self.L4 = dolfinx.fem.form(
+            ufl.inner(self.stress, ufl.TestFunction(self.T)) * ufl.dx
+        )
 
         # Create a dolfinx.fem.form for projecting CFL calculation onto DG function space
         cell_diam = ufl.CellDiameter(domain.fluid.msh)
@@ -508,7 +517,7 @@ class Flow:
 
         self.solver_3.solve(self.b3, self.u_k.vector)
         self.u_k.x.scatter_forward()
-    
+
     def _solver_step_4(self, params):
         """Solve step 3: velocity update
 

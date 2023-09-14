@@ -10,9 +10,9 @@ from pvade.geometry.MeshManager import FSIDomain
 
 input_path = "pvade/tests/input/yaml/"
 
+
 @pytest.mark.regression
 def test_calc_distance_to_panel_surface():
-
     input_file = os.path.join(input_path, "embedded_box.yaml")  # get_input_file()
 
     params = SimParams(input_file)
@@ -34,7 +34,7 @@ def test_calc_distance_to_panel_surface():
     # Assert that all distance values are positive (minimum should be min_dist_cutoff)
     assert np.all(vals > 0)
 
-    # The number of rows in coords should be equal to the number of distance values 
+    # The number of rows in coords should be equal to the number of distance values
     # but this won't be true in parallel since the mesh includes all ghost points
     # and the functions do not, so we assert >=
     assert np.shape(coords)[0] >= np.shape(vals)[0]
@@ -47,23 +47,23 @@ def test_calc_distance_to_panel_surface():
     # (i.e., the hypotenuse, or close to sqrt(0.5^2 + 0.5^2 + 0.5^2))
     max_dist = np.amax(vals)
 
-    dx = params.domain.x_max - 0.5*params.pv_array.panel_chord
-    dy = params.domain.y_max - 0.5*params.pv_array.panel_span
-    dz = params.domain.z_max - 0.5*params.pv_array.panel_thickness
-    truth_max_dist = np.sqrt(dx*dx + dy*dy + dz*dz)
+    dx = params.domain.x_max - 0.5 * params.pv_array.panel_chord
+    dy = params.domain.y_max - 0.5 * params.pv_array.panel_span
+    dz = params.domain.z_max - 0.5 * params.pv_array.panel_thickness
+    truth_max_dist = np.sqrt(dx * dx + dy * dy + dz * dz)
 
     assert np.isclose(max_dist, truth_max_dist)
 
+
 @pytest.mark.regression
 def test_move_mesh():
-
     input_file = os.path.join(input_path, "embedded_box.yaml")  # get_input_file()
 
     params = SimParams(input_file)
 
     domain = FSIDomain(params)
     # domain.build(params)
-    # This will exist by evaluating the previous test, test_calc_distance_to_panel_surface, 
+    # This will exist by evaluating the previous test, test_calc_distance_to_panel_surface,
     # first in the sequence, as the files are created during the write_to_read_hack step.
     domain.read_mesh_files(os.path.join(params.general.output_dir, "mesh"), params)
 
@@ -100,13 +100,25 @@ def test_move_mesh():
     assert np.isclose(np.amax(fluid_coords_before[:, 1]), params.domain.y_max)
     assert np.isclose(np.amax(fluid_coords_before[:, 2]), params.domain.z_max)
 
-    assert np.isclose(np.amin(structure_coords_before[:, 0]), -0.5*params.pv_array.panel_chord)
-    assert np.isclose(np.amin(structure_coords_before[:, 1]), -0.5*params.pv_array.panel_span)
-    assert np.isclose(np.amin(structure_coords_before[:, 2]), -0.5*params.pv_array.panel_thickness)
+    assert np.isclose(
+        np.amin(structure_coords_before[:, 0]), -0.5 * params.pv_array.panel_chord
+    )
+    assert np.isclose(
+        np.amin(structure_coords_before[:, 1]), -0.5 * params.pv_array.panel_span
+    )
+    assert np.isclose(
+        np.amin(structure_coords_before[:, 2]), -0.5 * params.pv_array.panel_thickness
+    )
 
-    assert np.isclose(np.amax(structure_coords_before[:, 0]), 0.5*params.pv_array.panel_chord)
-    assert np.isclose(np.amax(structure_coords_before[:, 1]), 0.5*params.pv_array.panel_span)
-    assert np.isclose(np.amax(structure_coords_before[:, 2]), 0.5*params.pv_array.panel_thickness)
+    assert np.isclose(
+        np.amax(structure_coords_before[:, 0]), 0.5 * params.pv_array.panel_chord
+    )
+    assert np.isclose(
+        np.amax(structure_coords_before[:, 1]), 0.5 * params.pv_array.panel_span
+    )
+    assert np.isclose(
+        np.amax(structure_coords_before[:, 2]), 0.5 * params.pv_array.panel_thickness
+    )
 
     # Move the mesh by the amount prescribed in uh_delta
     domain.move_mesh(elasticity, params, tt=0)
@@ -149,5 +161,3 @@ def test_move_mesh():
     # ax[1].scatter(fluid_coords_after[:, 0], fluid_coords_after[:, 1])
     # ax[1].scatter(structure_coords_after[:, 0], structure_coords_after[:, 1])
     # plt.show()
-
-

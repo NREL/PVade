@@ -11,15 +11,14 @@ import scipy.interpolate as interp
 
 import warnings
 
-from pvade.structure.boundary_conditions import (
-    build_structure_boundary_conditions
-)
+from pvade.structure.boundary_conditions import build_structure_boundary_conditions
 from contextlib import ExitStack
+
 
 class Elasticity:
     """This class solves the CFD problem"""
 
-    def __init__(self, domain,structural_analysis):
+    def __init__(self, domain, structural_analysis):
         """Initialize the fluid solver
 
         This method initialize the Flow object, namely, it creates all the
@@ -38,17 +37,18 @@ class Elasticity:
         self.rank = domain.rank
         self.num_procs = domain.num_procs
 
-
         # domain.structure.msh = dolfinx.mesh.refine(domain.structure.msh,None)
         # domain.structure.msh = dolfinx.mesh.refine(domain.structure.msh)
 
         P1 = ufl.VectorElement("Lagrange", domain.structure.msh.ufl_cell(), 1)
         self.V = dolfinx.fem.FunctionSpace(domain.structure.msh, P1)
 
-        self.W = dolfinx.fem.FunctionSpace(domain.structure.msh, ("Discontinuous Lagrange", 0))
+        self.W = dolfinx.fem.FunctionSpace(
+            domain.structure.msh, ("Discontinuous Lagrange", 0)
+        )
 
         self.first_call_to_solver = True
-       
+
         self.num_V_dofs = (
             self.V.dofmap.index_map_bs * self.V.dofmap.index_map.size_global
         )
@@ -68,7 +68,7 @@ class Elasticity:
         self.hmin = np.zeros(1)
         self.comm.Allreduce(hmin_local, self.hmin, op=MPI.MIN)
         self.hmin = self.hmin[0]
-        
+
         if self.rank == 0:
             print(f"hmin on structure = {self.hmin}")
             print(f"Total num dofs on structure = {self.num_V_dofs}")
@@ -94,8 +94,6 @@ class Elasticity:
 
         self.bc = build_structure_boundary_conditions(domain, params, self.V)
 
-    
-    
     def build_forms(self, domain, params):
         """Builds all variational statements
 
@@ -113,8 +111,8 @@ class Elasticity:
 
         """
         # Define structural properties
-        self.E = params.structure.elasticity_modulus#1.0e9
-        self.ν = params.structure.poissons_ratio #0.3
+        self.E = params.structure.elasticity_modulus  # 1.0e9
+        self.ν = params.structure.poissons_ratio  # 0.3
         self.μ = self.E / (2.0 * (1.0 + self.ν))
         self.λ = self.E * self.ν / ((1.0 + self.ν) * (1.0 - 2.0 * self.ν))
 
@@ -122,25 +120,24 @@ class Elasticity:
         self.u = ufl.TrialFunction(self.V)
         self.v = ufl.TestFunction(self.V)
 
-
         P3 = ufl.TensorElement("Lagrange", domain.structure.msh.ufl_cell(), 2)
         self.T = dolfinx.fem.FunctionSpace(domain.structure.msh, P3)
 
         self.stress = dolfinx.fem.Function(self.T, name="stress_fluid")
-        
-
 
         self.sigma_vm_h = dolfinx.fem.Function(self.W, name="Stress")
 
-        self.uh = dolfinx.fem.Function(self.V,  name="Deformation") 
-        self.uh_old = dolfinx.fem.Function(self.V,  name="Deformation_old")
-        self.uh_delta = dolfinx.fem.Function(self.V,  name="Deformation_change")
+        self.uh = dolfinx.fem.Function(self.V, name="Deformation")
+        self.uh_old = dolfinx.fem.Function(self.V, name="Deformation_old")
+        self.uh_delta = dolfinx.fem.Function(self.V, name="Deformation_change")
 
-        # self.uh_exp = dolfinx.fem.Function(self.V,  name="Deformation") 
+        # self.uh_exp = dolfinx.fem.Function(self.V,  name="Deformation")
 
         def σ(v):
             """Return an expression for the stress σ given a displacement field"""
-            return 2.0 * self.μ * ufl.sym(ufl.grad(v)) + self.λ * ufl.tr(ufl.sym(ufl.grad(v))) * ufl.Identity(len(v))
+            return 2.0 * self.μ * ufl.sym(ufl.grad(v)) + self.λ * ufl.tr(
+                ufl.sym(ufl.grad(v))
+            ) * ufl.Identity(len(v))
 
         # source term ($f = \rho \omega^2 [x_0, \, x_1]$)
         self.ω, self.ρ = 300.0, 10.0
@@ -150,17 +147,26 @@ class Elasticity:
         #     domain.structure.msh,
         #     (PETSc.ScalarType(0), PETSc.ScalarType(0), PETSc.ScalarType(0)),
         # )
-        # self.f = ufl.as_vector((0*self.ρ * self.ω**2 * x[0], self.ρ * self.ω**2 * x[1], 0.0))   
+        # self.f = ufl.as_vector((0*self.ρ * self.ω**2 * x[0], self.ρ * self.ω**2 * x[1], 0.0))
         # self.T = dolfinx.fem.Constant(domain.structure.msh, PETSc.ScalarType((0, 1.e-3, 0)))
         # self.f = dolfinx.fem.Constant(domain.structure.msh, PETSc.ScalarType((0,100,100)))
-        self.f = dolfinx.fem.Constant(domain.structure.msh, PETSc.ScalarType((params.structure.body_force_x, \
-                                                                              params.structure.body_force_y, \
-                                                                                params.structure.body_force_z)))
+        self.f = dolfinx.fem.Constant(
+            domain.structure.msh,
+            PETSc.ScalarType(
+                (
+                    params.structure.body_force_x,
+                    params.structure.body_force_y,
+                    params.structure.body_force_z,
+                )
+            ),
+        )
         self.ds = ufl.Measure("ds", domain=domain.structure.msh)
         n = ufl.FacetNormal(domain.structure.msh)
-        self.a = dolfinx.fem.form( ufl.inner(σ(self.u), ufl.grad(self.v)) * ufl.dx)
-        self.L = dolfinx.fem.form(ufl.dot(self.f, self.v) * ufl.dx + ufl.dot(ufl.dot(self.stress,n), self.v) * self.ds)
-
+        self.a = dolfinx.fem.form(ufl.inner(σ(self.u), ufl.grad(self.v)) * ufl.dx)
+        self.L = dolfinx.fem.form(
+            ufl.dot(self.f, self.v) * ufl.dx
+            + ufl.dot(ufl.dot(self.stress, n), self.v) * self.ds
+        )
 
     def _assemble_system(self, params):
         """Pre-assemble all LHS matrices and RHS vectors
@@ -174,33 +180,44 @@ class Elasticity:
         Args:
             params (:obj:`pvade.Parameters.SimParams`): A SimParams object
         """
+        # try:
+        #     self.A.zeroEntries()
+        # except:
+        #     print("not zeroing")
+
+        # try:
+        #     with self.b.localForm() as loc:
+        #         loc.set(0)
+        # except:
+        #     pass
 
         self.A = dolfinx.fem.petsc.assemble_matrix(self.a, bcs=self.bc)
-        self.A.assemble()    
+        self.A.assemble()
         self.b = dolfinx.fem.petsc.assemble_vector(self.L)
-        # Set solver options
-        opts = PETSc.Options()
-        opts["ksp_type"] = "cg"
-        opts["ksp_rtol"] = 1.0e-6
-        opts["pc_type"] = "gamg"
 
-        # Use Chebyshev smoothing for multigrid
-        opts["mg_levels_ksp_type"] = "chebyshev"
-        opts["mg_levels_pc_type"] = "jacobi"
+        if self.first_call_to_solver:
+            # Set solver options
+            opts = PETSc.Options()
+            opts["ksp_type"] = "cg"
+            opts["ksp_rtol"] = 1.0e-6
+            opts["pc_type"] = "gamg"
 
-        # Improve estimate of eigenvalues for Chebyshev smoothing
-        opts["mg_levels_esteig_ksp_type"] = "cg"
-        opts["mg_levels_ksp_chebyshev_esteig_steps"] = 10
+            # Use Chebyshev smoothing for multigrid
+            opts["mg_levels_ksp_type"] = "chebyshev"
+            opts["mg_levels_pc_type"] = "jacobi"
 
-        # Create PETSc Krylov solver and turn convergence monitoring on
-        self.solver = PETSc.KSP().create(self.comm)
-        self.solver.setFromOptions()
+            # Improve estimate of eigenvalues for Chebyshev smoothing
+            opts["mg_levels_esteig_ksp_type"] = "cg"
+            opts["mg_levels_ksp_chebyshev_esteig_steps"] = 10
+
+            # Create PETSc Krylov solver and turn convergence monitoring on
+            self.solver = PETSc.KSP().create(self.comm)
+            self.solver.setFromOptions()
 
         # Set matrix operator
         self.solver.setOperators(self.A)
 
-
-    def build_nullspace(self,V):
+    def build_nullspace(self, V):
         """Build PETSc nullspace for 3D elasticity"""
 
         # Create list of vectors for building nullspace
@@ -235,7 +252,7 @@ class Elasticity:
 
         return PETSc.NullSpace().create(vectors=ns)
 
-    def solve(self, params,dataIO):
+    def solve(self, params, dataIO):
         """Solve for a single timestep advancement
 
         Here we perform the three-step solution process (tentative velocity,
@@ -246,10 +263,12 @@ class Elasticity:
         Args:
             params (:obj:`pvade.Parameters.SimParams`): A SimParams object
         """
+
         def σ(v):
             """Return an expression for the stress σ given a displacement field"""
-            return 2.0 * self.μ * ufl.sym(ufl.grad(v)) + self.λ * ufl.tr(ufl.sym(ufl.grad(v))) * ufl.Identity(len(v))
-        
+            return 2.0 * self.μ * ufl.sym(ufl.grad(v)) + self.λ * ufl.tr(
+                ufl.sym(ufl.grad(v))
+            ) * ufl.Identity(len(v))
 
         if self.first_call_to_solver:
             if self.rank == 0:
@@ -259,8 +278,8 @@ class Elasticity:
 
         dolfinx.fem.petsc.apply_lifting(self.b, [self.a], bcs=[self.bc])
         self.b.ghostUpdate(
-                    addv=PETSc.InsertMode.ADD_VALUES, mode=PETSc.ScatterMode.REVERSE
-                )
+            addv=PETSc.InsertMode.ADD_VALUES, mode=PETSc.ScatterMode.REVERSE
+        )
         dolfinx.fem.petsc.set_bc(self.b, self.bc)
         # -
 
@@ -270,24 +289,29 @@ class Elasticity:
         self.A.setNearNullSpace(ns)
 
         # Store the old displacement/position for finite differencing
-        self.uh_old.vector.array[:] = self.uh.vector.array[:] 
+        self.uh_old.vector.array[:] = self.uh.vector.array[:]
 
         # self.solver.setMonitor(lambda _, its, rnorm: print(f"Iteration: {its}, rel. residual: {rnorm}"))
-        # Compute displacement 
+        # Compute displacement
         self.solver.solve(self.b, self.uh.vector)
         # self.solver.view()
         # Scatter forward the solution vector to update ghost values
         self.uh.x.scatter_forward()
 
         # Calculate the change in the displacement (new - old) this is what moves the mesh
-        self.uh_delta.vector.array[:] = self.uh.vector.array[:] - self.uh_old.vector.array[:]
+        self.uh_delta.vector.array[:] = (
+            self.uh.vector.array[:] - self.uh_old.vector.array[:]
+        )
 
-        sigma_dev = σ(self.uh) - (1 / 3) * ufl.tr(σ(self.uh)) * ufl.Identity(len(self.uh))
-        sigma_vm = ufl.sqrt((3 / 2) * ufl.inner(sigma_dev, sigma_dev))   
+        sigma_dev = σ(self.uh) - (1 / 3) * ufl.tr(σ(self.uh)) * ufl.Identity(
+            len(self.uh)
+        )
+        sigma_vm = ufl.sqrt((3 / 2) * ufl.inner(sigma_dev, sigma_dev))
 
-        
-        sigma_vm_expr = dolfinx.fem.Expression(sigma_vm, self.W.element.interpolation_points())
-        self.sigma_vm_h.interpolate(sigma_vm_expr)   
+        sigma_vm_expr = dolfinx.fem.Expression(
+            sigma_vm, self.W.element.interpolation_points()
+        )
+        self.sigma_vm_h.interpolate(sigma_vm_expr)
 
         self.unorm = self.uh.x.norm()
 

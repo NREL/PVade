@@ -12,6 +12,7 @@ import tqdm.autonotebook
 
 from pvade.structure.ElasticityManager import Elasticity
 
+
 def main():
     # Get the path to the input file from the command line
     input_file = get_input_file()
@@ -19,8 +20,6 @@ def main():
 
     # Load the parameters object specified by the input file
     params = SimParams(input_file)
-
-
 
     fluid_analysis = params.general.fluid_analysis
     structural_analysis = params.general.structural_analysis
@@ -36,51 +35,38 @@ def main():
 
     if params.general.mesh_only == True:
         list_timings(params.comm, [TimingType.wall])
-        elasticity, flow = [],[]
-        return  params, elasticity, flow
+        elasticity, flow = [], []
+        return params, elasticity, flow
 
     # Check to ensure mesh node matching for periodic simulations
     # if domain.periodic_simulation:
     # domain.check_mesh_periodicity(params)
     # sys.exit()
 
-
-    
-    flow = Flow(domain,fluid_analysis)
-    elasticity = Elasticity(domain,structural_analysis)
-
-    
-    
-
+    flow = Flow(domain, fluid_analysis)
+    elasticity = Elasticity(domain, structural_analysis)
 
     if fluid_analysis == True:
-        flow = Flow(domain,fluid_analysis)
+        flow = Flow(domain, fluid_analysis)
         # # # Specify the boundary conditions
         flow.build_boundary_conditions(domain, params)
         # # # Build the fluid forms
         flow.build_forms(domain, params)
 
-    
-    
-
     if structural_analysis == True:
-        
         elasticity.build_boundary_conditions(domain, params)
         # # # Build the fluid forms
         elasticity.build_forms(domain, params)
-    
 
     if structural_analysis == True and fluid_analysis == True:
         domain.move_mesh(elasticity, params, 0.0)
 
-    dataIO = DataStream(domain, flow,elasticity, params)
+    dataIO = DataStream(domain, flow, elasticity, params)
 
     if domain.rank == 0:
         progress = tqdm.autonotebook.tqdm(
             desc="Solving PDE", total=params.solver.t_steps
         )
-
-    
 
     for k in range(params.solver.t_steps):
         if domain.rank == 0:
@@ -90,12 +76,12 @@ def main():
             flow.solve(params)
         if structural_analysis == True:
             if fluid_analysis == True:
-                dataIO.fluid_struct(domain, flow,elasticity, params)
-            elasticity.solve(params,dataIO)
-        # adjust pressure to avoid dissipation of pressure profile
-        # flow.adjust_dpdx_for_constant_flux(params)
+                dataIO.fluid_struct(domain, flow, elasticity, params)
+            elasticity.solve(params, dataIO)
+            # adjust pressure to avoid dissipation of pressure profile
+            # flow.adjust_dpdx_for_constant_flux(params)
             if fluid_analysis == True:
-                domain.move_mesh(elasticity, params, k*params.solver.dt)
+                domain.move_mesh(elasticity, params, k * params.solver.dt)
 
         if (k + 1) % params.solver.save_xdmf_interval_n == 0:
             if fluid_analysis == True:
@@ -104,24 +90,23 @@ def main():
                         f"Time {params.solver.dt*(k+1):.2f} of {params.solver.t_final:.2f}, CFL = {flow.cfl_max}"
                     )
                 dataIO.save_XDMF_files(flow, domain, (k + 1) * params.solver.dt)
-            
+
             if structural_analysis == True:
                 if domain.rank == 0:
-                    print("deformation norm =", {elasticity.unorm}) 
-                    print("max deformation =", {max(elasticity.uh.x.array[:])}) 
+                    print("deformation norm =", {elasticity.unorm})
+                    print("max deformation =", {max(elasticity.uh.x.array[:])})
                 dataIO.save_XDMF_files_str(elasticity, (k + 1) * params.solver.dt)
-    
 
     list_timings(params.comm, [TimingType.wall])
 
-    return params, elasticity, flow 
+    return params, elasticity, flow
 
 
 # Print profiling results
 if __name__ == "__main__":
     profiler = cProfile.Profile()
     profiler.enable()
-    params, elasticity, flow  = main()
+    params, elasticity, flow = main()
     profiler.disable()
 
     if params.rank == 0:
@@ -133,4 +118,4 @@ if __name__ == "__main__":
             sys.stdout = sys.__stdout__
 
         if not params.general.mesh_only:
-            write_metrics(flow,elasticity)
+            write_metrics(flow, elasticity)
