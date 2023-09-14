@@ -1,15 +1,15 @@
 general:
-  geometry_module: cylinder3d
-  output_dir: output/cylinder3d
+  geometry_module: cylinder2d
+  output_dir: output/cylinder2d
   mesh_only: false
+  structural_analysis: false
+  fluid_analysis: true
 domain:
   x_min: 0.0
   x_max: 2.5
   y_min: 0.0
   y_max: 0.41
-  z_min: 0.0
-  z_max: 0.41
-  l_char: 2.0 #.02
+  l_char: .05
 pv_array:
   stream_rows: 1 # not used
   elevation: 1.5 # not used
@@ -19,34 +19,23 @@ pv_array:
   panel_thickness: 0.1 # not used
   tracker_angle: 30.0 # not used
 solver:
-  dt: 0.025
-  t_final: 0.1
-  solver1_ksp: cg
+  dt: 0.000625
+  t_final: 3
+  solver1_ksp: gmres
   solver2_ksp: cg
   solver3_ksp: cg
   solver1_pc: jacobi
   solver2_pc: jacobi
   solver3_pc: jacobi
   save_text_interval: 0.1
-  save_xdmf_interval: 0.1
-
+  save_xdmf_interval: 0.1  
 fluid:
-  u_ref: 0.45
+  u_ref: 2.5
   nu: 0.001 # Establish re = 20 with diam = 0.1 and u_bar = u_ref * (4/9)
   dpdx: 0.0
-  turbulence_model: smagorinsky
+  turbulence_model: null
   periodic: false 
   bc_y_max: noslip # slip noslip free
   bc_y_min: noslip # slip noslip free
-  bc_z_max: noslip # slip noslip free
-  bc_z_min: noslip # slip noslip free
-structure:
-  youngs: 1.0e+09
-# Boundary_conditions: 
-#   top: noslip
-#   bottom: noslip
-#   left: inflow
-#   right: free
-#   front: noslip
-#   back: noslip
+
 

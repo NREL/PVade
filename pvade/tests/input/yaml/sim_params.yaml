@@ -1,7 +1,9 @@
 general:
   geometry_module: panels3d
-  output_dir: output/panels3d
-  mesh_only: true
+  output_dir: pvade/tests/output/panels3d
+  mesh_only: False
+  structural_analysis: True
+  fluid_analysis: True
 domain:
   x_min: -10
   x_max: 50
@@ -9,26 +11,26 @@ domain:
   y_max: 27
   z_min: 0
   z_max: 20
-  l_char: 5
+  l_char: 20
 pv_array:
   stream_rows: 7
   elevation: 1.5
-  stream_spacing: [7.0]
+  stream_spacing: 7.0
   panel_chord: 2.0
   panel_span: 7.0
   panel_thickness: 0.1
-  tracker_angle: 30.0
+  tracker_angle: -30.0
 solver:
   dt: 0.005
-  t_final: 10.0
+  t_final: 0.05
   solver1_ksp: cg
   solver2_ksp: cg
   solver3_ksp: cg
   solver1_pc: jacobi
   solver2_pc: jacobi
   solver3_pc: jacobi
-  save_text_interval: 0.01
-  save_xdmf_interval: 0.01
+  save_text_interval: 0.1
+  save_xdmf_interval: 0.1
 fluid:
   u_ref: 8.0
   nu: 0.01
@@ -38,5 +40,3 @@ fluid:
   bc_y_min: slip # slip noslip free
   bc_z_max: slip # slip noslip free
   bc_z_min: noslip # slip noslip free
-structure:
-  youngs: 1.0e+09

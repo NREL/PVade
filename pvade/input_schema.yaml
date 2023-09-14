@@ -8,6 +8,10 @@ properties:
     type: "object"
     # required:
     properties:
+      test:
+        default: false
+        type: "boolean"
+        description: "test if interpolation is done correctly"
       output_dir:
         default: "output/"
         type: "string"
@@ -16,16 +20,25 @@ properties:
         default: "panels3d"
         type: "string"
         description: "The name of the directory in pvade/geometry/ that contains a DomainCreation.py file for generating the CAD description, prescribing mesh refinement, etc."
-      input_mesh_file:
+      input_mesh_dir:
         default: null
         type:
           - "string"
           - "null"
-        description: "The path to the input mesh.xdmf file to be used in the simulation, e.g., /inputs/case_1/mesh.xdmf"
+        description: "The path to the directory containing fluid_mesh.xdmf and structure_mesh.xdmf to be used in the simulation, e.g., /inputs/case_1/"
       mesh_only:
         default: false
         type: "boolean"
         description: "If true, exit the PVade run immediately after generating the mesh without solving"
+      structural_analysis:
+        default: False 
+        type: "boolean"
+        description: "If true, conduct a structure analysis"
+      fluid_analysis:
+        default: true
+        type: "boolean"
+        description: "If true, conduct a fluid analysis"
+
   domain:
     additionalProperties: false
     type: "object"
@@ -108,18 +121,28 @@ properties:
         description: "The vertical distance between the center of the panel and the ground."
         units: "meter"
       stream_spacing:
-        default: [7.0]
+        default: 7.0
         minimum: 1.0
-        maximum: 10.0
-        type: "array"
+        maximum: 32.0
+        type: "number"
         description: "The separation between panel rows in the streamwise direction."
         units: "meter"
       span_spacing:
-        default: [7.0]
+        default: 7.0
         minimum: 1.0
-        maximum: 10.0
-        type: "array"
+        maximum: 32.0
+        type: "number"
         description: "The separation between panel rows in the spanwise direction."
+        units: "meter"
+      span_fixation_pts:
+        default: 3.5
+        minimum: 1.0
+        # maximum: 32.0
+        type:
+          - "number"
+          - "array"
+          - "null"
+        description: "If a single number, the uniform distance between linear fixation points embedded in the structural mesh, if an array, the location of each such fixation point along the panel span, all points in the range [0, panel_span]."
         units: "meter"
       panel_chord:
         default: 2.0
@@ -137,7 +160,7 @@ properties:
         units: "meter"
       panel_thickness:
         default: 0.1
-        minimum: 0.01
+        minimum: 0.0001
         maximum: 1.0
         type: "number"
         description: "The thickness of the panel."
@@ -180,45 +203,59 @@ properties:
       solver1_ksp:
         default: "cg"
         type: "string"
-        description: "The solver to use for fluid solve 1 of 3"
+        description: "The solver to use for fluid solve 1 of 4"
         enum:
           - "cg"
           - "gmres"
       solver2_ksp:
         default: "cg"
         type: "string"
-        description: "The solver to use for fluid solve 2 of 3"
+        description: "The solver to use for fluid solve 2 of 4"
         enum:
           - "cg"
           - "gmres"
       solver3_ksp:
         default: "cg"
         type: "string"
-        description: "The solver to use for fluid solve 3 of 3"
+        description: "The solver to use for fluid solve 3 of 4"
         enum:
           - "cg"
           - "gmres"
+      solver4_ksp:
+        default: "cg"
+        type: "string"
+        description: "The solver to use for fluid solve 4 of 4"
+        enum:
+          - "cg"
+          - "gmres"    
       solver1_pc:
         default: "hypre"
         type: "string"
-        description: "The preconditioner to use for fluid solve 1 of 3"
+        description: "The preconditioner to use for fluid solve 1 of 4"
         enum:
           - "jacobi"
           - "hypre"
       solver2_pc:
         default: "hypre"
         type: "string"
-        description: "The preconditioner to use for fluid solve 2 of 3"
+        description: "The preconditioner to use for fluid solve 2 of 4"
         enum:
           - "jacobi"
           - "hypre"
       solver3_pc:
         default: "hypre"
         type: "string"
-        description: "The preconditioner to use for fluid solve 3 of 3"
+        description: "The preconditioner to use for fluid solve 3 of 4"
         enum:
           - "jacobi"
           - "hypre"
+      solver4_pc:
+        default: "hypre"
+        type: "string"
+        description: "The preconditioner to use for fluid solve 3 of 4"
+        enum:
+          - "jacobi"
+          - "hypre"    
   fluid:
     additionalProperties: false
     type: "object"
@@ -247,6 +284,14 @@ properties:
         type: "number"
         description: "The velocity of the wind as measured at the panel elevation."
         units: "meter/second"
+      wind_direction:
+        default: 270.0
+        minimum: 0.0
+        maximum: 360.0
+        type: "number"
+        description: "The direction of the wind in degrees. 0 indicates a wind blowing from North to South, 
+        90 degrees from East to West, 180 from South to North, and 270 (default) from West to East."
+        units: "degrees"
       nu:
         default: 1.8e-05
         minimum: 1.0e-06
@@ -317,10 +362,32 @@ properties:
     type: "object"
     # required:
     properties:
-      youngs:
-        default:  190.0e+9
-        minimum: 1.0e+9
+      elasticity_modulus:
+        default: 190.0e+9
+        minimum: 1.0e+2
         maximum: 500.0e+9
         type: "number"
         description: "The effective Young's modulus of the panel structure."
-        units: "Pascal"
+        units: "Pascal"  
+      poissons_ratio: 
+        default: 0.3
+        minimum: 0.1
+        maximum: 0.9
+        type: "number"
+        description: "poissons ratio of the panel structure."
+        units: "None"
+      body_force_x: 
+        default:  100
+        type: "number"
+        description: "Body force applied on strucrure in the x direction"
+        units: "Newton"
+      body_force_y: 
+        default:  100
+        type: "number"
+        description: "Body force applied on strucrure in the y direction"
+        units: "Newton"
+      body_force_z: 
+        default:  100
+        type: "number"
+        description: "Body force applied on strucrure in the z direction"
+        units: "Newton"

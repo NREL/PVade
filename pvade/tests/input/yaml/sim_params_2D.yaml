@@ -1,17 +1,19 @@
 general:
   geometry_module: panels2d
-  output_dir: output/panels2d
-  mesh_only: false
+  output_dir: pvade/tests/output/panels2d
+  mesh_only: True
+  structural_analysis: false
+  fluid_analysis: true
 domain:
   x_min: -10
   x_max: 50
   y_min: 0
   y_max: 20
-  l_char: 0.9
+  l_char: 2.0
 pv_array:
   stream_rows: 3
   elevation: 1.5
-  stream_spacing: [7.0]
+  stream_spacing: 7.0
   panel_chord: 2.0
   panel_span: 7.0
   panel_thickness: 0.1
@@ -30,9 +32,7 @@ solver:
 fluid:
   u_ref: 0.8
   nu: 0.001
-  turbulence_model: smagorinsky
+  turbulence_model: null
   periodic: false 
   bc_y_max: slip # slip noslip free
   bc_y_min: noslip # slip noslip free
-structure:
-  youngs: 1.0e+09

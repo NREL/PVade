@@ -28,21 +28,11 @@ def get_facet_dofs_by_gmsh_tag(domain, functionspace, location):
     facet_dim = domain.ndim - 1
 
     if isinstance(location, str):
-        found_entities = domain.fluid.facet_tags.find(
+        found_entities = domain.structure.facet_tags.find(
             domain.domain_markers[location]["idx"]
         )
     elif isinstance(location, int):
-        found_entities = domain.fluid.facet_tags.find(location)
-
-    debugging = False
-
-    if debugging:
-        global_found_entities = domain.comm.gather(found_entities, root=0)
-
-        if domain.rank == 0:
-            flattened = np.hstack(global_found_entities)
-            nnn = np.size(flattened)
-            print(f"{location}, global_entities = ", nnn)
+        found_entities = domain.structure.facet_tags.find(location)
 
     # if len(found_entities) == 0:
     #     warnings.warn(f"Found no facets using location = {location}.")
@@ -133,7 +123,7 @@ class InflowVelocity:
         u_hub = self.params.fluid.u_ref
         z_hub = self.params.pv_array.elevation
 
-        if self.params.general.geometry_module == "cylinder3d":
+        if self.params.general.example == "cylinder3d":
             inflow_values[0] = (
                 16.0
                 * self.params.fluid.u_ref
@@ -143,7 +133,7 @@ class InflowVelocity:
                 * inflow_dz
                 / H**4
             )
-        elif self.params.general.geometry_module == "cylinder2d":
+        elif self.params.general.example == "cylinder2d":
             inflow_values[0] = (
                 4
                 * (self.params.fluid.u_ref)
@@ -152,14 +142,13 @@ class InflowVelocity:
                 * (0.41 - x[1])
                 / (0.41**2)
             )
-        elif self.params.general.geometry_module == "panels3d":
-            # inflow_values[0] = x[2]
+        elif self.params.general.example == "panels3d":
             inflow_values[0] = (
                 (self.params.fluid.u_ref)
                 * np.log(((x[2]) - d0) / z0)
                 / (np.log((z_hub - d0) / z0))
             )
-        elif self.params.general.geometry_module == "panels2d":
+        elif self.params.general.example == "panels2d":
             inflow_values[0] = (
                 (self.params.fluid.u_ref)
                 * np.log(((x[1]) - d0) / z0)
@@ -185,7 +174,7 @@ def get_inflow_profile_function(domain, params, functionspace):
 
     inflow_velocity = InflowVelocity(geom_dim, params)
 
-    if params.general.geometry_module in ["cylinder3d", "cylinder2d"]:
+    if params.general.example in ["cylinder3d", "cylinder2d"]:
         inflow_function.interpolate(inflow_velocity)
 
     else:
@@ -231,10 +220,6 @@ def build_velocity_boundary_conditions(domain, params, functionspace):
 
     bcu = []
 
-    mesh_vel = dolfinx.fem.Function(functionspace)
-    mesh_vel.interpolate(domain.fluid_mesh_displacement)
-    mesh_vel.vector.array[:] /= params.solver.dt
-
     # Generate list of locations to loop over
     if ndim == 2:
         bc_location_list = ["y_min", "y_max"]
@@ -250,39 +235,9 @@ def build_velocity_boundary_conditions(domain, params, functionspace):
 
         bcu.append(bc)
 
-    # Set all interior surfaces to no slip *which sometimes means non-zero values*
-    use_surface_vel_from_fsi = True
-
-    for panel_id in range(params.pv_array.stream_rows * params.pv_array.span_rows):
-        if (
-            params.general.geometry_module == "panels2d"
-            or params.general.geometry_module == "panels3d"
-        ):
-            for location in (
-                f"bottom_{panel_id}",
-                f"top_{panel_id}",
-                f"left_{panel_id}",
-                f"right_{panel_id}",
-                f"front_{panel_id}",
-                f"back_{panel_id}",
-            ):
-                if use_surface_vel_from_fsi:
-                    dofs = get_facet_dofs_by_gmsh_tag(domain, functionspace, location)
-                    bc = dolfinx.fem.dirichletbc(mesh_vel, dofs)
-
-                else:
-                    # bc = build_vel_bc_by_type("noslip", domain, functionspace, "internal_surface")
-                    bc = build_vel_bc_by_type("noslip", domain, functionspace, location)
-
-                bcu.append(bc)
-
-        elif (
-            params.general.geometry_module == "cylinder3d"
-            or params.general.geometry_module == "cylinder2d"
-        ):
-            location = f"cylinder_side"
-            bc = build_vel_bc_by_type("noslip", domain, functionspace, location)
-            bcu.append(bc)
+    # Set all interior surfaces to no slip
+    bc = build_vel_bc_by_type("noslip", domain, functionspace, "internal_surface")
+    bcu.append(bc)
 
     # Set the inflow boundary condition
     inflow_function = get_inflow_profile_function(domain, params, functionspace)
@@ -310,3 +265,76 @@ def build_pressure_boundary_conditions(domain, params, functionspace):
     bcp.append(dolfinx.fem.dirichletbc(zero_scalar, dofs, functionspace))
 
     return bcp
+
+
+def build_structure_boundary_conditions(domain, params, functionspace):
+    facet_dim = domain.ndim - 1
+    zero_vec = dolfinx.fem.Constant(
+        domain.structure.msh, PETSc.ScalarType((0.0, 0.0, 0.0))
+    )
+    bc = []
+    for num_panel in range(params.pv_array.stream_rows * params.pv_array.span_rows):
+        for location in f"left_{num_panel}", f"right_{num_panel}":  # ,\
+            # f"front_{num_panel}" , f"back_{num_panel}":
+            # for location in  [f"left_{num_panel}"]:# , f"right_{num_panel}":
+            # for location in  f"left_{num_panel}":
+            # for location in f"left_{num_panel}":
+            # location = f"top_{num_panel}"
+            dofs = get_facet_dofs_by_gmsh_tag(domain, functionspace, location)
+            bc.append(dolfinx.fem.dirichletbc(zero_vec, dofs, functionspace))
+
+    # x = functionspace.tabulate_dof_coordinates()
+    # val = np.amax(x[:,0])
+    # print(np.amax(x[:,0]))
+
+    # length_in_z = np.sin(params.pv_array.tracker_angle) * params.pv_array.panel_chord
+    # min_point = params.pv_array.elevation - length_in_z/2
+
+    # point_of_attachement = ( min_point + 0.5*length_in_z)
+
+    # print(domain.numpy_pt_total_array)
+
+    def old_connection_point_up(x):
+        eps = 1e-6
+        # spot = params.pv_array.elevation-0.5*params.pv_array.panel_thickness
+        spot = (
+            params.pv_array.elevation
+            - 0.5
+            * params.pv_array.panel_thickness
+            * np.cos(np.radians(params.pv_array.tracker_angle))
+        )
+        print(spot)
+        test = np.logical_and(x[2] > spot - eps, x[2] < spot + eps)
+        return test
+
+    def connection_point_up(x):
+        eps = 1e-3
+
+        for k, pts in enumerate(domain.numpy_pt_total_array):
+            # print(pts)
+
+            test_vecs = x[:, :].T - pts[0:3]
+            truth_vec = pts[3:6] - pts[0:3]
+
+            cross_product = np.cross(test_vecs, truth_vec)
+            cross_product_mag = np.linalg.norm(cross_product, axis=1)
+
+            pinned_pts = cross_product_mag < eps
+            # print(np.shape(cross_product), np.shape(cross_product_mag))
+
+            if k == 0:
+                total_pinned_pts = np.copy(pinned_pts)
+            else:
+                total_pinned_pts = np.logical_or(pinned_pts, total_pinned_pts)
+
+        return total_pinned_pts
+
+    facet_uppoint = dolfinx.mesh.locate_entities(
+        domain.structure.msh, 1, connection_point_up
+    )
+    dofs_disp = dolfinx.fem.locate_dofs_topological(functionspace, 1, [facet_uppoint])
+    # print(np.shape(dofs_disp), dofs_disp)
+
+    # bc.append(dolfinx.fem.dirichletbc(zero_vec, dofs_disp, functionspace))
+
+    return bc
