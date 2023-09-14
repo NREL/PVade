@@ -271,9 +271,9 @@ def build_structure_boundary_conditions(domain, params, functionspace):
     zero_vec = dolfinx.fem.Constant(domain.structure.msh, PETSc.ScalarType((0.0, 0.0, 0.0)))
     bc = []
     for num_panel in range(params.pv_array.stream_rows*params.pv_array.span_rows):
-        # for location in  f"left_{num_panel}" , f"right_{num_panel}", \
-        #     f"top_{num_panel}" , f"bottom_{num_panel}":
-        for location in  [f"left_{num_panel}"]:# , f"right_{num_panel}":
+        for location in  f"left_{num_panel}" , f"right_{num_panel}":# ,\
+            # f"front_{num_panel}" , f"back_{num_panel}":
+        # for location in  [f"left_{num_panel}"]:# , f"right_{num_panel}":
         # for location in  f"left_{num_panel}":
         # for location in f"left_{num_panel}":
         # location = f"top_{num_panel}"
@@ -329,7 +329,9 @@ def build_structure_boundary_conditions(domain, params, functionspace):
     facet_uppoint = dolfinx.mesh.locate_entities(domain.structure.msh, 1, connection_point_up)
     dofs_disp = dolfinx.fem.locate_dofs_topological(functionspace, 1, [facet_uppoint])
     # print(np.shape(dofs_disp), dofs_disp)
-    bc.append(dolfinx.fem.dirichletbc(zero_vec, dofs_disp, functionspace))
+    
+    
+    # bc.append(dolfinx.fem.dirichletbc(zero_vec, dofs_disp, functionspace))
 
 
     return bc

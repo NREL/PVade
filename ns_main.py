@@ -68,8 +68,10 @@ def main():
         elasticity.build_boundary_conditions(domain, params)
         # # # Build the fluid forms
         elasticity.build_forms(domain, params)
+    
 
-    domain.move_mesh(elasticity, params, 0.0)
+    if structural_analysis == True and fluid_analysis == True:
+        domain.move_mesh(elasticity, params, 0.0)
 
     dataIO = DataStream(domain, flow,elasticity, params)
 
@@ -92,7 +94,8 @@ def main():
             elasticity.solve(params,dataIO)
         # adjust pressure to avoid dissipation of pressure profile
         # flow.adjust_dpdx_for_constant_flux(params)
-            domain.move_mesh(elasticity, params, k*params.solver.dt)
+            if fluid_analysis == True:
+                domain.move_mesh(elasticity, params, k*params.solver.dt)
 
         if (k + 1) % params.solver.save_xdmf_interval_n == 0:
             if fluid_analysis == True:
