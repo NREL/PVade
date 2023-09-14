@@ -14,7 +14,7 @@ import cProfile
 import sys
 import tqdm.autonotebook
 
-input_path = "pvade/tests/inputs_test/"
+input_path = "pvade/tests/input/yaml/"
 
 solve_iter = 10
 
@@ -24,14 +24,17 @@ rtol = 3.0e-5
 @pytest.mark.unit
 def test_flow_3dpanels():
     # Get the path to the input file from the command line
-    input_file = os.path.join(input_path, "sim_params_alt.yaml")  # get_input_file()
+    input_file = os.path.join(input_path, "sim_params.yaml")  # get_input_file()
 
     # Load the parameters object specified by the input file
     params = SimParams(input_file)
 
     # Initialize the domain and construct the initial mesh
     domain = FSIDomain(params)
-    domain.read_mesh_files("pvade/tests/test_mesh/panels3d/mesh/", params)
+    domain.read_mesh_files("pvade/tests/input/mesh/panels3d/", params)
+
+    print("fluid shape = ", np.shape(domain.fluid.msh.geometry.x))
+    print("struct shape = ", np.shape(domain.structure.msh.geometry.x))
 
     fluid_analysis = params.general.fluid_analysis
     # Initialize the function spaces for the flow
@@ -71,7 +74,7 @@ def test_flow_3dpanels():
 #@pytest.mark.unit
 #def test_flow_2dpanels():
 #    # Get the path to the input file from the command line
-#    input_file = os.path.join(input_path, "sim_params_alt_2D.yaml")  # get_input_file()
+#    input_file = os.path.join(input_path, "sim_params_2D.yaml")  # get_input_file()
 #
 #    # Load the parameters object specified by the input file
 #    params = SimParams(input_file)

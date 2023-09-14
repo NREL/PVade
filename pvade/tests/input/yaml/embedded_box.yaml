@@ -1,6 +1,6 @@
 general:
   geometry_module: panels3d
-  output_dir: pvade/tests/test_mesh/embedded_box
+  output_dir: pvade/tests/output/embedded_box
   mesh_only: True
   structural_analysis: True
   fluid_analysis: True
@@ -11,7 +11,7 @@ domain:
   y_max: 1.0
   z_min: -1.0
   z_max: 1.0
-  l_char: 0.1
+  l_char: 0.05
 pv_array:
   stream_rows: 1
   span_rows: 1

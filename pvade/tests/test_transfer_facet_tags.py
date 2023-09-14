@@ -1,6 +1,7 @@
 import pytest
 import dolfinx
 import numpy as np
+import os
 
 from pvade.Parameters import SimParams
 from pvade.geometry.MeshManager import FSIDomain
@@ -27,10 +28,10 @@ from pvade.geometry.MeshManager import FSIDomain
     ],
 )
 def test_transfer_facet_tags(sub_domain_name, marker_name):
-    input_path = "pvade/tests/inputs_test/"
+    input_path = "pvade/tests/input/yaml/"
 
     # Get the path to the input file from the command line
-    input_file = input_path + "sim_params_alt.yaml"  # get_input_file()
+    input_file = os.path.join(input_path, "sim_params.yaml")  # get_input_file()
 
     # Load the parameters object specified by the input file
     params = SimParams(input_file)

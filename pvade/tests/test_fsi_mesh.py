@@ -7,7 +7,7 @@ from pvade.DataStream import DataStream
 from pvade.Parameters import SimParams
 from pvade.Utilities import get_input_file, write_metrics
 
-input_path = "pvade/tests/inputs_test/"
+input_path = "pvade/tests/input/yaml/"
 
 
 # @pytest.mark.unit
@@ -28,7 +28,7 @@ input_path = "pvade/tests/inputs_test/"
 # @pytest.mark.unit
 # def test_meshing_2dpanels():
 #     # Get the path to the input file from the command line
-#     input_file = os.path.join(input_path, "sim_params_alt_2D.yaml")  # get_input_file()
+#     input_file = os.path.join(input_path, "sim_params_2D.yaml")  # get_input_file()
 
 #     # Load the parameters object specified by the input file
 #     params = SimParams(input_file)
@@ -59,7 +59,7 @@ input_path = "pvade/tests/inputs_test/"
 @pytest.mark.unit
 def test_meshing_3dpanels():
     # Get the path to the input file from the command line
-    input_file = os.path.join(input_path, "sim_params_alt.yaml")  # get_input_file()
+    input_file = os.path.join(input_path, "sim_params.yaml")  # get_input_file()
 
     # Load the parameters object specified by the input file
     params = SimParams(input_file)

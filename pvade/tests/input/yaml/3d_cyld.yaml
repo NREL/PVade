@@ -1,6 +1,6 @@
 general:
   geometry_module: cylinder3d
-  output_dir: pvade/tests/test_mesh/cylinder3d
+  output_dir: pvade/tests/output/cylinder3d
   mesh_only: True
   structural_analysis: false
   fluid_analysis: true

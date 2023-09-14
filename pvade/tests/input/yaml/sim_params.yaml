@@ -1,6 +1,6 @@
 general:
   geometry_module: panels3d
-  output_dir: pvade/tests/test_mesh/panels3d
+  output_dir: pvade/tests/output/panels3d
   mesh_only: True
   structural_analysis: true
   fluid_analysis: true

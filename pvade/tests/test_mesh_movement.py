@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 from pvade.Parameters import SimParams
 from pvade.geometry.MeshManager import FSIDomain
 
-input_path = "pvade/tests/inputs_test/"
+input_path = "pvade/tests/input/yaml/"
 
 @pytest.mark.regression
 def test_calc_distance_to_panel_surface():
@@ -62,6 +62,9 @@ def test_move_mesh():
     params = SimParams(input_file)
 
     domain = FSIDomain(params)
+    # domain.build(params)
+    # This will exist by evaluating the previous test, test_calc_distance_to_panel_surface, 
+    # first in the sequence, as the files are created during the write_to_read_hack step.
     domain.read_mesh_files(os.path.join(params.general.output_dir, "mesh"), params)
 
     # Create a dummy elasticity object that we can prescribe displacement values for
@@ -131,6 +134,10 @@ def test_move_mesh():
     assert np.isclose(np.amin(fluid_coords_after[:, 0]), params.domain.x_min)
     assert np.isclose(np.amin(fluid_coords_after[:, 1]), params.domain.y_min)
     assert np.isclose(np.amin(fluid_coords_after[:, 2]), params.domain.z_min)
+
+    for k in range(3):
+        max_val = np.amax(fluid_coords_after[:, k])
+        print(f"in dir {k}, max = {max_val}")
 
     assert np.isclose(np.amax(fluid_coords_after[:, 0]), params.domain.x_max)
     assert np.isclose(np.amax(fluid_coords_after[:, 1]), params.domain.y_max)

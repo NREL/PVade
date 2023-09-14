@@ -1,6 +1,6 @@
 general:
   geometry_module: panels2d
-  output_dir: pvade/tests/test_mesh/panels2d
+  output_dir: pvade/tests/output/panels2d
   mesh_only: True
   structural_analysis: false
   fluid_analysis: true

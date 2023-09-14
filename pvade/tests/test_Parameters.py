@@ -3,7 +3,7 @@ import os
 
 from pvade.Parameters import SimParams
 
-filename = "pvade/tests/test_inputs.yaml"
+filename = "pvade/tests/input/yaml/test_inputs.yaml"
 
 
 @pytest.fixture()
