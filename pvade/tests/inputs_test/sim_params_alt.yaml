@@ -1,9 +1,9 @@
 general:
   geometry_module: panels3d
   output_dir: pvade/tests/test_mesh/panels3d
-  mesh_only: True
-  structural_analysis: true
-  fluid_analysis: true
+  mesh_only: False
+  structural_analysis: True
+  fluid_analysis: True
 domain:
   x_min: -10
   x_max: 50
@@ -22,7 +22,7 @@ pv_array:
   tracker_angle: -30.0
 solver:
   dt: 0.005
-  t_final: 10.0
+  t_final: 0.05
   solver1_ksp: cg
   solver2_ksp: cg
   solver3_ksp: cg

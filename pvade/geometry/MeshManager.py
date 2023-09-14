@@ -144,8 +144,8 @@ class FSIDomain:
         self.facet_tags.name = "facet_tags"
 
 
-        if params.general.geometry_module == "panels3d"  and params.general.structural_analysis == True :
-            self._create_submeshes_from_parent(params.general.fluid_analysis)
+        if params.general.geometry_module == "panels3d"  :
+            self._create_submeshes_from_parent(params)
             self._transfer_mesh_tags_to_submeshes(params)
 
         self._save_submeshes_for_reload_hack(params)
@@ -229,7 +229,7 @@ class FSIDomain:
         #         setattr(self, sub_domain_name, sub_domain)
 
 
-    def _create_submeshes_from_parent(self,fluid_analysis):
+    def _create_submeshes_from_parent(self,params):
         """Create submeshes from a parent mesh by cell tags.
 
         This function uses the cell tags to identify meshes that
@@ -238,11 +238,14 @@ class FSIDomain:
         are accessed like domain.fluid.msh or domain.structure.msh.
 
         """
+        submesh_list = []
 
-        if fluid_analysis == True:
-            submesh_list = ["fluid", "structure"]
-        else:
-            submesh_list = ["structure"]
+
+        if params.general.fluid_analysis == True:
+            submesh_list.append("fluid") 
+        if params.general.structural_analysis == True:
+            submesh_list.append("structure")
+        
 
         for sub_domain_name in submesh_list:
             if self.rank == 0:
@@ -287,10 +290,12 @@ class FSIDomain:
 
         cell_to_facet = self.msh.topology.connectivity(self.ndim, facet_dim)
 
-        if  params.general.fluid_analysis == True:
-            submesh_list = ["fluid", "structure"]
-        else:
-            submesh_list = ["structure"]
+        submesh_list = []
+
+        if params.general.fluid_analysis == True:
+            submesh_list.append("fluid") 
+        if params.general.structural_analysis == True:
+            submesh_list.append("structure")
         
         for sub_domain_name in submesh_list:
             # Get the sub-domain object
@@ -556,8 +561,8 @@ class FSIDomain:
 
                 setattr(self, sub_domain_name, sub_domain)
 
-                if self.rank == 0:
-                    print(f"Finished read {sub_domain_name} mesh.")
+            if self.rank == 0:
+                print(f"Finished read {sub_domain_name} mesh.")
 
         self.ndim = submesh.topology.dim
 
