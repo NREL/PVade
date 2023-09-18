@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<!DOCTYPE Xdmf SYSTEM "Xdmf.dtd" []>
+<Xdmf Version="3.0" xmlns:xi="http://www.w3.org/2001/XInclude">
+  <Domain>
+    <Grid Name="structure_mesh.xdmf" GridType="Uniform">
+      <Topology TopologyType="Tetrahedron" NumberOfElements="560" NodesPerElement="4">
+        <DataItem Dimensions="560 4" NumberType="Int" Format="HDF">structure_mesh.h5:/Mesh/structure_mesh.xdmf/topology</DataItem>
+      </Topology>
+      <Geometry GeometryType="XYZ">
+        <DataItem Dimensions="287 3" Format="HDF">structure_mesh.h5:/Mesh/structure_mesh.xdmf/geometry</DataItem>
+      </Geometry>
+    </Grid>
+    <Grid Name="cell_tags" GridType="Uniform">
+      <xi:include xpointer="xpointer(/Xdmf/Domain/Grid/Geometry)" />
+      <Topology TopologyType="Tetrahedron" NumberOfElements="560" NodesPerElement="4">
+        <DataItem Dimensions="560 4" NumberType="Int" Format="HDF">structure_mesh.h5:/MeshTags/cell_tags/topology</DataItem>
+      </Topology>
+      <Attribute Name="cell_tags" AttributeType="Scalar" Center="Cell">
+        <DataItem Dimensions="560 1" Format="HDF">structure_mesh.h5:/MeshTags/cell_tags/Values</DataItem>
+      </Attribute>
+    </Grid>
+    <Grid Name="facet_tags" GridType="Uniform">
+      <xi:include xpointer="xpointer(/Xdmf/Domain/Grid/Geometry)" />
+      <Topology TopologyType="Triangle" NumberOfElements="1393" NodesPerElement="3">
+        <DataItem Dimensions="1393 3" NumberType="Int" Format="HDF">structure_mesh.h5:/MeshTags/facet_tags/topology</DataItem>
+      </Topology>
+      <Attribute Name="facet_tags" AttributeType="Scalar" Center="Cell">
+        <DataItem Dimensions="1393 1" Format="HDF">structure_mesh.h5:/MeshTags/facet_tags/Values</DataItem>
+      </Attribute>
+    </Grid>
+  </Domain>
+</Xdmf>
