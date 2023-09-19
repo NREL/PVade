@@ -18,7 +18,7 @@ from contextlib import ExitStack
 class Elasticity:
     """This class solves the CFD problem"""
 
-    def __init__(self, domain, structural_analysis):
+    def __init__(self, domain, structural_analysis, params):
         """Initialize the fluid solver
 
         This method initialize the Flow object, namely, it creates all the
@@ -73,6 +73,28 @@ class Elasticity:
             print(f"hmin on structure = {self.hmin}")
             print(f"Total num dofs on structure = {self.num_V_dofs}")
 
+        # Mass density
+        self.rho = 1 #params.structure.structural_density
+
+        # Rayleigh damping coefficients
+        self.eta_m = 0 #Constant(0.)
+        self.eta_k = 0 #Constant(0.)
+
+        # Generalized-alpha method parameters
+        self.alpha_m = dolfinx.fem.Constant(domain.structure.msh, 0.2)
+        self.alpha_f = dolfinx.fem.Constant(domain.structure.msh, 0.4)
+        self.gamma   = 0.5+self.alpha_f-self.alpha_m
+        self.beta    =  (self.gamma+0.5)**2/4.
+
+        # Define structural properties
+        self.E = params.structure.elasticity_modulus  # 1.0e9
+        self.ν = params.structure.poissons_ratio  # 0.3
+        self.μ = self.E / (2.0 * (1.0 + self.ν))
+        self.λ = self.E * self.ν / ((1.0 + self.ν) * (1.0 - 2.0 * self.ν))
+        #time step 
+        self.dt_st = dolfinx.fem.Constant(domain.structure.msh, (params.structure.dt))
+
+
     def build_boundary_conditions(self, domain, params):
         """Build the boundary conditions
 
@@ -93,7 +115,45 @@ class Elasticity:
         # )
 
         self.bc = build_structure_boundary_conditions(domain, params, self.V)
+            
+    
+    def update_a(u, u_old, v_old, a_old,  dt, beta , ufl=True):
+        # Update formula for acceleration
+        # a = 1/(2*beta)*((u - u0 - v0*dt)/(0.5*dt*dt) - (1-2*beta)*a0)
+        if ufl:
+            dt_ = dt
+            beta_ = beta
+        else:
+            dt_ = float(dt)
+            beta_ = float(beta)
+        return (u-u_old-dt_*v_old)/beta_/dt_**2 - (1-2*beta_)/2/beta_*a_old
 
+    # Update formula for velocity
+    # v = dt * ((1-gamma)*a0 + gamma*a) + v0
+    def update_v(a, u_old, v_old, a_old,dt, gamma, ufl=True):
+        if ufl:
+            dt_ = dt
+            gamma_ = gamma
+        else:
+            dt_ = float(dt)
+            gamma_ = float(gamma)
+        return v_old + dt_*((1-gamma_)*a_old + gamma_*a)
+
+    def update_fields(u, u_old, v_old, a_old, dt, beta ,gamma):
+        """Update fields at the end of each time step."""
+
+        u_vec,u0_vec = u.x.array[:],u_old.x.array[:]
+        v0_vec,a0_vec = v_old.x.array[:],a_old.x.array[:]
+        
+        a_vec = Elasticity.update_a(u_vec,u0_vec,v0_vec,a0_vec, dt , beta ,ufl=False)
+        v_vec = Elasticity.update_v(a_vec,u0_vec,v0_vec,a0_vec, dt , gamma ,ufl=False)
+        v_old.x.array[:] = v_vec
+        a_old.x.array[:] = a_vec
+        u_old.x.array[:] = u_vec
+    
+    def avg(x_old, x_new, alpha):
+        return alpha*x_old + (1-alpha)*x_new
+        
     def build_forms(self, domain, params):
         """Builds all variational statements
 
@@ -110,15 +170,12 @@ class Elasticity:
             params (:obj:`pvade.Parameters.SimParams`): A SimParams object
 
         """
-        # Define structural properties
-        self.E = params.structure.elasticity_modulus  # 1.0e9
-        self.ν = params.structure.poissons_ratio  # 0.3
-        self.μ = self.E / (2.0 * (1.0 + self.ν))
-        self.λ = self.E * self.ν / ((1.0 + self.ν) * (1.0 - 2.0 * self.ν))
+
+
 
         # Define trial and test functions for deformation
-        self.u = ufl.TrialFunction(self.V)
-        self.v = ufl.TestFunction(self.V)
+        # self.du = ufl.TrialFunction(self.V)    
+        self.u_ = ufl.TestFunction(self.V)
 
         P3 = ufl.TensorElement("Lagrange", domain.structure.msh.ufl_cell(), 2)
         self.T = dolfinx.fem.FunctionSpace(domain.structure.msh, P3)
@@ -127,12 +184,59 @@ class Elasticity:
 
         self.sigma_vm_h = dolfinx.fem.Function(self.W, name="Stress")
 
-        self.uh = dolfinx.fem.Function(self.V, name="Deformation")
-        self.uh_old = dolfinx.fem.Function(self.V, name="Deformation_old")
-        self.uh_delta = dolfinx.fem.Function(self.V, name="Deformation_change")
 
+        # discplacement 
+        self.u       = dolfinx.fem.Function(self.V, name="Deformation")
+        self.u_old   = dolfinx.fem.Function(self.V, name="Deformation_old")
+        self.u_delta = dolfinx.fem.Function(self.V, name="Deformation_change")
+
+        # velocity 
+        self.v     = dolfinx.fem.Function(self.V, name="Velocity")
+        self.v_old = dolfinx.fem.Function(self.V, name="Velocity_old")
+        
+        #acceleration 
+        self.a     = dolfinx.fem.Function(self.V, name="acceleration")
+        self.a_old = dolfinx.fem.Function(self.V, name="acceleration_old")
+        
+
+        # dss = ufl.ds(subdomain_data=boundary_subdomains)
+
+        # # Stress tensor
+        # def sigma(r):
+        #     return dolfinx.fem.form(2.0*self.μ*ufl.sym(ufl.grad(r)) + self.λ *ufl.tr(ufl.sym(ufl.grad(r)))*ufl.Identity(len(r)))
+
+        # # Mass form
+        # def m(u, u_):
+        #     return dolfinx.fem.form(self.rho*ufl.inner(u, u_)*ufl.dx)
+
+        # # Elastic stiffness form
+        # def k(u, u_):
+        #     return dolfinx.fem.form(ufl.inner(sigma(u), ufl.sym(ufl.grad(u_)))*ufl.dx)
+
+        # # Rayleigh damping form
+        # def c(u, u_):
+        #     return dolfinx.fem.form(self.eta_m*m(u, u_) + self.eta_k*k(u, u_))
+
+        # # Work of external forces
+        # def Wext(u_):
+        #     return ufl.dot(u_, self.f)*self.ds #dss(3)
+
+        def sigma(r):
+            return self.λ*ufl.nabla_div(r)*ufl.Identity(len(r)) + 2*self.μ*ufl.sym(ufl.grad(r))
+            
+        def m(u,u_):
+            return self.rho*ufl.inner(u,u_)*ufl.dx
+
+        def k(u,u_):
+            return ufl.inner(sigma(u),ufl.grad(u_))*ufl.dx
+
+        def c(u,u_):
+            return self.eta_m*m(u,u_) + self.eta_k*k(u,u_)
+
+        
+        
         # self.uh_exp = dolfinx.fem.Function(self.V,  name="Deformation")
-
+        
         def σ(v):
             """Return an expression for the stress σ given a displacement field"""
             return 2.0 * self.μ * ufl.sym(ufl.grad(v)) + self.λ * ufl.tr(
@@ -140,7 +244,7 @@ class Elasticity:
             ) * ufl.Identity(len(v))
 
         # source term ($f = \rho \omega^2 [x_0, \, x_1]$)
-        self.ω, self.ρ = 300.0, 10.0
+        # self.ω, self.ρ = 300.0, 10.0
         # x = ufl.SpatialCoordinate(domain.structure.msh)
         # self.f = ufl.as_vector((0*self.ρ * self.ω**2 * x[0], self.ρ * self.ω**2 * x[1], 0.0))
         # self.f_structure = dolfinx.fem.Constant(
@@ -162,11 +266,32 @@ class Elasticity:
         )
         self.ds = ufl.Measure("ds", domain=domain.structure.msh)
         n = ufl.FacetNormal(domain.structure.msh)
-        self.a = dolfinx.fem.form(ufl.inner(σ(self.u), ufl.grad(self.v)) * ufl.dx)
-        self.L = dolfinx.fem.form(
-            ufl.dot(self.f, self.v) * ufl.dx
-            + ufl.dot(ufl.dot(self.stress, n), self.v) * self.ds
-        )
+
+
+        # Residual
+        a_new = Elasticity.update_a(self.u, self.u_old, self.v_old, self.a_old, self.dt_st , self.beta , ufl=True)
+        v_new = Elasticity.update_v(a_new, self.u_old, self.v_old, self.a_old, self.dt_st , self.gamma ,ufl=True)
+
+
+        self.res = m(Elasticity.avg(self.a_old, a_new , self.alpha_m), self.u_) + \
+              c(Elasticity.avg(self.v_old, v_new , self.alpha_f), self.u_)  + \
+              k(Elasticity.avg(self.u_old , self.u, self.alpha_f), self.u_) - self.rho*ufl.inner(self.f,self.u_)*ufl.dx - ufl.dot(ufl.dot(self.stress, n), self.u_) * self.ds #- Wext(self.u)
+        
+        
+
+
+        # self.a = dolfinx.fem.form(ufl.lhs(res))
+        # self.L = dolfinx.fem.form(ufl.rhs(res))
+
+        
+        # self.a = dolfinx.fem.form(ufl.inner(σ(self.u), ufl.grad(self.v)) * ufl.dx)
+        # self.L = dolfinx.fem.form(
+        #     ufl.dot(self.f, self.v) * ufl.dx
+        #     + ufl.dot(ufl.dot(self.stress, n), self.v) * self.ds
+        # )
+
+
+
 
     def _assemble_system(self, params):
         """Pre-assemble all LHS matrices and RHS vectors
@@ -191,31 +316,47 @@ class Elasticity:
         # except:
         #     pass
 
-        self.A = dolfinx.fem.petsc.assemble_matrix(self.a, bcs=self.bc)
-        self.A.assemble()
-        self.b = dolfinx.fem.petsc.assemble_vector(self.L)
 
+        self.problem = dolfinx.fem.petsc.NonlinearProblem(self.res,self.u,self.bc) 
+        self.solver = dolfinx.nls.petsc.NewtonSolver(self.comm, self.problem)
         if self.first_call_to_solver:
-            # Set solver options
+            self.solver.atol = 1e-8
+            self.solver.rtol = 1e-8
+            self.solver.convergence_criterion = "incremental"
+
+            # We can customize the linear solver used inside the NewtonSolver by
+            # modifying the PETSc options
+            ksp = self.solver.krylov_solver
             opts = PETSc.Options()
-            opts["ksp_type"] = "cg"
-            opts["ksp_rtol"] = 1.0e-6
-            opts["pc_type"] = "gamg"
+            option_prefix = ksp.getOptionsPrefix()
+            opts[f"{option_prefix}ksp_type"] = "preonly"
+            opts[f"{option_prefix}pc_type"] = "lu"
+            ksp.setFromOptions()
+        # self.A = dolfinx.fem.petsc.assemble_matrix(self.a, bcs=self.bc)
+        # self.A.assemble()
+        # self.b = dolfinx.fem.petsc.assemble_vector(self.L)
 
-            # Use Chebyshev smoothing for multigrid
-            opts["mg_levels_ksp_type"] = "chebyshev"
-            opts["mg_levels_pc_type"] = "jacobi"
+        # if self.first_call_to_solver:
+        #     # Set solver options
+        #     opts = PETSc.Options()
+        #     opts["ksp_type"] = "cg"
+        #     opts["ksp_rtol"] = 1.0e-6
+        #     opts["pc_type"] = "gamg"
 
-            # Improve estimate of eigenvalues for Chebyshev smoothing
-            opts["mg_levels_esteig_ksp_type"] = "cg"
-            opts["mg_levels_ksp_chebyshev_esteig_steps"] = 10
+        #     # Use Chebyshev smoothing for multigrid
+        #     opts["mg_levels_ksp_type"] = "chebyshev"
+        #     opts["mg_levels_pc_type"] = "jacobi"
 
-            # Create PETSc Krylov solver and turn convergence monitoring on
-            self.solver = PETSc.KSP().create(self.comm)
-            self.solver.setFromOptions()
+        #     # Improve estimate of eigenvalues for Chebyshev smoothing
+        #     opts["mg_levels_esteig_ksp_type"] = "cg"
+        #     opts["mg_levels_ksp_chebyshev_esteig_steps"] = 10
 
-        # Set matrix operator
-        self.solver.setOperators(self.A)
+        #     # Create PETSc Krylov solver and turn convergence monitoring on
+        #     self.solver = PETSc.KSP().create(self.comm)
+        #     self.solver.setFromOptions()
+
+        # # Set matrix operator
+        # self.solver.setOperators(self.A)
 
     def build_nullspace(self, V):
         """Build PETSc nullspace for 3D elasticity"""
@@ -252,7 +393,49 @@ class Elasticity:
 
         return PETSc.NullSpace().create(vectors=ns)
 
+
     def solve(self, params, dataIO):
+        def σ(v):
+            """Return an expression for the stress σ given a displacement field"""
+            return 2.0 * self.μ * ufl.sym(ufl.grad(v)) + self.λ * ufl.tr(
+                ufl.sym(ufl.grad(v))
+            ) * ufl.Identity(len(v))
+
+        if self.first_call_to_solver:
+            if self.rank == 0:
+                print("Starting Strutural Solution")
+
+        self._assemble_system(params)
+
+        num_its,converged = self.solver.solve(self.u) # solve the current time step
+        assert(converged)
+        self.u.x.scatter_forward()
+        
+        # Update old fields with new quantities
+        Elasticity.update_fields(self.u, self.u_old, self.v_old, self.a_old, self.dt_st, self.beta , self.gamma)   
+
+
+        # Calculate the change in the displacement (new - old) this is what moves the mesh
+        self.u_delta.vector.array[:] = (
+            self.u.vector.array[:] - self.u_old.vector.array[:]
+        )
+
+        sigma_dev = σ(self.u) - (1 / 3) * ufl.tr(σ(self.u)) * ufl.Identity(
+            len(self.u)
+        )
+        sigma_vm = ufl.sqrt((3 / 2) * ufl.inner(sigma_dev, sigma_dev))
+
+        sigma_vm_expr = dolfinx.fem.Expression(
+            sigma_vm, self.W.element.interpolation_points()
+        )
+        self.sigma_vm_h.interpolate(sigma_vm_expr)
+
+        self.unorm = self.u.x.norm()
+
+        if self.first_call_to_solver:
+            self.first_call_to_solver = False
+
+    def solve_old(self, params, dataIO):
         """Solve for a single timestep advancement
 
         Here we perform the three-step solution process (tentative velocity,
@@ -297,6 +480,14 @@ class Elasticity:
         # self.solver.view()
         # Scatter forward the solution vector to update ghost values
         self.uh.x.scatter_forward()
+
+
+
+        # Update old fields with new quantities
+        self.update_fields(self.uh, self.uh_old, self.vel_old, self.acc_old)
+
+
+
 
         # Calculate the change in the displacement (new - old) this is what moves the mesh
         self.uh_delta.vector.array[:] = (

@@ -636,20 +636,23 @@ class FSIDomain:
             with open(yaml_filename, "r") as fp:
                 self.domain_markers = yaml.safe_load(fp)
 
-        # Create all forms that will eventually be used for mesh rotation/movement
-        # Build a function space for the rotation (a vector of degree 1)
-        vec_el_1 = ufl.VectorElement("Lagrange", self.fluid.msh.ufl_cell(), 1)
-        self.V1 = dolfinx.fem.FunctionSpace(self.fluid.msh, vec_el_1)
 
-        self.fluid_mesh_displacement = dolfinx.fem.Function(
-            self.V1, name="fluid_mesh_displacement"
-        )
-        self.fluid_mesh_displacement_bc = dolfinx.fem.Function(
-            self.V1, name="fluid_mesh_displacement_bc"
-        )
-        self.total_mesh_displacement = dolfinx.fem.Function(
-            self.V1, name="total_mesh_disp"
-        )
+
+        if params.general.fluid_analysis == True:
+            # Create all forms that will eventually be used for mesh rotation/movement
+            # Build a function space for the rotation (a vector of degree 1)
+            vec_el_1 = ufl.VectorElement("Lagrange", self.fluid.msh.ufl_cell(), 1)
+            self.V1 = dolfinx.fem.FunctionSpace(self.fluid.msh, vec_el_1)
+
+            self.fluid_mesh_displacement = dolfinx.fem.Function(
+                self.V1, name="fluid_mesh_displacement"
+            )
+            self.fluid_mesh_displacement_bc = dolfinx.fem.Function(
+                self.V1, name="fluid_mesh_displacement_bc"
+            )
+            self.total_mesh_displacement = dolfinx.fem.Function(
+                self.V1, name="total_mesh_disp"
+            )
 
     def test_mesh_functionspace(self):
         P2 = ufl.VectorElement("Lagrange", self.msh.ufl_cell(), 2)
@@ -864,7 +867,7 @@ class FSIDomain:
 
         # Interpolate the elasticity displacement (lives on the structure mesh)
         # field onto a function that lives on the fluid mesh
-        self.fluid_mesh_displacement_bc.interpolate(elasticity.uh_delta)
+        self.fluid_mesh_displacement_bc.interpolate(elasticity.u_delta)
 
         # Set the boundary condition for the walls of the computational domain
         zero_vec = dolfinx.fem.Constant(
@@ -940,7 +943,7 @@ class FSIDomain:
 
         # Obtain the vector of values for the mesh motion in a way that
         # keeps the ghost values (needed for the mesh update)
-        with elasticity.uh_delta.vector.localForm() as vals_local:
+        with elasticity.u_delta.vector.localForm() as vals_local:
             vals = vals_local.array
             vals = vals.reshape(-1, 3)
 

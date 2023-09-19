@@ -138,7 +138,7 @@ class DataStream:
             with XDMFFile(self.comm, self.results_filename_def, "w") as xdmf_file:
                 tt = 0.0
                 xdmf_file.write_mesh(domain.structure.msh)
-                xdmf_file.write_function(elasticity.uh, 0.0)
+                xdmf_file.write_function(elasticity.u, 0.0)
 
             with XDMFFile(self.comm, self.results_filename_stress, "w") as xdmf_file:
                 tt = 0.0
@@ -195,7 +195,7 @@ class DataStream:
 
         """
         with XDMFFile(self.comm, self.results_filename_def, "a") as xdmf_file:
-            xdmf_file.write_function(elasticity.uh, tt)
+            xdmf_file.write_function(elasticity.u, tt)
 
         with XDMFFile(self.comm, self.results_filename_stress, "a") as xdmf_file:
             xdmf_file.write_function(elasticity.sigma_vm_h, tt)

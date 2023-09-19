@@ -44,7 +44,7 @@ def main():
     # sys.exit()
 
     flow = Flow(domain, fluid_analysis)
-    elasticity = Elasticity(domain, structural_analysis)
+    elasticity = Elasticity(domain, structural_analysis,params)
 
     if fluid_analysis == True:
         flow = Flow(domain, fluid_analysis)
@@ -67,14 +67,17 @@ def main():
         progress = tqdm.autonotebook.tqdm(
             desc="Solving PDE", total=params.solver.t_steps
         )
-
+        
     for k in range(params.solver.t_steps):
         if domain.rank == 0:
             progress.update(1)
         # Solve the fluid problem at each timestep
         if fluid_analysis == True:
             flow.solve(params)
-        if structural_analysis == True:
+    
+        # print("time step is : ", (params.solver.dt*(k+1)))
+        # print("reaminder from modulo ",(params.solver.dt*(k+1)) % params.structure.dt )
+        if structural_analysis == True  and (   (params.solver.dt*(k+1)) % params.structure.dt ) == 0 : # :# TODO: add condition to work with fluid time step
             if fluid_analysis == True:
                 dataIO.fluid_struct(domain, flow, elasticity, params)
             elasticity.solve(params, dataIO)
@@ -91,10 +94,11 @@ def main():
                     )
                 dataIO.save_XDMF_files(flow, domain, (k + 1) * params.solver.dt)
 
-            if structural_analysis == True:
+            if structural_analysis == True and (   (params.solver.dt*(k+1)) % params.structure.dt ) == 0:
                 if domain.rank == 0:
+                    print("Structural time is : ", (params.solver.dt*(k+1)))
                     print("deformation norm =", {elasticity.unorm})
-                    print("max deformation =", {max(elasticity.uh.x.array[:])})
+                    print("max deformation =", {max(elasticity.u.x.array[:])})
                 dataIO.save_XDMF_files_str(elasticity, (k + 1) * params.solver.dt)
 
     list_timings(params.comm, [TimingType.wall])

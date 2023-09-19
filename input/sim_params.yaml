@@ -13,7 +13,7 @@ domain:
   y_max: 30 # 20+39 39 is panel to panel 
   z_min: 0
   z_max: 20
-  l_char: 4.0
+  l_char: 4
 pv_array:
   stream_rows: 3
   elevation: 1.5
@@ -27,7 +27,7 @@ pv_array:
   span_fixation_pts: 3.5
 solver:
   dt: .1 #0.0025
-  t_final: 1.0 # 10.0
+  t_final: 10.0 # 10.0
   solver1_ksp: cg
   solver2_ksp: cg
   solver3_ksp: cg
@@ -49,8 +49,11 @@ fluid:
   bc_z_min: noslip # slip noslip free
   wind_direction: 250 # slip noslip free
 structure:
+  dt : 0.1
   elasticity_modulus: 1.0e+03
   poissons_ratio: 0.3
   body_force_x: 0
   body_force_y: 0
   body_force_z: 0 #100
+  bc_list: [left ]
+  tube_connection: True
