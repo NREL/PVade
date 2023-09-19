@@ -73,18 +73,18 @@ def test_move_mesh():
             # Build a dummy displacement function to test mesh movement with
             P1 = ufl.VectorElement("Lagrange", domain.structure.msh.ufl_cell(), 1)
             V = dolfinx.fem.FunctionSpace(domain.structure.msh, P1)
-            self.uh_delta = dolfinx.fem.Function(V)
+            self.u_delta = dolfinx.fem.Function(V)
 
-            self.uh_delta.vector.array[0::3] = x_shift
-            self.uh_delta.vector.array[1::3] = y_shift
-            self.uh_delta.vector.array[2::3] = z_shift
+            self.u_delta.vector.array[0::3] = x_shift
+            self.u_delta.vector.array[1::3] = y_shift
+            self.u_delta.vector.array[2::3] = z_shift
 
     # Specify the distance to shift the structure in the x, y, and z direction
     x_shift = 0.05
     y_shift = 0.1
     z_shift = 0.2
 
-    # Build the elasticity, prescribe those motions for uh_delta (used to move the mesh)
+    # Build the elasticity, prescribe those motions for u_delta (used to move the mesh)
     elasticity = dummy_elasticity(domain, x_shift, y_shift, z_shift)
 
     # Make a copy of the locations before for testing
@@ -120,7 +120,7 @@ def test_move_mesh():
         np.amax(structure_coords_before[:, 2]), 0.5 * params.pv_array.panel_thickness
     )
 
-    # Move the mesh by the amount prescribed in uh_delta
+    # Move the mesh by the amount prescribed in u_delta
     domain.move_mesh(elasticity, params, tt=0)
 
     # Get a copy of the new positions
