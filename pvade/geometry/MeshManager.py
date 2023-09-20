@@ -572,6 +572,12 @@ class FSIDomain:
         with open(yaml_filename, "w") as fp:
             yaml.dump(self.domain_markers, fp)
 
+        # Save a version of the numpy_pt_array_total]
+        csv_name = "numpy_fixation_points.csv"
+        csv_filename = os.path.join(params.general.output_dir_mesh, csv_name)
+        header = "start_x,start_y,start_z,end_x,end_y,end_z,"
+        np.savetxt(csv_filename, self.numpy_pt_total_array, delimiter=",", header=header)
+
     def read_mesh_files(self, read_mesh_dir, params):
         """Read the mesh from an external file.
         The User can load an existing mesh file (mesh.xdmf)
@@ -636,6 +642,9 @@ class FSIDomain:
             with open(yaml_filename, "r") as fp:
                 self.domain_markers = yaml.safe_load(fp)
 
+        csv_name = "numpy_fixation_points.csv"
+        csv_filename = os.path.join(read_mesh_dir, csv_name)
+        self.numpy_pt_total_array = np.genfromtxt(csv_filename, delimiter=",", skip_header=1)
 
 
         if params.general.fluid_analysis == True:
