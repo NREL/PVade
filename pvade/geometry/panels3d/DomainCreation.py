@@ -202,8 +202,8 @@ class DomainCreation(TemplateDomainCreation):
                         )
 
                         # FIXME: don't add the fixation points into the numpy tagging for now
-                        # numpy_pt_list.append([-half_chord, -half_span + fp, -half_thickness,
-                        #                        half_chord, -half_span + fp, -half_thickness])
+                        numpy_pt_list.append([-half_chord, -half_span + fp, -half_thickness,
+                                               half_chord, -half_span + fp, -half_thickness])
 
                         fixed_pt_id = self.gmsh_model.occ.addLine(pt_1, pt_2)
                         fixed_pt_tag = (1, fixed_pt_id)
@@ -633,8 +633,8 @@ class DomainCreation(TemplateDomainCreation):
                         )
 
                         # FIXME: don't add the fixation points into the numpy tagging for now
-                        # numpy_pt_list.append([-half_chord, -half_span + fp, -half_thickness,
-                        #                        half_chord, -half_span + fp, -half_thickness])
+                        numpy_pt_list.append([-half_chord, -half_span + fp, -half_thickness,
+                                               half_chord, -half_span + fp, -half_thickness])
 
                         fixed_pt_id = self.gmsh_model.occ.addLine(pt_1, pt_2)
                         fixed_pt_tag = (1, fixed_pt_id)
