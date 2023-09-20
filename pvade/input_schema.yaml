@@ -364,6 +364,8 @@ properties:
     properties:
       tube_connection:
         default: false
+      motor_connection:
+        default: false
       bc_list:
         default: [front,back]
         # type: "list"
