@@ -274,8 +274,10 @@ def build_structure_boundary_conditions(domain, params, functionspace):
     )
     bc = []
 
+    total_num_panels = params.pv_array.stream_rows * params.pv_array.span_rows
+
 # for location in f"left_{num_panel}", f"right_{num_panel}":  # ,\
-    for num_panel in range(params.pv_array.stream_rows * params.pv_array.span_rows):
+    for num_panel in range(total_num_panels):
         for location in params.structure.bc_list:         
             location_panel = f"{location}_{num_panel}"
             # f"front_{num_panel}" , f"back_{num_panel}":
@@ -297,7 +299,6 @@ def build_structure_boundary_conditions(domain, params, functionspace):
 
     # print(domain.numpy_pt_total_array)
 
-
     if params.structure.tube_connection == True:
         def old_connection_point_up(x):
             eps = 1e-6
@@ -315,7 +316,63 @@ def build_structure_boundary_conditions(domain, params, functionspace):
         def connection_point_up(x):
             eps = 1e-3
 
-            for k, pts in enumerate(domain.numpy_pt_total_array):
+            num_nodes = np.shape(domain.numpy_pt_total_array)[0]
+            nodes_per_panel = int(num_nodes/total_num_panels)
+            tube_nodes_idx = np.arange(0, num_nodes, nodes_per_panel, dtype=np.int64)
+            tube_nodes = domain.numpy_pt_total_array[tube_nodes_idx, :]
+
+            for k, pts in enumerate(tube_nodes):
+                # print(pts)
+
+                test_vecs = x[:, :].T - pts[0:3]
+                truth_vec = pts[3:6] - pts[0:3]
+
+                cross_product = np.cross(test_vecs, truth_vec)
+                cross_product_mag = np.linalg.norm(cross_product, axis=1)
+
+                pinned_pts = cross_product_mag < eps
+                # print(np.shape(cross_product), np.shape(cross_product_mag))
+
+                if k == 0:
+                    total_pinned_pts = np.copy(pinned_pts)
+                else:
+                    total_pinned_pts = np.logical_or(pinned_pts, total_pinned_pts)
+
+            return total_pinned_pts
+
+        facet_uppoint = dolfinx.mesh.locate_entities(
+            domain.structure.msh, 1, connection_point_up
+        )
+        dofs_disp = dolfinx.fem.locate_dofs_topological(functionspace, 1, [facet_uppoint])
+        # print(np.shape(dofs_disp), dofs_disp)
+
+
+        
+        bc.append(dolfinx.fem.dirichletbc(zero_vec, dofs_disp, functionspace))
+
+    if params.structure.motor_connection == True:
+        def old_connection_point_up(x):
+            eps = 1e-6
+            # spot = params.pv_array.elevation-0.5*params.pv_array.panel_thickness
+            spot = (
+                params.pv_array.elevation
+                - 0.5
+                * params.pv_array.panel_thickness
+                * np.cos(np.radians(params.pv_array.tracker_angle))
+            )
+            print(spot)
+            test = np.logical_and(x[2] > spot - eps, x[2] < spot + eps)
+            return test
+
+        def connection_point_up(x):
+            eps = 1e-3
+
+            num_nodes = np.shape(domain.numpy_pt_total_array)[0]
+            nodes_per_panel = int(num_nodes/total_num_panels)
+            tube_nodes_idx = np.arange(0, num_nodes, nodes_per_panel, dtype=np.int64)
+            motor_nodes = np.delete(domain.numpy_pt_total_array, tube_nodes_idx, axis=0)
+
+            for k, pts in enumerate(motor_nodes):
                 # print(pts)
 
                 test_vecs = x[:, :].T - pts[0:3]
