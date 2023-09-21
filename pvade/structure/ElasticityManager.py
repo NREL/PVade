@@ -410,15 +410,14 @@ class Elasticity:
         num_its,converged = self.solver.solve(self.u) # solve the current time step
         assert(converged)
         self.u.x.scatter_forward()
-        
-        # Update old fields with new quantities
-        Elasticity.update_fields(self.u, self.u_old, self.v_old, self.a_old, self.dt_st, self.beta , self.gamma)   
-
 
         # Calculate the change in the displacement (new - old) this is what moves the mesh
         self.u_delta.vector.array[:] = (
             self.u.vector.array[:] - self.u_old.vector.array[:]
         )
+
+        # Update old fields with new quantities
+        Elasticity.update_fields(self.u, self.u_old, self.v_old, self.a_old, self.dt_st, self.beta , self.gamma)   
 
         sigma_dev = σ(self.u) - (1 / 3) * ufl.tr(σ(self.u)) * ufl.Identity(
             len(self.u)
