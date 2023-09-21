@@ -802,6 +802,7 @@ class FSIDomain:
         nn = np.shape(self.distance.vector.array)[0]
 
         self.distance.vector.array[:] = vec[0:nn]
+        self.distance.x.scatter_forward()
 
         dist_filename = os.path.join(
             params.general.output_dir_mesh, "distance_field.xdmf"
