@@ -997,11 +997,12 @@ class DomainCreation(TemplateDomainCreation):
         factor = params.domain.l_char
 
         resolution = factor * 10 * params.pv_array.panel_thickness / 2
-        half_panel = params.pv_array.panel_chord * np.cos(params.pv_array.tracker_angle)
+        tracker_angle_rad = np.radians(params.pv_array.tracker_angle)
+        half_panel = params.pv_array.panel_chord * np.cos(tracker_angle_rad)
         self.gmsh_model.mesh.field.setNumber(threshold, "LcMin", resolution * 0.5)
-        self.gmsh_model.mesh.field.setNumber(threshold, "LcMax", 2 * resolution)
+        self.gmsh_model.mesh.field.setNumber(threshold, "LcMax", 3 * resolution)
         self.gmsh_model.mesh.field.setNumber(
-            threshold, "DistMin", params.pv_array.stream_spacing
+            threshold, "DistMin", 0.3*params.pv_array.stream_spacing
         )
         self.gmsh_model.mesh.field.setNumber(
             threshold, "DistMax", params.pv_array.stream_spacing + half_panel
