@@ -1,0 +1,61 @@
+general:
+  test: False
+  geometry_module: panels3d
+  output_dir: output/duramat_vv
+  mesh_only: False
+  # input_mesh_dir: output/duramat_vv/mesh
+  structural_analysis: True
+  fluid_analysis: True
+domain:
+  x_min: -20
+  x_max: 100
+  y_min: -30
+  y_max: 30 # 20+39 39 is panel to panel 
+  z_min: 0
+  z_max: 20
+  l_char: 1.25 # 1.0
+pv_array:
+  stream_rows: 1
+  elevation: 2.1
+  stream_spacing: 10.0 # number from chris ivanov, distance from pier to edge of fixed tilt
+  panel_chord: 4.1
+  panel_span: 24.25
+  panel_thickness: 0.1
+  tracker_angle: 0
+  span_spacing: 1.0
+  span_rows: 1
+  # span_fixation_pts: [0.6, 6.9, 13.2, 18.3, 22.4]
+  span_fixation_pts: [13.2]
+solver:
+  dt: .001 #0.0025
+  t_final: 20.0 # 10.0
+  solver1_ksp: cg
+  solver2_ksp: cg
+  solver3_ksp: cg
+  solver4_ksp: gmres
+  solver1_pc: jacobi
+  solver2_pc: jacobi
+  solver3_pc: jacobi
+  solver4_pc: jacobi
+  save_text_interval: .01 #0.01
+  save_xdmf_interval: .01 #0.01
+fluid:
+  u_ref: 1.0
+  nu: 0.01
+  turbulence_model:  smagorinsky #null #  
+  periodic: false 
+  bc_y_max: slip # slip noslip free
+  bc_y_min: slip # slip noslip free
+  bc_z_max: slip # slip noslip free
+  bc_z_min: noslip # slip noslip free
+  wind_direction: 270 # slip noslip free
+structure:
+  dt : 0.1
+  elasticity_modulus: 1.0e+03
+  poissons_ratio: 0.3
+  body_force_x: 0
+  body_force_y: 0
+  body_force_z: 0 #100
+  bc_list: []
+  motor_connection: True
+  tube_connection: True
