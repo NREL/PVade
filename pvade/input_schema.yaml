@@ -356,6 +356,10 @@ properties:
         default: false
         type: "boolean"
         description: "Control whether periodic boundary conditions are set on the y_min/y_max walls."
+      warm_up_time:
+        default: 0.0
+        type: "number"
+        desciption: "The amount of time, in seconds, to solve the fluid solution for before un-freezing the structure and beginning to solve the FSI in a coupled manner. Warming up the fluid for e.g., 0.5 seconds helps establish a more appropriate fluid solution around the panels and can improve stability by avoiding a sudden shock associated with a bad initial condition at t=0."
 
   structure:
     additionalProperties: false

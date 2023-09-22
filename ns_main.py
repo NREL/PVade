@@ -79,7 +79,7 @@ def main():
     
         # print("time step is : ", (params.solver.dt*(k+1)))
         # print("reaminder from modulo ",(params.solver.dt*(k+1)) % params.structure.dt )
-        if structural_analysis == True and (k+1) % solve_structure_interval_n == 0: # :# TODO: add condition to work with fluid time step
+        if structural_analysis == True and (k+1) % solve_structure_interval_n == 0 and params.solver.dt*(k+1) > params.fluid.warm_up_time: # :# TODO: add condition to work with fluid time step
             if fluid_analysis == True:
                 dataIO.fluid_struct(domain, flow, elasticity, params)
             elasticity.solve(params, dataIO)
@@ -96,7 +96,7 @@ def main():
                     )
                 dataIO.save_XDMF_files(flow, domain, (k + 1) * params.solver.dt)
 
-            if structural_analysis == True and (k+1) % solve_structure_interval_n == 0:
+            if structural_analysis == True and (k+1) % solve_structure_interval_n == 0 and params.solver.dt*(k+1) > params.fluid.warm_up_time:
                 if domain.rank == 0:
                     print("Structural time is : ", (params.solver.dt*(k+1)))
                     print("deformation norm =", {elasticity.unorm})
