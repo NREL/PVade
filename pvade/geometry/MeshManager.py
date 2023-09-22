@@ -11,6 +11,8 @@ from petsc4py import PETSc
 
 from importlib import import_module
 
+from numba import jit
+
 
 # from pvade.geometry.panels.DomainCreation   import *
 class FSIDomain:
@@ -775,8 +777,6 @@ class FSIDomain:
             (global_structure_pts, self.ndim * global_num_pts_list),
         )
 
-        from numba import jit
-
         @jit(nopython=True)
         def find_shortest_distances(fluid_pts, structure_pts):
             vec = np.zeros(np.shape(fluid_pts)[0])
@@ -810,6 +810,127 @@ class FSIDomain:
         with dolfinx.io.XDMFFile(self.comm, dist_filename, "w") as xdmf_file:
             xdmf_file.write_mesh(self.fluid.msh)
             xdmf_file.write_function(self.distance, 0.0)
+
+    def force_interface_node_matching(self):
+
+        # Get the coordinates of each point from the mesh objects
+        fluid_pts = self.fluid.msh.geometry.x
+        fluid_boundary_pts = fluid_pts[self.all_interior_V_dofs, :]
+        local_structure_pts = self.structure.msh.geometry.x
+
+        # These are *local* to the process, and we need the *global* structure coordinates
+        # get the size of this chunk
+        local_num_pts = np.shape(local_structure_pts)[0]
+
+        # Initialize an array to hold the chunk sizes on each process
+        global_num_pts_list = np.zeros(self.num_procs, dtype=np.int64)
+
+        # Let each rank know how many nodes of the structure are held by all other ranks
+        self.comm.Allgather(
+            np.array(local_num_pts, dtype=np.int64), global_num_pts_list
+        )
+
+        # Sum them to allocate an array to hold all the coordinates
+        global_num_pts = int(np.sum(global_num_pts_list))
+        global_structure_pts = np.zeros((global_num_pts, self.ndim), dtype=np.float64)
+
+        # Gather all the coordinates from each process into a global array representing all the points of the structure
+        # After this step, local_structure_pts holds *every* node of the structure mesh
+        self.comm.Allgatherv(
+            local_structure_pts.astype(np.float64),
+            (global_structure_pts, self.ndim * global_num_pts_list),
+        )
+
+        @jit(nopython=True)
+        def find_closest_structure_idx(fluid_pts, structure_pts):
+
+            idx_vec = np.zeros(np.shape(fluid_pts)[0], dtype=np.int64)
+
+            for k, pt in enumerate(fluid_pts):
+                delta_x = pt - structure_pts
+                dist_2 = np.sum(delta_x**2, axis=1)
+
+                # Find what row this minimum occurs on, that
+                # is the row from structure_pts to copy
+                min_dist_id = np.argmin(dist_2)
+
+                idx_vec[k] = min_dist_id
+
+            return idx_vec
+
+        idx_vec = find_closest_structure_idx(fluid_boundary_pts, global_structure_pts)
+
+        # Apply the result in the following way:
+        # fluid_mesh_point[interior_surface_pt_idx, :] = structure_mesh_point[min_dist_idx, :]
+        # Where the interior surface point index comes from the boundary condition functions
+        # And the minimum distance idx is the one identified in find_closest_structure_idx
+        self.fluid.msh.geometry.x[self.all_interior_V_dofs, :] = global_structure_pts[idx_vec, :]
+
+
+    # def custom_interpolate(self, elasticity):
+    #
+    # NOTE: this is possibly no longer necessary since forcing
+    # point matching at the interface means we *should* be able to 
+    # use the built in interpolate function versus
+    # writing our own nearest neighbor function tranfer each time.
+    #
+    #     # Get the coordinates of each point from the mesh objects
+    #     fluid_pts = self.V1.tabulate_dof_coordinates()
+    #     local_structure_pts = elasticity.V.tabulate_dof_coordinates()
+    #     local_u_delta_vals = elasticity.u_delta.vector.array[:]
+
+    #     # These are *local* to the process, and we need the *global* vector of values
+    #     local_num_vals = np.shape(local_u_delta_vals)[0]
+
+    #     local_nn = int(local_num_vals/3)
+
+    #     # Initialize an array to hold the chunk sizes on each process
+    #     global_num_vals_list = np.zeros(self.num_procs, dtype=np.int64)
+
+    #     # Let each rank know how many values of the vector are held by all other ranks
+    #     self.comm.Allgather(
+    #         np.array(local_num_vals, dtype=np.int64), global_num_vals_list
+    #     )
+
+    #     # Sum them to allocate an array to hold all the coordinates
+    #     global_num_vals = int(np.sum(global_num_vals_list))
+    #     global_vals = np.zeros(global_num_vals, dtype=np.float64)
+
+    #     global_nn = int(global_num_vals/3)
+    #     global_structure_pts = np.zeros((global_nn, self.ndim), dtype=np.float64)
+
+    #     # Gather all the coordinates from each process into a global array representing all the points of the structure
+    #     # After this step, local_structure_pts holds *every* node of the structure mesh
+    #     self.comm.Allgatherv(
+    #         local_u_delta_vals.astype(np.float64),
+    #         (global_vals, global_num_vals_list),
+    #     )
+
+    #     self.comm.Allgatherv(
+    #         local_structure_pts[:local_nn, :].astype(np.float64),
+    #         (global_structure_pts, global_num_vals_list),
+    #     )
+
+    #     @jit(nopython=True)
+    #     def nearest_neighbor_interp(fluid_pts, structure_pts, global_vals):
+    #         vec = np.zeros(3*np.shape(fluid_pts)[0])
+
+    #         for k, pt in enumerate(fluid_pts):
+    #             delta_x = pt - structure_pts
+    #             dist_2 = np.sum(delta_x**2, axis=1)
+    #             # dist = np.linalg.norm(delta_x, axis=1)
+    #             min_id = np.argmin(dist_2)
+
+    #             vec[3*k] = global_vals[3*min_id]
+    #             vec[3*k+1] = global_vals[3*min_id+1]
+    #             vec[3*k+2] = global_vals[3*min_id+2]
+
+    #         return vec
+
+    #     vec = nearest_neighbor_interp(fluid_pts, global_structure_pts, global_vals)
+
+    #     return vec
+
 
     def move_mesh(self, elasticity, params, tt):
         if self.first_move_mesh:
@@ -877,7 +998,19 @@ class FSIDomain:
 
         # Interpolate the elasticity displacement (lives on the structure mesh)
         # field onto a function that lives on the fluid mesh
-        self.fluid_mesh_displacement_bc.interpolate(elasticity.u_delta)
+        use_built_in_interpolate = True
+
+        if use_built_in_interpolate:
+            self.fluid_mesh_displacement_bc.interpolate(elasticity.u_delta)
+
+        else:
+            fluid_mesh_displacement_bc_vec = self.custom_interpolate(elasticity)
+            nn_bc_vec = np.shape(self.fluid_mesh_displacement_bc.vector.array[:])[0]
+            self.fluid_mesh_displacement_bc.vector.array[:] = fluid_mesh_displacement_bc_vec[:nn_bc_vec]
+            self.fluid_mesh_displacement_bc.x.scatter_forward()
+
+            # print(self.fluid_mesh_displacement_bc.vector.array[self.all_interior_V_dofs])
+
 
         # Set the boundary condition for the walls of the computational domain
         zero_vec = dolfinx.fem.Constant(
@@ -965,5 +1098,9 @@ class FSIDomain:
         self.total_mesh_displacement.vector.array[
             :
         ] += self.fluid_mesh_displacement.vector.array
+
+        self.total_mesh_displacement.x.scatter_forward()
+
+        self.force_interface_node_matching()
 
         self.first_move_mesh = False
