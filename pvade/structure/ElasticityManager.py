@@ -415,6 +415,7 @@ class Elasticity:
         self.u_delta.vector.array[:] = (
             self.u.vector.array[:] - self.u_old.vector.array[:]
         )
+        self.u_delta.x.scatter_forward()
 
         # Update old fields with new quantities
         Elasticity.update_fields(self.u, self.u_old, self.v_old, self.a_old, self.dt_st, self.beta , self.gamma)   
