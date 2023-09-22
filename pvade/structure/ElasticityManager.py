@@ -10,6 +10,7 @@ import numpy as np
 import scipy.interpolate as interp
 
 import warnings
+import os
 
 from pvade.structure.boundary_conditions import build_structure_boundary_conditions
 from contextlib import ExitStack
@@ -94,6 +95,33 @@ class Elasticity:
         #time step 
         self.dt_st = dolfinx.fem.Constant(domain.structure.msh, (params.structure.dt))
 
+        def _north_east_corner(x):
+            eps = 1.0e-3
+
+            tracker_angle_rad = np.radians(params.pv_array.tracker_angle)
+            x1 = 0.5*params.pv_array.panel_chord*np.cos(tracker_angle_rad)
+            x2 = 0.5*params.pv_array.panel_thickness*np.sin(tracker_angle_rad)
+
+            corner = [x1-x2, 0.5*params.pv_array.panel_span]
+
+            east_edge = np.logical_and(
+                corner[0] - eps < x[0], x[0] < corner[0] + eps
+            )
+            north_edge = np.logical_and(
+                corner[1] - eps < x[1], x[1] < corner[1] + eps
+            )
+
+            north_east_corner = np.logical_and(east_edge, north_edge)
+
+            return north_east_corner
+
+        north_east_corner_facets = dolfinx.mesh.locate_entities_boundary(
+            domain.structure.msh, 0, _north_east_corner
+        )
+
+        self.north_east_corner_dofs = dolfinx.fem.locate_dofs_topological(
+            self.V, 0, north_east_corner_facets
+        )
 
     def build_boundary_conditions(self, domain, params):
         """Build the boundary conditions
@@ -322,6 +350,8 @@ class Elasticity:
         if self.first_call_to_solver:
             self.solver.atol = 1e-8
             self.solver.rtol = 1e-8
+            # self.solver.relaxation_parameter = 0.5
+            # self.solver.max_it = 500
             self.solver.convergence_criterion = "incremental"
 
             # We can customize the linear solver used inside the NewtonSolver by
@@ -329,8 +359,14 @@ class Elasticity:
             ksp = self.solver.krylov_solver
             opts = PETSc.Options()
             option_prefix = ksp.getOptionsPrefix()
+            
             opts[f"{option_prefix}ksp_type"] = "preonly"
             opts[f"{option_prefix}pc_type"] = "lu"
+
+            # # opts[f"{option_prefix}ksp_type"] = "cg"
+            # # opts[f"{option_prefix}pc_type"] = "gamg"
+            # # opts[f"{option_prefix}pc_factor_mat_solver_type"] = "mumps"
+
             ksp.setFromOptions()
         # self.A = dolfinx.fem.petsc.assemble_matrix(self.a, bcs=self.bc)
         # self.A.assemble()
@@ -431,6 +467,38 @@ class Elasticity:
         self.sigma_vm_h.interpolate(sigma_vm_expr)
 
         self.unorm = self.u.x.norm()
+
+        try:
+            idx = self.north_east_corner_dofs[0]
+            nw_corner_accel = self.u.vector.array[3*idx:3*idx+3].astype(np.float64)
+        except:
+            nw_corner_accel = np.zeros(self.ndim, dtype=np.float64)
+
+        nw_corner_accel_global = np.zeros((self.num_procs, self.ndim), dtype=np.float64)
+
+        self.comm.Gather(nw_corner_accel, nw_corner_accel_global, root=0)
+
+        # print(f"Acceleration at North West corner = {nw_corner_accel}")
+
+        if self.rank == 0:
+            norm2 = np.sum(nw_corner_accel_global**2, axis=1)
+            max_norm2_idx = np.argmax(norm2)
+            np_accel = nw_corner_accel_global[max_norm2_idx, :]
+            print(np_accel)
+
+            accel_pos_filename = os.path.join(
+                params.general.output_dir_sol, "accel_pos.csv"
+            )
+
+            if self.first_call_to_solver:
+
+                with open(accel_pos_filename, "w") as fp:
+                    fp.write("#x-pos,y-pos,z-pos\n")
+                    fp.write(f"{np_accel[0]},{np_accel[1]},{np_accel[2]}\n")
+
+            else:
+                with open(accel_pos_filename, "a") as fp:
+                    fp.write(f"{np_accel[0]},{np_accel[1]},{np_accel[2]}\n")
 
         if self.first_call_to_solver:
             self.first_call_to_solver = False
