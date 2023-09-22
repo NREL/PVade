@@ -811,7 +811,7 @@ class FSIDomain:
             xdmf_file.write_mesh(self.fluid.msh)
             xdmf_file.write_function(self.distance, 0.0)
 
-    def force_interface_node_matching(self):
+    def _force_interface_node_matching(self):
 
         # Get the coordinates of each point from the mesh objects
         fluid_pts = self.fluid.msh.geometry.x
@@ -1101,6 +1101,6 @@ class FSIDomain:
 
         self.total_mesh_displacement.x.scatter_forward()
 
-        self.force_interface_node_matching()
+        self._force_interface_node_matching()
 
         self.first_move_mesh = False
