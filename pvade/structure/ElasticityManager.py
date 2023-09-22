@@ -303,7 +303,9 @@ class Elasticity:
 
         self.res = m(Elasticity.avg(self.a_old, a_new , self.alpha_m), self.u_) + \
               c(Elasticity.avg(self.v_old, v_new , self.alpha_f), self.u_)  + \
-              k(Elasticity.avg(self.u_old , self.u, self.alpha_f), self.u_) - self.rho*ufl.inner(self.f,self.u_)*ufl.dx - ufl.dot(ufl.dot(self.stress, n), self.u_) * self.ds #- Wext(self.u)
+              k(Elasticity.avg(self.u_old , self.u, self.alpha_f), self.u_) - \
+              self.rho*ufl.inner(self.f,self.u_)*ufl.dx - \
+              ufl.dot(ufl.dot(self.stress, n), self.u_) * self.ds #- Wext(self.u)
         
         
 
@@ -345,21 +347,22 @@ class Elasticity:
         #     pass
 
 
-        self.problem = dolfinx.fem.petsc.NonlinearProblem(self.res,self.u,self.bc) 
-        self.solver = dolfinx.nls.petsc.NewtonSolver(self.comm, self.problem)
         if self.first_call_to_solver:
+            self.problem = dolfinx.fem.petsc.NonlinearProblem(self.res,self.u,self.bc) 
+            self.solver = dolfinx.nls.petsc.NewtonSolver(self.comm, self.problem)
             self.solver.atol = 1e-8
             self.solver.rtol = 1e-8
             # self.solver.relaxation_parameter = 0.5
             # self.solver.max_it = 500
-            self.solver.convergence_criterion = "incremental"
+            self.solver.convergence_criterion = "residual"
+            # self.solver.convergence_criterion = "incremental"
 
             # We can customize the linear solver used inside the NewtonSolver by
             # modifying the PETSc options
             ksp = self.solver.krylov_solver
             opts = PETSc.Options()
             option_prefix = ksp.getOptionsPrefix()
-            
+
             opts[f"{option_prefix}ksp_type"] = "preonly"
             opts[f"{option_prefix}pc_type"] = "lu"
 
