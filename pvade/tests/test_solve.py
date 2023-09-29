@@ -55,7 +55,7 @@ def test_flow_3dpanels():
     ## dataIO = DataStream(domain, flow, None, params)
 
     for t_step in range(solve_iter):
-        flow.solve(params)
+        flow.solve(domain, params)
 
         max_velocity = np.amax(flow.u_k.x.array)
         max_pressure = np.amax(flow.p_k.x.array)
