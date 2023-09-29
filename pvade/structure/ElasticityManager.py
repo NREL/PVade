@@ -487,7 +487,6 @@ class Elasticity:
             norm2 = np.sum(nw_corner_accel_global**2, axis=1)
             max_norm2_idx = np.argmax(norm2)
             np_accel = nw_corner_accel_global[max_norm2_idx, :]
-            print(np_accel)
 
             accel_pos_filename = os.path.join(
                 params.general.output_dir_sol, "accel_pos.csv"
@@ -497,11 +496,17 @@ class Elasticity:
 
                 with open(accel_pos_filename, "w") as fp:
                     fp.write("#x-pos,y-pos,z-pos\n")
-                    fp.write(f"{np_accel[0]},{np_accel[1]},{np_accel[2]}\n")
+                    if self.ndim == 3:
+                        fp.write(f"{np_accel[0]},{np_accel[1]},{np_accel[2]}\n")
+                    elif self.ndim == 2:
+                        fp.write(f"{np_accel[0]},{np_accel[1]}\n")
 
             else:
                 with open(accel_pos_filename, "a") as fp:
-                    fp.write(f"{np_accel[0]},{np_accel[1]},{np_accel[2]}\n")
+                    if self.ndim == 3:
+                        fp.write(f"{np_accel[0]},{np_accel[1]},{np_accel[2]}\n")
+                    elif self.ndim == 2:
+                        fp.write(f"{np_accel[0]},{np_accel[1]}\n")
 
         if self.first_call_to_solver:
             self.first_call_to_solver = False
