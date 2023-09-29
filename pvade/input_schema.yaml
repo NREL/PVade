@@ -90,7 +90,7 @@ properties:
         units: "meter"
       l_char:
         default: 10.0
-        minimum: 0.01
+        minimum: 0.001
         maximum: 100.0
         type: "number"
         description: "The characteristic length to use when building the mesh."
