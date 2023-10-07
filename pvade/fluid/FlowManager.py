@@ -54,6 +54,7 @@ class Flow:
             # Stress (Tensor)
             P3 = ufl.TensorElement("Lagrange", domain.fluid.msh.ufl_cell(), 2)
             self.T = dolfinx.fem.FunctionSpace(domain.fluid.msh, P3)
+            self.T_undeformed = dolfinx.fem.FunctionSpace(domain.fluid_undeformed.msh, P3)
 
             P4 = ufl.FiniteElement("DG", domain.fluid.msh.ufl_cell(), 0)
 
@@ -272,6 +273,7 @@ class Flow:
 
         # Define a function and the dolfinx.fem.form of the stress
         self.panel_stress = dolfinx.fem.Function(self.T)
+        self.panel_stress_undeformed = dolfinx.fem.Function(self.T_undeformed)
         self.stress = sigma(self.u_k, self.p_k, nu + self.nu_T)
 
         # Define mesh normals
@@ -282,7 +284,6 @@ class Flow:
 
         # Create a dolfinx.fem.form for projecting stress onto a tensor function space
         # e.g., panel_stress.assign(project(stress, T))
-
         self.a4 = dolfinx.fem.form(
             ufl.inner(ufl.TrialFunction(self.T), ufl.TestFunction(self.T)) * ufl.dx
         )
@@ -325,6 +326,38 @@ class Flow:
 
         # self.J_history = [self.J_initial]
         self.dpdx_history = [0.0]
+
+
+        def _all_interior_surfaces(x):
+            eps = 1.0e-5
+
+            x_mid = np.logical_and(
+                params.domain.x_min + eps < x[0], x[0] < params.domain.x_max - eps
+            )
+            y_mid = np.logical_and(
+                params.domain.y_min + eps < x[1], x[1] < params.domain.y_max - eps
+            )
+            z_mid = np.logical_and(
+                params.domain.z_min + eps < x[2], x[2] < params.domain.z_max - eps
+            )
+
+            all_interior_surfaces = np.logical_and(
+                x_mid, np.logical_and(y_mid, z_mid)
+            )
+
+            return all_interior_surfaces
+            
+        all_interior_facets = dolfinx.mesh.locate_entities_boundary(
+            domain.fluid.msh, self.facet_dim, _all_interior_surfaces
+        )
+
+        self.all_interior_V_dofs = dolfinx.fem.locate_dofs_topological(
+            self.V, self.facet_dim, all_interior_facets
+        )
+
+        self.zero_vec = dolfinx.fem.Constant(
+            domain.fluid.msh, PETSc.ScalarType((0.0, 0.0, 0.0))
+        )
 
     def _assemble_system(self, params):
         """Pre-assemble all LHS matrices and RHS vectors
@@ -387,7 +420,7 @@ class Flow:
         self.solver_5.getPC().setType("jacobi")
         self.solver_5.setFromOptions()
 
-    def solve(self, params):
+    def solve(self, domain, params):
         """Solve for a single timestep advancement
 
         Here we perform the three-step solution process (tentative velocity,
@@ -402,7 +435,32 @@ class Flow:
             if self.rank == 0:
                 print("Starting Fluid Solution")
 
+            self.bcu.append(
+                dolfinx.fem.dirichletbc(self.zero_vec, self.all_interior_V_dofs, self.V)
+            )
+
             self._assemble_system(params)
+
+
+        mesh_vel = dolfinx.fem.Function(self.V)
+        mesh_vel.interpolate(domain.fluid_mesh_displacement)
+        mesh_vel.vector.array[:] /= params.solver.dt
+        mesh_vel.x.scatter_forward()
+
+        vals = mesh_vel.vector.array[:].reshape(-1, 3)
+        vals = np.amax(np.sum(vals**2, axis=1))
+
+        self.mesh_vel_max = np.zeros(1)
+        self.comm.Allreduce(vals, self.mesh_vel_max, op=MPI.MAX)
+        self.mesh_vel_max = self.mesh_vel_max[0]
+        if self.rank == 0:
+            print(f"Max mesh vel = {self.mesh_vel_max}")
+
+
+
+        self.bcu[-1] = dolfinx.fem.dirichletbc(mesh_vel, self.all_interior_V_dofs)
+
+
 
         # Calculate the tentative velocity
         self._solver_step_1(params)
@@ -544,6 +602,8 @@ class Flow:
 
         self.solver_4.solve(self.b4, self.panel_stress.vector)
         self.panel_stress.x.scatter_forward()
+        self.panel_stress_undeformed.x.array[:] = self.panel_stress.x.array[:]
+        self.panel_stress_undeformed.x.scatter_forward()
 
     def compute_cfl(self):
         """Solve for the CFL number
