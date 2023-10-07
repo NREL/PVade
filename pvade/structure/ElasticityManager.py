@@ -75,11 +75,11 @@ class Elasticity:
             print(f"Total num dofs on structure = {self.num_V_dofs}")
 
         # Mass density
-        self.rho = 1 #params.structure.structural_density
+        self.rho = 1.0 #params.structure.structural_density
 
         # Rayleigh damping coefficients
-        self.eta_m = 0 #Constant(0.)
-        self.eta_k = 0 #Constant(0.)
+        self.eta_m = dolfinx.fem.Constant(domain.structure.msh, 0.0) #Constant(0.)
+        self.eta_k = dolfinx.fem.Constant(domain.structure.msh, 0.0) #Constant(0.)
 
         # Generalized-alpha method parameters
         self.alpha_m = dolfinx.fem.Constant(domain.structure.msh, 0.2)
@@ -92,6 +92,8 @@ class Elasticity:
         self.ν = params.structure.poissons_ratio  # 0.3
         self.μ = self.E / (2.0 * (1.0 + self.ν))
         self.λ = self.E * self.ν / ((1.0 + self.ν) * (1.0 - 2.0 * self.ν))
+
+        print(f"mu = {self.μ} lambda = {self.λ}")
         #time step 
         self.dt_st = dolfinx.fem.Constant(domain.structure.msh, (params.structure.dt))
 
@@ -255,8 +257,17 @@ class Elasticity:
         def m(u,u_):
             return self.rho*ufl.inner(u,u_)*ufl.dx
 
-        def k(u,u_):
+        def k_old(u,u_):
             return ufl.inner(sigma(u),ufl.grad(u_))*ufl.dx
+
+        def k(u,u_):
+            # return ufl.inner(sigma(u),ufl.grad(u_))*ufl.dx
+            # updated lagrangian form
+            F = ufl.grad(u) + ufl.Identity(len(u))
+            E = 0.5*(F.T*F - ufl.Identity(len(u)) )
+            S = self.λ *ufl.tr(E)*ufl.Identity(len(u))   + 2*self.μ * (E - ufl.tr(E)*ufl.Identity(len(u))  /3.0)
+
+            return ufl.inner(F*S,ufl.grad(u_))*ufl.dx
 
         def c(u,u_):
             return self.eta_m*m(u,u_) + self.eta_k*k(u,u_)
