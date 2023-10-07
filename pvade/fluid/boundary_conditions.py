@@ -152,6 +152,10 @@ class InflowVelocity:
                 * (0.41 - x[1])
                 / (0.41**2)
             )
+        elif self.params.general.geometry_module == "flag2d":
+            inflow_values[0] = (
+                1.5 * (self.params.fluid.u_ref) * 4.0 / 0.1681 * x[1] * (self.params.domain.y_max - x[1])
+            )
         elif self.params.general.geometry_module == "panels3d":
             # inflow_values[0] = x[2]
             inflow_values[0] = (
@@ -185,7 +189,7 @@ def get_inflow_profile_function(domain, params, functionspace):
 
     inflow_velocity = InflowVelocity(geom_dim, params)
 
-    if params.general.geometry_module in ["cylinder3d", "cylinder2d"]:
+    if params.general.geometry_module in ["cylinder3d", "cylinder2d", "flag2d"]:
         inflow_function.interpolate(inflow_velocity)
 
     else:
@@ -250,6 +254,11 @@ def build_velocity_boundary_conditions(domain, params, functionspace):
 
         bcu.append(bc)
 
+    # Set the inflow boundary condition
+    inflow_function = get_inflow_profile_function(domain, params, functionspace)
+    dofs = get_facet_dofs_by_gmsh_tag(domain, functionspace, "x_min")
+    bcu.append(dolfinx.fem.dirichletbc(inflow_function, dofs))
+
     # Set all interior surfaces to no slip *which sometimes means non-zero values*
     use_surface_vel_from_fsi = True
 
@@ -257,6 +266,7 @@ def build_velocity_boundary_conditions(domain, params, functionspace):
         if (
             params.general.geometry_module == "panels2d"
             or params.general.geometry_module == "panels3d"
+            or params.general.geometry_module == "flag2d"
         ):
             for location in (
                 f"bottom_{panel_id}",
@@ -267,14 +277,15 @@ def build_velocity_boundary_conditions(domain, params, functionspace):
                 f"back_{panel_id}",
             ):
                 if use_surface_vel_from_fsi:
-                    dofs = get_facet_dofs_by_gmsh_tag(domain, functionspace, location)
-                    bc = dolfinx.fem.dirichletbc(mesh_vel, dofs)
+                    # dofs = get_facet_dofs_by_gmsh_tag(domain, functionspace, location)
+                    # bc = dolfinx.fem.dirichletbc(mesh_vel, dofs)
+                    pass
+                    # We need to do this each time at the beginning of the fluid solve!
 
                 else:
                     # bc = build_vel_bc_by_type("noslip", domain, functionspace, "internal_surface")
                     bc = build_vel_bc_by_type("noslip", domain, functionspace, location)
-
-                bcu.append(bc)
+                    bcu.append(bc)
 
         elif (
             params.general.geometry_module == "cylinder3d"
@@ -284,10 +295,6 @@ def build_velocity_boundary_conditions(domain, params, functionspace):
             bc = build_vel_bc_by_type("noslip", domain, functionspace, location)
             bcu.append(bc)
 
-    # Set the inflow boundary condition
-    inflow_function = get_inflow_profile_function(domain, params, functionspace)
-    dofs = get_facet_dofs_by_gmsh_tag(domain, functionspace, "x_min")
-    bcu.append(dolfinx.fem.dirichletbc(inflow_function, dofs))
 
     return bcu, inflow_function
 
