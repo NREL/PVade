@@ -196,12 +196,14 @@ class FSIDomain:
 
         self.ndim = self.msh.topology.dim
 
+        self.msh.topology.create_connectivity(self.ndim, self.ndim-1)
+
         # Specify names for the mesh elements
         self.msh.name = "mesh_total"
         self.cell_tags.name = "cell_tags"
         self.facet_tags.name = "facet_tags"
 
-        if params.general.geometry_module == "panels3d":
+        if params.general.geometry_module == "panels3d" or params.general.geometry_module == "flag2d":
             self._create_submeshes_from_parent(params)
             self._transfer_mesh_tags_to_submeshes(params)
 
@@ -213,11 +215,17 @@ class FSIDomain:
             vec_el_1 = ufl.VectorElement("Lagrange", self.fluid.msh.ufl_cell(), 1)
             self.V1 = dolfinx.fem.FunctionSpace(self.fluid.msh, vec_el_1)
 
+            # vec_el_1_og = ufl.VectorElement("Lagrange", self.fluid_undeformed.msh.ufl_cell(), 1)
+            self.V1_undeformed = dolfinx.fem.FunctionSpace(self.fluid_undeformed.msh, vec_el_1)
+
             self.fluid_mesh_displacement = dolfinx.fem.Function(
                 self.V1, name="fluid_mesh_displacement"
             )
             self.fluid_mesh_displacement_bc = dolfinx.fem.Function(
                 self.V1, name="fluid_mesh_displacement_bc"
+            )
+            self.fluid_mesh_displacement_bc_undeformed = dolfinx.fem.Function(
+                self.V1_undeformed, name="fluid_mesh_displacement_bc"
             )
             self.total_mesh_displacement = dolfinx.fem.Function(
                 self.V1, name="total_mesh_disp"
@@ -322,7 +330,7 @@ class FSIDomain:
             class FSISubDomain:
                 pass
 
-            submesh.topology.create_connectivity(3, 2)
+            submesh.topology.create_connectivity(self.ndim, self.ndim-1)
 
             sub_domain = FSISubDomain()
 
@@ -511,17 +519,17 @@ class FSIDomain:
         # Mesh.Algorithm 2D mesh algorithm
         # (1: MeshAdapt, 2: Automatic, 3: Initial mesh only, 5: Delaunay, 6: Frontal-Delaunay, 7: BAMG, 8: Frontal-Delaunay for Quads, 9: Packing of Parallelograms)
         # Default value: 6
-        gmsh.option.setNumber("Mesh.Algorithm", 2)
+        # gmsh.option.setNumber("Mesh.Algorithm", 2)
 
-        gmsh.option.setNumber("Mesh.RecombinationAlgorithm", 2)
-        # gmsh.option.setNumber("Mesh.RecombineAll", 1)
-        gmsh.option.setNumber("Mesh.SubdivisionAlgorithm", 1)
+        # gmsh.option.setNumber("Mesh.RecombinationAlgorithm", 2)
+        # # gmsh.option.setNumber("Mesh.RecombineAll", 1)
+        # gmsh.option.setNumber("Mesh.SubdivisionAlgorithm", 1)
 
-        self.geometry.gmsh_model.mesh.generate(3)
-        self.geometry.gmsh_model.mesh.setOrder(2)
+        # self.geometry.gmsh_model.mesh.generate(3)
+        # self.geometry.gmsh_model.mesh.setOrder(2)
 
-        self.geometry.gmsh_model.mesh.optimize("Netgen")
-        self.geometry.gmsh_model.mesh.generate(3)
+        # self.geometry.gmsh_model.mesh.optimize("Netgen")
+        self.geometry.gmsh_model.mesh.generate(2)
 
     def write_mesh_files(self, params):
         # Attempt to save both the fluid and structure subdomains
@@ -615,7 +623,7 @@ class FSIDomain:
                 class FSISubDomain:
                     pass
 
-                submesh.topology.create_connectivity(3, 2)
+                submesh.topology.create_connectivity(self.ndim, self.ndim-1)
 
                 sub_domain = FSISubDomain()
 
@@ -631,6 +639,34 @@ class FSIDomain:
                 sub_domain.geom_map = None
 
                 setattr(self, sub_domain_name, sub_domain)
+
+                if sub_domain_name == "fluid":
+                    domain_ufl = ufl.Mesh(self.fluid.msh.ufl_domain().ufl_coordinate_element())
+                    fluid_undeformed = dolfinx.mesh.Mesh(self.comm,
+                        self.fluid.msh.topology,
+                        self.fluid.msh.geometry,
+                        domain_ufl)
+
+                    fluid_undeformed.topology.create_connectivity(self.ndim, self.ndim-1)
+
+                    sub_domain_undeformed = FSISubDomain()
+
+                    sub_domain_undeformed.msh = fluid_undeformed
+                    sub_domain_undeformed.cell_tags = cell_tags
+                    sub_domain_undeformed.facet_tags = facet_tags
+
+                    # These elements do not need to be created when reading a mesh
+                    # they are only used in the transfer of facet tags, and since
+                    # those can be read directly from a file, we don't need these
+                    sub_domain_undeformed.entity_map = None
+                    sub_domain_undeformed.vertex_map = None
+                    sub_domain_undeformed.geom_map = None
+
+                    setattr(self, "fluid_undeformed", sub_domain_undeformed)
+
+                    # assert np.all(self.fluid.msh.geometry.x[:] == self.fluid_undeformed.msh.geometry.x[:])
+                    # assert np.shape(self.fluid.msh.geometry.x[:]) == np.shape(self.fluid_undeformed.msh.geometry.x[:])
+
 
             if self.rank == 0:
                 print(f"Finished read {sub_domain_name} mesh.")
@@ -768,13 +804,14 @@ class FSIDomain:
 
         # Sum them to allocate an array to hold all the coordinates
         global_num_pts = int(np.sum(global_num_pts_list))
-        global_structure_pts = np.zeros((global_num_pts, self.ndim), dtype=np.float64)
+        global_structure_pts = np.zeros((global_num_pts, 3), dtype=np.float64)
 
         # Gather all the coordinates from each process into a global array representing all the points of the structure
         # After this step, local_structure_pts holds *every* node of the structure mesh
+        # Note that we do not use self.ndim as the number of columns since even 2D meshes have a z column
         self.comm.Allgatherv(
             local_structure_pts.astype(np.float64),
-            (global_structure_pts, self.ndim * global_num_pts_list),
+            (global_structure_pts, 3 * global_num_pts_list),
         )
 
         @jit(nopython=True)
@@ -832,13 +869,13 @@ class FSIDomain:
 
         # Sum them to allocate an array to hold all the coordinates
         global_num_pts = int(np.sum(global_num_pts_list))
-        global_structure_pts = np.zeros((global_num_pts, self.ndim), dtype=np.float64)
+        global_structure_pts = np.zeros((global_num_pts, 3), dtype=np.float64)
 
         # Gather all the coordinates from each process into a global array representing all the points of the structure
         # After this step, local_structure_pts holds *every* node of the structure mesh
         self.comm.Allgatherv(
             local_structure_pts.astype(np.float64),
-            (global_structure_pts, self.ndim * global_num_pts_list),
+            (global_structure_pts, 3 * global_num_pts_list),
         )
 
         @jit(nopython=True)
@@ -858,14 +895,27 @@ class FSIDomain:
 
             return idx_vec
 
-        idx_vec = find_closest_structure_idx(fluid_boundary_pts, global_structure_pts)
+        if not hasattr(self, "idx_vec"):
+            self.idx_vec = find_closest_structure_idx(fluid_boundary_pts, global_structure_pts)
 
         # Apply the result in the following way:
         # fluid_mesh_point[interior_surface_pt_idx, :] = structure_mesh_point[min_dist_idx, :]
         # Where the interior surface point index comes from the boundary condition functions
         # And the minimum distance idx is the one identified in find_closest_structure_idx
-        self.fluid.msh.geometry.x[self.all_interior_V_dofs, :] = global_structure_pts[idx_vec, :]
 
+        correction = global_structure_pts[self.idx_vec, :] - self.fluid.msh.geometry.x[self.all_interior_V_dofs, :]
+
+        self.fluid.msh.geometry.x[self.all_interior_V_dofs, :] = global_structure_pts[self.idx_vec, :]
+
+        for k, dof in enumerate(self.all_interior_V_dofs):
+            if 3*dof > np.shape(self.fluid_mesh_displacement.vector.array[:])[0] - 1:
+                break
+            else:
+                self.fluid_mesh_displacement.vector.array[3*dof] += correction[k, 0]
+                self.fluid_mesh_displacement.vector.array[3*dof+1] += correction[k, 1]
+                self.fluid_mesh_displacement.vector.array[3*dof+2] += correction[k, 2]
+
+        self.fluid_mesh_displacement.x.scatter_forward()
 
     # def custom_interpolate(self, elasticity):
     #
@@ -1001,7 +1051,9 @@ class FSIDomain:
         use_built_in_interpolate = True
 
         if use_built_in_interpolate:
-            self.fluid_mesh_displacement_bc.interpolate(elasticity.u_delta)
+            self.fluid_mesh_displacement_bc_undeformed.interpolate(elasticity.u_delta)
+            self.fluid_mesh_displacement_bc.x.array[:] = self.fluid_mesh_displacement_bc_undeformed.x.array[:]
+            self.fluid_mesh_displacement_bc.x.scatter_forward()
 
         else:
             fluid_mesh_displacement_bc_vec = self.custom_interpolate(elasticity)
@@ -1084,15 +1136,17 @@ class FSIDomain:
         # self.fluid.msh.geometry.x[:, :] = self.fluid.msh.initial_position[:, :] + vals[:, :]
         self.fluid.msh.geometry.x[:, :] += vals[:, :]
 
-        # Obtain the vector of values for the mesh motion in a way that
-        # keeps the ghost values (needed for the mesh update)
-        with elasticity.u_delta.vector.localForm() as vals_local:
-            vals = vals_local.array
-            vals = vals.reshape(-1, 3)
+        # # Obtain the vector of values for the mesh motion in a way that
+        # # keeps the ghost values (needed for the mesh update)
+        # with elasticity.u_delta.vector.localForm() as vals_local:
+        #     vals = vals_local.array
+        #     vals = vals.reshape(-1, 3)
 
-        # Move the mesh by those values: new = original + displacement
-        # self.structure.msh.geometry.x[:, :] = self.structure.msh.initial_position[:, :] + vals[:, :]
-        self.structure.msh.geometry.x[:, :] += vals[:, :]
+        # # Move the mesh by those values: new = original + displacement
+        # # self.structure.msh.geometry.x[:, :] = self.structure.msh.initial_position[:, :] + vals[:, :]
+        # self.structure.msh.geometry.x[:, :] += vals[:, :]
+
+        # self._force_interface_node_matching()
 
         # Save this mesh motion as the total mesh displacement
         self.total_mesh_displacement.vector.array[
@@ -1101,6 +1155,5 @@ class FSIDomain:
 
         self.total_mesh_displacement.x.scatter_forward()
 
-        self._force_interface_node_matching()
 
         self.first_move_mesh = False
