@@ -75,7 +75,7 @@ class Elasticity:
             print(f"Total num dofs on structure = {self.num_V_dofs}")
 
         # Mass density
-        self.rho = 1.0 #params.structure.structural_density
+        self.rho = dolfinx.fem.Constant(domain.structure.msh, params.structure.rho) #Constant(0.)
 
         # Rayleigh damping coefficients
         self.eta_m = dolfinx.fem.Constant(domain.structure.msh, 0.0) #Constant(0.)
@@ -91,7 +91,11 @@ class Elasticity:
         self.E = params.structure.elasticity_modulus  # 1.0e9
         self.ν = params.structure.poissons_ratio  # 0.3
         self.μ = self.E / (2.0 * (1.0 + self.ν))
-        self.λ = self.E * self.ν / ((1.0 + self.ν) * (1.0 - 2.0 * self.ν))
+        # self.λ = self.E * self.ν / ((1.0 + self.ν) * (1.0 - 2.0 * self.ν))
+        # WALID: this change may not be necessary, it was just one way i found
+        # to reproduce exactly the CSM3 case from turek and hron
+        # https://www.researchgate.net/publication/226447172_Proposal_for_Numerical_Benchmarking_of_Fluid-Structure_Interaction_Between_an_Elastic_Object_and_Laminar_Incompressible_Flow
+        self.λ = self.μ
 
         print(f"mu = {self.μ} lambda = {self.λ}")
         #time step 
@@ -211,6 +215,8 @@ class Elasticity:
         self.T = dolfinx.fem.FunctionSpace(domain.structure.msh, P3)
 
         self.stress = dolfinx.fem.Function(self.T, name="stress_fluid")
+        self.stress_old = dolfinx.fem.Function(self.T, name="stress_fluid_old")
+        self.stress_predicted = dolfinx.fem.Function(self.T, name="stress_fluid_predicted")
 
         self.sigma_vm_h = dolfinx.fem.Function(self.W, name="Stress")
 
@@ -316,7 +322,7 @@ class Elasticity:
               c(Elasticity.avg(self.v_old, v_new , self.alpha_f), self.u_)  + \
               k(Elasticity.avg(self.u_old , self.u, self.alpha_f), self.u_) - \
               self.rho*ufl.inner(self.f,self.u_)*ufl.dx - \
-              ufl.dot(ufl.dot(self.stress, n), self.u_) * self.ds #- Wext(self.u)
+              ufl.dot(ufl.dot(self.stress_predicted, n), self.u_) * self.ds #- Wext(self.u)
         
         
 
