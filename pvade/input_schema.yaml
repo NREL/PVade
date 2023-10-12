@@ -284,6 +284,13 @@ properties:
         type: "number"
         description: "The velocity of the wind as measured at the panel elevation."
         units: "meter/second"
+      rho:
+        default: 1.0
+        # minimum: 0.001
+        # maximum: 1000.0
+        type: "number"
+        description: "The density of the fluid."
+        units: "kg/meter^3"
       wind_direction:
         default: 270.0
         minimum: 0.0
@@ -385,6 +392,13 @@ properties:
         type: "number"
         description: "time step for structural analysis."
         units: "s" 
+      rho:
+        default: 1.0
+        # minimum: 0.001
+        # maximum: 1000.0
+        type: "number"
+        description: "The density of the structure."
+        units: "kg/meter^3"
       elasticity_modulus:
         default: 190.0e+9
         minimum: 1.0e+2
