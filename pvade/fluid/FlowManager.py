@@ -105,8 +105,11 @@ class Flow:
 
         """
 
-        self.bcu, self.inflow_profile = build_velocity_boundary_conditions(
-            domain, params, self.V
+        self.u_ref_c = dolfinx.fem.Constant(domain.fluid.msh, PETSc.ScalarType(0.0))
+
+
+        self.bcu, self.inflow_profile, self.inflow_velocity = build_velocity_boundary_conditions(
+            domain, params, self.V, self.u_ref_c
         )
 
         self.bcp = build_pressure_boundary_conditions(domain, params, self.Q)
@@ -130,6 +133,7 @@ class Flow:
         # Define fluid properties
         self.dpdx = dolfinx.fem.Constant(domain.fluid.msh, (0.0, 0.0, 0.0))
         self.dt_c = dolfinx.fem.Constant(domain.fluid.msh, (params.solver.dt))
+        self.rho_c = dolfinx.fem.Constant(domain.fluid.msh, (params.fluid.rho))
         nu = dolfinx.fem.Constant(domain.fluid.msh, (params.fluid.nu))
 
         # Define trial and test functions for velocity
@@ -145,11 +149,17 @@ class Flow:
         self.u_k1 = dolfinx.fem.Function(self.V)
         self.u_k2 = dolfinx.fem.Function(self.V)
 
+        self.mesh_vel = dolfinx.fem.Function(self.V, name="mesh_displacement")
+        self.mesh_vel_old = dolfinx.fem.Function(self.V)
+        self.mesh_vel_bc = dolfinx.fem.Function(self.V, name="mesh_displacement_bc")
+        self.mesh_vel_bc_old = dolfinx.fem.Function(self.V)
+        # self.mesh_vel_composite = dolfinx.fem.Function(self.V)
+
         # Define functions for pressure solutions
         self.p_k = dolfinx.fem.Function(self.Q, name="pressure")
         self.p_k1 = dolfinx.fem.Function(self.Q)
 
-        initialize_flow = True
+        initialize_flow = False
 
         if initialize_flow:
             # self.inflow_profile = dolfinx.fem.Function(self.V)
@@ -216,7 +226,7 @@ class Flow:
             return ufl.sym(ufl.nabla_grad(u))
 
         # Define stress tensor
-        def sigma(u, p, nu):
+        def sigma(u, p, nu, rho):
             """Convenience expression for fluid stress, sigma
 
             Args:
@@ -227,29 +237,37 @@ class Flow:
             Returns:
                 ufl.dolfinx.fem.form: Stress in fluid, $2\nu \epsilon (u)$
             """
-            return 2 * nu * epsilon(u) - p * ufl.Identity(len(u))
+            return (nu*rho)*(ufl.grad(u) + ufl.grad(u).T) - p*ufl.Identity(len(u))
+            # return 2 * nu * rho * epsilon(u) - p * ufl.Identity(len(u))
 
         fractional_step_scheme = "IPCS"
         U = 0.5 * (self.u_k1 + self.u)
-        n = ufl.FacetNormal(domain.fluid.msh)
         f = dolfinx.fem.Constant(
             domain.fluid.msh,
             (PETSc.ScalarType(0), PETSc.ScalarType(0), PETSc.ScalarType(0)),
         )
         # Define variational problem for step 1: tentative velocity
+        # self.U_ALE = (1.5*self.mesh_vel - 0.5*self.mesh_vel_old) / self.dt_c
+        # self.U_ALE = 0.5*(domain.fluid_mesh_displacement + domain.fluid_mesh_displacement_old) / self.dt_c
+        # self.U_ALE = self.mesh_vel_old / self.dt_c
+        self.U_ALE = self.mesh_vel #/ self.dt_c
+        # self.U_ALE = 0.1*self.mesh_vel + 0.9*self.mesh_vel_old
+        # self.U_ALE = domain.fluid_mesh_displacement / self.dt_c
+        # TODO: why does domain.fluid_mesh_displacement/dt work and mesh_vel/dt not work?
+
         self.F1 = (
             (1.0 / self.dt_c) * ufl.inner(self.u - self.u_k1, self.v) * ufl.dx
             + ufl.inner(
                 ufl.dot(
-                    U_AB - domain.fluid_mesh_displacement / self.dt_c,
+                    U_AB - self.U_ALE,
                     ufl.nabla_grad(U_CN),
                 ),
                 self.v,
             )
             * ufl.dx
             + (nu + self.nu_T) * ufl.inner(ufl.grad(U_CN), ufl.grad(self.v)) * ufl.dx
-            + ufl.inner(ufl.grad(self.p_k1), self.v) * ufl.dx
-            - ufl.inner(self.dpdx, self.v) * ufl.dx
+            + (1.0/self.rho_c)*ufl.inner(ufl.grad(self.p_k1), self.v) * ufl.dx
+            - (1.0/self.rho_c)*ufl.inner(self.dpdx, self.v) * ufl.dx
         )
 
         self.a1 = dolfinx.fem.form(ufl.lhs(self.F1))
@@ -261,26 +279,26 @@ class Flow:
         )
         self.L2 = dolfinx.fem.form(
             ufl.dot(ufl.nabla_grad(self.p_k1), ufl.nabla_grad(self.q)) * ufl.dx
-            - (1.0 / self.dt_c) * ufl.div(self.u_k) * self.q * ufl.dx
+            - (self.rho_c / self.dt_c) * ufl.div(self.u_k) * self.q * ufl.dx
         )
 
         # Define variational problem for step 3: velocity update
         self.a3 = dolfinx.fem.form(ufl.dot(self.u, self.v) * ufl.dx)
         self.L3 = dolfinx.fem.form(
             ufl.dot(self.u_k, self.v) * ufl.dx
-            - self.dt_c * ufl.dot(ufl.nabla_grad(self.p_k - self.p_k1), self.v) * ufl.dx
+            - (self.dt_c/self.rho_c) * ufl.dot(ufl.nabla_grad(self.p_k - self.p_k1), self.v) * ufl.dx
         )
 
         # Define a function and the dolfinx.fem.form of the stress
         self.panel_stress = dolfinx.fem.Function(self.T)
         self.panel_stress_undeformed = dolfinx.fem.Function(self.T_undeformed)
-        self.stress = sigma(self.u_k, self.p_k, nu + self.nu_T)
+        self.stress = sigma(self.u_k, self.p_k, nu + self.nu_T, self.rho_c)
 
         # Define mesh normals
         self.n = ufl.FacetNormal(domain.fluid.msh)
 
         # Compute traction vector
-        self.traction = ufl.dot(self.stress, self.n)
+        self.traction = ufl.dot(self.stress, -self.n)
 
         # Create a dolfinx.fem.form for projecting stress onto a tensor function space
         # e.g., panel_stress.assign(project(stress, T))
@@ -314,7 +332,7 @@ class Flow:
         )
 
         # self.flux_plane = Expression('x[0] < cutoff ? 0.0 : 1.0', cutoff=domain.x_range[1]-1.0, degree=1)
-        self.flux_dx = ufl.Measure("dx", domain=domain.fluid.msh)  # not needed ?
+        # self.flux_dx = ufl.Measure("dx", domain=domain.fluid.msh)  # not needed ?
 
         # self.vol = dolfinx.fem.petsc.assemble_matrix(self.flux_plane*self.flux_dx)
         # form1 = dolfinx.fem.form(self.flux_plane*self.flux_dx)
@@ -358,6 +376,39 @@ class Flow:
         self.zero_vec = dolfinx.fem.Constant(
             domain.fluid.msh, PETSc.ScalarType((0.0, 0.0, 0.0))
         )
+
+        ds_fluid = ufl.Measure("ds", domain=domain.fluid.msh, subdomain_data=domain.fluid.facet_tags)
+
+        self.lift_form_list = []
+        self.drag_form_list = []
+
+        for panel_id in range(int(params.pv_array.stream_rows * params.pv_array.span_rows)):
+            self.lift_form_list.append(0)
+            self.lift_form_list[-1] += self.traction[1]*ds_fluid(domain.domain_markers[f"left_{panel_id:.0f}"]["idx"])
+            self.lift_form_list[-1] += self.traction[1]*ds_fluid(domain.domain_markers[f"top_{panel_id:.0f}"]["idx"])
+            self.lift_form_list[-1] += self.traction[1]*ds_fluid(domain.domain_markers[f"right_{panel_id:.0f}"]["idx"])
+            self.lift_form_list[-1] += self.traction[1]*ds_fluid(domain.domain_markers[f"bottom_{panel_id:.0f}"]["idx"])
+            if self.ndim == 3:
+                self.lift_form_list[-1] += self.traction[1]*ds_fluid(domain.domain_markers[f"front_{panel_id:.0f}"]["idx"])
+                self.lift_form_list[-1] += self.traction[1]*ds_fluid(domain.domain_markers[f"back_{panel_id:.0f}"]["idx"])
+
+            self.lift_form_list[-1] = dolfinx.fem.form(self.lift_form_list[-1])
+
+            # for loc in ["top_0", "bottom_0", "left_0", "right_0"]:
+            #     idx = domain.domain_markers[loc]["idx"]
+            #     s = dolfinx.fem.assemble_scalar(dolfinx.fem.form(1.0*ds_fluid(idx)))
+            #     print(f"loc = {loc}, idx = {idx}, s = {s}")
+
+            self.drag_form_list.append(0)
+            self.drag_form_list[-1] += self.traction[0]*ds_fluid(domain.domain_markers[f"left_{panel_id:.0f}"]["idx"])
+            self.drag_form_list[-1] += self.traction[0]*ds_fluid(domain.domain_markers[f"top_{panel_id:.0f}"]["idx"])
+            self.drag_form_list[-1] += self.traction[0]*ds_fluid(domain.domain_markers[f"right_{panel_id:.0f}"]["idx"])
+            self.drag_form_list[-1] += self.traction[0]*ds_fluid(domain.domain_markers[f"bottom_{panel_id:.0f}"]["idx"])
+            if self.ndim == 3:
+                self.drag_form_list[-1] += self.traction[0]*ds_fluid(domain.domain_markers[f"front_{panel_id:.0f}"]["idx"])
+                self.drag_form_list[-1] += self.traction[0]*ds_fluid(domain.domain_markers[f"back_{panel_id:.0f}"]["idx"])
+
+            self.drag_form_list[-1] = dolfinx.fem.form(self.drag_form_list[-1])
 
     def _assemble_system(self, params):
         """Pre-assemble all LHS matrices and RHS vectors
@@ -420,7 +471,7 @@ class Flow:
         self.solver_5.getPC().setType("jacobi")
         self.solver_5.setFromOptions()
 
-    def solve(self, domain, params):
+    def solve(self, domain, params, current_time):
         """Solve for a single timestep advancement
 
         Here we perform the three-step solution process (tentative velocity,
@@ -431,34 +482,69 @@ class Flow:
         Args:
             params (:obj:`pvade.Parameters.SimParams`): A SimParams object
         """
+
+
+        if current_time < 2.0:
+            self.u_ref_c.value = params.fluid.u_ref*(1.0-np.cos(np.pi/2.0*current_time))/2.0
+        else:
+            self.u_ref_c.value = params.fluid.u_ref
+
+        self.inflow_profile.interpolate(self.inflow_velocity)
+
         if self.first_call_to_solver:
             if self.rank == 0:
                 print("Starting Fluid Solution")
 
             self.bcu.append(
-                dolfinx.fem.dirichletbc(self.zero_vec, self.all_interior_V_dofs, self.V)
+                dolfinx.fem.dirichletbc(self.mesh_vel_bc, self.all_interior_V_dofs)
             )
 
             self._assemble_system(params)
 
 
-        mesh_vel = dolfinx.fem.Function(self.V)
-        mesh_vel.interpolate(domain.fluid_mesh_displacement)
-        mesh_vel.vector.array[:] /= params.solver.dt
-        mesh_vel.x.scatter_forward()
-
-        vals = mesh_vel.vector.array[:].reshape(-1, 3)
-        vals = np.amax(np.sum(vals**2, axis=1))
-
-        self.mesh_vel_max = np.zeros(1)
-        self.comm.Allreduce(vals, self.mesh_vel_max, op=MPI.MAX)
-        self.mesh_vel_max = self.mesh_vel_max[0]
-        if self.rank == 0:
-            print(f"Max mesh vel = {self.mesh_vel_max}")
 
 
 
-        self.bcu[-1] = dolfinx.fem.dirichletbc(mesh_vel, self.all_interior_V_dofs)
+        # WALID: this has been a focus for testing, trying to "soften" the changes in velocity 
+        # applied as a BC at the internal boundary. I think this is a hack and that the real
+        # solution would be to apply some stabilizing terms like SUPG in the variational form
+        # for navier stokes.
+        self.mesh_vel_old.x.array[:] = self.mesh_vel.x.array
+        self.mesh_vel_bc_old.x.array[:] = self.mesh_vel_bc.x.array
+
+        self.mesh_vel.interpolate(domain.fluid_mesh_displacement)
+        # # self.mesh_vel.interpolate(domain.better_mesh_vel)
+
+        self.mesh_vel.vector.array[:] = self.mesh_vel.vector.array/params.solver.dt
+        self.mesh_vel.x.scatter_forward()
+
+        self.mesh_vel_bc.x.array[:] = self.mesh_vel_bc_old.x.array + 0.2*(self.mesh_vel.x.array - self.mesh_vel_bc_old.x.array)
+
+
+
+
+
+
+        # # self.mesh_vel.x.array[:] = self.mesh_vel_interp.x.array
+        # # print(self.U_ALE)
+
+        # vals = self.mesh_vel.vector.array[:].reshape(-1, 3)
+        # vals = np.amax(np.sum(vals**2, axis=1))
+
+        # self.mesh_vel_max = np.zeros(1)
+        # self.comm.Allreduce(vals, self.mesh_vel_max, op=MPI.MAX)
+        # self.mesh_vel_max = self.mesh_vel_max[0]
+        # if self.rank == 0:
+        #     print(f"Max mesh vel = {self.mesh_vel_max}")
+
+
+        # # self.mesh_vel_composite.x.array[:] = (2.5*self.mesh_vel.x.array - 1.5 *self.mesh_vel_old.x.array)
+        # # self.mesh_vel_composite.x.array[:] = (1.5*self.mesh_vel.x.array - 0.5 *self.mesh_vel_old.x.array)
+        # # self.mesh_vel_composite.x.array[:] = (0.5*self.mesh_vel.x.array + 0.5 *self.mesh_vel_old.x.array)
+        # self.mesh_vel_composite.x.array[:] += 0.1*(self.mesh_vel.x.array - self.mesh_vel_composite.x.array)
+
+
+        # self.bcu[-1] = dolfinx.fem.dirichletbc(self.mesh_vel, self.all_interior_V_dofs)
 
 
 
@@ -474,6 +560,88 @@ class Flow:
         self._solver_step_4(params)
         # Compute the CFL number
         self.compute_cfl()
+
+        self.lift_coeff_list = []
+        self.drag_coeff_list = []
+
+        for panel_id in range(int(params.pv_array.stream_rows * params.pv_array.span_rows)):
+            lift_coeff_local = dolfinx.fem.assemble_scalar(self.lift_form_list[panel_id])
+            lift_coeff_array = np.zeros(self.num_procs, dtype=np.float64)
+            self.comm.Gather(np.array(lift_coeff_local, dtype=np.float64), lift_coeff_array, root=0)
+
+            drag_coeff_local = dolfinx.fem.assemble_scalar(self.drag_form_list[panel_id])
+            drag_coeff_array = np.zeros(self.num_procs, dtype=np.float64)
+            self.comm.Gather(np.array(drag_coeff_local, dtype=np.float64), drag_coeff_array, root=0)
+
+            if self.rank == 0:
+                self.lift_coeff_list.append(np.sum(lift_coeff_array))
+                self.drag_coeff_list.append(np.sum(drag_coeff_array))
+
+        if self.rank == 0:
+            if self.first_call_to_solver:
+                self.lift_and_drag_filename = f"{params.general.output_dir_sol}/lift_and_drag.csv"
+
+                with open(self.lift_and_drag_filename, "w") as fp:
+                    fp.write("#Time")
+
+                    for panel_id in range(int(params.pv_array.stream_rows * params.pv_array.span_rows)):
+                        fp.write(f",Lift_{panel_id:.0f},Drag_{panel_id:.0f},Lift_ND_{panel_id:.0f},Drag_ND_{panel_id:.0f}")
+
+                    fp.write("\n")
+
+            with open(self.lift_and_drag_filename, "a") as fp:
+                fp.write(f"{current_time:.9e}")
+
+                lift_coeff = self.lift_coeff_list[panel_id]
+                drag_coeff = self.drag_coeff_list[panel_id]
+
+                lift_coeff_nd = 2.0*lift_coeff/(params.fluid.rho*params.fluid.u_ref**2*2.0*params.pv_array.panel_span)
+                drag_coeff_nd = 2.0*drag_coeff/(params.fluid.rho*params.fluid.u_ref**2*2.0*params.pv_array.panel_span)
+
+                for panel_id in range(int(params.pv_array.stream_rows * params.pv_array.span_rows)):
+                        fp.write(f",{lift_coeff:.9e},{drag_coeff:.9e},{lift_coeff_nd:.9e},{drag_coeff_nd:.9e}")
+
+                fp.write("\n")
+
+                print(f"Lift = {lift_coeff} ({lift_coeff_nd})")
+                print(f"Drag = {drag_coeff} ({drag_coeff_nd})")
+
+        bb_tree = dolfinx.geometry.BoundingBoxTree(domain.fluid.msh, domain.fluid.msh.topology.dim)
+
+        eps = 1.0e-6
+
+        # Find cells whose bounding-box collide with the the points
+        points = np.array([[0.2-params.pv_array.panel_span-eps, 0.2, 0.0],
+                           [0.2+params.pv_array.panel_span+eps, 0.2, 0.0]])
+
+        cell_candidates = dolfinx.geometry.compute_collisions(bb_tree, points)
+
+        cells = []
+        points_on_proc = []
+
+        # Choose one of the cells that contains the point
+        colliding_cells = dolfinx.geometry.compute_colliding_cells(domain.fluid.msh, cell_candidates, points)
+
+        for i, point in enumerate(points):
+            if len(colliding_cells.links(i))>0:
+                points_on_proc.append(point)
+                cells.append(colliding_cells.links(i)[0])
+
+        points_on_proc = np.array(points_on_proc, dtype=np.float64)
+        p_front_and_back = self.p_k.eval(points_on_proc, cells)
+
+        if len(p_front_and_back) == 0:
+            p_front_and_back = np.array(np.nan)
+
+        p_front_and_back_global = self.comm.gather(p_front_and_back, root=0)
+        if self.rank == 0:
+            temp = [data.flatten() for data in p_front_and_back_global]
+            p_front_and_back_global = np.concatenate(temp).ravel()
+            delta_p = np.nanmax(p_front_and_back_global) - np.nanmin(p_front_and_back_global)
+            # print(p_front_and_back_global)
+            print(f"delta_P = {delta_p}")
+
+        # print(p_front)
 
         # Update new -> old variables
         self.u_k2.x.array[:] = self.u_k1.x.array
