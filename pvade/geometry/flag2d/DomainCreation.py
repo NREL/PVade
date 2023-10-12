@@ -75,7 +75,10 @@ class DomainCreation(TemplateDomainCreation):
         thickness = params.pv_array.panel_thickness # Not a good variable name, but hijacking a definition from the standard input.yaml file
 
         # Flag starts at the center of the flagpole (will be unioned with flagpole) so total length is radius+length
-        flag_body = self.gmsh_model.occ.addRectangle(c_x, c_y-0.5*thickness, 0, radius+length, thickness)
+        if length > 0:
+            flag_body = self.gmsh_model.occ.addRectangle(c_x, c_y-0.5*thickness, 0, radius+length, thickness)
+        else:
+            flag_body = self.gmsh_model.occ.addRectangle(c_x, c_y-0.5*thickness, 0, 1e-3+length, thickness)
 
 
         # self.gmsh_model.occ.cut([(2, domain)], [(2, obstacle)])
@@ -156,4 +159,23 @@ class DomainCreation(TemplateDomainCreation):
                     )
                     self.gmsh_model.setPhysicalName(self.ndim - 1, data["idx"], key)
 
+    def set_length_scales(self, params, domain_markers):
+        """This function call defines the characteristic length for the mesh in locations of interst
+        LcMin,LcMax,DistMin and DistMax are used to create a refined mesh in specific locations
+        which results in a high fidelity mesh without using a uniform element size in the whole mesh.
+        """
+        if self.rank == 0:
+            all_pts = self.gmsh_model.occ.getEntities(0)
+            self.gmsh_model.mesh.setSize(all_pts, params.domain.l_char)
+
+            # Set the left-hand side (inflow) of the computational domain to use elements 2x the size of l_char 
+            eps = 1.0e-6
+            left_edge = gmsh.model.getEntitiesInBoundingBox(params.domain.x_min-eps, params.domain.y_min-eps, 0.0-eps,
+                                                             params.domain.x_min+eps, params.domain.y_max+eps, 0.0+eps)
+            self.gmsh_model.mesh.setSize(left_edge, 2.0*params.domain.l_char)
+
+            # Set the left-hand side (outflow) of the computational domain to use elements 4x the size of l_char 
+            right_edge = gmsh.model.getEntitiesInBoundingBox(params.domain.x_max-eps, params.domain.y_min-eps, 0.0-eps,
+                                                             params.domain.x_max+eps, params.domain.y_max+eps, 0.0+eps)
+            self.gmsh_model.mesh.setSize(right_edge, 4.0*params.domain.l_char)
 
