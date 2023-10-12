@@ -66,6 +66,7 @@ class DataStream:
                 xdmf_file.write_function(flow.panel_stress, 0.0)
                 # xdmf_file.write_function(flow.inflow_profile, 0.0)
                 # xdmf_file.write_function(domain.total_mesh_displacement, 0.0)
+                xdmf_file.write_function(domain.total_mesh_displacement, 0.0)
 
             with XDMFFile(self.comm, self.results_filename_mesh, "w") as xdmf_file:
                 tt = 0.0
@@ -151,6 +152,7 @@ class DataStream:
                 xdmf_file.write_mesh(domain.structure.msh)
                 xdmf_file.write_function(elasticity.u, 0.0)
                 xdmf_file.write_function(elasticity.stress, 0.0)
+                xdmf_file.write_function(elasticity.v_old, 0.0)
 
             with XDMFFile(self.comm, self.results_filename_stress, "w") as xdmf_file:
                 tt = 0.0
@@ -196,6 +198,7 @@ class DataStream:
             xdmf_file.write_function(flow.p_k, tt)
             xdmf_file.write_function(flow.panel_stress, tt)
             # xdmf_file.write_function(domain.total_mesh_displacement, tt)
+            xdmf_file.write_function(domain.total_mesh_displacement, tt)
 
         with XDMFFile(self.comm, self.results_filename_mesh, "a") as xdmf_file:
             xdmf_file.write_function(domain.total_mesh_displacement, tt)
@@ -213,6 +216,7 @@ class DataStream:
         with XDMFFile(self.comm, self.results_filename_def, "a") as xdmf_file:
             xdmf_file.write_function(elasticity.u, tt)
             xdmf_file.write_function(elasticity.stress, tt)
+            xdmf_file.write_function(elasticity.v_old, tt)
 
         with XDMFFile(self.comm, self.results_filename_stress, "a") as xdmf_file:
             xdmf_file.write_function(elasticity.sigma_vm_h, tt)
@@ -227,5 +231,12 @@ class DataStream:
 
     def fluid_struct(self, domain, flow, elasticity, params):
         # print("tst")
+        
+        elasticity.stress_old.x.array[:] = elasticity.stress.x.array
+
         elasticity.stress.interpolate(flow.panel_stress_undeformed)
+
+        beta = 0.5
+        elasticity.stress.x.array[:] = beta*elasticity.stress.x.array + (1.0-beta)*elasticity.stress_predicted.x.array
+
 
