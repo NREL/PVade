@@ -1097,7 +1097,7 @@ class FSIDomain:
             # TODO: use the distance in the diffusion calculation
             # self.a = dolfinx.fem.form(ufl.inner(ufl.grad(u), ufl.grad(v)) * ufl.dx)
             self.a = dolfinx.fem.form(
-                1.0 / self.distance**2 * ufl.inner(ufl.grad(u), ufl.grad(v)) * ufl.dx
+                1.0 / self.distance * ufl.inner(ufl.grad(u), ufl.grad(v)) * ufl.dx
             )
             self.L = dolfinx.fem.form(ufl.inner(zero_vec, v) * ufl.dx)
 

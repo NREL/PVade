@@ -19,7 +19,7 @@ pv_array:
   stream_rows: 1
 solver:
   dt: 0.005
-  t_final: 10.0
+  t_final: 35.0
   solver1_ksp: gmres
   solver2_ksp: gmres
   solver3_ksp: gmres
@@ -28,8 +28,8 @@ solver:
   solver2_pc: hypre
   solver3_pc: hypre
   solver4_pc: hypre
-  save_text_interval: 0.05
-  save_xdmf_interval: 0.05
+  save_text_interval: 0.005
+  save_xdmf_interval: 0.005
 fluid:
   u_ref: 1.0 # 0.2 1.0 2.0
   rho: 1000.0 # 0.2 1.0 2.0

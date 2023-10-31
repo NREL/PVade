@@ -263,7 +263,7 @@ class Elasticity:
         def m(u,u_):
             return self.rho*ufl.inner(u,u_)*ufl.dx
 
-        def k_old(u,u_):
+        def k(u,u_):
             return ufl.inner(sigma(u),ufl.grad(u_))*ufl.dx
 
         def k(u,u_):
@@ -271,7 +271,8 @@ class Elasticity:
             # updated lagrangian form
             F = ufl.grad(u) + ufl.Identity(len(u))
             E = 0.5*(F.T*F - ufl.Identity(len(u)) )
-            S = self.λ *ufl.tr(E)*ufl.Identity(len(u))   + 2*self.μ * (E - ufl.tr(E)*ufl.Identity(len(u))  /3.0)
+            # S = self.λ *ufl.tr(E)*ufl.Identity(len(u))   + 2*self.μ * (E - ufl.tr(E)*ufl.Identity(len(u))  /3.0)
+            S = self.λ *ufl.tr(E)*ufl.Identity(len(u))   + 2*self.μ * (E)
 
             return ufl.inner(F*S,ufl.grad(u_))*ufl.dx
 
@@ -317,12 +318,13 @@ class Elasticity:
         a_new = Elasticity.update_a(self.u, self.u_old, self.v_old, self.a_old, self.dt_st , self.beta , ufl=True)
         v_new = Elasticity.update_v(a_new, self.u_old, self.v_old, self.a_old, self.dt_st , self.gamma ,ufl=True)
 
-
+        F = ufl.grad(self.u) + ufl.Identity(len(self.u))
+        J = ufl.det(F)
         self.res = m(Elasticity.avg(self.a_old, a_new , self.alpha_m), self.u_) + \
               c(Elasticity.avg(self.v_old, v_new , self.alpha_f), self.u_)  + \
               k(Elasticity.avg(self.u_old , self.u, self.alpha_f), self.u_) - \
               self.rho*ufl.inner(self.f,self.u_)*ufl.dx - \
-              ufl.dot(ufl.dot(self.stress_predicted, n), self.u_) * self.ds #- Wext(self.u)
+              ufl.dot(ufl.dot(self.stress_predicted*J*ufl.inv(F.T), n), self.u_) * self.ds #- Wext(self.u)
         
         
 
