@@ -1,12 +1,13 @@
 # PVade
 
-`PVade` is an open source fluid-structure interaction model which can be used to study wind loading and stability on solar-tracking PV arrays. `PVade` can be used as part of a larger modeling chain to provide stressor inputs to mechanical module models to study the physics of failure for degradation mechanisms such as cell cracking, weathering of cracked cells, and glass breakage. For more information, visit the [PVade Documentation](TODO).
+`PVade` is an open source fluid-structure interaction model which can be used to study wind loading and stability on solar-tracking PV arrays. `PVade` can be used as part of a larger modeling chain to provide stressor inputs to mechanical module models to study the physics of failure for degradation mechanisms such as cell cracking, weathering of cracked cells, and glass breakage. For more information, visit the [PVade Documentation](https://pvade.readthedocs.io/en/latest/index.html).
 
 [![test_pvade](https://github.com/NREL/PVade/actions/workflows/test_pvade.yaml/badge.svg)](https://github.com/NREL/PVade/actions/workflows/test_pvade.yaml)
+[![Documentation Status](https://readthedocs.org/projects/pvade/badge/?version=latest)](https://pvade.readthedocs.io/en/latest/?badge=latest)
 
 ## Getting Started
 
-New users are encouraged to review the [Getting Started](https://pvade.readthedocs.io/en/latest/index.html) guide which describes how to create the Conda environment and run the example simulations.
+New users are encouraged to review the [Getting Started](https://pvade.readthedocs.io/en/latest/how_to_guides/getting_started.html) guide which describes how to create the Conda environment and run the example simulations.
 
 ## Developer Quick Start
 
