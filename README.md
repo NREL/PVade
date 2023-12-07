@@ -6,7 +6,7 @@
 
 ## Getting Started
 
-New users are encouraged to review the [Getting Started](TODO) guide which describes how to create the Conda environment and run the example simulations.
+New users are encouraged to review the [Getting Started](https://pvade.readthedocs.io/en/latest/index.html) guide which describes how to create the Conda environment and run the example simulations.
 
 ## Developer Quick Start
 
