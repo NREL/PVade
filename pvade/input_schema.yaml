@@ -90,7 +90,7 @@ properties:
         units: "meter"
       l_char:
         default: 10.0
-        minimum: 0.01
+        minimum: 0.001
         maximum: 100.0
         type: "number"
         description: "The characteristic length to use when building the mesh."
@@ -153,7 +153,7 @@ properties:
         units: "meter"
       panel_span:
         default: 7.0
-        minimum: 1.0
+        minimum: 0
         # maximum: 10.0
         type: "number"
         description: "The length of the panel in the spanwise direction."
@@ -284,6 +284,13 @@ properties:
         type: "number"
         description: "The velocity of the wind as measured at the panel elevation."
         units: "meter/second"
+      rho:
+        default: 1.0
+        # minimum: 0.001
+        # maximum: 1000.0
+        type: "number"
+        description: "The density of the fluid."
+        units: "kg/meter^3"
       wind_direction:
         default: 270.0
         minimum: 0.0
@@ -356,12 +363,42 @@ properties:
         default: false
         type: "boolean"
         description: "Control whether periodic boundary conditions are set on the y_min/y_max walls."
+      warm_up_time:
+        default: 0.0
+        type: "number"
+        desciption: "The amount of time, in seconds, to solve the fluid solution for before un-freezing the structure and beginning to solve the FSI in a coupled manner. Warming up the fluid for e.g., 0.5 seconds helps establish a more appropriate fluid solution around the panels and can improve stability by avoiding a sudden shock associated with a bad initial condition at t=0."
 
   structure:
     additionalProperties: false
     type: "object"
     # required:
     properties:
+      tube_connection:
+        default: false
+        type: "boolean"
+        description: "Controls whether or not a boundary condition is applied along the lines defined by the torque tube running in the spanwise direction which divides the panel into equal upstream and downstream rectangles."
+      motor_connection:
+        default: false
+        type: "boolean"
+        description: "Controls whether or not a boundary condition is applied along the lines defined by the spanwise fixation points which run in the streamwise direction and divide the panel into multiple rectangles in the spanwise direction."
+      bc_list:
+        default: [front,back]
+        # type: "list"
+        description: "location for clamped boundary conditions"
+      dt:
+        default: 0.04
+        minimum: 0
+        maximum: 1.e+2
+        type: "number"
+        description: "time step for structural analysis."
+        units: "s" 
+      rho:
+        default: 1.0
+        # minimum: 0.001
+        # maximum: 1000.0
+        type: "number"
+        description: "The density of the structure."
+        units: "kg/meter^3"
       elasticity_modulus:
         default: 190.0e+9
         minimum: 1.0e+2

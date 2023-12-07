@@ -202,8 +202,8 @@ class DomainCreation(TemplateDomainCreation):
                         )
 
                         # FIXME: don't add the fixation points into the numpy tagging for now
-                        # numpy_pt_list.append([-half_chord, -half_span + fp, -half_thickness,
-                        #                        half_chord, -half_span + fp, -half_thickness])
+                        numpy_pt_list.append([-half_chord, -half_span + fp, -half_thickness,
+                                               half_chord, -half_span + fp, -half_thickness])
 
                         fixed_pt_id = self.gmsh_model.occ.addLine(pt_1, pt_2)
                         fixed_pt_tag = (1, fixed_pt_id)
@@ -633,8 +633,8 @@ class DomainCreation(TemplateDomainCreation):
                         )
 
                         # FIXME: don't add the fixation points into the numpy tagging for now
-                        # numpy_pt_list.append([-half_chord, -half_span + fp, -half_thickness,
-                        #                        half_chord, -half_span + fp, -half_thickness])
+                        numpy_pt_list.append([-half_chord, -half_span + fp, -half_thickness,
+                                               half_chord, -half_span + fp, -half_thickness])
 
                         fixed_pt_id = self.gmsh_model.occ.addLine(pt_1, pt_2)
                         fixed_pt_tag = (1, fixed_pt_id)
@@ -982,6 +982,9 @@ class DomainCreation(TemplateDomainCreation):
                 domain_markers[f"back_{panel_id}"]["gmsh_tags"][0]
             )
 
+
+        min_dist = []
+
         # Define a distance field from the immersed panels
         distance = self.gmsh_model.mesh.field.add("Distance")
         self.gmsh_model.mesh.field.setNumbers(
@@ -994,46 +997,52 @@ class DomainCreation(TemplateDomainCreation):
         factor = params.domain.l_char
 
         resolution = factor * 10 * params.pv_array.panel_thickness / 2
-        half_panel = params.pv_array.panel_chord * np.cos(params.pv_array.tracker_angle)
+        tracker_angle_rad = np.radians(params.pv_array.tracker_angle)
+        half_panel = params.pv_array.panel_chord * np.cos(tracker_angle_rad)
         self.gmsh_model.mesh.field.setNumber(threshold, "LcMin", resolution * 0.5)
-        self.gmsh_model.mesh.field.setNumber(threshold, "LcMax", 2 * resolution)
+        self.gmsh_model.mesh.field.setNumber(threshold, "LcMax", 3 * resolution)
         self.gmsh_model.mesh.field.setNumber(
-            threshold, "DistMin", params.pv_array.stream_spacing
+            threshold, "DistMin", 0.3*params.pv_array.stream_spacing
         )
         self.gmsh_model.mesh.field.setNumber(
             threshold, "DistMax", params.pv_array.stream_spacing + half_panel
         )
+        min_dist.append(threshold)
 
-        # Define a distance field from the immersed panels
-        zmin_dist = self.gmsh_model.mesh.field.add("Distance")
-        self.gmsh_model.mesh.field.setNumbers(
-            zmin_dist, "FacesList", domain_markers["z_min"]["gmsh_tags"]
-        )
+        if params.general.fluid_analysis == True:
+            # Define a distance field from the immersed panels
+            zmin_dist = self.gmsh_model.mesh.field.add("Distance")
+            self.gmsh_model.mesh.field.setNumbers(
+                zmin_dist, "FacesList", domain_markers["z_min"]["gmsh_tags"]
+            )
 
-        zmin_thre = self.gmsh_model.mesh.field.add("Threshold")
-        self.gmsh_model.mesh.field.setNumber(zmin_thre, "IField", zmin_dist)
-        self.gmsh_model.mesh.field.setNumber(zmin_thre, "LcMin", 2 * resolution)
-        self.gmsh_model.mesh.field.setNumber(zmin_thre, "LcMax", 5 * resolution)
-        self.gmsh_model.mesh.field.setNumber(zmin_thre, "DistMin", 0.1)
-        self.gmsh_model.mesh.field.setNumber(zmin_thre, "DistMax", 0.5)
+            zmin_thre = self.gmsh_model.mesh.field.add("Threshold")
+            self.gmsh_model.mesh.field.setNumber(zmin_thre, "IField", zmin_dist)
+            self.gmsh_model.mesh.field.setNumber(zmin_thre, "LcMin", 2 * resolution)
+            self.gmsh_model.mesh.field.setNumber(zmin_thre, "LcMax", 5 * resolution)
+            self.gmsh_model.mesh.field.setNumber(zmin_thre, "DistMin", 0.1)
+            self.gmsh_model.mesh.field.setNumber(zmin_thre, "DistMax", 0.5)
 
-        xy_dist = self.gmsh_model.mesh.field.add("Distance")
-        self.gmsh_model.mesh.field.setNumbers(
-            xy_dist, "FacesList", domain_markers["x_min"]["gmsh_tags"]
-        )
-        self.gmsh_model.mesh.field.setNumbers(
-            xy_dist, "FacesList", domain_markers["x_max"]["gmsh_tags"]
-        )
+            xy_dist = self.gmsh_model.mesh.field.add("Distance")
+            self.gmsh_model.mesh.field.setNumbers(
+                xy_dist, "FacesList", domain_markers["x_min"]["gmsh_tags"]
+            )
+            self.gmsh_model.mesh.field.setNumbers(
+                xy_dist, "FacesList", domain_markers["x_max"]["gmsh_tags"]
+            )
 
-        xy_thre = self.gmsh_model.mesh.field.add("Threshold")
-        self.gmsh_model.mesh.field.setNumber(xy_thre, "IField", xy_dist)
-        self.gmsh_model.mesh.field.setNumber(xy_thre, "LcMin", 2 * resolution)
-        self.gmsh_model.mesh.field.setNumber(xy_thre, "LcMax", 5 * resolution)
-        self.gmsh_model.mesh.field.setNumber(xy_thre, "DistMin", 0.1)
-        self.gmsh_model.mesh.field.setNumber(xy_thre, "DistMax", 0.5)
+            xy_thre = self.gmsh_model.mesh.field.add("Threshold")
+            self.gmsh_model.mesh.field.setNumber(xy_thre, "IField", xy_dist)
+            self.gmsh_model.mesh.field.setNumber(xy_thre, "LcMin", 2 * resolution)
+            self.gmsh_model.mesh.field.setNumber(xy_thre, "LcMax", 5 * resolution)
+            self.gmsh_model.mesh.field.setNumber(xy_thre, "DistMin", 0.1)
+            self.gmsh_model.mesh.field.setNumber(xy_thre, "DistMax", 0.5)
+            min_dist.append(xy_thre)
+            min_dist.append(zmin_thre)
+
 
         minimum = self.gmsh_model.mesh.field.add("Min")
         self.gmsh_model.mesh.field.setNumbers(
-            minimum, "FieldsList", [threshold, xy_thre, zmin_thre]
+            minimum, "FieldsList", min_dist
         )
         self.gmsh_model.mesh.field.setAsBackgroundMesh(minimum)

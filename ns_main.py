@@ -8,6 +8,7 @@ from dolfinx.common import TimingType, list_timings
 import cProfile
 import sys
 import tqdm.autonotebook
+import numpy as np
 
 
 from pvade.structure.ElasticityManager import Elasticity
@@ -44,7 +45,7 @@ def main():
     # sys.exit()
 
     flow = Flow(domain, fluid_analysis)
-    elasticity = Elasticity(domain, structural_analysis)
+    elasticity = Elasticity(domain, structural_analysis,params)
 
     if fluid_analysis == True:
         flow = Flow(domain, fluid_analysis)
@@ -59,7 +60,8 @@ def main():
         elasticity.build_forms(domain, params)
 
     if structural_analysis == True and fluid_analysis == True:
-        domain.move_mesh(elasticity, params, 0.0)
+        # pass
+        domain.move_mesh(elasticity, params)
 
     dataIO = DataStream(domain, flow, elasticity, params)
 
@@ -68,34 +70,57 @@ def main():
             desc="Solving PDE", total=params.solver.t_steps
         )
 
+    solve_structure_interval_n = int(params.structure.dt/params.solver.dt)
+        
     for k in range(params.solver.t_steps):
+        current_time = (k + 1) * params.solver.dt
+
         if domain.rank == 0:
             progress.update(1)
         # Solve the fluid problem at each timestep
-        if fluid_analysis == True:
-            flow.solve(params)
-        if structural_analysis == True:
+    
+        # print("time step is : ", current_time)
+        # print("reaminder from modulo ",current_time % params.structure.dt )
+        if structural_analysis == True and (k+1) % solve_structure_interval_n == 0 and current_time > params.fluid.warm_up_time: # :# TODO: add condition to work with fluid time step
             if fluid_analysis == True:
-                dataIO.fluid_struct(domain, flow, elasticity, params)
+                elasticity.stress_predicted.x.array[:] = 2.0*elasticity.stress.x.array - elasticity.stress_old.x.array
+
             elasticity.solve(params, dataIO)
+
+            # if fluid_analysis == True:
+            #     dataIO.fluid_struct(domain, flow, elasticity, params)
             # adjust pressure to avoid dissipation of pressure profile
             # flow.adjust_dpdx_for_constant_flux(params)
             if fluid_analysis == True:
-                domain.move_mesh(elasticity, params, k * params.solver.dt)
+                # pass
+                domain.move_mesh(elasticity, params)
+
+        if fluid_analysis == True:
+            flow.solve(domain, params, current_time)
+
+        if structural_analysis == True and (k+1) % solve_structure_interval_n == 0 and current_time > params.fluid.warm_up_time: # :# TODO: add condition to work with fluid time step
+            if fluid_analysis == True:
+                dataIO.fluid_struct(domain, flow, elasticity, params)
 
         if (k + 1) % params.solver.save_xdmf_interval_n == 0:
             if fluid_analysis == True:
                 if domain.rank == 0:
                     print(
-                        f"Time {params.solver.dt*(k+1):.2f} of {params.solver.t_final:.2f}, CFL = {flow.cfl_max}"
+                        f"Time {current_time:.2f} of {params.solver.t_final:.2f}, CFL = {flow.cfl_max}"
                     )
-                dataIO.save_XDMF_files(flow, domain, (k + 1) * params.solver.dt)
+                dataIO.save_XDMF_files(flow, domain, current_time)
 
-            if structural_analysis == True:
+            if structural_analysis == True and (k+1) % solve_structure_interval_n == 0 and current_time > params.fluid.warm_up_time:
+
+                local_def_max = np.amax(np.sum(elasticity.u.vector.array.reshape(-1, 3)**2, axis=1))
+                global_def_max_list = np.zeros(params.num_procs, dtype=np.float64)
+                params.comm.Gather(local_def_max, global_def_max_list, root=0)
+
                 if domain.rank == 0:
+                    print("Structural time is : ", current_time)
                     print("deformation norm =", {elasticity.unorm})
-                    print("max deformation =", {max(elasticity.uh.x.array[:])})
-                dataIO.save_XDMF_files_str(elasticity, (k + 1) * params.solver.dt)
+                    print("max deformation =", {np.sqrt(np.amax(global_def_max_list))})
+                dataIO.save_XDMF_files_str(domain, elasticity, current_time)
 
     list_timings(params.comm, [TimingType.wall])
 

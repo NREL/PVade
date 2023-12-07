@@ -54,6 +54,8 @@ class DataStream:
             self.ndim = domain.fluid.msh.topology.dim
 
             self.results_filename = f"{params.general.output_dir_sol}/solution.xdmf"
+            self.results_filename_mesh = f"{params.general.output_dir_sol}/solution_mesh.xdmf"
+            self.results_filename_vtk = f"{params.general.output_dir_sol}/solution.pvd"
             self.log_filename = f"{params.general.output_dir_sol}/log.txt"
 
             with XDMFFile(self.comm, self.results_filename, "w") as xdmf_file:
@@ -61,8 +63,15 @@ class DataStream:
                 xdmf_file.write_mesh(domain.fluid.msh)
                 xdmf_file.write_function(flow.u_k, 0.0)
                 xdmf_file.write_function(flow.p_k, 0.0)
-                xdmf_file.write_function(flow.inflow_profile, 0.0)
+                xdmf_file.write_function(flow.panel_stress, 0.0)
+                # xdmf_file.write_function(flow.inflow_profile, 0.0)
+                # xdmf_file.write_function(domain.total_mesh_displacement, 0.0)
                 xdmf_file.write_function(domain.total_mesh_displacement, 0.0)
+
+            with XDMFFile(self.comm, self.results_filename_mesh, "w") as xdmf_file:
+                tt = 0.0
+                xdmf_file.write_mesh(domain.fluid.msh)
+                xdmf_file.write_function(domain.total_mesh_displacement, tt)
 
             if self.rank == 0:
                 with open(self.log_filename, "w") as fp:
@@ -131,6 +140,9 @@ class DataStream:
             self.results_filename_def = (
                 f"{params.general.output_dir_sol}/solution_def.xdmf"
             )
+            self.results_filename_def_vtk = (
+                f"{params.general.output_dir_sol}/solution_def.pvd"
+            )
             self.results_filename_stress = (
                 f"{params.general.output_dir_sol}/solution_stress.xdmf"
             )
@@ -138,7 +150,9 @@ class DataStream:
             with XDMFFile(self.comm, self.results_filename_def, "w") as xdmf_file:
                 tt = 0.0
                 xdmf_file.write_mesh(domain.structure.msh)
-                xdmf_file.write_function(elasticity.uh, 0.0)
+                xdmf_file.write_function(elasticity.u, 0.0)
+                xdmf_file.write_function(elasticity.stress, 0.0)
+                xdmf_file.write_function(elasticity.v_old, 0.0)
 
             with XDMFFile(self.comm, self.results_filename_stress, "w") as xdmf_file:
                 tt = 0.0
@@ -182,9 +196,14 @@ class DataStream:
         with XDMFFile(self.comm, self.results_filename, "a") as xdmf_file:
             xdmf_file.write_function(flow.u_k, tt)
             xdmf_file.write_function(flow.p_k, tt)
+            xdmf_file.write_function(flow.panel_stress, tt)
+            # xdmf_file.write_function(domain.total_mesh_displacement, tt)
             xdmf_file.write_function(domain.total_mesh_displacement, tt)
 
-    def save_XDMF_files_str(self, elasticity, tt):
+        with XDMFFile(self.comm, self.results_filename_mesh, "a") as xdmf_file:
+            xdmf_file.write_function(domain.total_mesh_displacement, tt)
+
+    def save_XDMF_files_str(self, domain, elasticity, tt):
         """Write additional timestep to XDMF file
 
         This function appends the state of the flow at time `tt` to an existing XDMF file.
@@ -195,7 +214,9 @@ class DataStream:
 
         """
         with XDMFFile(self.comm, self.results_filename_def, "a") as xdmf_file:
-            xdmf_file.write_function(elasticity.uh, tt)
+            xdmf_file.write_function(elasticity.u, tt)
+            xdmf_file.write_function(elasticity.stress, tt)
+            xdmf_file.write_function(elasticity.v_old, tt)
 
         with XDMFFile(self.comm, self.results_filename_stress, "a") as xdmf_file:
             xdmf_file.write_function(elasticity.sigma_vm_h, tt)
@@ -210,4 +231,12 @@ class DataStream:
 
     def fluid_struct(self, domain, flow, elasticity, params):
         # print("tst")
-        elasticity.stress.interpolate(flow.panel_stress)
+        
+        elasticity.stress_old.x.array[:] = elasticity.stress.x.array
+
+        elasticity.stress.interpolate(flow.panel_stress_undeformed)
+
+        beta = 0.5
+        elasticity.stress.x.array[:] = beta*elasticity.stress.x.array + (1.0-beta)*elasticity.stress_predicted.x.array
+
+

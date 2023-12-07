@@ -273,44 +273,44 @@ def build_structure_boundary_conditions(domain, params, functionspace):
         domain.structure.msh, PETSc.ScalarType((0.0, 0.0, 0.0))
     )
     bc = []
-    for num_panel in range(params.pv_array.stream_rows * params.pv_array.span_rows):
-        for location in f"left_{num_panel}", f"right_{num_panel}":  # ,\
+
+    total_num_panels = params.pv_array.stream_rows * params.pv_array.span_rows
+
+    for num_panel in range(total_num_panels):
+        for location in params.structure.bc_list:         
+            location_panel = f"{location}_{num_panel}"
             # f"front_{num_panel}" , f"back_{num_panel}":
             # for location in  [f"left_{num_panel}"]:# , f"right_{num_panel}":
             # for location in  f"left_{num_panel}":
             # for location in f"left_{num_panel}":
             # location = f"top_{num_panel}"
-            dofs = get_facet_dofs_by_gmsh_tag(domain, functionspace, location)
+            dofs = get_facet_dofs_by_gmsh_tag(domain, functionspace, location_panel)
             bc.append(dolfinx.fem.dirichletbc(zero_vec, dofs, functionspace))
 
-    # x = functionspace.tabulate_dof_coordinates()
-    # val = np.amax(x[:,0])
-    # print(np.amax(x[:,0]))
+    def connection_point_up(x, nodes_to_pin_between):
+        """
+        This pins points along a line between the values in `nodes_to_pin_between`
 
-    # length_in_z = np.sin(params.pv_array.tracker_angle) * params.pv_array.panel_chord
-    # min_point = params.pv_array.elevation - length_in_z/2
+        This function returns a boolean array which is true for nodes 
+        (0D elements) that fall along a line between the start and stop points expressed
+        in `nodes_to_pin_between`. Each row of `nodes_to_pin_between` is a single line
+        constraint, with the first three columns expressing the 3D starting point and the 
+        second three columns expressing the ending point. `nodes_to_pin_between` has
+        dimension `number_of_fixation_lines x 6`. The decision about whether or not a node
+        is colinear with the line defined by the starting and stopping points is made by 
+        calculating a cross product. If A is the starting point, B is the stopping point, 
+        and C is an arbitrary point we are testing for collinearity, then
 
-    # point_of_attachement = ( min_point + 0.5*length_in_z)
+            | AC x AB | = 0
 
-    # print(domain.numpy_pt_total_array)
+        or the magnitude of segement AC (test vector) crossed with the segment AB
+        (truth vector) being near zero means the three points are collinear.
 
-    def old_connection_point_up(x):
-        eps = 1e-6
-        # spot = params.pv_array.elevation-0.5*params.pv_array.panel_thickness
-        spot = (
-            params.pv_array.elevation
-            - 0.5
-            * params.pv_array.panel_thickness
-            * np.cos(np.radians(params.pv_array.tracker_angle))
-        )
-        print(spot)
-        test = np.logical_and(x[2] > spot - eps, x[2] < spot + eps)
-        return test
+        """
 
-    def connection_point_up(x):
         eps = 1e-3
 
-        for k, pts in enumerate(domain.numpy_pt_total_array):
+        for k, pts in enumerate(nodes_to_pin_between):
             # print(pts)
 
             test_vecs = x[:, :].T - pts[0:3]
@@ -329,12 +329,61 @@ def build_structure_boundary_conditions(domain, params, functionspace):
 
         return total_pinned_pts
 
-    facet_uppoint = dolfinx.mesh.locate_entities(
-        domain.structure.msh, 1, connection_point_up
-    )
-    dofs_disp = dolfinx.fem.locate_dofs_topological(functionspace, 1, [facet_uppoint])
-    # print(np.shape(dofs_disp), dofs_disp)
+    def connection_point_up_helper(nodes_to_pin_between):
+        """
+        This returns a function with a single input, x, as expected by `dolfinx.mesh.locate_entities`
 
-    # bc.append(dolfinx.fem.dirichletbc(zero_vec, dofs_disp, functionspace))
+        This is a wrapper around the function `connection_point_up`. It allows us to pass extra arguments
+        to that function (besides just `x`) to define how the calculation should be carried out. The return
+        value of this helper function is a function handle with a single input, `x`, which is what
+        `dolfinx.mesh.locate_entities` expects.
+
+        That is:
+
+            fn_handle(x) = fn(x, extra_arg_1, extra_arg_2)
+
+        where the extra arguments can be passed in here.
+
+        """
+        fn_handle = lambda x: connection_point_up(x, nodes_to_pin_between)
+
+        return fn_handle
+
+    # Start pinning along the lines expressed byt numpy_pt_total_array
+    # First, determine the total number of rows (number of lines to pin)
+    num_nodes = np.shape(domain.numpy_pt_total_array)[0]
+
+    # Determine how many pinning lines exist per each panel (e.g., 24 lines distributed on 8 panels means 3 lines per panel)
+    nodes_per_panel = int(num_nodes/total_num_panels)
+
+    # The torque tube entry (oriented spanwise along the middle, divides panel into upstream and downstream rectangular halves)
+    # is always the first entry, e.g., [0, ..., ..., 3, ..., ..., 6, ..., ...], [0, 3, 6] are the torque tubes
+    tube_nodes_idx = np.arange(0, num_nodes, nodes_per_panel, dtype=np.int64)
+
+    if params.structure.tube_connection == True:
+
+        # If making torque tube connections, pass only those pinning lines to the BC identification function
+        tube_nodes = domain.numpy_pt_total_array[tube_nodes_idx, :]
+
+        facet_uppoint = dolfinx.mesh.locate_entities(
+            domain.structure.msh, 1, connection_point_up_helper(tube_nodes)
+        )
+        dofs_disp = dolfinx.fem.locate_dofs_topological(functionspace, 1, [facet_uppoint])
+
+        bc.append(dolfinx.fem.dirichletbc(zero_vec, dofs_disp, functionspace))
+
+    if params.structure.motor_connection == True:
+
+        # If making motor mount connections, pass only those pinning lines to the BC identification function
+        # this is done by making a copy of the numpy_pt_total_array with the torque tube lines *deleted*
+        # not done in place, so numpy_pt_total_array remains unaltered.
+        motor_nodes = np.delete(domain.numpy_pt_total_array, tube_nodes_idx, axis=0)
+
+        facet_uppoint = dolfinx.mesh.locate_entities(
+            domain.structure.msh, 1, connection_point_up_helper(motor_nodes)
+        )
+        dofs_disp = dolfinx.fem.locate_dofs_topological(functionspace, 1, [facet_uppoint])
+
+        bc.append(dolfinx.fem.dirichletbc(zero_vec, dofs_disp, functionspace))
 
     return bc
