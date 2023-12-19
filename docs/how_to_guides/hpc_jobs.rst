@@ -78,7 +78,7 @@ An Example for a job script is presented below
    #SBATCH --ntasks-per-node=104
    #SBATCH --partition=shared
    #SBATCH --time=1:00:00
-   #SBATCH --account=hpcapps 
+   #SBATCH --account=$account_name 
    #SBATCH --job-name=example-pvade
    #SBATCH --nodes=1
    #SBATCH --error=pvade_example.err
@@ -91,7 +91,7 @@ An Example for a job script is presented below
    mamba activate my_env_name
    export OMP_NUM_THREADS=1
    
-   mpirun -np $ncores python -u /kfs2/projects/hpcapps/warsalan/fenicsx_bench/src/poissoneq.py 64  cg none 1
+   mpirun -np $ncores python -u $PVade/example/poissoneq.py 64  cg none 1
    
    
 2. Module access 
@@ -115,7 +115,7 @@ a Job script example is shown below:
     #SBATCH --ntasks-per-node=104
     #SBATCH --partition=shared
     #SBATCH --time=1:00:00
-    #SBATCH --account=hpcapps
+    #SBATCH --account=$account_name
     #SBATCH --job-name=example-pvade
     #SBATCH --nodes=1
     #SBATCH --error=pvade_example.err
@@ -129,7 +129,7 @@ a Job script example is shown below:
     ml fenicsx/0.6.0-gcc
     export OMP_NUM_THREADS=1
     
-    srun -n 104 python -u /kfs2/projects/hpcapps/warsalan/fenicsx_bench/src/poissoneq.py 64  cg none 1
+    srun -n 104 python -u $PVade/example/poissoneq.py 64  cg none 1
 
 
 .. note::
