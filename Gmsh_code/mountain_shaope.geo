@@ -3,8 +3,8 @@ SetFactory("OpenCASCADE");
 
 /* Define parameters */
 
-nx = 10;
-ny = 10;
+nx = 20;
+ny = 20;
 
 x_min = 10;
 x_max = 40;
@@ -14,21 +14,25 @@ y_center = 30;
 /* create points on mountain */
 
 p_left = newp;
-Point(p_left) = {x_min, y_center, 0, 1};
+Point(p_left) = {x_min, y_center, 0};
 
-p_center = p_left+1;
+p_center = newp;
 
 For I In {1:nx-1}
     For J In {0:ny}
         x = x_min+(x_max-x_min)/nx*I;
         y = 30-(20^2-20^2/15^2*(x-25)^2)^0.5+2*(20^2-20^2/15^2*(x-25)^2)^0.5/ny*J;
-        z = 20*(1-(x-25)^2/15^2-(y-30)^2/20^2)^0.5;
-        Point(p_center+(ny+1)*(I-1)+J) = {x, y, z, 1};
+        If (1-(x-25)^2/15^2-(y-30)^2/20^2<0)
+            z = 0;
+        Else
+            z = 20*(1-(x-25)^2/15^2-(y-30)^2/20^2)^0.5;
+        EndIf
+        Point(p_center+(ny+1)*(I-1)+J) = {x, y, z};
     EndFor
 EndFor
 
-p_right = p_center+(ny+1)*(nx-1-1)+ny+1;
-Point(p_right) = {x_max, y_center, 0, 1};
+p_right = newp;
+Point(p_right) = {x_max, y_center, 0};
 
 /* Create surface of mountain */
 
