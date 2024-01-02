@@ -2,7 +2,7 @@ name: test_pvade
 
 on:
   push:
-    branches: [ dev ]
+    branches: [ main ]
     # branches: [ main, dev ]
   pull_request:
     branches: [ main, dev ]
