@@ -1,8 +1,11 @@
-How To Guides
+User Manual
 =============
 
 .. toctree::
    :maxdepth: 1
 
-   getting_started
+   installing_pvade
+   pvade_input_file
+   running_pvade
    hpc_jobs
+   examples/index

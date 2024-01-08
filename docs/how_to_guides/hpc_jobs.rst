@@ -2,10 +2,10 @@ HPC Jobs
 ========
 
 
-PVade on Kestrel 
-----------------
+Job submission on Kestrel 
+------------------------
 
-In order to use PVade on Kestrel, we can use one of the two options.
+As Mentioned in ,In order to use PVade on Kestrel, we can use one of the two options.
 
 * A conda/mamba installation 
 * Loading FEniCSx as a module  
@@ -13,55 +13,6 @@ In order to use PVade on Kestrel, we can use one of the two options.
 
 
 1. conda/mamba installation
-
-In order to install PVade, it is recommend to use compute node. 
-You can allocate one use it interactively through: 
-
-.. code:: bash
-
-   ~$ salloc --nodes=1 --time=4:00:00 --partition=$partion_name --account $account_name --mem=0 --exclusive
-
-Make sure you specify the partition name *$partion_name* and the account name *$account_name*. 
-Next, we clone the repository from https://github.com/NREL/PVade.git.
-
-.. code:: bash
-
-   ~$ git clone https://github.com/NREL/PVade.git
-
-.. note:: 
-   the same can be achieved by downloading the latest release from https://github.com/NREL/PVade/releases
-
-
-We will refer to *$PVade* as the location of the cloned repo. 
-We change the directory to *$PVade* and load mamba. 
-
-
-.. code:: bash
-
-   ~$ cd $PVade/
-   ~$ module unload PrgEnv-cray/8.3.3
-   ~$ module load mamba 
-
-
-.. note::
-
-   The same can be achived by using Conda.
-   Mamba was shown to be faster.
-
-We then create an environment *my_env_name* and activate it.
-
-.. code::
-
-   ~$ mamba env create -n PVade_public -f environment.yaml
-   ~$ mamba activate my_env_name
-
-To test the installation we can run an example using the command 
-
-.. code::
-
-   mpirun -np #ncores python -u $PVade/example/poissoneq.py 64  cg none 1
-
-The example solve a Poisson's equation in 3 dimensions using 64 elements and 1 order Lagrange shape functions with cg as the ksp solver and no preconditioners. 
 
 .. note::
 
@@ -96,14 +47,6 @@ An Example for a job script is presented below
    
 2. Module access 
 
-On Kestrel, PVade is installed and available as a module. 
-PVade can be accessed by loading:
-
-.. code::
-
-   module load fenicsx
-
-This instance of PVade leverages a FEniCSx installation that leverages GNU Programming environment and cray-mpich for its mpi communication.
 
 a Job script example is shown below: 
 
@@ -139,7 +82,8 @@ a Job script example is shown below:
      * *srun* is the luncher to be used 
 
  
-
+PVade Performance on Kestrel 
+----------------------------
 
 
 
