@@ -46,6 +46,8 @@ def test_flow_3dpanels():
     # # # Build the fluid forms
     flow.build_forms(domain, params)
 
+    os.makedirs(params.general.output_dir_sol, exist_ok=True)
+
     ## Initialize the function spaces for the flow
     # flow = Flow(domain)
     ## # # Specify the boundary conditions
@@ -55,7 +57,9 @@ def test_flow_3dpanels():
     ## dataIO = DataStream(domain, flow, None, params)
 
     for t_step in range(solve_iter):
-        flow.solve(domain, params)
+        current_time = (t_step + 1) * params.solver.dt
+
+        flow.solve(domain, params, current_time)
 
         max_velocity = np.amax(flow.u_k.x.array)
         max_pressure = np.amax(flow.p_k.x.array)

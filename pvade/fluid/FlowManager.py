@@ -159,7 +159,7 @@ class Flow:
         self.p_k = dolfinx.fem.Function(self.Q, name="pressure")
         self.p_k1 = dolfinx.fem.Function(self.Q)
 
-        initialize_flow = False
+        initialize_flow = True
 
         if initialize_flow:
             # self.inflow_profile = dolfinx.fem.Function(self.V)
@@ -484,12 +484,12 @@ class Flow:
         """
 
 
-        if current_time < 2.0:
-            self.u_ref_c.value = params.fluid.u_ref*(1.0-np.cos(np.pi/2.0*current_time))/2.0
-        else:
-            self.u_ref_c.value = params.fluid.u_ref
+        # if current_time < 2.0:
+        #     self.u_ref_c.value = params.fluid.u_ref*(1.0-np.cos(np.pi/2.0*current_time))/2.0
+        # else:
+        #     self.u_ref_c.value = params.fluid.u_ref
 
-        self.inflow_profile.interpolate(self.inflow_velocity)
+        # self.inflow_profile.interpolate(self.inflow_velocity)
 
         if self.first_call_to_solver:
             if self.rank == 0:
