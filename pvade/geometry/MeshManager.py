@@ -623,6 +623,11 @@ class FSIDomain:
                 class FSISubDomain:
                     pass
 
+                if not hasattr(self, "ndim"):
+                    self.ndim = submesh.topology.dim
+                else:
+                    assert self.ndim == submesh.topology.dim
+
                 submesh.topology.create_connectivity(self.ndim, self.ndim-1)
 
                 sub_domain = FSISubDomain()
@@ -691,24 +696,31 @@ class FSIDomain:
             vec_el_1 = ufl.VectorElement("Lagrange", self.fluid.msh.ufl_cell(), 1)
             self.V1 = dolfinx.fem.FunctionSpace(self.fluid.msh, vec_el_1)
 
+            self.V1_undeformed = dolfinx.fem.FunctionSpace(self.fluid_undeformed.msh, vec_el_1)
+
             self.fluid_mesh_displacement = dolfinx.fem.Function(
                 self.V1, name="fluid_mesh_displacement"
             )
             self.fluid_mesh_displacement_bc = dolfinx.fem.Function(
                 self.V1, name="fluid_mesh_displacement_bc"
             )
+            self.fluid_mesh_displacement_bc_undeformed = dolfinx.fem.Function(
+                self.V1_undeformed, name="fluid_mesh_displacement_bc"
+            )
             self.total_mesh_displacement = dolfinx.fem.Function(
                 self.V1, name="total_mesh_disp"
             )
-            self.total_mesh_displacement_k1 = dolfinx.fem.Function(
-                self.V1, name="total_mesh_disp_k1"
-            )
-            self.total_mesh_displacement_k2 = dolfinx.fem.Function(
-                self.V1, name="total_mesh_disp_k2"
-            )
-            self.better_mesh_vel = dolfinx.fem.Function(
-                self.V1, name="better_mesh_vel"
-            )
+
+            # self.total_mesh_displacement_k1 = dolfinx.fem.Function(
+            #     self.V1, name="total_mesh_disp_k1"
+            # )
+            # self.total_mesh_displacement_k2 = dolfinx.fem.Function(
+            #     self.V1, name="total_mesh_disp_k2"
+            # )
+            # self.better_mesh_vel = dolfinx.fem.Function(
+            #     self.V1, name="better_mesh_vel"
+            # )
+
 
     def test_mesh_functionspace(self):
         P2 = ufl.VectorElement("Lagrange", self.msh.ufl_cell(), 2)
@@ -1158,8 +1170,8 @@ class FSIDomain:
         # self._force_interface_node_matching()
 
         # Save this mesh motion as the total mesh displacement
-        self.total_mesh_displacement_k2.x.array[:] = self.total_mesh_displacement_k1.x.array
-        self.total_mesh_displacement_k1.x.array[:] = self.total_mesh_displacement.x.array
+        # self.total_mesh_displacement_k2.x.array[:] = self.total_mesh_displacement_k1.x.array
+        # self.total_mesh_displacement_k1.x.array[:] = self.total_mesh_displacement.x.array
 
         self.total_mesh_displacement.vector.array[
             :
@@ -1167,7 +1179,7 @@ class FSIDomain:
 
         self.total_mesh_displacement.x.scatter_forward()
 
-        self.better_mesh_vel.x.array[:] = (0.5*self.total_mesh_displacement_k2.x.array - 2.0*self.total_mesh_displacement_k1.x.array + 1.5*self.total_mesh_displacement.x.array)/params.solver.dt
-        self.better_mesh_vel.x.scatter_forward()
+        # self.better_mesh_vel.x.array[:] = (0.5*self.total_mesh_displacement_k2.x.array - 2.0*self.total_mesh_displacement_k1.x.array + 1.5*self.total_mesh_displacement.x.array)/params.solver.dt
+        # self.better_mesh_vel.x.scatter_forward()
 
         self.first_move_mesh = False
