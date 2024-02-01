@@ -1,20 +1,47 @@
-title: PV Wind Schema
-description: Definitions for a PV wind simulation/optimization
-type: object
-additionalProperties: False
+title: "PVade Schema"
+description: "Definitions for a PVade simulation"
+additionalProperties: false
+type: "object"
 properties:
-  problem: 
-    type: string
   general:
-    type: object
+    additionalProperties: false
+    type: "object"
     # required:
     properties:
+      test:
+        default: false
+        type: "boolean"
+        description: "test if interpolation is done correctly"
       output_dir:
-        default: output/
-        type: string
-        description: The folder that will contain the output files for this run, formatted as a single string.
+        default: "output/"
+        type: "string"
+        description: "The folder that will contain the output files for this run, formatted as a single string."
+      geometry_module:
+        default: "panels3d"
+        type: "string"
+        description: "The name of the directory in pvade/geometry/ that contains a DomainCreation.py file for generating the CAD description, prescribing mesh refinement, etc."
+      input_mesh_dir:
+        default: null
+        type:
+          - "string"
+          - "null"
+        description: "The path to the directory containing fluid_mesh.xdmf and structure_mesh.xdmf to be used in the simulation, e.g., /inputs/case_1/"
+      mesh_only:
+        default: false
+        type: "boolean"
+        description: "If true, exit the PVade run immediately after generating the mesh without solving"
+      structural_analysis:
+        default: False 
+        type: "boolean"
+        description: "If true, conduct a structure analysis"
+      fluid_analysis:
+        default: true
+        type: "boolean"
+        description: "If true, conduct a fluid analysis"
+
   domain:
-    type: object
+    additionalProperties: false
+    type: "object"
     # required:
     # - x_min
     # - x_max
@@ -23,208 +50,381 @@ properties:
         default: -100
         minimum: -1000
         maximum: 1000
-        type: number
-        description: The minimum x-value of the fluid domain.
-        units: meter
+        type: "number"
+        description: "The minimum x-value of the fluid domain."
+        units: "meter"
       x_max:
         default: 100
         minimum: -1000
         maximum: 1000
-        type: number
-        description: The maximum x-value of the fluid domain.
-        units: meter
+        type: "number"
+        description: "The maximum x-value of the fluid domain."
+        units: "meter"
       y_min:
         default: -100
         minimum: -1000
         maximum: 1000
-        type: number
-        description: The minimum y-value of the fluid domain.
-        units: meter
+        type: "number"
+        description: "The minimum y-value of the fluid domain."
+        units: "meter"
       y_max:
         default: 100
         minimum: -1000
         maximum: 1000
-        type: number
-        description: The maximum y-value of the fluid domain.
-        units: meter
+        type: "number"
+        description: "The maximum y-value of the fluid domain."
+        units: "meter"
       z_min:
         default: -100
         minimum: -1000
         maximum: 1000
-        type: number
-        description: The minimum z-value of the fluid domain.
-        units: meter
+        type: "number"
+        description: "The minimum z-value of the fluid domain."
+        units: "meter"
       z_max:
         default: 100
         minimum: -1000
         maximum: 1000
-        type: number
-        description: The maximum z-value of the fluid domain.
-        units: meter
+        type: "number"
+        description: "The maximum z-value of the fluid domain."
+        units: "meter"
       l_char:
         default: 10.0
-        minimum: 0.01
+        minimum: 0.001
         maximum: 100.0
-        type: number
-        description: The characteristic length to use when building the mesh.
-        units: meter
+        type: "number"
+        description: "The characteristic length to use when building the mesh."
+        units: "meter"
   pv_array:
-    type: object
+    additionalProperties: false
+    type: "object"
     properties:
-      num_rows:
+      stream_rows:
         default: 3
         minimum: 1
         maximum: 10
-        type: integer
-        description: The number of panel rows in the array.
-        units: None
+        type: "integer"
+        description: "The number of panel rows in the streamwise direction."
+        units: "unitless"
+      span_rows:
+        default: 3
+        minimum: 1
+        maximum: 10
+        type: "integer"
+        description: "The number of panel rows in the spanwise direction."
+        units: "unitless"
       elevation:
         default: 1.5
         minimum: 0.0
         maximum: 10.0
-        type: number
-        description: The vertical distance between the center of the panel and the ground.
-        units: meter
-      spacing:
-        default: [7.0]
+        type: "number"
+        description: "The vertical distance between the center of the panel and the ground."
+        units: "meter"
+      stream_spacing:
+        default: 7.0
         minimum: 1.0
-        maximum: 10.0
-        type: array
-        description: The separation between panel rows in the streamwise direction.
-        units: meter
-      panel_length:
+        maximum: 32.0
+        type: "number"
+        description: "The separation between panel rows in the streamwise direction."
+        units: "meter"
+      span_spacing:
+        default: 7.0
+        minimum: 1.0
+        maximum: 32.0
+        type: "number"
+        description: "The separation between panel rows in the spanwise direction."
+        units: "meter"
+      span_fixation_pts:
+        default: 3.5
+        minimum: 1.0
+        # maximum: 32.0
+        type:
+          - "number"
+          - "array"
+          - "null"
+        description: "If a single number, the uniform distance between linear fixation points embedded in the structural mesh, if an array, the location of each such fixation point along the panel span, all points in the range [0, panel_span]."
+        units: "meter"
+      panel_chord:
         default: 2.0
         minimum: 0.0
         maximum: 10.0
-        type: number
-        description: The length of the panels in the streamwise direction.
-        units: meter
-      panel_width:
+        type: "number"
+        description: "The length of the panels from the leading to the trailing edge."
+        units: "meter"
+      panel_span:
         default: 7.0
-        minimum: 1.0
+        minimum: 0
         # maximum: 10.0
-        type: number
-        description: The length of the panel in the spanwise direction.
-        units: meter
+        type: "number"
+        description: "The length of the panel in the spanwise direction."
+        units: "meter"
       panel_thickness:
         default: 0.1
-        minimum: 0.01
+        minimum: 0.0001
         maximum: 1.0
-        type: number
-        description: The thickness of the panel.
-        units: meter
+        type: "number"
+        description: "The thickness of the panel."
+        units: "meter"
       tracker_angle:
         default: 30.0
         minimum: -90.0
         maximum: 90.0
-        type: number
-        description: The orientation of the panels, positive indicates the upstream edge is closer to the ground and negative indicates the downstream edge is closer to the ground.
-        units: degree
+        type: "number"
+        description: "The orientation of the panels, sign convention follows the right-hand rule about the positive y-axis, that is, a positive angle indicates the upstream edge is further from the ground and negative indicates the downstream edge is further from the ground."
+        units: "degree"
   solver:
-    type: object
+    additionalProperties: false
+    type: "object"
     properties:
       dt:
         default: 0.002
         minimum: 0.0
-        type: number
-        description: The timestep size to use in both the fluid and structural solver.
-        units: second
+        type: "number"
+        description: "The timestep size to use in both the fluid and structural solver."
+        units: "second"
       t_final:
         default: 0.1
         minimum: 0.0
-        type: number
-        description: The final simulation time.
-        units: second
+        type: "number"
+        description: "The final simulation time."
+        units: "second"
       save_text_interval:
         default: 0.02
         minimum: 0.0
-        type: number
-        description: The interval to use between saving text output files.
-        units: second
+        type: "number"
+        description: "The interval to use between saving text output files."
+        units: "second"
       save_xdmf_interval:
         default: 0.1
         minimum: 0.0
-        type: number
-        description: The interval to use between saving visualization/XDMF output files.
-        units: second
+        type: "number"
+        description: "The interval to use between saving visualization/XDMF output files."
+        units: "second"
       solver1_ksp:
-        default: cg
+        default: "cg"
+        type: "string"
+        description: "The solver to use for fluid solve 1 of 4"
+        enum:
+          - "cg"
+          - "gmres"
       solver2_ksp:
-        default: cg
+        default: "cg"
+        type: "string"
+        description: "The solver to use for fluid solve 2 of 4"
+        enum:
+          - "cg"
+          - "gmres"
       solver3_ksp:
-        default: cg
+        default: "cg"
+        type: "string"
+        description: "The solver to use for fluid solve 3 of 4"
+        enum:
+          - "cg"
+          - "gmres"
+      solver4_ksp:
+        default: "cg"
+        type: "string"
+        description: "The solver to use for fluid solve 4 of 4"
+        enum:
+          - "cg"
+          - "gmres"    
       solver1_pc:
-        default: hypre
+        default: "hypre"
+        type: "string"
+        description: "The preconditioner to use for fluid solve 1 of 4"
+        enum:
+          - "jacobi"
+          - "hypre"
       solver2_pc:
-        default: hypre
+        default: "hypre"
+        type: "string"
+        description: "The preconditioner to use for fluid solve 2 of 4"
+        enum:
+          - "jacobi"
+          - "hypre"
       solver3_pc:
-        default: hypre
+        default: "hypre"
+        type: "string"
+        description: "The preconditioner to use for fluid solve 3 of 4"
+        enum:
+          - "jacobi"
+          - "hypre"
+      solver4_pc:
+        default: "hypre"
+        type: "string"
+        description: "The preconditioner to use for fluid solve 3 of 4"
+        enum:
+          - "jacobi"
+          - "hypre"    
   fluid:
-    type: object
-    required:
-      - turbulence_model
-    if:
-      properties:
-        turbulence_model:
-          const: smagorinsky
-    then:
-      required:
-        - c_s
-    else:
-      if:
-        properties:
-          turbulence_model:
-            const: wale
-      then:
-        required:
-          - c_w
+    additionalProperties: false
+    type: "object"
+    # required:
+    #   - turbulence_model
+    # if:
+    #   properties:
+    #     turbulence_model:
+    #       const: smagorinsky
+    # then:
+    #   required:
+    #     - c_s
+    # else:
+    #   if:
+    #     properties:
+    #       turbulence_model:
+    #         const: wale
+    #   then:
+    #     required:
+    #       - c_w
     properties:
       u_ref:
         default: 8.0
         minimum: 0.0
-        maximum: 10.0
-        type: number
-        description: The velocity of the wind as measured at the panel elevation.
-        units: meter/second
+        maximum: 100.0
+        type: "number"
+        description: "The velocity of the wind as measured at the panel elevation."
+        units: "meter/second"
+      rho:
+        default: 1.0
+        # minimum: 0.001
+        # maximum: 1000.0
+        type: "number"
+        description: "The density of the fluid."
+        units: "kg/meter^3"
+      wind_direction:
+        default: 270.0
+        minimum: 0.0
+        maximum: 360.0
+        type: "number"
+        description: "The direction of the wind in degrees. 0 indicates a wind blowing from North to South, 
+        90 degrees from East to West, 180 from South to North, and 270 (default) from West to East."
+        units: "degrees"
       nu:
         default: 1.8e-05
         minimum: 1.0e-06
-        type: number
-        description: The kinematic viscosity of the fluid.
-        units: meter^s/second
+        type: "number"
+        description: "The kinematic viscosity of the fluid."
+        units: "meter^s/second"
       dpdx:
         default: 0.0
         minimum: 0.0
-        type: number
-        description: The constant pressure gradient to use to accelerate the flow.
-        units: Pa/m
+        type: "number"
+        description: "The constant pressure gradient to use to accelerate the flow."
+        units: "Pa/m"
       turbulence_model:
-        default: smagorinsky
-        type: string
-        description: The turbulence model to use in the fluid solver.
+        default: null
+        type:
+          - "string"
+          - "null"
+        description: "The turbulence model to use in the fluid solver."
         enum:
-          - none
-          - smagorinsky
-          - wale
+          - null
+          - "smagorinsky"
+          - "wale"
       c_s:
-        default: 0.6
+        default: 0.17
         minimum: 0.0
-        type: number
-        description: The Smagorinsky coefficient.
+        type: "number"
+        description: "The Smagorinsky coefficient."
       c_w:
         default: 0.5
         minimum: 0.0
-        type: number
-        description: The WALE coefficient.
-        
+        type: "number"
+        description: "The WALE coefficient."
+      bc_y_min:
+        default: "noslip"
+        type: "string"
+        description: "The type of boundary to set on the y_min wall."
+        enum:
+          - "slip"
+          - "noslip"
+      bc_y_max:
+        default: "noslip"
+        type: "string"
+        description: "The type of boundary to set on the y_max wall."
+        enum:
+          - "slip"
+          - "noslip"
+      bc_z_min:
+        default: "noslip"
+        type: "string"
+        description: "The type of boundary to set on the z_min wall."
+        enum:
+          - "slip"
+          - "noslip"
+      bc_z_max:
+        default: "noslip"
+        type: "string"
+        description: "The type of boundary to set on the z_max wall."
+        enum:
+          - "slip"
+          - "noslip"
+      periodic:
+        default: false
+        type: "boolean"
+        description: "Control whether periodic boundary conditions are set on the y_min/y_max walls."
+      warm_up_time:
+        default: 0.0
+        type: "number"
+        desciption: "The amount of time, in seconds, to solve the fluid solution for before un-freezing the structure and beginning to solve the FSI in a coupled manner. Warming up the fluid for e.g., 0.5 seconds helps establish a more appropriate fluid solution around the panels and can improve stability by avoiding a sudden shock associated with a bad initial condition at t=0."
+
   structure:
-    type: object
+    additionalProperties: false
+    type: "object"
     # required:
     properties:
-      youngs:
-        default:  190.0e+9
-        minimum: 1.0e+9
+      tube_connection:
+        default: false
+        type: "boolean"
+        description: "Controls whether or not a boundary condition is applied along the lines defined by the torque tube running in the spanwise direction which divides the panel into equal upstream and downstream rectangles."
+      motor_connection:
+        default: false
+        type: "boolean"
+        description: "Controls whether or not a boundary condition is applied along the lines defined by the spanwise fixation points which run in the streamwise direction and divide the panel into multiple rectangles in the spanwise direction."
+      bc_list:
+        default: [front,back]
+        # type: "list"
+        description: "location for clamped boundary conditions"
+      dt:
+        default: 0.04
+        minimum: 0
+        maximum: 1.e+2
+        type: "number"
+        description: "time step for structural analysis."
+        units: "s" 
+      rho:
+        default: 1.0
+        # minimum: 0.001
+        # maximum: 1000.0
+        type: "number"
+        description: "The density of the structure."
+        units: "kg/meter^3"
+      elasticity_modulus:
+        default: 190.0e+9
+        minimum: 1.0e+2
         maximum: 500.0e+9
-        type: number
-        description: The effective Young's modulus of the panel structure.
-        units: Pascal
+        type: "number"
+        description: "The effective Young's modulus of the panel structure."
+        units: "Pascal"  
+      poissons_ratio: 
+        default: 0.3
+        minimum: 0.1
+        maximum: 0.9
+        type: "number"
+        description: "poissons ratio of the panel structure."
+        units: "None"
+      body_force_x: 
+        default:  100
+        type: "number"
+        description: "Body force applied on strucrure in the x direction"
+        units: "Newton"
+      body_force_y: 
+        default:  100
+        type: "number"
+        description: "Body force applied on strucrure in the y direction"
+        units: "Newton"
+      body_force_z: 
+        default:  100
+        type: "number"
+        description: "Body force applied on strucrure in the z direction"
+        units: "Newton"
