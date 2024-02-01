@@ -510,12 +510,17 @@ class Flow:
             params (:obj:`pvade.Parameters.SimParams`): A SimParams object
         """
 
-        # if current_time < 2.0:
-        #     self.u_ref_c.value = params.fluid.u_ref*(1.0-np.cos(np.pi/2.0*current_time))/2.0
-        # else:
-        #     self.u_ref_c.value = params.fluid.u_ref
+        if params.fluid.time_varying_inflow_bc:
+            if current_time < 2.0:
+                self.u_ref_c.value = (
+                    params.fluid.u_ref
+                    * (1.0 - np.cos(np.pi / 2.0 * current_time))
+                    / 2.0
+                )
+            else:
+                self.u_ref_c.value = params.fluid.u_ref
 
-        # self.inflow_profile.interpolate(self.inflow_velocity)
+            self.inflow_profile.interpolate(self.inflow_velocity)
 
         if self.first_call_to_solver:
             if self.rank == 0:

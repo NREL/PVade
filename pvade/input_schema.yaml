@@ -288,6 +288,10 @@ properties:
         default: true
         type: "boolean"
         description: "If true, use the inflow boundary condition to interpolate a non-zero initial velocity throughout the domain (even if that does not respect interior boundary conditions), if false, initial velocity is zero."
+      time_varying_inflow_bc:
+        default: false
+        type: "boolean"
+        description: "If true, the inflow boundary condition will be re-evaluated at each time step, if false, the inflow function is treated as constant and will not be re-evaluated after the initial t=0 state."
       rho:
         default: 1.0
         # minimum: 0.001
