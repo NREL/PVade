@@ -67,7 +67,6 @@ class DomainCreation(TemplateDomainCreation):
 
         factor = params.domain.l_char
 
-        self.cyld_radius = params.domain.cyld_radius
         resolution = factor * self.cyld_radius / 10
         self.gmsh_model.mesh.field.setNumber(threshold, "LcMin", resolution)
         self.gmsh_model.mesh.field.setNumber(threshold, "LcMax", 20 * resolution)
