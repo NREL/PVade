@@ -161,9 +161,7 @@ class Flow:
         self.p_k = dolfinx.fem.Function(self.Q, name="pressure")
         self.p_k1 = dolfinx.fem.Function(self.Q)
 
-        initialize_flow = True
-
-        if initialize_flow:
+        if params.fluid.initialize_with_inflow_bc:
             # self.inflow_profile = dolfinx.fem.Function(self.V)
             # self.inflow_profile.interpolate(lambda x: np.vstack((x[0], x[1],x[2])))
 

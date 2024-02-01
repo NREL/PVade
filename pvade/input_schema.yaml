@@ -284,6 +284,10 @@ properties:
         type: "number"
         description: "The velocity of the wind as measured at the panel elevation."
         units: "meter/second"
+      initialize_with_inflow_bc:
+        default: true
+        type: "boolean"
+        description: "If true, use the inflow boundary condition to interpolate a non-zero initial velocity throughout the domain (even if that does not respect interior boundary conditions), if false, initial velocity is zero."
       rho:
         default: 1.0
         # minimum: 0.001
