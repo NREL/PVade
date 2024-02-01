@@ -34,6 +34,8 @@ class Elasticity:
 
         """
         self.structural_analysis = structural_analysis
+        self.name = "structure"
+
         # Store the comm and mpi info for convenience
         self.comm = domain.comm
         self.rank = domain.rank

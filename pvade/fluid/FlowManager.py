@@ -35,6 +35,7 @@ class Flow:
 
         """
         self.fluid_analysis = fluid_analysis
+        self.name = "fluid"
 
         if fluid_analysis == False:
             pass
