@@ -1151,9 +1151,7 @@ class FSIDomain:
             )
         )
 
-        free_slip_along_walls = True
-
-        if free_slip_along_walls:
+        if params.domain.free_slip_along_walls:
             # print("uh_max", np.amax(elasticity.uh.x.array[:]))
             self.bcx.append(
                 dolfinx.fem.dirichletbc(

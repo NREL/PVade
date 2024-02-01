@@ -95,6 +95,11 @@ properties:
         type: "number"
         description: "The characteristic length to use when building the mesh."
         units: "meter"
+      free_slip_along_walls:
+        default: false
+        type: "boolean"
+        description: "If true, allow movement of the fluid mesh to 'slip' nodes along the edges of the computational domain walls, with zero motion normal to wall, if false, nodes on boundaries remain completely dixed during mesh motion."
+        units: "meter"
   pv_array:
     additionalProperties: false
     type: "object"
