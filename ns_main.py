@@ -136,7 +136,7 @@ def main():
                     print("Structural time is : ", current_time)
                     print("deformation norm =", {elasticity.unorm})
                     print("max deformation =", {np.sqrt(np.amax(global_def_max_list))})
-                dataIO.save_XDMF_files_str(domain, elasticity, current_time)
+                dataIO.save_XDMF_files(elasticity, domain, current_time)
 
     list_timings(params.comm, [TimingType.wall])
 
