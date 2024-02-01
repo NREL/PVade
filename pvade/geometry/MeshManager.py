@@ -1063,6 +1063,24 @@ class FSIDomain:
 
                 return all_exterior_surfaces
 
+            def _all_xmin_xmax_surfaces(x):
+                eps = 1.0e-5
+
+                x_edge = np.logical_or(
+                    x[0] < params.domain.x_min + eps, params.domain.x_max - eps < x[0]
+                )
+
+                return x_edge
+
+            def _all_ymin_ymax_surfaces(x):
+                eps = 1.0e-5
+
+                y_edge = np.logical_or(
+                    x[1] < params.domain.y_min + eps, params.domain.y_max - eps < x[1]
+                )
+
+                return y_edge
+
             self.facet_dim = self.ndim - 1
 
             all_interior_facets = dolfinx.mesh.locate_entities_boundary(
@@ -1073,12 +1091,28 @@ class FSIDomain:
                 self.fluid.msh, self.facet_dim, _all_exterior_surfaces
             )
 
+            all_xmin_xmax_facets = dolfinx.mesh.locate_entities_boundary(
+                self.fluid.msh, self.facet_dim, _all_xmin_xmax_surfaces
+            )
+
+            all_ymin_ymax_facets = dolfinx.mesh.locate_entities_boundary(
+                self.fluid.msh, self.facet_dim, _all_ymin_ymax_surfaces
+            )
+
             self.all_interior_V_dofs = dolfinx.fem.locate_dofs_topological(
                 self.V1, self.facet_dim, all_interior_facets
             )
 
             self.all_exterior_V_dofs = dolfinx.fem.locate_dofs_topological(
                 self.V1, self.facet_dim, all_exterior_facets
+            )
+
+            self.all_xmin_xmax_V_dofs = dolfinx.fem.locate_dofs_topological(
+                self.V1.sub(0), self.facet_dim, all_xmin_xmax_facets
+            )
+
+            self.all_ymin_ymax_V_dofs = dolfinx.fem.locate_dofs_topological(
+                self.V1.sub(1), self.facet_dim, all_ymin_ymax_facets
             )
 
         # Interpolate the elasticity displacement (lives on the structure mesh)
@@ -1107,17 +1141,37 @@ class FSIDomain:
             self.fluid.msh, PETSc.ScalarType((0.0, 0.0, 0.0))
         )
 
+        zero_scalar = dolfinx.fem.Constant(self.fluid.msh, PETSc.ScalarType((0.0)))
+
         self.bcx = []
+
         self.bcx.append(
             dolfinx.fem.dirichletbc(
                 self.fluid_mesh_displacement_bc, self.all_interior_V_dofs
             )
         )
 
-        # print("uh_max", np.amax(elasticity.uh.x.array[:]))
-        self.bcx.append(
-            dolfinx.fem.dirichletbc(zero_vec, self.all_exterior_V_dofs, self.V1)
-        )
+        free_slip_along_walls = True
+
+        if free_slip_along_walls:
+            # print("uh_max", np.amax(elasticity.uh.x.array[:]))
+            self.bcx.append(
+                dolfinx.fem.dirichletbc(
+                    zero_scalar, self.all_xmin_xmax_V_dofs, self.V1.sub(0)
+                )
+            )
+            # print("uh_max", np.amax(elasticity.uh.x.array[:]))
+            self.bcx.append(
+                dolfinx.fem.dirichletbc(
+                    zero_scalar, self.all_ymin_ymax_V_dofs, self.V1.sub(1)
+                )
+            )
+
+        else:
+            # print("uh_max", np.amax(elasticity.uh.x.array[:]))
+            self.bcx.append(
+                dolfinx.fem.dirichletbc(zero_vec, self.all_exterior_V_dofs, self.V1)
+            )
 
         if self.first_move_mesh:
             u = ufl.TrialFunction(self.V1)
@@ -1126,7 +1180,11 @@ class FSIDomain:
             # TODO: use the distance in the diffusion calculation
             # self.a = dolfinx.fem.form(ufl.inner(ufl.grad(u), ufl.grad(v)) * ufl.dx)
             self.a = dolfinx.fem.form(
-                1.0 / self.distance * ufl.inner(ufl.grad(u), ufl.grad(v)) * ufl.dx
+                1.0
+                / self.distance
+                * ufl.inner(ufl.grad(u), ufl.grad(v))
+                * ufl.dx
+                # ufl.inner(ufl.grad(u), ufl.grad(v)) * ufl.dx
             )
             self.L = dolfinx.fem.form(ufl.inner(zero_vec, v) * ufl.dx)
 
