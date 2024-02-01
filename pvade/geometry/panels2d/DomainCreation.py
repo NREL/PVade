@@ -40,7 +40,7 @@ class DomainCreation(TemplateDomainCreation):
             params.domain.y_min,
             0,  # params.domain.z_min,
             self.x_span,
-            self.y_span
+            self.y_span,
             # self.z_span,
         )
 

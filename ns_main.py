@@ -45,7 +45,7 @@ def main():
     # sys.exit()
 
     flow = Flow(domain, fluid_analysis)
-    elasticity = Elasticity(domain, structural_analysis,params)
+    elasticity = Elasticity(domain, structural_analysis, params)
 
     if fluid_analysis == True:
         flow = Flow(domain, fluid_analysis)
@@ -70,20 +70,26 @@ def main():
             desc="Solving PDE", total=params.solver.t_steps
         )
 
-    solve_structure_interval_n = int(params.structure.dt/params.solver.dt)
-        
+    solve_structure_interval_n = int(params.structure.dt / params.solver.dt)
+
     for k in range(params.solver.t_steps):
         current_time = (k + 1) * params.solver.dt
 
         if domain.rank == 0:
             progress.update(1)
         # Solve the fluid problem at each timestep
-    
+
         # print("time step is : ", current_time)
         # print("reaminder from modulo ",current_time % params.structure.dt )
-        if structural_analysis == True and (k+1) % solve_structure_interval_n == 0 and current_time > params.fluid.warm_up_time: # :# TODO: add condition to work with fluid time step
+        if (
+            structural_analysis == True
+            and (k + 1) % solve_structure_interval_n == 0
+            and current_time > params.fluid.warm_up_time
+        ):  # :# TODO: add condition to work with fluid time step
             if fluid_analysis == True:
-                elasticity.stress_predicted.x.array[:] = 2.0*elasticity.stress.x.array - elasticity.stress_old.x.array
+                elasticity.stress_predicted.x.array[:] = (
+                    2.0 * elasticity.stress.x.array - elasticity.stress_old.x.array
+                )
 
             elasticity.solve(params, dataIO)
 
@@ -98,7 +104,11 @@ def main():
         if fluid_analysis == True:
             flow.solve(domain, params, current_time)
 
-        if structural_analysis == True and (k+1) % solve_structure_interval_n == 0 and current_time > params.fluid.warm_up_time: # :# TODO: add condition to work with fluid time step
+        if (
+            structural_analysis == True
+            and (k + 1) % solve_structure_interval_n == 0
+            and current_time > params.fluid.warm_up_time
+        ):  # :# TODO: add condition to work with fluid time step
             if fluid_analysis == True:
                 dataIO.fluid_struct(domain, flow, elasticity, params)
 
@@ -110,9 +120,15 @@ def main():
                     )
                 dataIO.save_XDMF_files(flow, domain, current_time)
 
-            if structural_analysis == True and (k+1) % solve_structure_interval_n == 0 and current_time > params.fluid.warm_up_time:
+            if (
+                structural_analysis == True
+                and (k + 1) % solve_structure_interval_n == 0
+                and current_time > params.fluid.warm_up_time
+            ):
 
-                local_def_max = np.amax(np.sum(elasticity.u.vector.array.reshape(-1, 3)**2, axis=1))
+                local_def_max = np.amax(
+                    np.sum(elasticity.u.vector.array.reshape(-1, 3) ** 2, axis=1)
+                )
                 global_def_max_list = np.zeros(params.num_procs, dtype=np.float64)
                 params.comm.Gather(local_def_max, global_def_max_list, root=0)
 
