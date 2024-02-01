@@ -1,10 +1,9 @@
 general:
-  example: cylinder3d
-  output_dir_mesh: output/cylinder3d/mesh
-  output_dir_sol: output/cylinder3d/solution
-  create_mesh: True
-  read_mesh: False
-  mesh_only: True
+  geometry_module: cylinder3d
+  output_dir: output/cylinder3d
+  mesh_only: false
+  structural_analysis: false
+  fluid_analysis: true
 domain:
   x_min: 0.0
   x_max: 2.5
@@ -12,21 +11,18 @@ domain:
   y_max: 0.41
   z_min: 0.0
   z_max: 0.41
-  l_char: 20 #.02
-  cyld_radius: 0.05
+  l_char: 2.0 #.02
 pv_array:
-  num_rows: 1 # not used
+  stream_rows: 1 # not used
   elevation: 1.5 # not used
-  spacing: [7.0] # not used
-  panel_length: 2.0 # not used
-  panel_width: 7.0 # not used
+  stream_spacing: [7.0] # not used
+  panel_chord: 2.0 # not used
+  panel_span: 7.0 # not used
   panel_thickness: 0.1 # not used
   tracker_angle: 30.0 # not used
 solver:
   dt: 0.025
   t_final: 0.1
-  save_text_every: 0.1
-  save_vtk_every: 0.1
   solver1_ksp: cg
   solver2_ksp: cg
   solver3_ksp: cg
@@ -36,24 +32,14 @@ solver:
   save_text_interval: 0.1
   save_xdmf_interval: 0.1
 fluid:
-  use_eddy_viscosity: True
   u_ref: 0.45
   nu: 0.001 # Establish re = 20 with diam = 0.1 and u_bar = u_ref * (4/9)
   dpdx: 0.0
-  turbulence_model: none
+  turbulence_model: null
   periodic: false 
-  # c_s: 0.325
   bc_y_max: noslip # slip noslip free
   bc_y_min: noslip # slip noslip free
   bc_z_max: noslip # slip noslip free
   bc_z_min: noslip # slip noslip free
-structure:
-  youngs: 1.0e+09
-# Boundary_conditions: 
-#   top: noslip
-#   bottom: noslip
-#   left: inflow
-#   right: free
-#   front: noslip
-#   back: noslip
+
 
