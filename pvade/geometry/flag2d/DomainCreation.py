@@ -21,7 +21,6 @@ class DomainCreation(TemplateDomainCreation):
         """
         super().__init__(params)
 
-
     def _add_to_domain_markers(self, marker_name, gmsh_tags, entity_type):
         # Create a dictionary to hold the gmsh tags associated with
         # x_min, x_max, y_min, y_max, z_min, z_max panel surfaces and domain walls
@@ -43,7 +42,6 @@ class DomainCreation(TemplateDomainCreation):
 
         self.domain_markers[marker_name] = marker_dict
         self.domain_markers["_current_idx"] += 1
-
 
     def build_FSI(self, params):
         """This function creates the computational domain for a flow around a 2D cylinder.
@@ -67,26 +65,34 @@ class DomainCreation(TemplateDomainCreation):
         # Add the flag pole centered at (x, y) = (0.2, 0.2)
         c_x = 0.2
         c_y = 0.2
-        radius = params.pv_array.panel_span # Not a good variable name, but hijacking a definition from the standard input.yaml file
+        radius = (
+            params.pv_array.panel_span
+        )  # Not a good variable name, but hijacking a definition from the standard input.yaml file
         flag_pole = self.gmsh_model.occ.addDisk(c_x, c_y, 0, radius, radius)
 
         # Add the flag body extending from the flag pole
-        length = params.pv_array.panel_chord # Not a good variable name, but hijacking a definition from the standard input.yaml file
-        thickness = params.pv_array.panel_thickness # Not a good variable name, but hijacking a definition from the standard input.yaml file
+        length = (
+            params.pv_array.panel_chord
+        )  # Not a good variable name, but hijacking a definition from the standard input.yaml file
+        thickness = (
+            params.pv_array.panel_thickness
+        )  # Not a good variable name, but hijacking a definition from the standard input.yaml file
 
         # Flag starts at the center of the flagpole (will be unioned with flagpole) so total length is radius+length
         if length > 0:
-            flag_body = self.gmsh_model.occ.addRectangle(c_x, c_y-0.5*thickness, 0, radius+length, thickness)
+            flag_body = self.gmsh_model.occ.addRectangle(
+                c_x, c_y - 0.5 * thickness, 0, radius + length, thickness
+            )
         else:
-            flag_body = self.gmsh_model.occ.addRectangle(c_x, c_y-0.5*thickness, 0, 1e-3+length, thickness)
-
+            flag_body = self.gmsh_model.occ.addRectangle(
+                c_x, c_y - 0.5 * thickness, 0, 1e-3 + length, thickness
+            )
 
         # self.gmsh_model.occ.cut([(2, domain)], [(2, obstacle)])
         fused_flag = self.gmsh_model.occ.fuse([(2, flag_body)], [(2, flag_pole)])
         self.gmsh_model.occ.fragment([(2, 1)], [(2, fused_flag[0][0][1])])
 
         self.gmsh_model.occ.synchronize()
-
 
         # Surfaces are the entities with dimension equal to the mesh dimension -1
         surf_tag_list = self.gmsh_model.occ.getEntities(self.ndim - 1)
@@ -168,14 +174,25 @@ class DomainCreation(TemplateDomainCreation):
             all_pts = self.gmsh_model.occ.getEntities(0)
             self.gmsh_model.mesh.setSize(all_pts, params.domain.l_char)
 
-            # Set the left-hand side (inflow) of the computational domain to use elements 2x the size of l_char 
+            # Set the left-hand side (inflow) of the computational domain to use elements 2x the size of l_char
             eps = 1.0e-6
-            left_edge = gmsh.model.getEntitiesInBoundingBox(params.domain.x_min-eps, params.domain.y_min-eps, 0.0-eps,
-                                                             params.domain.x_min+eps, params.domain.y_max+eps, 0.0+eps)
-            self.gmsh_model.mesh.setSize(left_edge, 2.0*params.domain.l_char)
+            left_edge = gmsh.model.getEntitiesInBoundingBox(
+                params.domain.x_min - eps,
+                params.domain.y_min - eps,
+                0.0 - eps,
+                params.domain.x_min + eps,
+                params.domain.y_max + eps,
+                0.0 + eps,
+            )
+            self.gmsh_model.mesh.setSize(left_edge, 2.0 * params.domain.l_char)
 
-            # Set the left-hand side (outflow) of the computational domain to use elements 4x the size of l_char 
-            right_edge = gmsh.model.getEntitiesInBoundingBox(params.domain.x_max-eps, params.domain.y_min-eps, 0.0-eps,
-                                                             params.domain.x_max+eps, params.domain.y_max+eps, 0.0+eps)
-            self.gmsh_model.mesh.setSize(right_edge, 4.0*params.domain.l_char)
-
+            # Set the left-hand side (outflow) of the computational domain to use elements 4x the size of l_char
+            right_edge = gmsh.model.getEntitiesInBoundingBox(
+                params.domain.x_max - eps,
+                params.domain.y_min - eps,
+                0.0 - eps,
+                params.domain.x_max + eps,
+                params.domain.y_max + eps,
+                0.0 + eps,
+            )
+            self.gmsh_model.mesh.setSize(right_edge, 4.0 * params.domain.l_char)

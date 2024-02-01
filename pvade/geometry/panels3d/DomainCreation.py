@@ -202,8 +202,16 @@ class DomainCreation(TemplateDomainCreation):
                         )
 
                         # FIXME: don't add the fixation points into the numpy tagging for now
-                        numpy_pt_list.append([-half_chord, -half_span + fp, -half_thickness,
-                                               half_chord, -half_span + fp, -half_thickness])
+                        numpy_pt_list.append(
+                            [
+                                -half_chord,
+                                -half_span + fp,
+                                -half_thickness,
+                                half_chord,
+                                -half_span + fp,
+                                -half_thickness,
+                            ]
+                        )
 
                         fixed_pt_id = self.gmsh_model.occ.addLine(pt_1, pt_2)
                         fixed_pt_tag = (1, fixed_pt_id)
@@ -633,8 +641,16 @@ class DomainCreation(TemplateDomainCreation):
                         )
 
                         # FIXME: don't add the fixation points into the numpy tagging for now
-                        numpy_pt_list.append([-half_chord, -half_span + fp, -half_thickness,
-                                               half_chord, -half_span + fp, -half_thickness])
+                        numpy_pt_list.append(
+                            [
+                                -half_chord,
+                                -half_span + fp,
+                                -half_thickness,
+                                half_chord,
+                                -half_span + fp,
+                                -half_thickness,
+                            ]
+                        )
 
                         fixed_pt_id = self.gmsh_model.occ.addLine(pt_1, pt_2)
                         fixed_pt_tag = (1, fixed_pt_id)
@@ -982,7 +998,6 @@ class DomainCreation(TemplateDomainCreation):
                 domain_markers[f"back_{panel_id}"]["gmsh_tags"][0]
             )
 
-
         min_dist = []
 
         # Define a distance field from the immersed panels
@@ -1002,7 +1017,7 @@ class DomainCreation(TemplateDomainCreation):
         self.gmsh_model.mesh.field.setNumber(threshold, "LcMin", resolution * 0.5)
         self.gmsh_model.mesh.field.setNumber(threshold, "LcMax", 3 * resolution)
         self.gmsh_model.mesh.field.setNumber(
-            threshold, "DistMin", 0.3*params.pv_array.stream_spacing
+            threshold, "DistMin", 0.3 * params.pv_array.stream_spacing
         )
         self.gmsh_model.mesh.field.setNumber(
             threshold, "DistMax", params.pv_array.stream_spacing + half_panel
@@ -1040,9 +1055,6 @@ class DomainCreation(TemplateDomainCreation):
             min_dist.append(xy_thre)
             min_dist.append(zmin_thre)
 
-
         minimum = self.gmsh_model.mesh.field.add("Min")
-        self.gmsh_model.mesh.field.setNumbers(
-            minimum, "FieldsList", min_dist
-        )
+        self.gmsh_model.mesh.field.setNumbers(minimum, "FieldsList", min_dist)
         self.gmsh_model.mesh.field.setAsBackgroundMesh(minimum)

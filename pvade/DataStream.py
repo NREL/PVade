@@ -18,7 +18,6 @@ import json
 
 # test actions
 class DataStream:
-
     """Input/Output and file writing class
 
     This class manages the generation and updating of the saved xdmf files
@@ -54,7 +53,9 @@ class DataStream:
             self.ndim = domain.fluid.msh.topology.dim
 
             self.results_filename = f"{params.general.output_dir_sol}/solution.xdmf"
-            self.results_filename_mesh = f"{params.general.output_dir_sol}/solution_mesh.xdmf"
+            self.results_filename_mesh = (
+                f"{params.general.output_dir_sol}/solution_mesh.xdmf"
+            )
             self.results_filename_vtk = f"{params.general.output_dir_sol}/solution.pvd"
             self.log_filename = f"{params.general.output_dir_sol}/log.txt"
 
@@ -231,12 +232,13 @@ class DataStream:
 
     def fluid_struct(self, domain, flow, elasticity, params):
         # print("tst")
-        
+
         elasticity.stress_old.x.array[:] = elasticity.stress.x.array
 
         elasticity.stress.interpolate(flow.panel_stress_undeformed)
 
         beta = 0.5
-        elasticity.stress.x.array[:] = beta*elasticity.stress.x.array + (1.0-beta)*elasticity.stress_predicted.x.array
-
-
+        elasticity.stress.x.array[:] = (
+            beta * elasticity.stress.x.array
+            + (1.0 - beta) * elasticity.stress_predicted.x.array
+        )

@@ -336,7 +336,6 @@ class SimParams:
         """
 
         class ParamGroup:
-
             """Empty class to enable nesting and attribute storage"""
 
             pass

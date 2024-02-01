@@ -158,7 +158,12 @@ class InflowVelocity:
             #     1.5 * (self.params.fluid.u_ref) * 4.0 / 0.1681 * x[1] * (self.params.domain.y_max - x[1])
             # )
             inflow_values[0] = (
-                1.5 * (self.u_ref_c) * 4.0 / 0.1681 * x[1] * (self.params.domain.y_max - x[1])
+                1.5
+                * (self.u_ref_c)
+                * 4.0
+                / 0.1681
+                * x[1]
+                * (self.params.domain.y_max - x[1])
             )
         elif self.params.general.geometry_module == "panels3d":
             # inflow_values[0] = x[2]
@@ -259,7 +264,9 @@ def build_velocity_boundary_conditions(domain, params, functionspace, u_ref_c):
         bcu.append(bc)
 
     # Set the inflow boundary condition
-    inflow_function, inflow_velocity = get_inflow_profile_function(domain, params, functionspace, u_ref_c)
+    inflow_function, inflow_velocity = get_inflow_profile_function(
+        domain, params, functionspace, u_ref_c
+    )
     dofs = get_facet_dofs_by_gmsh_tag(domain, functionspace, "x_min")
     bcu.append(dolfinx.fem.dirichletbc(inflow_function, dofs))
 
@@ -298,7 +305,6 @@ def build_velocity_boundary_conditions(domain, params, functionspace, u_ref_c):
             location = f"cylinder_side"
             bc = build_vel_bc_by_type("noslip", domain, functionspace, location)
             bcu.append(bc)
-
 
     return bcu, inflow_function, inflow_velocity
 
