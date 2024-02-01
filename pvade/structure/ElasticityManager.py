@@ -44,7 +44,7 @@ class Elasticity:
         # domain.structure.msh = dolfinx.mesh.refine(domain.structure.msh,None)
         # domain.structure.msh = dolfinx.mesh.refine(domain.structure.msh)
 
-        P1 = ufl.VectorElement("Lagrange", domain.structure.msh.ufl_cell(), 1)
+        P1 = ufl.VectorElement("Lagrange", domain.structure.msh.ufl_cell(), 2)
         self.V = dolfinx.fem.FunctionSpace(domain.structure.msh, P1)
 
         self.W = dolfinx.fem.FunctionSpace(
@@ -96,11 +96,11 @@ class Elasticity:
         self.E = params.structure.elasticity_modulus  # 1.0e9
         self.ν = params.structure.poissons_ratio  # 0.3
         self.μ = self.E / (2.0 * (1.0 + self.ν))
-        # self.λ = self.E * self.ν / ((1.0 + self.ν) * (1.0 - 2.0 * self.ν))
+        self.λ = self.E * self.ν / ((1.0 + self.ν) * (1.0 - 2.0 * self.ν))
         # WALID: this change may not be necessary, it was just one way i found
         # to reproduce exactly the CSM3 case from turek and hron
         # https://www.researchgate.net/publication/226447172_Proposal_for_Numerical_Benchmarking_of_Fluid-Structure_Interaction_Between_an_Elastic_Object_and_Laminar_Incompressible_Flow
-        self.λ = self.μ
+        # self.λ = self.μ
 
         print(f"mu = {self.μ} lambda = {self.λ}")
         # time step
