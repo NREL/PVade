@@ -65,18 +65,19 @@ def main():
 
     dataIO = DataStream(domain, flow, elasticity, params)
 
-    if domain.rank == 0:
-        progress = tqdm.autonotebook.tqdm(
-            desc="Solving PDE", total=params.solver.t_steps
-        )
+    # if domain.rank == 0:
+    #     progress = tqdm.autonotebook.tqdm(
+    #         desc="Solving PDE", total=params.solver.t_steps
+    #     )
 
     solve_structure_interval_n = int(params.structure.dt / params.solver.dt)
 
     for k in range(params.solver.t_steps):
         current_time = (k + 1) * params.solver.dt
 
-        if domain.rank == 0:
-            progress.update(1)
+        # if domain.rank == 0:
+        #     progress.update(1)
+        #     print()
         # Solve the fluid problem at each timestep
 
         # print("time step is : ", current_time)
@@ -116,8 +117,17 @@ def main():
             if fluid_analysis == True:
                 if domain.rank == 0:
                     print(
-                        f"Time {current_time:.2f} of {params.solver.t_final:.2f}, CFL = {flow.cfl_max}"
+                        f"Time {current_time:.2f} of {params.solver.t_final:.2f} (step {k+1} of {params.solver.t_steps})"
                     )
+                    print(f"| CFL = {flow.cfl_max:.4f}")
+
+                    if params.pv_array.num_panels == 1:
+                        lift_coeff = flow.lift_coeff_list[0]
+                        drag_coeff = flow.drag_coeff_list[0]
+
+                        print(f"| Lift = {lift_coeff:.4f}")
+                        print(f"| Drag = {drag_coeff:.4f}")
+
                 dataIO.save_XDMF_files(flow, domain, current_time)
 
             if (
@@ -133,9 +143,11 @@ def main():
                 params.comm.Gather(local_def_max, global_def_max_list, root=0)
 
                 if domain.rank == 0:
-                    print("Structural time is : ", current_time)
-                    print("deformation norm =", {elasticity.unorm})
-                    print("max deformation =", {np.sqrt(np.amax(global_def_max_list))})
+                    # print("Structural time is : ", current_time)
+                    # print("deformation norm =", {elasticity.unorm})
+                    print(
+                        f"| Max Deformation = {np.sqrt(np.amax(global_def_max_list)):.2e}"
+                    )
                 dataIO.save_XDMF_files(elasticity, domain, current_time)
 
     list_timings(params.comm, [TimingType.wall])
