@@ -117,7 +117,7 @@ def main():
             if fluid_analysis == True:
                 if domain.rank == 0:
                     print(
-                        f"Time {current_time:.2f} of {params.solver.t_final:.2f} (step {k+1} of {params.solver.t_steps})"
+                        f"Time {current_time:.2f} of {params.solver.t_final:.2f} (step {k+1} of {params.solver.t_steps}, {100.0*(k+1)/params.solver.t_steps:.1f}%)"
                     )
                     print(f"| CFL = {flow.cfl_max:.4f}")
 

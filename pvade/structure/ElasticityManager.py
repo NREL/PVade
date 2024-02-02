@@ -115,6 +115,12 @@ class Elasticity:
 
             corner = [x1 - x2, 0.5 * params.pv_array.panel_span]
 
+            # TEMP FOR FLAG
+            x1 = 0.6
+            x2 = 0.21
+
+            corner = [x1, x2]
+
             east_edge = np.logical_and(corner[0] - eps < x[0], x[0] < corner[0] + eps)
             north_edge = np.logical_and(corner[1] - eps < x[1], x[1] < corner[1] + eps)
 
@@ -495,9 +501,10 @@ class Elasticity:
 
         try:
             idx = self.north_east_corner_dofs[0]
-            nw_corner_accel = self.u.vector.array[3 * idx : 3 * idx + 3].astype(
-                np.float64
-            )
+            nw_corner_accel = self.u.vector.array[
+                self.ndim * idx : self.ndim * idx + self.ndim
+            ].astype(np.float64)
+            print(nw_corner_accel)
         except:
             nw_corner_accel = np.zeros(self.ndim, dtype=np.float64)
 

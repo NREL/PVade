@@ -186,7 +186,7 @@ class DomainCreation(TemplateDomainCreation):
             )
             self.gmsh_model.mesh.setSize(left_edge, 2.0 * params.domain.l_char)
 
-            # Set the left-hand side (outflow) of the computational domain to use elements 4x the size of l_char
+            # Set the right-hand side (outflow) of the computational domain to use elements 4x the size of l_char
             right_edge = gmsh.model.getEntitiesInBoundingBox(
                 params.domain.x_max - eps,
                 params.domain.y_min - eps,
@@ -195,4 +195,4 @@ class DomainCreation(TemplateDomainCreation):
                 params.domain.y_max + eps,
                 0.0 + eps,
             )
-            self.gmsh_model.mesh.setSize(right_edge, 4.0 * params.domain.l_char)
+            self.gmsh_model.mesh.setSize(right_edge, 6.0 * params.domain.l_char)
