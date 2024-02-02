@@ -28,8 +28,8 @@ interpolate_func = scipy.interpolate.LinearNDInterpolator(list(zip(imported_x,im
 #####################################################################
 print('compute the coordinates of points used to construct terrain shape')
 
-nx = 201 # number of points along x
-ny = 201 # number of points along y
+nx = 101 # number of points along x
+ny = 101 # number of points along y
 
 x_array = np.linspace(min(imported_x), max(imported_x), nx)
 y_array = np.linspace(min(imported_y), max(imported_y), ny)
@@ -163,9 +163,19 @@ v_m = sl_mountain+1
 
 gmsh.model.occ.addVolume([sl_mountain], tag=v_m)
 
-#####################
+
+###########################
+# add PV volume (flat box)
+###########################
+
+pv_domain = gmsh.model.occ.addBox(40, 40, 10, 20, 20, 1)
+
+
+
+
+##########################
 # create whole box domain
-#####################
+##########################
 
 print('create whole box domain')
 
@@ -173,7 +183,7 @@ whole_domain = gmsh.model.occ.addBox(0, 0, 0, 100, 100, 20)
 
 
 print('cut')
-domain = gmsh.model.occ.cut([(3, whole_domain)], [(3, v_m)])
+domain = gmsh.model.occ.cut([(3, whole_domain)], [(3, v_m), (3, pv_domain)])
 
 gmsh.model.occ.synchronize()
 gmsh.write("fake_terrain_geo.brep")
