@@ -256,11 +256,11 @@ class Flow:
         # self.U_ALE = (1.5*self.mesh_vel - 0.5*self.mesh_vel_old) / self.dt_c
         # self.U_ALE = 0.5*(domain.fluid_mesh_displacement + domain.fluid_mesh_displacement_old) / self.dt_c
         # self.U_ALE = self.mesh_vel_old / self.dt_c
-        # self.U_ALE = 0.5*(self.mesh_vel + self.mesh_vel_old)  # / self.dt_c
-        self.U_ALE = self.mesh_vel  # / self.dt_c
+        # self.U_ALE = 1.5 * self.mesh_vel -0.5 * self.mesh_vel_old  # / self.dt_c
+        self.U_ALE = 0.5 * (self.mesh_vel + self.mesh_vel_old)  # / self.dt_c
+        # self.U_ALE = self.mesh_vel  # / self.dt_c
         # self.U_ALE = 0.1*self.mesh_vel + 0.9*self.mesh_vel_old
         # self.U_ALE = domain.fluid_mesh_displacement / self.dt_c
-        # TODO: why does domain.fluid_mesh_displacement/dt work and mesh_vel/dt not work?
 
         self.F1 = (
             (1.0 / self.dt_c) * ufl.inner(self.u - self.u_k1, self.v) * ufl.dx
@@ -534,18 +534,10 @@ class Flow:
                 print("Starting Fluid Solution")
 
             self.bcu.append(
-                dolfinx.fem.dirichletbc(self.mesh_vel_bc, self.all_interior_V_dofs)
+                dolfinx.fem.dirichletbc(self.mesh_vel, self.all_interior_V_dofs)
             )
-            # self.bcu.append(
-            #     dolfinx.fem.dirichletbc(self.mesh_vel_bc, self.all_interior_V_dofs)
-            # )
 
             self._assemble_system(params)
-
-        # WALID: this has been a focus for testing, trying to "soften" the changes in velocity
-        # applied as a BC at the internal boundary. I think this is a hack and that the real
-        # solution would be to apply some stabilizing terms like SUPG in the variational form
-        # for navier stokes.
 
         self.mesh_vel.interpolate(domain.fluid_mesh_displacement)
         # # self.mesh_vel.interpolate(domain.better_mesh_vel)
@@ -553,38 +545,8 @@ class Flow:
         self.mesh_vel.vector.array[:] = self.mesh_vel.vector.array / params.solver.dt
         self.mesh_vel.x.scatter_forward()
 
-        self.mesh_vel_bc.x.array[:] = self.mesh_vel_bc_old.x.array + 0.5 * (
-            self.mesh_vel.x.array - self.mesh_vel_bc_old.x.array
-        )
-        self.mesh_vel_bc.x.scatter_forward()
-
-        # print(np.amax(self.mesh_vel_bc.x.array[:]))
-
-        self.mesh_vel_bc_old.x.array[:] = self.mesh_vel_bc.x.array
-
-        # # self.mesh_vel.x.array[:] = self.mesh_vel_interp.x.array
-        # # print(self.U_ALE)
-
-        # vals = self.mesh_vel.vector.array[:].reshape(-1, 3)
-        # vals = np.amax(np.sum(vals**2, axis=1))
-
-        # self.mesh_vel_max = np.zeros(1)
-        # self.comm.Allreduce(vals, self.mesh_vel_max, op=MPI.MAX)
-        # self.mesh_vel_max = self.mesh_vel_max[0]
-        # if self.rank == 0:
-        #     print(f"Max mesh vel = {self.mesh_vel_max}")
-
-        # # self.mesh_vel_composite.x.array[:] = (2.5*self.mesh_vel.x.array - 1.5 *self.mesh_vel_old.x.array)
-        # # self.mesh_vel_composite.x.array[:] = (1.5*self.mesh_vel.x.array - 0.5 *self.mesh_vel_old.x.array)
-        # # self.mesh_vel_composite.x.array[:] = (0.5*self.mesh_vel.x.array + 0.5 *self.mesh_vel_old.x.array)
-        # self.mesh_vel_composite.x.array[:] += 0.1*(self.mesh_vel.x.array - self.mesh_vel_composite.x.array)
-
-        # self.bcu[-1] = dolfinx.fem.dirichletbc(self.mesh_vel, self.all_interior_V_dofs)
-
         # Calculate the tentative velocity
         self._solver_step_1(params)
-
-        self.mesh_vel_old.x.array[:] = self.mesh_vel.x.array
 
         # Calculate the change in pressure to enforce incompressibility
         self._solver_step_2(params)
@@ -604,6 +566,7 @@ class Flow:
         self.u_k2.x.array[:] = self.u_k1.x.array
         self.u_k1.x.array[:] = self.u_k.x.array
         self.p_k1.x.array[:] = self.p_k.x.array
+        self.mesh_vel_old.x.array[:] = self.mesh_vel.x.array
 
         if self.first_call_to_solver:
             self.first_call_to_solver = False
