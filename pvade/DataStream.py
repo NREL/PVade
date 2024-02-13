@@ -176,11 +176,16 @@ class DataStream:
         # print("tst")
 
         elasticity.stress_old.x.array[:] = elasticity.stress.x.array
+        elasticity.stress_old.x.scatter_forward()
 
         elasticity.stress.interpolate(flow.panel_stress_undeformed)
+        elasticity.stress.x.scatter_forward()
 
-        beta = 0.5
+        beta = params.structure.beta_relaxation
+
         elasticity.stress.x.array[:] = (
             beta * elasticity.stress.x.array
             + (1.0 - beta) * elasticity.stress_predicted.x.array
         )
+
+        elasticity.stress.x.scatter_forward()
