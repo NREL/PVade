@@ -368,7 +368,7 @@ class Elasticity:
         J = ufl.det(F)
         self.res = (
             m(self.avg(self.a_old, a_new, self.alpha_m), self.u_)
-            + c(Elasticity.avg(self.v_old, v_new, self.alpha_f), self.u_)
+            + c(self.avg(self.v_old, v_new, self.alpha_f), self.u_)
             + k(self.avg(self.u_old, self.u, self.alpha_f), self.u_)
             - self.rho * ufl.inner(self.f, self.u_) * ufl.dx
             - ufl.dot(ufl.dot(self.stress_predicted * J * ufl.inv(F.T), n), self.u_)
