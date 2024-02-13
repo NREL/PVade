@@ -97,17 +97,17 @@ class Elasticity:
         self.ν = params.structure.poissons_ratio  # 0.3
         self.μ = self.E / (2.0 * (1.0 + self.ν))
         self.λ = self.E * self.ν / ((1.0 + self.ν) * (1.0 - 2.0 * self.ν))
-        # WALID: this change may not be necessary, it was just one way i found
-        # to reproduce exactly the CSM3 case from turek and hron
-        # https://www.researchgate.net/publication/226447172_Proposal_for_Numerical_Benchmarking_of_Fluid-Structure_Interaction_Between_an_Elastic_Object_and_Laminar_Incompressible_Flow
-        # self.λ = self.μ
 
-        print(f"mu = {self.μ} lambda = {self.λ}")
+        if self.rank == 0:
+            print(
+                f"mu = {self.μ} lambda = {self.λ} E = {self.E} nu = {self.ν} density = {self.rho.value}"
+            )
+
         # time step
         self.dt_st = dolfinx.fem.Constant(domain.structure.msh, (params.structure.dt))
 
         def _north_east_corner(x):
-            eps = 1.0e-3
+            eps = 1.0e-6
 
             tracker_angle_rad = np.radians(params.pv_array.tracker_angle)
             x1 = 0.5 * params.pv_array.panel_chord * np.cos(tracker_angle_rad)
@@ -117,7 +117,7 @@ class Elasticity:
 
             # TEMP FOR FLAG
             x1 = 0.6
-            x2 = 0.21
+            x2 = 0.2
 
             corner = [x1, x2]
 
@@ -157,7 +157,7 @@ class Elasticity:
 
         self.bc = build_structure_boundary_conditions(domain, params, self.V)
 
-    def update_a(u, u_old, v_old, a_old, dt, beta, ufl=True):
+    def update_a(self, u, u_old, v_old, a_old, dt, beta, ufl=True):
         # Update formula for acceleration
         # a = 1/(2*beta)*((u - u0 - v0*dt)/(0.5*dt*dt) - (1-2*beta)*a0)
         if ufl:
@@ -172,7 +172,7 @@ class Elasticity:
 
     # Update formula for velocity
     # v = dt * ((1-gamma)*a0 + gamma*a) + v0
-    def update_v(a, u_old, v_old, a_old, dt, gamma, ufl=True):
+    def update_v(self, a, u_old, v_old, a_old, dt, gamma, ufl=True):
         if ufl:
             dt_ = dt
             gamma_ = gamma
@@ -181,19 +181,19 @@ class Elasticity:
             gamma_ = float(gamma)
         return v_old + dt_ * ((1 - gamma_) * a_old + gamma_ * a)
 
-    def update_fields(u, u_old, v_old, a_old, dt, beta, gamma):
+    def update_fields(self, u, u_old, v_old, a_old, dt, beta, gamma):
         """Update fields at the end of each time step."""
 
         u_vec, u0_vec = u.x.array[:], u_old.x.array[:]
         v0_vec, a0_vec = v_old.x.array[:], a_old.x.array[:]
 
-        a_vec = Elasticity.update_a(u_vec, u0_vec, v0_vec, a0_vec, dt, beta, ufl=False)
-        v_vec = Elasticity.update_v(a_vec, u0_vec, v0_vec, a0_vec, dt, gamma, ufl=False)
+        a_vec = self.update_a(u_vec, u0_vec, v0_vec, a0_vec, dt, beta, ufl=False)
+        v_vec = self.update_v(a_vec, u0_vec, v0_vec, a0_vec, dt, gamma, ufl=False)
         v_old.x.array[:] = v_vec
         a_old.x.array[:] = a_vec
         u_old.x.array[:] = u_vec
 
-    def avg(x_old, x_new, alpha):
+    def avg(self, x_old, x_new, alpha):
         return alpha * x_old + (1 - alpha) * x_new
 
     def build_forms(self, domain, params):
@@ -282,7 +282,44 @@ class Elasticity:
             # S = self.λ *ufl.tr(E)*ufl.Identity(len(u))   + 2*self.μ * (E - ufl.tr(E)*ufl.Identity(len(u))  /3.0)
             S = self.λ * ufl.tr(E) * ufl.Identity(len(u)) + 2 * self.μ * (E)
 
-            return ufl.inner(F * S, ufl.grad(u_)) * ufl.dx
+            # return ufl.inner(F * S, ufl.grad(u_)) * ufl.dx
+            return ufl.inner(P_(u), ufl.grad(u_)) * ufl.dx
+
+        # The deformation gradient, F = I + dy/dX
+        def F_(u):
+            I = ufl.Identity(len(u))
+            return I + ufl.grad(u)
+
+        # The Cauchy-Green deformation tensor, C = F.T * F
+        def C_(u):
+            F = F_(u)
+            return F.T * F
+
+        # Green–Lagrange strain tensor, E = 0.5*(C - I)
+        def E_(u):
+            I = ufl.Identity(len(u))
+            C = C_(u)
+
+            return 0.5 * (C - I)
+            # return 0.5 * (ufl.grad(u) + ufl.grad(u).T)
+
+        # The second Piola–Kirchhoff stress, S
+        def S_(u):
+            E = E_(u)
+            I = ufl.Identity(len(u))
+
+            # return lamda * ufl.tr(E) * I + 2.0 * mu * (E - ufl.tr(E) * I / 3.0)
+            # TODO: Why does the above form give a better result and where does it come from?
+
+            S_svk = self.λ * ufl.tr(E) * I + 2.0 * self.μ * E
+            return S_svk
+
+        # The first Piola–Kirchhoff stress tensor, P = F*S
+        def P_(u):
+            F = F_(u)
+            S = S_(u)
+            # return ufl.inv(F) * S
+            return F * S
 
         def c(u, u_):
             return self.eta_m * m(u, u_) + self.eta_k * k(u, u_)
@@ -320,19 +357,19 @@ class Elasticity:
         n = ufl.FacetNormal(domain.structure.msh)
 
         # Residual
-        a_new = Elasticity.update_a(
+        a_new = self.update_a(
             self.u, self.u_old, self.v_old, self.a_old, self.dt_st, self.beta, ufl=True
         )
-        v_new = Elasticity.update_v(
+        v_new = self.update_v(
             a_new, self.u_old, self.v_old, self.a_old, self.dt_st, self.gamma, ufl=True
         )
 
         F = ufl.grad(self.u) + ufl.Identity(len(self.u))
         J = ufl.det(F)
         self.res = (
-            m(Elasticity.avg(self.a_old, a_new, self.alpha_m), self.u_)
+            m(self.avg(self.a_old, a_new, self.alpha_m), self.u_)
             + c(Elasticity.avg(self.v_old, v_new, self.alpha_f), self.u_)
-            + k(Elasticity.avg(self.u_old, self.u, self.alpha_f), self.u_)
+            + k(self.avg(self.u_old, self.u, self.alpha_f), self.u_)
             - self.rho * ufl.inner(self.f, self.u_) * ufl.dx
             - ufl.dot(ufl.dot(self.stress_predicted * J * ufl.inv(F.T), n), self.u_)
             * self.ds
@@ -456,17 +493,17 @@ class Elasticity:
         return PETSc.NullSpace().create(vectors=ns)
 
     def solve(self, params, dataIO):
-        def σ(v):
-            """Return an expression for the stress σ given a displacement field"""
-            return 2.0 * self.μ * ufl.sym(ufl.grad(v)) + self.λ * ufl.tr(
-                ufl.sym(ufl.grad(v))
-            ) * ufl.Identity(len(v))
+        # def σ(v):
+        #     """Return an expression for the stress σ given a displacement field"""
+        #     return 2.0 * self.μ * ufl.sym(ufl.grad(v)) + self.λ * ufl.tr(
+        #         ufl.sym(ufl.grad(v))
+        #     ) * ufl.Identity(len(v))
 
         if self.first_call_to_solver:
             if self.rank == 0:
                 print("Starting Strutural Solution")
 
-        self._assemble_system(params)
+            self._assemble_system(params)
 
         num_its, converged = self.solver.solve(self.u)  # solve the current time step
         assert converged
@@ -479,7 +516,7 @@ class Elasticity:
         self.u_delta.x.scatter_forward()
 
         # Update old fields with new quantities
-        Elasticity.update_fields(
+        self.update_fields(
             self.u,
             self.u_old,
             self.v_old,
@@ -489,26 +526,26 @@ class Elasticity:
             self.gamma,
         )
 
-        sigma_dev = σ(self.u) - (1 / 3) * ufl.tr(σ(self.u)) * ufl.Identity(len(self.u))
-        sigma_vm = ufl.sqrt((3 / 2) * ufl.inner(sigma_dev, sigma_dev))
+        # sigma_dev = σ(self.u) - (1 / 3) * ufl.tr(σ(self.u)) * ufl.Identity(len(self.u))
+        # sigma_vm = ufl.sqrt((3 / 2) * ufl.inner(sigma_dev, sigma_dev))
 
-        sigma_vm_expr = dolfinx.fem.Expression(
-            sigma_vm, self.W.element.interpolation_points()
-        )
-        self.sigma_vm_h.interpolate(sigma_vm_expr)
+        # sigma_vm_expr = dolfinx.fem.Expression(
+        #     sigma_vm, self.W.element.interpolation_points()
+        # )
+        # self.sigma_vm_h.interpolate(sigma_vm_expr)
 
-        self.unorm = self.u.x.norm()
+        # self.unorm = self.u.x.norm()
 
         try:
             idx = self.north_east_corner_dofs[0]
-            nw_corner_accel = self.u.vector.array[
-                self.ndim * idx : self.ndim * idx + self.ndim
-            ].astype(np.float64)
+            nw_corner_accel = self.u.vector.array[3 * idx : 3 * idx + 3].astype(
+                np.float64
+            )
             print(nw_corner_accel)
         except:
-            nw_corner_accel = np.zeros(self.ndim, dtype=np.float64)
+            nw_corner_accel = np.zeros(3, dtype=np.float64)
 
-        nw_corner_accel_global = np.zeros((self.num_procs, self.ndim), dtype=np.float64)
+        nw_corner_accel_global = np.zeros((self.num_procs, 3), dtype=np.float64)
 
         self.comm.Gather(nw_corner_accel, nw_corner_accel_global, root=0)
 
@@ -538,75 +575,6 @@ class Elasticity:
                         fp.write(f"{np_accel[0]},{np_accel[1]},{np_accel[2]}\n")
                     elif self.ndim == 2:
                         fp.write(f"{np_accel[0]},{np_accel[1]}\n")
-
-        if self.first_call_to_solver:
-            self.first_call_to_solver = False
-
-    def solve_old(self, params, dataIO):
-        """Solve for a single timestep advancement
-
-        Here we perform the three-step solution process (tentative velocity,
-        pressure correction, velocity update) to advance the fluid simulation
-        a single timestep. Additionally, we calculate the new CFL number
-        associated with the latest velocity solution.
-
-        Args:
-            params (:obj:`pvade.Parameters.SimParams`): A SimParams object
-        """
-
-        def σ(v):
-            """Return an expression for the stress σ given a displacement field"""
-            return 2.0 * self.μ * ufl.sym(ufl.grad(v)) + self.λ * ufl.tr(
-                ufl.sym(ufl.grad(v))
-            ) * ufl.Identity(len(v))
-
-        if self.first_call_to_solver:
-            if self.rank == 0:
-                print("Starting Strutural Solution")
-
-        self._assemble_system(params)
-
-        dolfinx.fem.petsc.apply_lifting(self.b, [self.a], bcs=[self.bc])
-        self.b.ghostUpdate(
-            addv=PETSc.InsertMode.ADD_VALUES, mode=PETSc.ScatterMode.REVERSE
-        )
-        dolfinx.fem.petsc.set_bc(self.b, self.bc)
-        # -
-
-        # Create the near-nullspace and attach it to the PETSc matrix:
-
-        ns = self.build_nullspace(self.V)
-        self.A.setNearNullSpace(ns)
-
-        # Store the old displacement/position for finite differencing
-        self.uh_old.vector.array[:] = self.uh.vector.array[:]
-
-        # self.solver.setMonitor(lambda _, its, rnorm: print(f"Iteration: {its}, rel. residual: {rnorm}"))
-        # Compute displacement
-        self.solver.solve(self.b, self.uh.vector)
-        # self.solver.view()
-        # Scatter forward the solution vector to update ghost values
-        self.uh.x.scatter_forward()
-
-        # Update old fields with new quantities
-        self.update_fields(self.uh, self.uh_old, self.vel_old, self.acc_old)
-
-        # Calculate the change in the displacement (new - old) this is what moves the mesh
-        self.uh_delta.vector.array[:] = (
-            self.uh.vector.array[:] - self.uh_old.vector.array[:]
-        )
-
-        sigma_dev = σ(self.uh) - (1 / 3) * ufl.tr(σ(self.uh)) * ufl.Identity(
-            len(self.uh)
-        )
-        sigma_vm = ufl.sqrt((3 / 2) * ufl.inner(sigma_dev, sigma_dev))
-
-        sigma_vm_expr = dolfinx.fem.Expression(
-            sigma_vm, self.W.element.interpolation_points()
-        )
-        self.sigma_vm_h.interpolate(sigma_vm_expr)
-
-        self.unorm = self.uh.x.norm()
 
         if self.first_call_to_solver:
             self.first_call_to_solver = False
