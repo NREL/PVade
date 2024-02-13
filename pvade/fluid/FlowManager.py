@@ -109,10 +109,8 @@ class Flow:
 
         """
 
-        self.u_ref_c = dolfinx.fem.Constant(domain.fluid.msh, PETSc.ScalarType(0.0))
-
         self.bcu, self.inflow_profile, self.inflow_velocity = (
-            build_velocity_boundary_conditions(domain, params, self.V, self.u_ref_c)
+            build_velocity_boundary_conditions(domain, params, self.V, current_time=0.0)
         )
 
         self.bcp = build_pressure_boundary_conditions(domain, params, self.Q)
@@ -518,15 +516,7 @@ class Flow:
         """
 
         if params.fluid.time_varying_inflow_bc:
-            if current_time < 2.0:
-                self.u_ref_c.value = (
-                    params.fluid.u_ref
-                    * (1.0 - np.cos(np.pi / 2.0 * current_time))
-                    / 2.0
-                )
-            else:
-                self.u_ref_c.value = params.fluid.u_ref
-
+            self.inflow_velocity.current_time = current_time
             self.inflow_profile.interpolate(self.inflow_velocity)
 
         if self.first_call_to_solver:

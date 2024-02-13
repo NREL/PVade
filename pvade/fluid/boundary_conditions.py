@@ -101,7 +101,7 @@ def build_vel_bc_by_type(bc_type, domain, functionspace, bc_location):
 
 
 class InflowVelocity:
-    def __init__(self, geom_dim, params, u_ref_c):
+    def __init__(self, geom_dim, params, current_time):
         """Inflow velocity object
 
         Args:
@@ -110,7 +110,7 @@ class InflowVelocity:
         """
         self.geom_dim = geom_dim
         self.params = params
-        self.u_ref_c = u_ref_c
+        self.current_time = current_time
 
     def __call__(self, x):
         """Define an inflow expression for use as boundary condition
@@ -154,12 +154,18 @@ class InflowVelocity:
                 / (0.41**2)
             )
         elif self.params.general.geometry_module == "flag2d":
-            # inflow_values[0] = (
-            #     1.5 * (self.params.fluid.u_ref) * 4.0 / 0.1681 * x[1] * (self.params.domain.y_max - x[1])
-            # )
+            if self.current_time < 2.0:
+                time_vary_u_ref = (
+                    self.params.fluid.u_ref
+                    * (1.0 - np.cos(np.pi / 2.0 * self.current_time))
+                    / 2.0
+                )
+            else:
+                time_vary_u_ref = self.params.fluid.u_ref
+
             inflow_values[0] = (
                 1.5
-                * (self.u_ref_c)
+                * time_vary_u_ref
                 * 4.0
                 / 0.1681
                 * x[1]
@@ -182,7 +188,7 @@ class InflowVelocity:
         return inflow_values
 
 
-def get_inflow_profile_function(domain, params, functionspace, u_ref_c):
+def get_inflow_profile_function(domain, params, functionspace, current_time):
     ndim = domain.ndim
 
     # IMPORTANT: this is distinct from ndim because a mesh can
@@ -196,7 +202,7 @@ def get_inflow_profile_function(domain, params, functionspace, u_ref_c):
 
     inflow_function = dolfinx.fem.Function(functionspace)
 
-    inflow_velocity = InflowVelocity(geom_dim, params, u_ref_c)
+    inflow_velocity = InflowVelocity(geom_dim, params, current_time)
 
     if params.general.geometry_module in ["cylinder3d", "cylinder2d", "flag2d"]:
         inflow_function.interpolate(inflow_velocity)
@@ -228,7 +234,7 @@ def get_inflow_profile_function(domain, params, functionspace, u_ref_c):
     return inflow_function, inflow_velocity
 
 
-def build_velocity_boundary_conditions(domain, params, functionspace, u_ref_c):
+def build_velocity_boundary_conditions(domain, params, functionspace, current_time):
     """Build all boundary conditions on velocity
 
     This method builds all the boundary conditions associated with velocity and stores in a list, ``bcu``.
@@ -265,7 +271,7 @@ def build_velocity_boundary_conditions(domain, params, functionspace, u_ref_c):
 
     # Set the inflow boundary condition
     inflow_function, inflow_velocity = get_inflow_profile_function(
-        domain, params, functionspace, u_ref_c
+        domain, params, functionspace, current_time
     )
     dofs = get_facet_dofs_by_gmsh_tag(domain, functionspace, "x_min")
     bcu.append(dolfinx.fem.dirichletbc(inflow_function, dofs))
