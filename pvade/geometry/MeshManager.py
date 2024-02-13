@@ -1121,6 +1121,7 @@ class FSIDomain:
 
         if use_built_in_interpolate:
             self.fluid_mesh_displacement_bc_undeformed.interpolate(elasticity.u_delta)
+            self.fluid_mesh_displacement_bc_undeformed.x.scatter_forward()
             self.fluid_mesh_displacement_bc.x.array[:] = (
                 self.fluid_mesh_displacement_bc_undeformed.x.array[:]
             )
