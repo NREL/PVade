@@ -12,6 +12,7 @@ import numpy as np
 
 
 from pvade.structure.ElasticityManager import Elasticity
+import os
 
 
 def main():
@@ -102,7 +103,7 @@ def main():
                 # pass
                 domain.move_mesh(elasticity, params)
 
-        if fluid_analysis == True:
+        if fluid_analysis == True and not params.general.debug_mesh_motion_only:
             flow.solve(domain, params, current_time)
 
         if (
@@ -115,7 +116,7 @@ def main():
 
         if (k + 1) % params.solver.save_xdmf_interval_n == 0:
             if fluid_analysis == True:
-                if domain.rank == 0:
+                if domain.rank == 0 and not params.general.debug_mesh_motion_only:
                     print(
                         f"Time {current_time:.2f} of {params.solver.t_final:.2f} (step {k+1} of {params.solver.t_steps}, {100.0*(k+1)/params.solver.t_steps:.1f}%)"
                     )
@@ -163,9 +164,12 @@ if __name__ == "__main__":
     profiler.disable()
 
     if params.rank == 0:
-        profiler.dump_stats("profiling.prof")
+        prof_filename = os.path.join(params.general.output_dir, "profiling.prof")
+        profiler.dump_stats(prof_filename)
 
-        with open("profiling.txt", "w") as output_file:
+        prof_txt_filename = os.path.join(params.general.output_dir, "profiling.txt")
+
+        with open(prof_txt_filename, "w") as output_file:
             sys.stdout = output_file
             profiler.print_stats(sort="cumtime")
             sys.stdout = sys.__stdout__
