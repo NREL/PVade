@@ -30,6 +30,10 @@ properties:
         default: false
         type: "boolean"
         description: "If true, exit the PVade run immediately after generating the mesh without solving"
+      debug_mesh_motion_only:
+        default: false
+        type: "boolean"
+        description: "If true, use both a structure and fluid domain, but do not solve the fluid solution, just use the motion of the solved structure to adapt the fluid mesh, useful for testing various mesh motion strategies without the expensive fluid solve."
       structural_analysis:
         default: False 
         type: "boolean"
@@ -386,6 +390,13 @@ properties:
     type: "object"
     # required:
     properties:
+      beta_relaxation:
+        default: 0.5
+        minimum: 0.0
+        maximum: 1.0
+        type: "number"
+        description: "Controls the value of beta in the expression `traction = beta * traction_actual + (1-beta) * traction_predicted`, smaller values mean trusting the predicted traction more, larger values mean trusting the actual traction more."
+        units: "unitless"
       tube_connection:
         default: false
         type: "boolean"
