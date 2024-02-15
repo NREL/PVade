@@ -109,17 +109,17 @@ class Elasticity:
         def _north_east_corner(x):
             eps = 1.0e-6
 
-            tracker_angle_rad = np.radians(params.pv_array.tracker_angle)
-            x1 = 0.5 * params.pv_array.panel_chord * np.cos(tracker_angle_rad)
-            x2 = 0.5 * params.pv_array.panel_thickness * np.sin(tracker_angle_rad)
-
-            corner = [x1 - x2, 0.5 * params.pv_array.panel_span]
-
-            # TEMP FOR FLAG
-            x1 = 0.6
-            x2 = 0.2
-
-            corner = [x1, x2]
+            # TODO: allow the probing of (x,y,z) points as something specified in the yaml file
+            if params.general.geometry_module == "flag2d":
+                # TEMP Hack for Turek and Hron Flag
+                x1 = 0.6
+                x2 = 0.2
+                corner = [x1, x2]
+            else:
+                tracker_angle_rad = np.radians(params.pv_array.tracker_angle)
+                x1 = 0.5 * params.pv_array.panel_chord * np.cos(tracker_angle_rad)
+                x2 = 0.5 * params.pv_array.panel_thickness * np.sin(tracker_angle_rad)
+                corner = [x1 - x2, 0.5 * params.pv_array.panel_span]
 
             east_edge = np.logical_and(corner[0] - eps < x[0], x[0] < corner[0] + eps)
             north_edge = np.logical_and(corner[1] - eps < x[1], x[1] < corner[1] + eps)
