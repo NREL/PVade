@@ -26,7 +26,7 @@ New users are encouraged to review the [Getting Started](https://pvade.readthedo
 
 ## Citation
 
-To cite PVade, please use the "Cite this repository" feature available on the right-hand side of this repository page or use the reference text given below:
+To cite PVade, please use the "Cite this repository" feature available on the right-hand side of this repository page or copy the BibTeX reference below:
 
 ```bash
 @software{Young_PVade_PV_Aerodynamic_2023,
