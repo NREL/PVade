@@ -19,13 +19,22 @@ New users are encouraged to review the [Getting Started](https://pvade.readthedo
     ```bash
     conda activate my_env_name
     ```
-    from within your activate Conda environment, a simulation can be executed with:
+2. From within your activate Conda environment, a simulation can be executed with:
     ```bash
-    python main.py --command_line_arg value
+    python ns_main.py --command_line_arg value
     ```
 
 ## Citation
+
 To cite PVade, please use the "Cite this repository" feature available on the right-hand side of this repository page or use the reference text given below:
-    ```bash
-    sample
-    ``` 
+
+```bash
+@software{Young_PVade_PV_Aerodynamic_2023,
+    author = {Young, Ethan and Arsalane, Walid and Stanislawski, Brooke and He, Xin and Ivanov, Chris and Dana, Scott and Deceglie, Michael},
+    doi = {10.11578/dc.20231208.1},
+    month = sep,
+    title = {{PVade (PV Aerodynamic Design Engineering) [SWR-23-49]}},
+    url = {https://github.com/NREL/PVade},
+    year = {2023}
+}
+```
