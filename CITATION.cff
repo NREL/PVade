@@ -1,0 +1,21 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+authors:
+- family-names: "Young"
+  given-names: "Ethan"
+- family-names: "Arsalane"
+  given-names: "Walid"
+- family-names: "Stanislawski"
+  given-names: "Brooke"
+- family-names: "He"
+  given-names: "Xin"
+- family-names: "Ivanov"
+  given-names: "Chris"
+- family-names: "Dana"
+  given-names: "Scott"
+- family-names: "Deceglie"
+  given-names: "Michael"
+title: "PVade (PV Aerodynamic Design Engineering) [SWR-23-49]"
+doi: 10.11578/dc.20231208.1
+date-released: 2023-09-29
+url: "https://github.com/NREL/PVade"
