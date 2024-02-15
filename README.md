@@ -23,3 +23,9 @@ New users are encouraged to review the [Getting Started](https://pvade.readthedo
     ```bash
     python main.py --command_line_arg value
     ```
+
+## Citation
+To cite PVade, please use the "Cite this repository" feature available on the right-hand side of this repository page or use the reference text given below:
+    ```bash
+    sample
+    ``` 
