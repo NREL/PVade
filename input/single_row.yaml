@@ -40,7 +40,7 @@ solver:
 fluid:
   u_ref: 1.0
   rho: 1.0
-  nu: 1.5e-05
+  nu: 1.8e-05
   turbulence_model:  smagorinsky #null #  
   bc_y_max: slip # slip noslip free
   bc_y_min: slip # slip noslip free
@@ -49,7 +49,7 @@ fluid:
   wind_direction: 270 # slip noslip free
 structure:
   dt : 0.001 # 0.1
-  rho: 1000.0
+  rho: 124.0
   poissons_ratio: 0.3
   elasticity_modulus: 1.0e+07 # 1.0e+03
   body_force_x: 0
