@@ -30,8 +30,8 @@ y_min = 0.0
 y_max = 1.0
 
 h = 0.05
-nx = 150 # int((x_max - x_min)/h)
-ny = 50 # int((y_max - y_min)/h)
+nx = 50 # 150 # int((x_max - x_min)/h)
+ny = 10 # 50 # int((y_max - y_min)/h)
 
 mesh = create_rectangle(MPI.COMM_WORLD, [np.array([x_min, y_min]), np.array([x_max, y_max])],
                                [nx, ny], CellType.triangle)
@@ -114,6 +114,12 @@ T_n.name = "T_n"
 theta_n = Function(S)
 theta_ = Function(S) 
 
+# with io.XDMFFile(mesh.comm, "rayleigh-benard.xdmf", "w") as xdmf:
+
+#     xdmf.write_mesh(mesh)
+#     xdmf.write_function(u_n, 0)
+#     xdmf.write_function(p_n, 0)
+#     xdmf.write_function(T_n, 0)
 
 #%% ================================================================
 # Build Boundary Conditions
@@ -130,6 +136,10 @@ def bottom_wall( x):
 
 def top_wall( x):
     return np.isclose(x[1], y_max)
+
+# bottom wall should be 0
+# class for internal boundaries where all walls are zero
+# maybe do square within a square so propoagation is the same in all directions
 
 # Velocity Boundary Conditions
 if not X_PERIODIC:
@@ -202,6 +212,98 @@ bcT = [bcT_top_wall, bcT_bottom_wall]
 
 bcp = [] # [bcp_left_wall, bcp_right_wall, bcp_bottom_wall, bcp_top_wall]
 
+
+
+# ================================================================
+# Build All Forms
+# ==================================================================
+
+# step 1: tentative velocity
+# chorin (removed the pressure term)
+F1 = (1 / Pr) * ((1 / dt) * inner(u - u_n, v) * dx 
+                + inner(nabla_grad(u_n) * u_n, v) * dx) # this might be dot not * ? 
+F1 += nu * inner(nabla_grad(u), nabla_grad(v)) * dx 
+F1 -= Ra*inner(theta_n*g,v)*dx
+#previous
+# F1 = (1/(Pr*dt))*inner(u - u_n, v)*dx
+# F1 += (1/Pr)*inner(dot(u_n, nabla_grad(u)), v)*dx
+# F1 += inner(nabla_grad(u), nabla_grad(v))*dx
+# F1 -= inner(p_n, div(v))*dx
+# F1 -=  Ra*inner(theta_n*g, v)*dx
+
+a1 = form(lhs(F1)) # dependent on u
+L1 = form(rhs(F1))
+
+# step 2: pressure correction
+a2 = form(inner(nabla_grad(p), nabla_grad(q))*dx)
+L2 = form(-(1.0/dt)*div(u_)*q*dx) # needs to be reassembled
+# a2 = form(inner(nabla_grad(p), nabla_grad(q))*dx)
+# L2 = form(inner(nabla_grad(p_n), nabla_grad(q))*dx - (1.0/dt)*div(u_)*q*dx)
+
+# step 3: velocity update
+a3 = form(inner(u, v)*dx) # doesn't need to be reassembled
+L3 = form(inner(u_, v)*dx - dt*inner(nabla_grad(p_), v)*dx)
+# L3 = form(inner(u_, v)*dx - dt*inner(nabla_grad(p_ - p_n), v)*dx)
+
+# step 4: temperature update?
+a4 = form((1/dt)*inner((theta), s)*dx 
+        + inner(nabla_grad(theta), nabla_grad(s))*dx 
+        + inner(dot(u_, nabla_grad(theta)), s)*dx) # needs to be reassembled bc of u_
+L4 = form((1/dt)*inner(theta_n, s)*dx) # needs to be reassembled bc of theta_n
+# F4 = (1/dt)*inner((theta - theta_n), s)*dx
+# F4 += inner(dot(u_, nabla_grad(theta)), s)*dx
+# F4 += inner(nabla_grad(theta), nabla_grad(s))*dx
+# a4 = form(lhs(F4))
+# L4 = form(rhs(F4))
+
+# visualizing variables
+# ================================================================
+
+# print(u_n.vector.array[:])
+
+# plt.scatter(mesh.geometry.x[:,0], mesh.geometry.x[:,1], s=10, c=p_k.vector.array[:])
+# plt.scatter(coords[0, :], coords[:,1], s=10, c=p_k.vector.array[:])
+# plt.show()
+
+# coords_better = V.tabulate_dof_coordinates()
+# print('size1 = ',np.shape(coords_better[0, :]))
+# print('size2 = ',np.shape(coords_better[0, :]))
+# plt.scatter(coords_better[:, 0], coords_better[:, 1], c=np.sqrt(u_k.vector.array[0::2]**2 + u_k.vector.array[1::2]**2))
+# plt.show()
+
+
+# [BJS] First Pass - closest alignment to FEniCS RB code as possible (not FEniCSX Nav-Stokes code)
+# Solver for step 1
+solver1 = PETSc.KSP().create(mesh.comm)
+# solver1.setOperators(A1)
+solver1.setType(PETSc.KSP.Type.GMRES) # TODO - test solution with BCGS
+pc1 = solver1.getPC()
+pc1.setType(PETSc.PC.Type.HYPRE)
+pc1.setHYPREType("boomeramg")
+
+# Solver for step 2
+solver2 = PETSc.KSP().create(mesh.comm)
+# solver2.setOperators(A2)
+solver2.setType(PETSc.KSP.Type.GMRES) # TODO - test solution with BCGS
+pc2 = solver2.getPC()
+pc2.setType(PETSc.PC.Type.HYPRE)
+# pc2.setHYPREType("boomeramg") # TODO - test solution with this instead (for speed?)
+
+# Solver for step 3
+solver3 = PETSc.KSP().create(mesh.comm)
+# solver3.setOperators(A3)
+solver3.setType(PETSc.KSP.Type.GMRES)
+pc3 = solver3.getPC()
+pc3.setType(PETSc.PC.Type.JACOBI) # TODO - test solution with SOR
+
+# Solver for step 2
+solver4 = PETSc.KSP().create(mesh.comm)
+# solver4.setOperators(A4)
+solver4.setType(PETSc.KSP.Type.GMRES)
+pc4 = solver4.getPC()
+pc4.setType(PETSc.PC.Type.HYPRE)
+pc4.setHYPREType("boomeramg")
+
 # ================================================================
 # Begin Time Iteration
 # ================================================================
@@ -211,7 +313,7 @@ t = 0.0001 #dt # 0.0
 ct = 1 #0
 save_interval = 1 #50
 
-t_final = 0.1 #0.5 # 0.5 #0.1 # 0.000075
+t_final = 0.05 #0.5 # 0.5 #0.1 # 0.000075
 
 with io.XDMFFile(mesh.comm, "rayleigh-benard.xdmf", "w") as xdmf:
 
@@ -219,6 +321,23 @@ with io.XDMFFile(mesh.comm, "rayleigh-benard.xdmf", "w") as xdmf:
     xdmf.write_function(u_n, 0)
     xdmf.write_function(p_n, 0)
     xdmf.write_function(T_n, 0)
+    xdmf.write_function(theta_n, 0)
+
+A1 = assemble_matrix(a1, bcs=bcu)
+A1.assemble()
+b1 = assemble_vector(L1)
+
+A2 = assemble_matrix(a2, bcs=bcp)
+A2.assemble()
+b2 = assemble_vector(L2)
+
+A3 = assemble_matrix(a3, bcs=bcu)
+A3.assemble()
+b3 = assemble_vector(L3)
+
+A4 = assemble_matrix(a4, bcs=bcT)
+A4.assemble()
+b4 = assemble_vector(L4)
 
 while t < t_final + eps:
 
@@ -230,122 +349,40 @@ while t < t_final + eps:
         xdmf.write_function(u_n, t)
         xdmf.write_function(p_n, t)
         xdmf.write_function(T_n, t)
-
-    # ================================================================
-    # Build All Forms
-    # ==================================================================
-
-    # step 1: tentative velocity
-    # chorin (removed the pressure term)
-    F1 = (1 / Pr) * ((1 / dt) * inner(u - u_n, v) * dx 
-                    + inner(nabla_grad(u_n) * u_n, v) * dx) # this might be dot not * ? 
-    F1 += nu * inner(nabla_grad(u), nabla_grad(v)) * dx 
-    F1 -= Ra*inner(theta_n*g,v)*dx
-    #previous
-    # F1 = (1/(Pr*dt))*inner(u - u_n, v)*dx
-    # F1 += (1/Pr)*inner(dot(u_n, nabla_grad(u)), v)*dx
-    # F1 += inner(nabla_grad(u), nabla_grad(v))*dx
-    # F1 -= inner(p_n, div(v))*dx
-    # F1 -=  Ra*inner(theta_n*g, v)*dx
-
-    a1 = form(lhs(F1))
-    L1 = form(rhs(F1))
-
-    # step 2: pressure correction
-    a2 = form(inner(nabla_grad(p), nabla_grad(q))*dx)
-    L2 = form(-(1.0/dt)*div(u_)*q*dx)
-    # a2 = form(inner(nabla_grad(p), nabla_grad(q))*dx)
-    # L2 = form(inner(nabla_grad(p_n), nabla_grad(q))*dx - (1.0/dt)*div(u_)*q*dx)
-
-    # step 3: velocity update
-    a3 = form(inner(u, v)*dx)
-    L3 = form(inner(u_, v)*dx - dt*inner(nabla_grad(p_), v)*dx)
-    # L3 = form(inner(u_, v)*dx - dt*inner(nabla_grad(p_ - p_n), v)*dx)
-
-    # step 4: temperature update?
-    a4 = form((1/dt)*inner((theta), s)*dx 
-            + inner(nabla_grad(theta), nabla_grad(s))*dx 
-            + inner(dot(u_, nabla_grad(theta)), s)*dx)
-    L4 = form((1/dt)*inner(theta_n, s)*dx)
-    # F4 = (1/dt)*inner((theta - theta_n), s)*dx
-    # F4 += inner(dot(u_, nabla_grad(theta)), s)*dx
-    # F4 += inner(nabla_grad(theta), nabla_grad(s))*dx
-    # a4 = form(lhs(F4))
-    # L4 = form(rhs(F4))
-
-    # visualizing variables
-    # ================================================================
-
-    # print(u_n.vector.array[:])
-
-    # plt.scatter(mesh.geometry.x[:,0], mesh.geometry.x[:,1], s=10, c=p_k.vector.array[:])
-    # plt.scatter(coords[0, :], coords[:,1], s=10, c=p_k.vector.array[:])
-    # plt.show()
-
-    # coords_better = V.tabulate_dof_coordinates()
-    # print('size1 = ',np.shape(coords_better[0, :]))
-    # print('size2 = ',np.shape(coords_better[0, :]))
-    # plt.scatter(coords_better[:, 0], coords_better[:, 1], c=np.sqrt(u_k.vector.array[0::2]**2 + u_k.vector.array[1::2]**2))
-    # plt.show()
+        xdmf.write_function(theta_n, t)
 
     # ================================================================
     # Assemble and Build Solvers
     # ================================================================
 
-    A1 = assemble_matrix(a1, bcs=bcu)
+    A1.zeroEntries() # resets the matrix
+    A1 = assemble_matrix(A1,a1,bcs=bcu)
     A1.assemble()
-    b1 = create_vector(L1)
-
-    A2 = assemble_matrix(a2, bcs=bcp)
-    A2.assemble()
-    b2 = create_vector(L2)
-
-    A3 = assemble_matrix(a3, bcs=bcu)
-    A3.assemble()
-    b3 = create_vector(L3)
-
-    A4 = assemble_matrix(a4, bcs=bcT)
-    A4.assemble()
-    b4 = create_vector(L4)
-
-    # [BJS] First Pass - closest alignment to FEniCS RB code as possible (not FEniCSX Nav-Stokes code)
-    # Solver for step 1
-    solver1 = PETSc.KSP().create(mesh.comm)
     solver1.setOperators(A1)
-    solver1.setType(PETSc.KSP.Type.GMRES) # TODO - test solution with BCGS
-    pc1 = solver1.getPC()
-    pc1.setType(PETSc.PC.Type.HYPRE)
-    pc1.setHYPREType("boomeramg")
 
-    # Solver for step 2
-    solver2 = PETSc.KSP().create(mesh.comm)
+    # could be removed? ----------
+    # A2.zeroEntries()
+    # A2 = assemble_matrix(A2,a2, bcs=bcp)
+    # A2.assemble()
     solver2.setOperators(A2)
-    solver2.setType(PETSc.KSP.Type.GMRES) # TODO - test solution with BCGS
-    pc2 = solver2.getPC()
-    pc2.setType(PETSc.PC.Type.GAMG)
-    pc2.setHYPREType("boomeramg") # TODO - test solution with this instead (for speed?)
 
-    # Solver for step 3
-    solver3 = PETSc.KSP().create(mesh.comm)
+    # A3.zeroEntries()
+    # A3 = assemble_matrix(A3, a3, bcs=bcu)
+    # A3.assemble()
     solver3.setOperators(A3)
-    solver3.setType(PETSc.KSP.Type.GMRES)
-    pc3 = solver3.getPC()
-    pc3.setType(PETSc.PC.Type.JACOBI) # TODO - test solution with SOR
+    # b3 = create_vector(L3)
+    # could be removed? ----------
 
-    # Solver for step 2
-    solver4 = PETSc.KSP().create(mesh.comm)
+    A4.zeroEntries()
+    A4 = assemble_matrix(A4, a4, bcs=bcT)
+    A4.assemble()
     solver4.setOperators(A4)
-    solver4.setType(PETSc.KSP.Type.GMRES)
-    pc4 = solver4.getPC()
-    pc4.setType(PETSc.PC.Type.HYPRE)
-    pc4.setHYPREType("boomeramg")
-
-
+    # b4 = create_vector(L4)
 
     # Step 1: Tentative velocity solve
     with b1.localForm() as loc_1:
         loc_1.set(0)
-    assemble_vector(b1, L1)
+    b1=assemble_vector(b1, L1)
     apply_lifting(b1, [a1], [bcu])
     b1.ghostUpdate(addv=PETSc.InsertMode.ADD_VALUES, mode=PETSc.ScatterMode.REVERSE)
     set_bc(b1, bcu)
@@ -355,7 +392,7 @@ while t < t_final + eps:
     # Step 2: Pressure corrrection step
     with b2.localForm() as loc_2:
         loc_2.set(0)
-    assemble_vector(b2, L2)
+    b2=assemble_vector(b2, L2)
     apply_lifting(b2, [a2], [bcp])
     b2.ghostUpdate(addv=PETSc.InsertMode.ADD_VALUES, mode=PETSc.ScatterMode.REVERSE)
     set_bc(b2, bcp)
@@ -365,17 +402,17 @@ while t < t_final + eps:
     # Step 3: Velocity correction step
     with b3.localForm() as loc_3:
         loc_3.set(0)
-    assemble_vector(b3, L3)
+    b3=assemble_vector(b3, L3)
     apply_lifting(b3, [a3], [bcu])
     b3.ghostUpdate(addv=PETSc.InsertMode.ADD_VALUES, mode=PETSc.ScatterMode.REVERSE)
-    set_bc(b3, bcu)
+    # set_bc(b3, bcu)
     solver3.solve(b3, u_.vector)
     u_.x.scatter_forward()
 
     # Step 4: Temperature corrrection step
     with b4.localForm() as loc_4:
         loc_4.set(0)
-    assemble_vector(b4, L4)
+    b4=assemble_vector(b4, L4)
     apply_lifting(b4, [a4], [bcT])
     b4.ghostUpdate(addv=PETSc.InsertMode.ADD_VALUES, mode=PETSc.ScatterMode.REVERSE)
     set_bc(b4, bcT)
@@ -389,14 +426,15 @@ while t < t_final + eps:
     p_n.x.array[:] = p_.x.array[:]
     theta_n.x.array[:] = theta_.x.array[:]
 
-    print(T_n.x.array[:])
+    # print(T_n.x.array[:])
 
     u_n_max = mesh.comm.allreduce(np.max(u_n.vector.array), op=MPI.MAX)
     p_n_max = mesh.comm.allreduce(np.max(p_n.vector.array), op=MPI.MAX)
     T_n_max = mesh.comm.allreduce(np.max(T_n.vector.array), op=MPI.MAX)
+    T_n_sum = mesh.comm.allreduce(np.sum(T_n.vector.array), op=MPI.SUM)
 
     if ct % save_interval == 0:
-        print('Time = %.6f, u_max = %.6e, p_max = %.6e, T_max = %.6e' % (t, u_n_max, p_n_max, T_n_max))
+        print('Time = %.6f, u_max = %.6e, p_max = %.6e, T_max = %.6e, T_sum = %.6e' % (t, u_n_max, p_n_max, T_n_max, T_n_sum))
 
     # Move to next step
     t += float(dt)
