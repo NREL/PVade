@@ -172,9 +172,19 @@ class InflowVelocity:
                 * (self.params.domain.y_max - x[1])
             )
         elif self.params.general.geometry_module == "panels3d":
+
+            if self.current_time < 2.0 and self.params.fluid.time_varying_inflow_bc:
+                time_vary_u_ref = (
+                    self.params.fluid.u_ref
+                    * (1.0 - np.cos(np.pi / 2.0 * self.current_time))
+                    / 2.0
+                )
+            else:
+                time_vary_u_ref = self.params.fluid.u_ref
+
             # inflow_values[0] = x[2]
             inflow_values[0] = (
-                (self.params.fluid.u_ref)
+                (time_vary_u_ref)
                 * np.log(((x[2]) - d0) / z0)
                 / (np.log((z_hub - d0) / z0))
             )

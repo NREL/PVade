@@ -38,6 +38,7 @@ solver:
   save_text_interval: .02 #0.01
   save_xdmf_interval: .02 #0.01
 fluid:
+  time_varying_inflow_bc: true
   u_ref: 1.0
   rho: 1.0
   nu: 1.8e-05
