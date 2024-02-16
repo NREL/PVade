@@ -175,4 +175,4 @@ if __name__ == "__main__":
             sys.stdout = sys.__stdout__
 
         if not params.general.mesh_only:
-            write_metrics(flow, elasticity)
+            write_metrics(flow, elasticity, prof_filename=prof_txt_filename)
