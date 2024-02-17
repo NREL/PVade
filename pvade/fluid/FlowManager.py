@@ -109,7 +109,7 @@ class Flow:
 
         """
 
-        self.bcu, self.inflow_profile, self.inflow_velocity = (
+        self.bcu, self.inflow_profile, self.inflow_velocity, self.upper_cells = (
             build_velocity_boundary_conditions(domain, params, self.V, current_time=0.0)
         )
 
@@ -517,7 +517,10 @@ class Flow:
 
         if params.fluid.time_varying_inflow_bc:
             self.inflow_velocity.current_time = current_time
-            self.inflow_profile.interpolate(self.inflow_velocity)
+            if self.upper_cells is not None:
+                self.inflow_profile.interpolate(self.inflow_velocity, self.upper_cells)
+            else:
+                self.inflow_profile.interpolate(self.inflow_velocity)
 
         if self.first_call_to_solver:
             if self.rank == 0:

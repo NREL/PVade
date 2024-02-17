@@ -214,6 +214,8 @@ def get_inflow_profile_function(domain, params, functionspace, current_time):
 
     inflow_velocity = InflowVelocity(geom_dim, params, current_time)
 
+    upper_cells = None
+
     if params.general.geometry_module in ["cylinder3d", "cylinder2d", "flag2d"]:
         inflow_function.interpolate(inflow_velocity)
 
@@ -241,7 +243,7 @@ def get_inflow_profile_function(domain, params, functionspace, current_time):
 
         inflow_function.interpolate(inflow_velocity, upper_cells)
 
-    return inflow_function, inflow_velocity
+    return inflow_function, inflow_velocity, upper_cells
 
 
 def build_velocity_boundary_conditions(domain, params, functionspace, current_time):
@@ -280,7 +282,7 @@ def build_velocity_boundary_conditions(domain, params, functionspace, current_ti
         bcu.append(bc)
 
     # Set the inflow boundary condition
-    inflow_function, inflow_velocity = get_inflow_profile_function(
+    inflow_function, inflow_velocity, upper_cells = get_inflow_profile_function(
         domain, params, functionspace, current_time
     )
     dofs = get_facet_dofs_by_gmsh_tag(domain, functionspace, "x_min")
@@ -322,7 +324,7 @@ def build_velocity_boundary_conditions(domain, params, functionspace, current_ti
             bc = build_vel_bc_by_type("noslip", domain, functionspace, location)
             bcu.append(bc)
 
-    return bcu, inflow_function, inflow_velocity
+    return bcu, inflow_function, inflow_velocity, upper_cells
 
 
 def build_pressure_boundary_conditions(domain, params, functionspace):
