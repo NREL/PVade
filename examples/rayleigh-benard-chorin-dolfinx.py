@@ -15,10 +15,6 @@ from dolfinx.mesh import create_rectangle, CellType
 from ufl import (FacetNormal, FiniteElement, Identity, TestFunction, TrialFunction, VectorElement,
                  div, dot, ds, dx, inner, lhs, nabla_grad, rhs, sym)
 
-# differences compared to Walid's FEniCS code
-# mesh was crossed, now is triangle - is there crossed in FEniCSx?
-# solver types
-
 # ================================================================
 # Build Mesh
 # ================================================================
@@ -40,6 +36,7 @@ mesh = create_rectangle(MPI.COMM_WORLD, [np.array([x_min, y_min]), np.array([x_m
 # dissipation and heat conduction and the
 # Prandtl number (Pr), which measures the ratio of viscosity to heat
 # conduction.
+
 # ================================================================
 # Define Constants
 # ================================================================
@@ -57,8 +54,6 @@ nu = Constant(mesh, PETSc.ScalarType(1))
 
 # dt = Constant(mesh, PETSc.ScalarType(0.000025))
 dt = Constant(mesh, PETSc.ScalarType(0.0001))
-
-
 
 # ================================================================
 # Build Function Spaces and Functions
@@ -114,13 +109,6 @@ T_n.name = "T_n"
 theta_n = Function(S)
 theta_ = Function(S) 
 
-# with io.XDMFFile(mesh.comm, "rayleigh-benard.xdmf", "w") as xdmf:
-
-#     xdmf.write_mesh(mesh)
-#     xdmf.write_function(u_n, 0)
-#     xdmf.write_function(p_n, 0)
-#     xdmf.write_function(T_n, 0)
-
 #%% ================================================================
 # Build Boundary Conditions
 # ================================================================
@@ -159,15 +147,6 @@ bcu_top_wall = dirichletbc(u_noslip, top_wall_dofs, V)
 bcu = [bcu_left_wall, bcu_right_wall, bcu_bottom_wall, bcu_top_wall]
 
 # Temperature Boundary Conditions
-# def temp_bc(x):
-#     return 0.1+0.1*np.sin(2*x[1])
-
-# bottom_wall_dofs = locate_dofs_geometrical(S, bottom_wall)
-# T_bc = Function(S)
-# T_bc.interpolate(temp_bc)
-# print('after interpolation')
-# # print([i for i in T_bc.vector.array[:]])
-
 # # visualize temperature variation along wall
 # y = np.linspace(y_min, y_max, ny)
 # fig, axs = plt.subplots(2)
@@ -212,8 +191,6 @@ bcT = [bcT_top_wall, bcT_bottom_wall]
 
 bcp = [] # [bcp_left_wall, bcp_right_wall, bcp_bottom_wall, bcp_top_wall]
 
-
-
 # ================================================================
 # Build All Forms
 # ==================================================================
@@ -224,12 +201,6 @@ F1 = (1 / Pr) * ((1 / dt) * inner(u - u_n, v) * dx
                 + inner(nabla_grad(u_n) * u_n, v) * dx) # this might be dot not * ? 
 F1 += nu * inner(nabla_grad(u), nabla_grad(v)) * dx 
 F1 -= Ra*inner(theta_n*g,v)*dx
-#previous
-# F1 = (1/(Pr*dt))*inner(u - u_n, v)*dx
-# F1 += (1/Pr)*inner(dot(u_n, nabla_grad(u)), v)*dx
-# F1 += inner(nabla_grad(u), nabla_grad(v))*dx
-# F1 -= inner(p_n, div(v))*dx
-# F1 -=  Ra*inner(theta_n*g, v)*dx
 
 a1 = form(lhs(F1)) # dependent on u
 L1 = form(rhs(F1))
@@ -237,39 +208,16 @@ L1 = form(rhs(F1))
 # step 2: pressure correction
 a2 = form(inner(nabla_grad(p), nabla_grad(q))*dx)
 L2 = form(-(1.0/dt)*div(u_)*q*dx) # needs to be reassembled
-# a2 = form(inner(nabla_grad(p), nabla_grad(q))*dx)
-# L2 = form(inner(nabla_grad(p_n), nabla_grad(q))*dx - (1.0/dt)*div(u_)*q*dx)
 
 # step 3: velocity update
 a3 = form(inner(u, v)*dx) # doesn't need to be reassembled
 L3 = form(inner(u_, v)*dx - dt*inner(nabla_grad(p_), v)*dx)
-# L3 = form(inner(u_, v)*dx - dt*inner(nabla_grad(p_ - p_n), v)*dx)
 
 # step 4: temperature update?
 a4 = form((1/dt)*inner((theta), s)*dx 
         + inner(nabla_grad(theta), nabla_grad(s))*dx 
         + inner(dot(u_, nabla_grad(theta)), s)*dx) # needs to be reassembled bc of u_
 L4 = form((1/dt)*inner(theta_n, s)*dx) # needs to be reassembled bc of theta_n
-# F4 = (1/dt)*inner((theta - theta_n), s)*dx
-# F4 += inner(dot(u_, nabla_grad(theta)), s)*dx
-# F4 += inner(nabla_grad(theta), nabla_grad(s))*dx
-# a4 = form(lhs(F4))
-# L4 = form(rhs(F4))
-
-# visualizing variables
-# ================================================================
-
-# print(u_n.vector.array[:])
-
-# plt.scatter(mesh.geometry.x[:,0], mesh.geometry.x[:,1], s=10, c=p_k.vector.array[:])
-# plt.scatter(coords[0, :], coords[:,1], s=10, c=p_k.vector.array[:])
-# plt.show()
-
-# coords_better = V.tabulate_dof_coordinates()
-# print('size1 = ',np.shape(coords_better[0, :]))
-# print('size2 = ',np.shape(coords_better[0, :]))
-# plt.scatter(coords_better[:, 0], coords_better[:, 1], c=np.sqrt(u_k.vector.array[0::2]**2 + u_k.vector.array[1::2]**2))
-# plt.show()
 
 
 # [BJS] First Pass - closest alignment to FEniCS RB code as possible (not FEniCSX Nav-Stokes code)
@@ -313,7 +261,7 @@ t = 0.0001 #dt # 0.0
 ct = 1 #0
 save_interval = 1 #50
 
-t_final = 0.05 #0.5 # 0.5 #0.1 # 0.000075
+t_final = 0.1 #0.5 # 0.5 #0.1 # 0.000075
 
 with io.XDMFFile(mesh.comm, "rayleigh-benard.xdmf", "w") as xdmf:
 
@@ -441,3 +389,17 @@ while t < t_final + eps:
     ct += 1
 
 
+# visualizing variables
+# ================================================================
+
+# print(u_n.vector.array[:])
+
+# plt.scatter(mesh.geometry.x[:,0], mesh.geometry.x[:,1], s=10, c=p_k.vector.array[:])
+# plt.scatter(coords[0, :], coords[:,1], s=10, c=p_k.vector.array[:])
+# plt.show()
+
+# coords_better = V.tabulate_dof_coordinates()
+# print('size1 = ',np.shape(coords_better[0, :]))
+# print('size2 = ',np.shape(coords_better[0, :]))
+# plt.scatter(coords_better[:, 0], coords_better[:, 1], c=np.sqrt(u_k.vector.array[0::2]**2 + u_k.vector.array[1::2]**2))
+# plt.show()
