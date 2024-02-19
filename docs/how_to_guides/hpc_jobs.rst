@@ -1,5 +1,5 @@
-HPC Jobs
-========
+Running on HPC
+==============
 
 
 Job submission on Kestrel 
@@ -82,8 +82,8 @@ a Job script example is shown below:
      * *srun* is the luncher to be used 
 
  
-PVade Performance on Kestrel 
-----------------------------
+.. PVade Performance on Kestrel 
+.. ----------------------------
 
 
 

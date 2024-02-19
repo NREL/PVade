@@ -1,5 +1,5 @@
 Input File parameters 
-===============
+======================
 
 The input parameters for PVade are orgnized in categories:
 
@@ -123,5 +123,10 @@ structure:
 
 Input file Structure
 ----------------
+
+.. toctree::
+   :maxdepth: 2
+
+   input_schema
 
 .. Fill in with walkthrough pointing to an example

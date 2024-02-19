@@ -32,6 +32,7 @@ extensions = [
     "sphinx.ext.autodoc",
     "sphinx.ext.napoleon",
     "sphinx.ext.autosectionlabel",
+    'sphinxcontrib.datatemplates',
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -57,3 +58,11 @@ html_theme = "sphinx_rtd_theme"
 html_static_path = ["_static"]
 
 autoclass_content = "both"
+
+from sphinx.builders.html import StandaloneHTMLBuilder
+StandaloneHTMLBuilder.supported_image_types = [
+    'image/svg+xml',
+    'image/gif',
+    'image/png',
+    'image/jpeg'
+]

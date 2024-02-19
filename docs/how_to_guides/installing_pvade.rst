@@ -1,19 +1,36 @@
 Installing PVade 
-===============
+=================
 
 
 On a Unix base machine 
 --------------------------
 
-Building Conda Environment
+PVade is a software that uses FEniCSx for its Finite Element Computation. 
+For more information about FEniCSx please refer to https://github.com/FEniCS/dolfinx.
+
+In addition to FEniCSx, PVade uses multiple python packages as part of the pre- and post-processing steps. 
+PVade dependencies are included in environment.yaml. 
+
+In order to start using PVade, we can use Conda/Mamba for the creation of an environement containg all the necessary dependencies. 
+
+In order to obtain Mamba we can use the following ressource https://mamba.readthedocs.io/en/latest/installation/mamba-installation.html.
+
+In order to obtain Conda we can use the following ressource https://conda.io/projects/conda/en/latest/user-guide/install/index.html.
+
+.. Note:: 
+   We recommand using Mamba for its fast installation of the environement. 
+
+
+
+Building Mamba Environment
 
 To use this software, begin by creating a Conda environment using the provided ``environment.yaml`` file::
 
-  conda env create -n my_env_name -f environment.yaml
+  mamba env create -n my_env_name -f environment.yaml
 
 where ``my_env_name`` can be replaced with a short name for your Conda environment. When the environment finishes installing, activate it with::
 
-  conda activate my_env_name
+  mamba activate my_env_name
 
 from within your activate Conda environment, a simulation can be executed with::
 
@@ -25,10 +42,10 @@ We can test the successful installation of PVade and it's MPI implementation by 
   mpirun -np #ncores python -u $PVade/example/poissoneq.py 64  cg none 1
 
 The example solve a Poisson's equation in 3 dimensions using 64 elements and 1 order Lagrange shape functions with cg as the ksp solver and no preconditioners. 
-
+For more details about the poisson's problem we refer the use to the folowing link https://jsdokken.com/dolfinx-tutorial/chapter1/fundamentals.html 
 
 On NREL HPC machine Kestrel 
---------------------------
+----------------------------
 
 In order to use PVade on Kestrel, we can use one of the two options.
 

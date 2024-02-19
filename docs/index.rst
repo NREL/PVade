@@ -20,6 +20,12 @@ Documentation is currently organized into three main categories:
 
 New users may find it helpful to review the :ref:`Getting Started` materials first.
 
+
+
+.. image:: how_to_guides/benchmark_png/fsi2.gif
+   :alt: StreamPlayer
+   :align: center
+
 Contents
 --------
 
@@ -27,6 +33,6 @@ Contents
    :maxdepth: 2
 
    how_to_guides/index
-   theory_manual/index
    technical_reference/index
    background/index
+..   theory_manual/index
