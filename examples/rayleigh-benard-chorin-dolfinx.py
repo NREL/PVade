@@ -6,6 +6,7 @@ from petsc4py import PETSc
 import numpy as np
 import matplotlib.pyplot as plt
 
+import gmsh
 from dolfinx import io
 from dolfinx.fem import Constant, Function, FunctionSpace, assemble_scalar, dirichletbc, form, locate_dofs_geometrical
 from dolfinx.fem.petsc import assemble_matrix, assemble_vector, apply_lifting, create_vector, set_bc
@@ -29,8 +30,63 @@ h = 0.05
 nx = 50 # 150 # int((x_max - x_min)/h)
 ny = 10 # 50 # int((y_max - y_min)/h)
 
-mesh = create_rectangle(MPI.COMM_WORLD, [np.array([x_min, y_min]), np.array([x_max, y_max])],
-                               [nx, ny], CellType.triangle)
+# mesh = create_rectangle(MPI.COMM_WORLD, [np.array([x_min, y_min]), np.array([x_max, y_max])],
+#                                [nx, ny], CellType.triangle)
+
+comm = MPI.COMM_WORLD
+
+gmsh.initialize()
+gmsh.option.setNumber("General.Terminal", 0)
+
+gmsh_model = gmsh.model()
+gmsh_model.add("domain")
+gmsh_model.setCurrent("domain")
+
+ndim = 2
+
+domain_width = 3.0 # box width
+domain_height = 1.0 #  # box height
+
+domain_id = gmsh_model.occ.addRectangle(0, 0, 0, domain_width, domain_height) # Notice this spans from [0, x_max], [0, y_max], your BCs may need adjustment
+domain_tag = (ndim, domain_id)
+
+panel_width = 0.5 # Chord length, or width
+panel_height = 0.05 # Sets the panel thickness, really
+panel_angle = np.radians(30) # Sets the panel rotation (argument must be radians for gmsh)
+
+panel_id = gmsh_model.occ.addRectangle(-0.5*panel_width, -0.5*panel_height, 0, panel_width, panel_height)
+panel_tag = (ndim, panel_id)
+
+# Rotate the panel and shift it into its correct position
+gmsh_model.occ.rotate([panel_tag], 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, panel_angle)
+gmsh_model.occ.translate([panel_tag],
+                         0.5*domain_width,
+                         0.5*domain_height,
+                         0.0)
+
+# Cookie cutter step, domain = domain - panel, is how to read this
+gmsh_model.occ.cut([domain_tag], [panel_tag])
+
+gmsh_model.occ.synchronize()
+
+all_pts = gmsh_model.occ.getEntities(0)
+
+l_characteristic = 0.05 # Sets the characteristic size of the cells
+gmsh_model.mesh.setSize(all_pts, l_characteristic)
+
+vol_tag_list = gmsh_model.occ.getEntities(ndim)
+
+for vol_tag in vol_tag_list:
+    vol_id = vol_tag[1]
+    gmsh_model.add_physical_group(ndim, [vol_id], vol_id)
+
+# Generate the mesh
+gmsh_model.mesh.generate(ndim)
+
+mesh, mt, ft = io.gmshio.model_to_mesh(gmsh_model, comm, 0, gdim=2)
+
+
+
 # Two key physical parameters are the Rayleigh number (Ra), which
 # measures the ratio of energy from buoyant forces to viscous
 # dissipation and heat conduction and the
@@ -308,24 +364,13 @@ while t < t_final + eps:
     A1.assemble()
     solver1.setOperators(A1)
 
-    # could be removed? ----------
-    # A2.zeroEntries()
-    # A2 = assemble_matrix(A2,a2, bcs=bcp)
-    # A2.assemble()
     solver2.setOperators(A2)
-
-    # A3.zeroEntries()
-    # A3 = assemble_matrix(A3, a3, bcs=bcu)
-    # A3.assemble()
     solver3.setOperators(A3)
-    # b3 = create_vector(L3)
-    # could be removed? ----------
 
     A4.zeroEntries()
     A4 = assemble_matrix(A4, a4, bcs=bcT)
     A4.assemble()
     solver4.setOperators(A4)
-    # b4 = create_vector(L4)
 
     # Step 1: Tentative velocity solve
     with b1.localForm() as loc_1:
@@ -353,7 +398,6 @@ while t < t_final + eps:
     b3=assemble_vector(b3, L3)
     apply_lifting(b3, [a3], [bcu])
     b3.ghostUpdate(addv=PETSc.InsertMode.ADD_VALUES, mode=PETSc.ScatterMode.REVERSE)
-    # set_bc(b3, bcu)
     solver3.solve(b3, u_.vector)
     u_.x.scatter_forward()
 
@@ -366,19 +410,16 @@ while t < t_final + eps:
     set_bc(b4, bcT)
     solver4.solve(b4, theta_.vector)
     theta_.x.scatter_forward()
-
-    
-
+  
     # Update variable with solution form this time step
     u_n.x.array[:] = u_.x.array[:]
     p_n.x.array[:] = p_.x.array[:]
     theta_n.x.array[:] = theta_.x.array[:]
 
     # print(T_n.x.array[:])
-
-    u_n_max = mesh.comm.allreduce(np.max(u_n.vector.array), op=MPI.MAX)
-    p_n_max = mesh.comm.allreduce(np.max(p_n.vector.array), op=MPI.MAX)
-    T_n_max = mesh.comm.allreduce(np.max(T_n.vector.array), op=MPI.MAX)
+    u_n_max = mesh.comm.allreduce(np.amax(u_n.vector.array), op=MPI.MAX)
+    p_n_max = mesh.comm.allreduce(np.amax(p_n.vector.array), op=MPI.MAX)
+    T_n_max = mesh.comm.allreduce(np.amax(T_n.vector.array), op=MPI.MAX)
     T_n_sum = mesh.comm.allreduce(np.sum(T_n.vector.array), op=MPI.SUM)
 
     if ct % save_interval == 0:
