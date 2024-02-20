@@ -1,5 +1,9 @@
-# Rayleigh-Benard Convection Flow
-# copied from Walid Arsalene's FEniCS code, adapted to FEniCSx by Brooke Stanislawski
+"""
+Rayleigh-Benard Convection Flow
+- copied from Walid Arsalene's FEniCS code, adapted to FEniCSx by Brooke Stanislawski
+- uses the governing equations from Chorin 1968 (Oberbeck-Boussinesq approximation of the Navier-Stokes equations)
+- includes the option to model the classical convective flow in an empty domain or to include a heated pv panel at the center of the domain
+"""
 
 from mpi4py import MPI
 from petsc4py import PETSc
@@ -17,7 +21,7 @@ from ufl import (FacetNormal, FiniteElement, Identity, TestFunction, TrialFuncti
                  div, dot, ds, dx, inner, lhs, nabla_grad, rhs, sym)
 
 # ================================================================
-# Build Mesh
+# Inputs
 # ================================================================
 
 x_min = 0.0
@@ -30,61 +34,69 @@ h = 0.05
 nx = 50 # 150 # int((x_max - x_min)/h)
 ny = 10 # 50 # int((y_max - y_min)/h)
 
-# mesh = create_rectangle(MPI.COMM_WORLD, [np.array([x_min, y_min]), np.array([x_max, y_max])],
-#                                [nx, ny], CellType.triangle)
+pv_panel_present = True # empty domain or with a pv panel in the center?
 
-comm = MPI.COMM_WORLD
+# ================================================================
+# Build Mesh
+# ================================================================
 
-gmsh.initialize()
-gmsh.option.setNumber("General.Terminal", 0)
+if pv_panel_present: 
+    comm = MPI.COMM_WORLD
 
-gmsh_model = gmsh.model()
-gmsh_model.add("domain")
-gmsh_model.setCurrent("domain")
+    gmsh.initialize()
+    gmsh.option.setNumber("General.Terminal", 0)
 
-ndim = 2
+    gmsh_model = gmsh.model()
+    gmsh_model.add("domain")
+    gmsh_model.setCurrent("domain")
 
-domain_width = 3.0 # box width
-domain_height = 1.0 #  # box height
+    ndim = 2
 
-domain_id = gmsh_model.occ.addRectangle(0, 0, 0, domain_width, domain_height) # Notice this spans from [0, x_max], [0, y_max], your BCs may need adjustment
-domain_tag = (ndim, domain_id)
+    domain_width = 3.0 # box width
+    domain_height = 1.0 #  # box height
 
-panel_width = 0.5 # Chord length, or width
-panel_height = 0.05 # Sets the panel thickness, really
-panel_angle = np.radians(30) # Sets the panel rotation (argument must be radians for gmsh)
+    domain_id = gmsh_model.occ.addRectangle(0, 0, 0, domain_width, domain_height) # Notice this spans from [0, x_max], [0, y_max], your BCs may need adjustment
+    domain_tag = (ndim, domain_id)
 
-panel_id = gmsh_model.occ.addRectangle(-0.5*panel_width, -0.5*panel_height, 0, panel_width, panel_height)
-panel_tag = (ndim, panel_id)
+    panel_width = 0.5 # Chord length, or width
+    panel_height = 0.05 # Sets the panel thickness, really
+    panel_angle = np.radians(30) # Sets the panel rotation (argument must be radians for gmsh)
 
-# Rotate the panel and shift it into its correct position
-gmsh_model.occ.rotate([panel_tag], 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, panel_angle)
-gmsh_model.occ.translate([panel_tag],
-                         0.5*domain_width,
-                         0.5*domain_height,
-                         0.0)
+    panel_id = gmsh_model.occ.addRectangle(-0.5*panel_width, -0.5*panel_height, 0, panel_width, panel_height)
+    panel_tag = (ndim, panel_id)
 
-# Cookie cutter step, domain = domain - panel, is how to read this
-gmsh_model.occ.cut([domain_tag], [panel_tag])
+    # Rotate the panel and shift it into its correct position
+    gmsh_model.occ.rotate([panel_tag], 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, panel_angle)
+    gmsh_model.occ.translate([panel_tag],
+                            0.5*domain_width,
+                            0.5*domain_height,
+                            0.0)
 
-gmsh_model.occ.synchronize()
+    # Cookie cutter step, domain = domain - panel, is how to read this
+    gmsh_model.occ.cut([domain_tag], [panel_tag])
 
-all_pts = gmsh_model.occ.getEntities(0)
+    gmsh_model.occ.synchronize()
 
-l_characteristic = 0.05 # Sets the characteristic size of the cells
-gmsh_model.mesh.setSize(all_pts, l_characteristic)
+    all_pts = gmsh_model.occ.getEntities(0)
 
-vol_tag_list = gmsh_model.occ.getEntities(ndim)
+    l_characteristic = 0.05 # Sets the characteristic size of the cells
+    gmsh_model.mesh.setSize(all_pts, l_characteristic)
 
-for vol_tag in vol_tag_list:
-    vol_id = vol_tag[1]
-    gmsh_model.add_physical_group(ndim, [vol_id], vol_id)
+    vol_tag_list = gmsh_model.occ.getEntities(ndim)
 
-# Generate the mesh
-gmsh_model.mesh.generate(ndim)
+    for vol_tag in vol_tag_list:
+        vol_id = vol_tag[1]
+        gmsh_model.add_physical_group(ndim, [vol_id], vol_id)
 
-mesh, mt, ft = io.gmshio.model_to_mesh(gmsh_model, comm, 0, gdim=2)
+    # Generate the mesh
+    gmsh_model.mesh.generate(ndim)
 
+    mesh, mt, ft = io.gmshio.model_to_mesh(gmsh_model, comm, 0, gdim=2)
+
+else:
+    # create an empty domain mesh
+    mesh = create_rectangle(MPI.COMM_WORLD, [np.array([x_min, y_min]), np.array([x_max, y_max])],
+                               [nx, ny], CellType.triangle)
 
 
 # Two key physical parameters are the Rayleigh number (Ra), which
@@ -102,43 +114,21 @@ Ra = Constant(mesh, PETSc.ScalarType(1e5))
 # Ra = Constant(mesh, PETSc.ScalarType(2500))
 
 Pr = Constant(mesh, PETSc.ScalarType(0.7))
-# print('Pr = ', Pr.value)
 
 g = Constant(mesh, PETSc.ScalarType((0, 1)))
 
 nu = Constant(mesh, PETSc.ScalarType(1))
 
-# dt = Constant(mesh, PETSc.ScalarType(0.000025))
-dt = Constant(mesh, PETSc.ScalarType(0.0001))
+dt_num = 0.0001
+dt = Constant(mesh, PETSc.ScalarType(dt_num))
 
 # ================================================================
 # Build Function Spaces and Functions
 # ================================================================
-X_PERIODIC = False
-# X_PERIODIC = True
 
-# if X_PERIODIC:
-#     class XPeriodicBoundary(SubDomain):
-#         # Left boundary is "target domain" G
-#         def inside(self, x):
-#             return np.isclose(x[0], x_min)
-
-#         # Map right boundary (H) to left boundary (G)
-#         def map(self, x, y):
-#             y[0] = x[0] - (x_max - x_min)
-#             y[1] = x[1]
-
-#     v_cg2 = VectorElement("Lagrange", mesh.ufl_cell(), 2)
-#     V = FunctionSpace(mesh, v_cg2, constrained_domain=XPeriodicBoundary()) # velocity
-#     print('applied periodic BCs')
-#     # V = VectorFunctionSpace(mesh, 'P', 2, constrained_domain=XPeriodicBoundary())
-#     # Q = FunctionSpace(mesh, 'P', 1, constrained_domain=XPeriodicBoundary())
-#     # S = FunctionSpace(mesh, 'P', 1, constrained_domain=XPeriodicBoundary())
-
-# else:
 v_cg2 = VectorElement("Lagrange", mesh.ufl_cell(), 2)
 q_cg1 = FiniteElement("Lagrange", mesh.ufl_cell(), 1)
-# s_cg1 = FiniteElement("Lagrange", mesh.ufl_cell(), 1)
+
 V = FunctionSpace(mesh, v_cg2) # velocity
 Q = FunctionSpace(mesh, q_cg1) # pressure
 S = FunctionSpace(mesh, q_cg1) # temperature
@@ -187,18 +177,13 @@ def internal_boundaries( x):
     y_test = np.logical_and(y_min + tol < x[1], x[1] < y_max - tol)
     return np.logical_and(x_test, y_test)
 
-# bottom wall should be 0
-# class for internal boundaries where all walls are zero
-# maybe do square within a square so propoagation is the same in all directions
-
 # Velocity Boundary Conditions
-if not X_PERIODIC:
-    left_wall_dofs = locate_dofs_geometrical(V, left_wall)
-    u_noslip = np.array((0,) * mesh.geometry.dim, dtype=PETSc.ScalarType)
-    bcu_left_wall = dirichletbc(u_noslip, left_wall_dofs, V)
+left_wall_dofs = locate_dofs_geometrical(V, left_wall)
+u_noslip = np.array((0,) * mesh.geometry.dim, dtype=PETSc.ScalarType)
+bcu_left_wall = dirichletbc(u_noslip, left_wall_dofs, V)
 
-    right_wall_dofs = locate_dofs_geometrical(V, right_wall)
-    bcu_right_wall = dirichletbc(u_noslip, right_wall_dofs, V)
+right_wall_dofs = locate_dofs_geometrical(V, right_wall)
+bcu_right_wall = dirichletbc(u_noslip, right_wall_dofs, V)
 
 bottom_wall_dofs = locate_dofs_geometrical(V, bottom_wall)
 bcu_bottom_wall = dirichletbc(u_noslip, bottom_wall_dofs, V)
@@ -206,11 +191,15 @@ bcu_bottom_wall = dirichletbc(u_noslip, bottom_wall_dofs, V)
 top_wall_dofs = locate_dofs_geometrical(V, top_wall)
 bcu_top_wall = dirichletbc(u_noslip, top_wall_dofs, V)
 
-boundary_facets = locate_entities_boundary(mesh, mesh.topology.dim - 1, internal_boundaries)
-boundary_dofs = locate_dofs_topological(V, mesh.topology.dim - 1, boundary_facets)
-bcu_internal_walls = dirichletbc(u_noslip, boundary_dofs, V)
+bcu = [bcu_left_wall, bcu_right_wall, bcu_bottom_wall, bcu_top_wall]
 
-bcu = [bcu_left_wall, bcu_right_wall, bcu_bottom_wall, bcu_top_wall, bcu_internal_walls]
+if pv_panel_present: 
+
+    boundary_facets = locate_entities_boundary(mesh, mesh.topology.dim - 1, internal_boundaries)
+    boundary_dofs = locate_dofs_topological(V, mesh.topology.dim - 1, boundary_facets)
+    bcu_internal_walls = dirichletbc(u_noslip, boundary_dofs, V)
+
+    bcu.append(bcu_internal_walls)
 
 # Temperature Boundary Conditions
 # # visualize temperature variation along wall
@@ -237,21 +226,36 @@ theta_n.interpolate(lambda x: (-x[1]/y_max))
 #initialize T_n
 # T_n.x.array[:] = DeltaT*theta_n.x.array[:] + T0_bottom # is this necessary?
 
-print('applying bottom wall temp = {}'.format((T0_bottom-T0_bottom)/DeltaT))
-bottom_wall_dofs = locate_dofs_geometrical(S, bottom_wall)
-bcT_bottom_wall = dirichletbc(PETSc.ScalarType((T0_bottom-T0_bottom)/DeltaT), bottom_wall_dofs, S)
+# keeping these separate in case we want to specify different temperatures for when pv panels are present
+if pv_panel_present==False:
 
-print('applying top wall temp = {}'.format((T0_top-T0_bottom)/DeltaT))
-top_wall_dofs = locate_dofs_geometrical(S, top_wall)
-bcT_top_wall = dirichletbc(PETSc.ScalarType((T0_top-T0_bottom)/DeltaT), top_wall_dofs, S)
+    print('applying bottom wall temp = {}'.format((T0_bottom-T0_bottom)/DeltaT))
+    bottom_wall_dofs = locate_dofs_geometrical(S, bottom_wall)
+    bcT_bottom_wall = dirichletbc(PETSc.ScalarType((T0_bottom-T0_bottom)/DeltaT), bottom_wall_dofs, S)
 
-print('applying internal boundary temp')
-boundary_facets = locate_entities_boundary(mesh, mesh.topology.dim - 1, internal_boundaries)
-boundary_dofs = locate_dofs_topological(S, mesh.topology.dim - 1, boundary_facets)
-bcT_internal_walls = dirichletbc(PETSc.ScalarType((T0_bottom-T0_bottom)/DeltaT), boundary_dofs, S)
+    print('applying top wall temp = {}'.format((T0_top-T0_bottom)/DeltaT))
+    top_wall_dofs = locate_dofs_geometrical(S, top_wall)
+    bcT_top_wall = dirichletbc(PETSc.ScalarType((T0_top-T0_bottom)/DeltaT), top_wall_dofs, S)
 
+    bcT = [bcT_top_wall, bcT_bottom_wall]
 
-bcT = [bcT_top_wall, bcT_bottom_wall, bcT_internal_walls]
+if pv_panel_present: 
+    # apply temperature of 0 at all walls except PV panel which is 1
+    print('applying bottom wall temp = {}'.format((T0_bottom-T0_bottom)/DeltaT))
+    bottom_wall_dofs = locate_dofs_geometrical(S, bottom_wall)
+    bcT_bottom_wall = dirichletbc(PETSc.ScalarType((T0_bottom-T0_bottom)/DeltaT), bottom_wall_dofs, S)
+
+    print('applying top wall temp = {}'.format((T0_top-T0_bottom)/DeltaT))
+    top_wall_dofs = locate_dofs_geometrical(S, top_wall)
+    bcT_top_wall = dirichletbc(PETSc.ScalarType((T0_top-T0_bottom)/DeltaT), top_wall_dofs, S)
+
+    print('applying internal boundary temp')
+    boundary_facets = locate_entities_boundary(mesh, mesh.topology.dim - 1, internal_boundaries)
+    boundary_dofs = locate_dofs_topological(S, mesh.topology.dim - 1, boundary_facets)
+    bcT_internal_walls = dirichletbc(PETSc.ScalarType((T0_bottom-T0_bottom)/DeltaT), boundary_dofs, S)
+
+    bcT = [bcT_top_wall, bcT_bottom_wall, bcT_internal_walls]
+
 # bcT = [T_bc]
 
 # Pressure Boundary Conditions from fenics code
@@ -292,10 +296,8 @@ a4 = form((1/dt)*inner((theta), s)*dx
 L4 = form((1/dt)*inner(theta_n, s)*dx) # needs to be reassembled bc of theta_n
 
 
-# [BJS] First Pass - closest alignment to FEniCS RB code as possible (not FEniCSX Nav-Stokes code)
 # Solver for step 1
 solver1 = PETSc.KSP().create(mesh.comm)
-# solver1.setOperators(A1)
 solver1.setType(PETSc.KSP.Type.GMRES) # TODO - test solution with BCGS
 pc1 = solver1.getPC()
 pc1.setType(PETSc.PC.Type.HYPRE)
@@ -303,7 +305,6 @@ pc1.setHYPREType("boomeramg")
 
 # Solver for step 2
 solver2 = PETSc.KSP().create(mesh.comm)
-# solver2.setOperators(A2)
 solver2.setType(PETSc.KSP.Type.GMRES) # TODO - test solution with BCGS
 pc2 = solver2.getPC()
 pc2.setType(PETSc.PC.Type.HYPRE)
@@ -311,14 +312,12 @@ pc2.setType(PETSc.PC.Type.HYPRE)
 
 # Solver for step 3
 solver3 = PETSc.KSP().create(mesh.comm)
-# solver3.setOperators(A3)
 solver3.setType(PETSc.KSP.Type.GMRES)
 pc3 = solver3.getPC()
 pc3.setType(PETSc.PC.Type.JACOBI) # TODO - test solution with SOR
 
 # Solver for step 2
 solver4 = PETSc.KSP().create(mesh.comm)
-# solver4.setOperators(A4)
 solver4.setType(PETSc.KSP.Type.GMRES)
 pc4 = solver4.getPC()
 pc4.setType(PETSc.PC.Type.HYPRE)
@@ -329,13 +328,18 @@ pc4.setHYPREType("boomeramg")
 # ================================================================
 
 eps = 3.0e-16
-t = 0.0001 #dt # 0.0
+t = dt_num #dt # 0.0
 ct = 1 #0
 save_interval = 1 #50
 
 t_final = 0.1 #0.5 # 0.5 #0.1 # 0.000075
 
-with io.XDMFFile(mesh.comm, "rayleigh-benard.xdmf", "w") as xdmf:
+if pv_panel_present:
+    save_fn = "rayleigh-benard-pv.xdmf"
+else:
+    save_fn = "rayleigh-benard.xdmf"
+
+with io.XDMFFile(mesh.comm, save_fn, "w") as xdmf:
 
     xdmf.write_mesh(mesh)
     xdmf.write_function(u_n, 0)
@@ -361,10 +365,9 @@ b4 = assemble_vector(L4)
 
 while t < t_final + eps:
 
-    # why is this required?
     T_n.x.array[:] = DeltaT*theta_n.x.array[:] + T0_bottom
 
-    with io.XDMFFile(mesh.comm, "rayleigh-benard.xdmf", "a") as xdmf:
+    with io.XDMFFile(mesh.comm, save_fn, "a") as xdmf:
 
         xdmf.write_function(u_n, t)
         xdmf.write_function(p_n, t)
