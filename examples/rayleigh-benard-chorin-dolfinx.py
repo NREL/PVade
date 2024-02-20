@@ -8,10 +8,10 @@ import matplotlib.pyplot as plt
 
 import gmsh
 from dolfinx import io
-from dolfinx.fem import Constant, Function, FunctionSpace, assemble_scalar, dirichletbc, form, locate_dofs_geometrical
+from dolfinx.fem import Constant, Function, FunctionSpace, assemble_scalar, dirichletbc, form, locate_dofs_geometrical, locate_dofs_topological
 from dolfinx.fem.petsc import assemble_matrix, assemble_vector, apply_lifting, create_vector, set_bc
 # from dolfinx.io import VTXWriter
-from dolfinx.mesh import create_rectangle, CellType
+from dolfinx.mesh import create_rectangle, CellType, locate_entities_boundary
 # from dolfinx.plot import vtk_mesh
 from ufl import (FacetNormal, FiniteElement, Identity, TestFunction, TrialFunction, VectorElement,
                  div, dot, ds, dx, inner, lhs, nabla_grad, rhs, sym)
@@ -181,6 +181,12 @@ def bottom_wall( x):
 def top_wall( x):
     return np.isclose(x[1], y_max)
 
+def internal_boundaries( x):
+    tol = 1e-3
+    x_test = np.logical_and(x_min + tol < x[0], x[0] < x_max - tol)
+    y_test = np.logical_and(y_min + tol < x[1], x[1] < y_max - tol)
+    return np.logical_and(x_test, y_test)
+
 # bottom wall should be 0
 # class for internal boundaries where all walls are zero
 # maybe do square within a square so propoagation is the same in all directions
@@ -200,7 +206,11 @@ bcu_bottom_wall = dirichletbc(u_noslip, bottom_wall_dofs, V)
 top_wall_dofs = locate_dofs_geometrical(V, top_wall)
 bcu_top_wall = dirichletbc(u_noslip, top_wall_dofs, V)
 
-bcu = [bcu_left_wall, bcu_right_wall, bcu_bottom_wall, bcu_top_wall]
+boundary_facets = locate_entities_boundary(mesh, mesh.topology.dim - 1, internal_boundaries)
+boundary_dofs = locate_dofs_topological(V, mesh.topology.dim - 1, boundary_facets)
+bcu_internal_walls = dirichletbc(u_noslip, boundary_dofs, V)
+
+bcu = [bcu_left_wall, bcu_right_wall, bcu_bottom_wall, bcu_top_wall, bcu_internal_walls]
 
 # Temperature Boundary Conditions
 # # visualize temperature variation along wall
@@ -235,7 +245,13 @@ print('applying top wall temp = {}'.format((T0_top-T0_bottom)/DeltaT))
 top_wall_dofs = locate_dofs_geometrical(S, top_wall)
 bcT_top_wall = dirichletbc(PETSc.ScalarType((T0_top-T0_bottom)/DeltaT), top_wall_dofs, S)
 
-bcT = [bcT_top_wall, bcT_bottom_wall]
+print('applying internal boundary temp')
+boundary_facets = locate_entities_boundary(mesh, mesh.topology.dim - 1, internal_boundaries)
+boundary_dofs = locate_dofs_topological(S, mesh.topology.dim - 1, boundary_facets)
+bcT_internal_walls = dirichletbc(PETSc.ScalarType((T0_bottom-T0_bottom)/DeltaT), boundary_dofs, S)
+
+
+bcT = [bcT_top_wall, bcT_bottom_wall, bcT_internal_walls]
 # bcT = [T_bc]
 
 # Pressure Boundary Conditions from fenics code
