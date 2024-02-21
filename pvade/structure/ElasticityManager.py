@@ -414,8 +414,8 @@ class Elasticity:
             self.solver.rtol = 1e-8
             # self.solver.relaxation_parameter = 0.5
             # self.solver.max_it = 500
-            self.solver.convergence_criterion = "residual"
-            # self.solver.convergence_criterion = "incremental"
+            # self.solver.convergence_criterion = "residual"
+            self.solver.convergence_criterion = "incremental"
 
             # We can customize the linear solver used inside the NewtonSolver by
             # modifying the PETSc options
