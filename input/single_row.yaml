@@ -25,7 +25,7 @@ pv_array:
   # span_fixation_pts: [0.6, 6.9, 13.2, 18.3, 22.4]
   span_fixation_pts: [13.2]
 solver:
-  dt: .001 #0.0025
+  dt: .01 #0.0025
   t_final: 20.0 # 10.0
   solver1_ksp: gmres
   solver2_ksp: gmres
@@ -38,8 +38,8 @@ solver:
   save_text_interval: .02 #0.01
   save_xdmf_interval: .02 #0.01
 fluid:
-  time_varying_inflow_bc: true
-  u_ref: 1.0
+  time_varying_inflow_bc: false # true
+  u_ref: 16.0
   rho: 1.0
   nu: 1.8e-05
   turbulence_model:  smagorinsky #null #  
@@ -49,10 +49,10 @@ fluid:
   bc_z_min: noslip # slip noslip free
   wind_direction: 270 # slip noslip free
 structure:
-  dt : 0.001 # 0.1
+  dt : 0.01 # 0.1
   rho: 124.0
   poissons_ratio: 0.3
-  elasticity_modulus: 1.0e+07 # 1.0e+03
+  elasticity_modulus: 1.0e+09 # 1.0e+03
   body_force_x: 0
   body_force_y: 0
   body_force_z: 0 #100
