@@ -15,9 +15,10 @@ from pvade.structure.ElasticityManager import Elasticity
 import os
 
 
-def main():
+def main(input_file=None):
     # Get the path to the input file from the command line
-    input_file = get_input_file()
+    if input_file is None:
+        input_file = get_input_file()
     # input_file = "inputs/sim_params_alt.yaml"  # get_input_file()
 
     # Load the parameters object specified by the input file
