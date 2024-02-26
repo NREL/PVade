@@ -22,7 +22,7 @@ New users may find it helpful to review the :ref:`Getting Started` materials fir
 
 
 
-.. image:: how_to_guides/benchmark_png/fsi2.gif
+.. image:: how_to_guides/benchmark_png/main_animation.gif 
    :alt: StreamPlayer
    :align: center
 
