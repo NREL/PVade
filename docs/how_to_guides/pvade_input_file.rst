@@ -1,5 +1,5 @@
 Input File parameters 
-======================
+=====================
 
 The input parameters for PVade are orgnized in categories:
 
@@ -122,7 +122,7 @@ structure:
   - tube_connection: Boolean flag to constrain rotation around a a torque tube. explain torque tube True 
 
 Input file Structure
-----------------
+--------------------
 
 .. toctree::
    :maxdepth: 2

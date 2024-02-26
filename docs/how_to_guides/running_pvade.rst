@@ -44,6 +44,7 @@ we can run any of the examples by pointing to the correct input file located und
 In order to run a Flag 2D example we can execute the following:
 
 .. code::
+
     python $PVade/ns_main.py --input input/flag2d.yaml
 
 

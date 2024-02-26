@@ -4,19 +4,17 @@ Benchmark
 
 The Flag 2D example is used to benchmark PVade. 
 For more detail on the Flag 2D example, you can refer to :ref:`Flag 2D`. 
+Benchmarking of PVade was done through validation of lift, drag and position of point A as described in Turek and Hron [1]_, and proceeds through three steps: (1) validation of the structure solve only (CSM3), validation of the fluid solve only (CFD3), and validation of the coupled fluid-structure interaction (FSI2).
 
 
+CSM3 benchmark 
+--------------
 
-Benchmarking of PVade was done through validation of lift, drag and position of point A as described in [E.Y.]
+For benchmarking of the structural dynamics, we used CSM3 in Turek and Hron [1]_ and compared the x and y position of point A (see :ref:`Flag 2D`)
+The table shows the results obtained for CSM3.
 
-
-CSD benchmark 
--------------
-
-For benchmarking of the structural dynamics, we used CSD3 in "insert paper here" and compared the x and y position of point A (see :ref:`Flag 2D`)
-The table shows the results obtained for CSD3. 
 .. container::
-   :name: tab:my_label
+   :name: tab:csm3
 
    .. table:: Results for CSM3 with timesteps :math:`\Delta T = 0.005`
 
@@ -34,13 +32,13 @@ A plot for x and y position of point A is shown below
 .. image:: benchmark_png/csm3_comparison.png
   :alt: Alternative text
 
-CFD benchmark 
--------------
+CFD3 benchmark 
+--------------
 
 For benchmarking of the fluid analysis, we used FSI3 in "insert paper here" and compared the Lift and Drag over the time of the simulation.
 
-   .. container::
-   :name: tab:my_label
+.. container::
+   :name: tab:cfd3
 
    .. table:: Results for CFD3 with timesteps :math:`\Delta T = 0.001`
 
@@ -61,14 +59,15 @@ The lift and Drag versus time are shown below
 .. image:: benchmark_png/dragCFD3.png
   :alt: alternative text
    
-FSI benchmark 
--------------
+FSI2 benchmark 
+--------------
 
-    For the coupled FSI, we used FSI2 from and compared the posiion of point A as well as Lift and Drag over the duration of the simulation.
+For the coupled FSI, we used FSI2 from and compared the posiion of point A as well as Lift and Drag over the duration of the simulation.
+
 .. container::
-   :name: tab:my_label
+   :name: tab:fsi2
 
-   .. table:: Results for CSM3 with timesteps :math:`\Delta T = 0.005`
+   .. table:: Results for FSI2 with timesteps :math:`\Delta T = 0.005`
 
       =====  ========================== ======================== ========================== =========================
       \      ux of A [×10−3]            uy of A [×10−3]          Drag                       Lift
@@ -93,3 +92,9 @@ The simulation of FSI2 can be visualized below
 .. image:: benchmark_png/fsi2.gif
    :alt: StreamPlayer
    :align: center
+
+
+References
+----------
+.. [1] S. Turek and J. Hron, “Proposal for Numerical Benchmarking of Fluid–Structure Interaction Between an Elastic Object and Laminar Incompressible Flow,” in Fluid-Structure Interaction: Modelling, Simulation, Optimisation, 2007, doi.org/10.1007/3-540-34596-5_15
+
