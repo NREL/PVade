@@ -37,7 +37,7 @@ For the upcoming benchmarks the following values are used:
 
 
 .. container::
-   :name: tab:my_label
+   :name: tab:geometry
 
    .. table:: Parameter settings for the CSM tests
 
@@ -48,8 +48,8 @@ For the upcoming benchmarks the following values are used:
       :math:`L [m]`                        2.5
       :math:`h [m]`                        0.02
       :math:`l [m]`                        0.35
-      :math:`C `                           (0.2,0.2)
-      :math:`A `                           (0.6,0.2)
+      :math:`C`                            (0.2,0.2)
+      :math:`A`                            (0.6,0.2)
       :math:`r [m]`                        0.05
       ==================================== =====
 
@@ -68,7 +68,7 @@ time dependent case starting from the undeformed configuration
 The Parameters used for the benchmarking are defined below
 
 .. container::
-   :name: tab:my_label
+   :name: tab:properties
 
    .. table:: Parameter settings for the CSM tests
 
@@ -83,7 +83,7 @@ The Parameters used for the benchmarking are defined below
 [E.Y] add data and context for table below 
 
 .. container::
-   :name: tab:my_label
+   :name: tab:results
 
    .. table:: Results for CSM3 with timesteps :math:`\Delta T = 0.005`
 

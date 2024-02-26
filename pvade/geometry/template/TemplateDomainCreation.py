@@ -3,10 +3,6 @@ import numpy as np
 
 
 class TemplateDomainCreation:
-    """This class creates the geometry used for a given example.
-    Gmsh is used to create the computational domain
-
-    """
 
     def __init__(self, params):
         """The class is initialised here
@@ -31,7 +27,8 @@ class TemplateDomainCreation:
         self.gmsh_model.setCurrent("domain")
 
     def build(self, params):
-        """
+        """Build the geometry using gmsh functions (new domains must supply this, template is blank)
+
             panels: This function creates the computational domain for a 3d simulation involving N panels.
             The panels are set at a distance apart, rotated at an angle theta and are elevated with a distance H from the ground.
             panels2d: This function creates the computational domain for a 2d simulation involving N panels.
@@ -45,6 +42,7 @@ class TemplateDomainCreation:
 
     def set_length_scales(self, params, domain_markers):
         """This function call defines the characteristic length for the mesh in locations of interst
+
         LcMin,LcMax,DistMin and DistMax are used to create a refined mesh in specific locations
         which results in a high fidelity mesh without using a uniform element size in the whole mesh.
         """
@@ -54,6 +52,7 @@ class TemplateDomainCreation:
 
     def mark_surfaces(self, params, domain_markers):
         """This function call iterates over all boundaries and assigns tags for each boundary.
+
         The Tags are being used when appying boundary condition.
         """
 
