@@ -99,7 +99,7 @@ The Parameters used for the benchmarking are defined below
 When we plot the "x" and "y" displacement of the point A versus time we obtain the following 
 
 
-.. image:: pictures/2dflag/csm3_comparison.png
+.. image:: /how_to_guides/benchmark_png/csm3_tip_position_comparison.png
   :alt: Alternative text
 
 
