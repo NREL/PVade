@@ -23,4 +23,5 @@ dependencies:
   - pip
   - pip:
     - sphinx-rtd-theme
+    - sphinxcontrib.datatemplates
     - -e . # Installs the pvade package
