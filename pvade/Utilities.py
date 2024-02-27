@@ -23,8 +23,8 @@ def get_input_file():
     return input_file_path
 
 
-def write_metrics(flow, elasticity):
-    with open("profiling.txt", "r") as output_file:
+def write_metrics(flow, elasticity, prof_filename="profiling.txt"):
+    with open(prof_filename, "r") as output_file:
         if flow.fluid_analysis == True:
             # solver_line = [line for line in output_file if "(solve)" in line]
             solver_line = [line for line in output_file if "(solve)" in line]
@@ -39,7 +39,7 @@ def write_metrics(flow, elasticity):
                 solver_line[0],
             )
 
-    with open("profiling.txt", "r") as output_file_1:
+    with open(prof_filename, "r") as output_file_1:
         if flow.fluid_analysis == True:
             # solver_line = [line for line in output_file if "(solve)" in line]
             solver1_line = [line for line in output_file_1 if "_solver_step_1" in line]
@@ -54,7 +54,7 @@ def write_metrics(flow, elasticity):
                 solver1_line[0],
             )
 
-    with open("profiling.txt", "r") as output_file:
+    with open(prof_filename, "r") as output_file:
         if flow.fluid_analysis == True:
             solver2_line = [line for line in output_file if "_solver_step_2" in line]
             print(solver2_line)
@@ -68,7 +68,7 @@ def write_metrics(flow, elasticity):
                 solver2_line[0],
             )
 
-    with open("profiling.txt", "r") as output_file:
+    with open(prof_filename, "r") as output_file:
         if flow.fluid_analysis == True:
             solver3_line = [line for line in output_file if "_solver_step_3" in line]
             print(solver3_line)
@@ -82,7 +82,7 @@ def write_metrics(flow, elasticity):
                 solver3_line[0],
             )
 
-    with open("profiling.txt", "r") as output_file:
+    with open(prof_filename, "r") as output_file:
         if flow.fluid_analysis == True:
             meshread_line = [line for line in output_file if "(read)" in line]
             if meshread_line:
@@ -96,7 +96,7 @@ def write_metrics(flow, elasticity):
                     meshread_line[0],
                 )
 
-    with open("profiling.txt", "r") as output_file:
+    with open(prof_filename, "r") as output_file:
         if flow.fluid_analysis == True:
             meshbuild_line = [line for line in output_file if "(build)" in line]
             if meshbuild_line:

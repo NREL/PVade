@@ -30,6 +30,10 @@ properties:
         default: false
         type: "boolean"
         description: "If true, exit the PVade run immediately after generating the mesh without solving"
+      debug_mesh_motion_only:
+        default: false
+        type: "boolean"
+        description: "If true, use both a structure and fluid domain, but do not solve the fluid solution, just use the motion of the solved structure to adapt the fluid mesh, useful for testing various mesh motion strategies without the expensive fluid solve."
       structural_analysis:
         default: False 
         type: "boolean"
@@ -94,6 +98,11 @@ properties:
         maximum: 100.0
         type: "number"
         description: "The characteristic length to use when building the mesh."
+        units: "meter"
+      free_slip_along_walls:
+        default: false
+        type: "boolean"
+        description: "If true, allow movement of the fluid mesh to 'slip' nodes along the edges of the computational domain walls, with zero motion normal to wall, if false, nodes on boundaries remain completely dixed during mesh motion."
         units: "meter"
   pv_array:
     additionalProperties: false
@@ -284,6 +293,14 @@ properties:
         type: "number"
         description: "The velocity of the wind as measured at the panel elevation."
         units: "meter/second"
+      initialize_with_inflow_bc:
+        default: true
+        type: "boolean"
+        description: "If true, use the inflow boundary condition to interpolate a non-zero initial velocity throughout the domain (even if that does not respect interior boundary conditions), if false, initial velocity is zero."
+      time_varying_inflow_bc:
+        default: false
+        type: "boolean"
+        description: "If true, the inflow boundary condition will be re-evaluated at each time step, if false, the inflow function is treated as constant and will not be re-evaluated after the initial t=0 state."
       rho:
         default: 1.0
         # minimum: 0.001
@@ -373,6 +390,13 @@ properties:
     type: "object"
     # required:
     properties:
+      beta_relaxation:
+        default: 0.5
+        minimum: 0.0
+        maximum: 1.0
+        type: "number"
+        description: "Controls the value of beta in the expression `traction = beta * traction_actual + (1-beta) * traction_predicted`, smaller values mean trusting the predicted traction more, larger values mean trusting the actual traction more."
+        units: "unitless"
       tube_connection:
         default: false
         type: "boolean"
