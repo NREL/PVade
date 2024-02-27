@@ -1,6 +1,6 @@
 general:
   geometry_module: flag2d
-  output_dir: output/flag2d
+  output_dir: pvade/tests/output/flag2d
   mesh_only: false
   structural_analysis: true
   fluid_analysis: true
@@ -19,7 +19,7 @@ pv_array:
   stream_rows: 1
 solver:
   dt: 0.001 # 0.002
-  t_final: 30.0
+  t_final: 0.02
   solver1_ksp: gmres
   solver2_ksp: gmres
   solver3_ksp: gmres

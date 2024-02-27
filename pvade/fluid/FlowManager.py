@@ -35,6 +35,7 @@ class Flow:
 
         """
         self.fluid_analysis = fluid_analysis
+        self.name = "fluid"
 
         if fluid_analysis == False:
             pass
@@ -108,13 +109,12 @@ class Flow:
 
         """
 
-        self.u_ref_c = dolfinx.fem.Constant(domain.fluid.msh, PETSc.ScalarType(0.0))
-
-        self.bcu, self.inflow_profile, self.inflow_velocity = (
-            build_velocity_boundary_conditions(domain, params, self.V, self.u_ref_c)
+        self.bcu, self.inflow_profile, self.inflow_velocity, self.upper_cells = (
+            build_velocity_boundary_conditions(domain, params, self.V, current_time=0.0)
         )
 
         self.bcp = build_pressure_boundary_conditions(domain, params, self.Q)
+        # self.bcp = []
 
     def build_forms(self, domain, params):
         """Builds all variational statements
@@ -161,9 +161,7 @@ class Flow:
         self.p_k = dolfinx.fem.Function(self.Q, name="pressure")
         self.p_k1 = dolfinx.fem.Function(self.Q)
 
-        initialize_flow = True
-
-        if initialize_flow:
+        if params.fluid.initialize_with_inflow_bc:
             # self.inflow_profile = dolfinx.fem.Function(self.V)
             # self.inflow_profile.interpolate(lambda x: np.vstack((x[0], x[1],x[2])))
 
@@ -208,6 +206,10 @@ class Flow:
                 # Eddy viscosity
                 self.nu_T = Cs**2 * filter_scale**2 * strainMag
                 # self.nu_T = dolfinx.fem.Constant(domain.fluid.msh, 0.0)
+            else:
+                raise ValueError(
+                    f"Turbulence model {params.fluid.turbulence_model} not recognized."
+                )
         else:
             self.nu_T = dolfinx.fem.Constant(domain.fluid.msh, 0.0)
 
@@ -252,10 +254,11 @@ class Flow:
         # self.U_ALE = (1.5*self.mesh_vel - 0.5*self.mesh_vel_old) / self.dt_c
         # self.U_ALE = 0.5*(domain.fluid_mesh_displacement + domain.fluid_mesh_displacement_old) / self.dt_c
         # self.U_ALE = self.mesh_vel_old / self.dt_c
-        self.U_ALE = self.mesh_vel  # / self.dt_c
+        # self.U_ALE = 1.5 * self.mesh_vel -0.5 * self.mesh_vel_old  # / self.dt_c
+        self.U_ALE = 0.5 * (self.mesh_vel + self.mesh_vel_old)  # / self.dt_c
+        # self.U_ALE = self.mesh_vel  # / self.dt_c
         # self.U_ALE = 0.1*self.mesh_vel + 0.9*self.mesh_vel_old
         # self.U_ALE = domain.fluid_mesh_displacement / self.dt_c
-        # TODO: why does domain.fluid_mesh_displacement/dt work and mesh_vel/dt not work?
 
         self.F1 = (
             (1.0 / self.dt_c) * ufl.inner(self.u - self.u_k1, self.v) * ufl.dx
@@ -512,58 +515,28 @@ class Flow:
             params (:obj:`pvade.Parameters.SimParams`): A SimParams object
         """
 
-        # if current_time < 2.0:
-        #     self.u_ref_c.value = params.fluid.u_ref*(1.0-np.cos(np.pi/2.0*current_time))/2.0
-        # else:
-        #     self.u_ref_c.value = params.fluid.u_ref
-
-        # self.inflow_profile.interpolate(self.inflow_velocity)
+        if params.fluid.time_varying_inflow_bc:
+            self.inflow_velocity.current_time = current_time
+            if self.upper_cells is not None:
+                self.inflow_profile.interpolate(self.inflow_velocity, self.upper_cells)
+            else:
+                self.inflow_profile.interpolate(self.inflow_velocity)
 
         if self.first_call_to_solver:
             if self.rank == 0:
                 print("Starting Fluid Solution")
 
             self.bcu.append(
-                dolfinx.fem.dirichletbc(self.mesh_vel_bc, self.all_interior_V_dofs)
+                dolfinx.fem.dirichletbc(self.mesh_vel, self.all_interior_V_dofs)
             )
 
             self._assemble_system(params)
-
-        # WALID: this has been a focus for testing, trying to "soften" the changes in velocity
-        # applied as a BC at the internal boundary. I think this is a hack and that the real
-        # solution would be to apply some stabilizing terms like SUPG in the variational form
-        # for navier stokes.
-        self.mesh_vel_old.x.array[:] = self.mesh_vel.x.array
-        self.mesh_vel_bc_old.x.array[:] = self.mesh_vel_bc.x.array
 
         self.mesh_vel.interpolate(domain.fluid_mesh_displacement)
         # # self.mesh_vel.interpolate(domain.better_mesh_vel)
 
         self.mesh_vel.vector.array[:] = self.mesh_vel.vector.array / params.solver.dt
         self.mesh_vel.x.scatter_forward()
-
-        self.mesh_vel_bc.x.array[:] = self.mesh_vel_bc_old.x.array + 0.2 * (
-            self.mesh_vel.x.array - self.mesh_vel_bc_old.x.array
-        )
-
-        # # self.mesh_vel.x.array[:] = self.mesh_vel_interp.x.array
-        # # print(self.U_ALE)
-
-        # vals = self.mesh_vel.vector.array[:].reshape(-1, 3)
-        # vals = np.amax(np.sum(vals**2, axis=1))
-
-        # self.mesh_vel_max = np.zeros(1)
-        # self.comm.Allreduce(vals, self.mesh_vel_max, op=MPI.MAX)
-        # self.mesh_vel_max = self.mesh_vel_max[0]
-        # if self.rank == 0:
-        #     print(f"Max mesh vel = {self.mesh_vel_max}")
-
-        # # self.mesh_vel_composite.x.array[:] = (2.5*self.mesh_vel.x.array - 1.5 *self.mesh_vel_old.x.array)
-        # # self.mesh_vel_composite.x.array[:] = (1.5*self.mesh_vel.x.array - 0.5 *self.mesh_vel_old.x.array)
-        # # self.mesh_vel_composite.x.array[:] = (0.5*self.mesh_vel.x.array + 0.5 *self.mesh_vel_old.x.array)
-        # self.mesh_vel_composite.x.array[:] += 0.1*(self.mesh_vel.x.array - self.mesh_vel_composite.x.array)
-
-        # self.bcu[-1] = dolfinx.fem.dirichletbc(self.mesh_vel, self.all_interior_V_dofs)
 
         # Calculate the tentative velocity
         self._solver_step_1(params)
@@ -578,140 +551,15 @@ class Flow:
         # Compute the CFL number
         self.compute_cfl()
 
-        self.lift_coeff_list = []
-        self.drag_coeff_list = []
+        self.compute_lift_and_drag(params, current_time)
 
-        for panel_id in range(
-            int(params.pv_array.stream_rows * params.pv_array.span_rows)
-        ):
-            lift_coeff_local = dolfinx.fem.assemble_scalar(
-                self.lift_form_list[panel_id]
-            )
-            lift_coeff_array = np.zeros(self.num_procs, dtype=np.float64)
-            self.comm.Gather(
-                np.array(lift_coeff_local, dtype=np.float64), lift_coeff_array, root=0
-            )
-
-            drag_coeff_local = dolfinx.fem.assemble_scalar(
-                self.drag_form_list[panel_id]
-            )
-            drag_coeff_array = np.zeros(self.num_procs, dtype=np.float64)
-            self.comm.Gather(
-                np.array(drag_coeff_local, dtype=np.float64), drag_coeff_array, root=0
-            )
-
-            if self.rank == 0:
-                self.lift_coeff_list.append(np.sum(lift_coeff_array))
-                self.drag_coeff_list.append(np.sum(drag_coeff_array))
-
-        if self.rank == 0:
-            if self.first_call_to_solver:
-                self.lift_and_drag_filename = (
-                    f"{params.general.output_dir_sol}/lift_and_drag.csv"
-                )
-
-                with open(self.lift_and_drag_filename, "w") as fp:
-                    fp.write("#Time")
-
-                    for panel_id in range(
-                        int(params.pv_array.stream_rows * params.pv_array.span_rows)
-                    ):
-                        fp.write(
-                            f",Lift_{panel_id:.0f},Drag_{panel_id:.0f},Lift_ND_{panel_id:.0f},Drag_ND_{panel_id:.0f}"
-                        )
-
-                    fp.write("\n")
-
-            with open(self.lift_and_drag_filename, "a") as fp:
-                fp.write(f"{current_time:.9e}")
-
-                lift_coeff = self.lift_coeff_list[panel_id]
-                drag_coeff = self.drag_coeff_list[panel_id]
-
-                lift_coeff_nd = (
-                    2.0
-                    * lift_coeff
-                    / (
-                        params.fluid.rho
-                        * params.fluid.u_ref**2
-                        * 2.0
-                        * params.pv_array.panel_span
-                    )
-                )
-                drag_coeff_nd = (
-                    2.0
-                    * drag_coeff
-                    / (
-                        params.fluid.rho
-                        * params.fluid.u_ref**2
-                        * 2.0
-                        * params.pv_array.panel_span
-                    )
-                )
-
-                for panel_id in range(
-                    int(params.pv_array.stream_rows * params.pv_array.span_rows)
-                ):
-                    fp.write(
-                        f",{lift_coeff:.9e},{drag_coeff:.9e},{lift_coeff_nd:.9e},{drag_coeff_nd:.9e}"
-                    )
-
-                fp.write("\n")
-
-                print(f"Lift = {lift_coeff} ({lift_coeff_nd})")
-                print(f"Drag = {drag_coeff} ({drag_coeff_nd})")
-
-        bb_tree = dolfinx.geometry.BoundingBoxTree(
-            domain.fluid.msh, domain.fluid.msh.topology.dim
-        )
-
-        eps = 1.0e-6
-
-        # Find cells whose bounding-box collide with the the points
-        points = np.array(
-            [
-                [0.2 - params.pv_array.panel_span - eps, 0.2, 0.0],
-                [0.2 + params.pv_array.panel_span + eps, 0.2, 0.0],
-            ]
-        )
-
-        cell_candidates = dolfinx.geometry.compute_collisions(bb_tree, points)
-
-        cells = []
-        points_on_proc = []
-
-        # Choose one of the cells that contains the point
-        colliding_cells = dolfinx.geometry.compute_colliding_cells(
-            domain.fluid.msh, cell_candidates, points
-        )
-
-        for i, point in enumerate(points):
-            if len(colliding_cells.links(i)) > 0:
-                points_on_proc.append(point)
-                cells.append(colliding_cells.links(i)[0])
-
-        points_on_proc = np.array(points_on_proc, dtype=np.float64)
-        p_front_and_back = self.p_k.eval(points_on_proc, cells)
-
-        if len(p_front_and_back) == 0:
-            p_front_and_back = np.array(np.nan)
-
-        p_front_and_back_global = self.comm.gather(p_front_and_back, root=0)
-        if self.rank == 0:
-            temp = [data.flatten() for data in p_front_and_back_global]
-            p_front_and_back_global = np.concatenate(temp).ravel()
-            delta_p = np.nanmax(p_front_and_back_global) - np.nanmin(
-                p_front_and_back_global
-            )
-            # print(p_front_and_back_global)
-            print(f"delta_P = {delta_p}")
-
-        # print(p_front)
+        self.compute_pressure_drop_between_points(domain, params)
 
         # Update new -> old variables
         self.u_k2.x.array[:] = self.u_k1.x.array
         self.u_k1.x.array[:] = self.u_k.x.array
         self.p_k1.x.array[:] = self.p_k.x.array
+        self.mesh_vel_old.x.array[:] = self.mesh_vel.x.array
 
         if self.first_call_to_solver:
             self.first_call_to_solver = False
@@ -770,13 +618,29 @@ class Flow:
 
         self.b2 = dolfinx.fem.petsc.assemble_vector(self.b2, self.L2)
 
-        dolfinx.fem.petsc.apply_lifting(self.b2, [self.a2], [self.bcp])
+        nullspace_testing = True
 
-        self.b2.ghostUpdate(
-            addv=PETSc.InsertMode.ADD_VALUES, mode=PETSc.ScatterMode.REVERSE
-        )
+        if len(self.bcp) == 0 and nullspace_testing:
+            if self.first_call_to_solver:
+                # No pressure boundary conditions applied,
+                # Therefore we need to remove the null space
+                if params.rank == 0:
+                    print("No pressure BC found, initializing null space")
 
-        dolfinx.fem.petsc.set_bc(self.b2, self.bcp)
+                self.nullspace = PETSc.NullSpace().create(
+                    constant=True, comm=params.comm
+                )
+                self.A2.setNullSpace(self.nullspace)
+
+            self.nullspace.remove(self.b2)
+        else:
+            dolfinx.fem.petsc.apply_lifting(self.b2, [self.a2], [self.bcp])
+
+            self.b2.ghostUpdate(
+                addv=PETSc.InsertMode.ADD_VALUES, mode=PETSc.ScatterMode.REVERSE
+            )
+
+            dolfinx.fem.petsc.set_bc(self.b2, self.bcp)
 
         self.solver_2.solve(self.b2, self.p_k.vector)
         self.p_k.x.scatter_forward()
@@ -873,6 +737,135 @@ class Flow:
         self.cfl_max = np.zeros(1)
         self.comm.Allreduce(cfl_max_local, self.cfl_max, op=MPI.MAX)
         self.cfl_max = self.cfl_max[0]
+
+    def compute_lift_and_drag(self, params, current_time):
+
+        self.lift_coeff_list = []
+        self.drag_coeff_list = []
+
+        for panel_id in range(params.pv_array.num_panels):
+            lift_coeff_local = dolfinx.fem.assemble_scalar(
+                self.lift_form_list[panel_id]
+            )
+            lift_coeff_array = np.zeros(self.num_procs, dtype=np.float64)
+            self.comm.Gather(
+                np.array(lift_coeff_local, dtype=np.float64), lift_coeff_array, root=0
+            )
+
+            drag_coeff_local = dolfinx.fem.assemble_scalar(
+                self.drag_form_list[panel_id]
+            )
+            drag_coeff_array = np.zeros(self.num_procs, dtype=np.float64)
+            self.comm.Gather(
+                np.array(drag_coeff_local, dtype=np.float64), drag_coeff_array, root=0
+            )
+
+            if self.rank == 0:
+                self.lift_coeff_list.append(np.sum(lift_coeff_array))
+                self.drag_coeff_list.append(np.sum(drag_coeff_array))
+
+        if self.rank == 0:
+            if self.first_call_to_solver:
+                self.lift_and_drag_filename = (
+                    f"{params.general.output_dir_sol}/lift_and_drag.csv"
+                )
+
+                with open(self.lift_and_drag_filename, "w") as fp:
+                    fp.write("#Time")
+
+                    for panel_id in range(params.pv_array.num_panels):
+                        fp.write(
+                            f",Lift_{panel_id:.0f},Drag_{panel_id:.0f},Lift_ND_{panel_id:.0f},Drag_ND_{panel_id:.0f}"
+                        )
+
+                    fp.write("\n")
+
+            with open(self.lift_and_drag_filename, "a") as fp:
+                fp.write(f"{current_time:.9e}")
+
+                for panel_id in range(params.pv_array.num_panels):
+
+                    lift_coeff = self.lift_coeff_list[panel_id]
+                    drag_coeff = self.drag_coeff_list[panel_id]
+
+                    lift_coeff_nd = (
+                        2.0
+                        * lift_coeff
+                        / (
+                            params.fluid.rho
+                            * params.fluid.u_ref**2
+                            * 2.0
+                            * params.pv_array.panel_span
+                        )
+                    )
+
+                    drag_coeff_nd = (
+                        2.0
+                        * drag_coeff
+                        / (
+                            params.fluid.rho
+                            * params.fluid.u_ref**2
+                            * 2.0
+                            * params.pv_array.panel_span
+                        )
+                    )
+
+                    fp.write(
+                        f",{lift_coeff:.9e},{drag_coeff:.9e},{lift_coeff_nd:.9e},{drag_coeff_nd:.9e}"
+                    )
+
+                    # print(f"Lift = {lift_coeff} ({lift_coeff_nd})")
+                    # print(f"Drag = {drag_coeff} ({drag_coeff_nd})")
+
+                fp.write("\n")
+
+    def compute_pressure_drop_between_points(self, domain, params):
+        bb_tree = dolfinx.geometry.BoundingBoxTree(
+            domain.fluid.msh, domain.fluid.msh.topology.dim
+        )
+
+        eps = 1.0e-6
+
+        # Find cells whose bounding-box collide with the the points
+        points = np.array(
+            [
+                [0.2 - params.pv_array.panel_span - eps, 0.2, 0.0],
+                [0.2 + params.pv_array.panel_span + eps, 0.2, 0.0],
+            ]
+        )
+
+        cell_candidates = dolfinx.geometry.compute_collisions(bb_tree, points)
+
+        cells = []
+        points_on_proc = []
+
+        # Choose one of the cells that contains the point
+        colliding_cells = dolfinx.geometry.compute_colliding_cells(
+            domain.fluid.msh, cell_candidates, points
+        )
+
+        for i, point in enumerate(points):
+            if len(colliding_cells.links(i)) > 0:
+                points_on_proc.append(point)
+                cells.append(colliding_cells.links(i)[0])
+
+        points_on_proc = np.array(points_on_proc, dtype=np.float64)
+        p_front_and_back = self.p_k.eval(points_on_proc, cells)
+
+        if len(p_front_and_back) == 0:
+            p_front_and_back = np.array(np.nan)
+
+        p_front_and_back_global = self.comm.gather(p_front_and_back, root=0)
+        if self.rank == 0:
+            temp = [data.flatten() for data in p_front_and_back_global]
+            p_front_and_back_global = np.concatenate(temp).ravel()
+            delta_p = np.nanmax(p_front_and_back_global) - np.nanmin(
+                p_front_and_back_global
+            )
+            # print(p_front_and_back_global)
+            # print(f"delta_P = {delta_p}")
+
+        # print(p_front)
 
     def adjust_dpdx_for_constant_flux(self):
         """Adjust the forcing term, ``dpdx``, to maintain flowrate

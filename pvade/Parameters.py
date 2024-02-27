@@ -411,5 +411,14 @@ class SimParams:
             self.solver.save_text_interval / self.solver.dt
         )
 
+        # Add the two sub-directories for output (solution and mesh)
         self.general.output_dir_mesh = os.path.join(self.general.output_dir, "mesh")
         self.general.output_dir_sol = os.path.join(self.general.output_dir, "solution")
+
+        os.makedirs(self.general.output_dir_mesh, exist_ok=True)
+        os.makedirs(self.general.output_dir_sol, exist_ok=True)
+
+        # Add the total number of panels (num streamwise rows X num spanwise rows)
+        self.pv_array.num_panels = int(
+            self.pv_array.stream_rows * self.pv_array.span_rows
+        )
