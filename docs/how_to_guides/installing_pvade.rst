@@ -39,7 +39,7 @@ from within your activate Conda environment, a simulation can be executed with::
 
 We can test the successful installation of PVade and it's MPI implementation by running the following example ::
   
-  mpirun -np #ncores python -u $PVade/example/poissoneq.py 64  cg none 1
+  mpirun -np $num_cores python -u $PVade/example/poissoneq.py 64  cg none 1
 
 The example solve a Poisson's equation in 3 dimensions using 64 elements and 1 order Lagrange shape functions with cg as the ksp solver and no preconditioners. 
 For more details about the poisson's problem we refer the use to the folowing link https://jsdokken.com/dolfinx-tutorial/chapter1/fundamentals.html 
@@ -61,9 +61,9 @@ You can allocate one use it interactively through:
 
 .. code:: bash
 
-   ~$ salloc --nodes=1 --time=4:00:00 --partition=$partion_name --account $account_name --mem=0 --exclusive
+   ~$ salloc --nodes=1 --time=4:00:00 --partition=$partition_name --account $account_name --mem=0 --exclusive
 
-Make sure you specify the partition name *$partion_name* and the account name *$account_name*. 
+Make sure you specify the partition name ``$partition_name`` and the account name ``$account_name``. 
 Next, we clone the repository from https://github.com/NREL/PVade.git.
 
 .. code:: bash
@@ -74,8 +74,8 @@ Next, we clone the repository from https://github.com/NREL/PVade.git.
    the same can be achieved by downloading the latest release from https://github.com/NREL/PVade/releases
 
 
-We will refer to *$PVade* as the location of the cloned repo. 
-We change the directory to *$PVade* and load mamba. 
+We will refer to ``$PVade`` as the location of the cloned repo. 
+We change the directory to ``$PVade`` and load mamba. 
 
 
 .. code:: bash
@@ -90,7 +90,7 @@ We change the directory to *$PVade* and load mamba.
    The same can be achived by using Conda.
    Mamba was shown to be faster.
 
-We then create an environment *my_env_name* and activate it.
+We then create an environment ``my_env_name`` and activate it.
 
 .. code::
 
@@ -101,7 +101,7 @@ To test the installation we can run an example using the command
 
 .. code::
 
-   mpirun -np #ncores python -u $PVade/example/poissoneq.py 64  cg none 1
+   mpirun -np $num_cores python -u $PVade/example/poissoneq.py 64  cg none 1
 
 The example solve a Poisson's equation in 3 dimensions using 64 elements and 1 order Lagrange shape functions with cg as the ksp solver and no preconditioners. 
 

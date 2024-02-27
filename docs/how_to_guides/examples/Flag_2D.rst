@@ -1,6 +1,6 @@
 Flag 2D
 ===========
-The Flag 2D example is used to benchmark PVade. 
+The Flag 2D problem from Turek and Hron [1]_ is used to benchmark PVade. 
 
 
 
@@ -8,11 +8,7 @@ Geometry Definition
 -------------------
 
 
-[E.Y] brief description of the problem 
-
-
-
-The geometry of the problem is described in the Fig. 
+The 2D flag problem consists of a channel flow in which the fluid interacts with a structure defined by a rigid cylinder (flagpole) and an attached flexible beam (flag), where a strong oscillatory flapping emerges over time due to the fluid-structure interaction. We present the results of this FSI benchmark below. The geometry of the problem is described in the Figure below. 
 
 .. image:: pictures/2dflag/domain_dimensions.png
   :alt: Alternative text
@@ -35,7 +31,6 @@ A is the measurment point for benchmarking
 
 For the upcoming benchmarks the following values are used:
 
-
 .. container::
    :name: tab:geometry
 
@@ -57,8 +52,7 @@ For the upcoming benchmarks the following values are used:
 Structural Benchmarking
 -----------------------
 
-The Benchmarking of the
-Structural analysis is conducted against CSM3 analysis in the paper by
+The Benchmarking of the structural solver is follows the CSM3 example in Turek and Hron [1]_.
 
 In CSM3, the structural tests are computed only for the elastic beam
 (without the surrounding fluid) adding the gravitational force only on
@@ -80,19 +74,17 @@ The Parameters used for the benchmarking are defined below
       :math:`\mu [10^6 \frac{kg}{ms^3}]`   0.5
       ==================================== =====
 
-[E.Y] add data and context for table below 
-
 .. container::
    :name: tab:results
 
    .. table:: Results for CSM3 with timesteps :math:`\Delta T = 0.005`
 
-      ===== ===== ======================== ========================
-      \     ndof  ux of A [×10−3]          uy of A [×10−3]
-      ===== ===== ======================== ========================
-      CSM3  6468  −14.279 ± 14.280[1.0995] −63.541 ± 65.094[1.0995]
-      PVADE 14118                             
-      ===== ===== ======================== ========================
+      ===== ===== ========================= =========================
+      \     ndof  ux of A [×10−3]           uy of A [×10−3]
+      ===== ===== ========================= =========================
+      PVADE 6522  -15.368 ± 15.369 [1.0956] -65.624 ± 67.515 [1.0956]                         
+      CSM3  6468  −14.279 ± 14.280 [1.0995] −63.541 ± 65.094 [1.0995]
+      ===== ===== ========================= =========================
 
 
 
@@ -133,11 +125,7 @@ When we plot the "x" and "y" displacement of the point A versus time we obtain t
 FSI Benchmarking 
 ----------------
 
-In this example, we will solve a 2D flag simulation known as 
-DESCRIBE THE EXAMPLE IN A THEORY KIND OF WAY.
-
-
-The input file used for this example is the following::
+In this example, we will solve a 2D flag simulation known as FSI2 using the PVade code. This example uses a custom domain creation file but otherwise sets boundary conditions and defines the key geometric quantities presented above using standard PVade definitions (instances where these definitions might be unclear when adopting our standard PV naming conventions are marked with comments in the input file). The input file used for this example is the following::
 
   general:
     geometry_module: flag2d
@@ -218,4 +206,9 @@ The structural domain
 
 .. image:: pictures/2dflag/CSD_domain.png
   :alt: Alternative text
+
+References
+----------
+.. [1] S. Turek and J. Hron, “Proposal for Numerical Benchmarking of Fluid–Structure Interaction Between an Elastic Object and Laminar Incompressible Flow,” in Fluid-Structure Interaction: Modelling, Simulation, Optimisation, 2007, doi.org/10.1007/3-540-34596-5_15
+
 
