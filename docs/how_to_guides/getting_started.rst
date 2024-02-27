@@ -14,7 +14,7 @@ where ``my_env_name`` can be replaced with a short name for your Conda environme
 
 from within your activate Conda environment, a simulation can be executed with::
 
-  python main.py --command_line_arg value
+  python ns_main.py --input_file input/single_row.yaml --command_line_arg value
 
 
 Running Examples
