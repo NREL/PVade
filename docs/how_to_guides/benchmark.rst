@@ -35,7 +35,7 @@ A plot for x- and y-position of point A is shown below, the blue line represents
 CFD3 benchmark 
 --------------
 
-For benchmarking of the fluid analysis, we used CFD3 in Turek and Hron [1]_ and compared the Lift and Drag over the time of the simulation. Additionally, rather than matching as closely as possible the number of degrees of freedom as in CSM3, we show convergence to the finest values reported by Turek and Hron as a function of increasing mesh resolution, i.e., decreasing values of :math:`\Delta x = 0.0125`, the spacing between finite elements at the flag's surface.
+For benchmarking of the fluid analysis, we used CFD3 in Turek and Hron [1]_ and compared the Lift and Drag over the time of the simulation. Additionally, rather than matching as closely as possible the number of degrees of freedom as in CSM3, we show convergence to the finest values reported by Turek and Hron as a function of increasing mesh resolution, i.e., decreasing values of :math:`\Delta x`, the spacing between finite elements at the flag's surface.
 
 .. container::
    :name: tab:cfd3
