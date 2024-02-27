@@ -9,3 +9,4 @@ Technical Reference
    domain_creation
    mesh_manager
    flow_manager
+   elasticity_manager
