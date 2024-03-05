@@ -121,7 +121,7 @@ def test_move_mesh():
     )
 
     # Move the mesh by the amount prescribed in u_delta
-    domain.move_mesh(elasticity, params, tt=0)
+    domain.move_mesh(elasticity, params)
 
     # Get a copy of the new positions
     fluid_coords_after = np.copy(domain.fluid.msh.geometry.x[:])
@@ -136,10 +136,10 @@ def test_move_mesh():
     assert np.isclose(np.amax(delta_fluid_coords[:, 1]), y_shift)
     assert np.isclose(np.amax(delta_fluid_coords[:, 2]), z_shift)
 
-    # Assert that the structure mesh moved all points uniformly
-    assert np.allclose(delta_structure_coords[:, 0], x_shift)
-    assert np.allclose(delta_structure_coords[:, 1], y_shift)
-    assert np.allclose(delta_structure_coords[:, 2], z_shift)
+    # Assert that the structure mesh hasn't moved (probably not necessary)
+    assert np.allclose(delta_structure_coords[:, 0], 0.0)
+    assert np.allclose(delta_structure_coords[:, 1], 0.0)
+    assert np.allclose(delta_structure_coords[:, 2], 0.0)
 
     # Assert that the fluid still has the same bounding box
     # (i.e., no penetration of the moved nodes through the original domain)

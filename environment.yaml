@@ -6,7 +6,7 @@ dependencies:
   # Dependencies should be kept as loosely pinned to version numbers as possible
   - alive-progress
   - black
-  - fenics-dolfinx
+  - fenics-dolfinx=0.6
   - jsonschema
   - jupyter
   - matplotlib
@@ -23,4 +23,5 @@ dependencies:
   - pip
   - pip:
     - sphinx-rtd-theme
+    - sphinxcontrib.datatemplates
     - -e . # Installs the pvade package

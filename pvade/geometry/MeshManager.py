@@ -196,14 +196,17 @@ class FSIDomain:
 
         self.ndim = self.msh.topology.dim
 
-        self.msh.topology.create_connectivity(self.ndim, self.ndim-1)
+        self.msh.topology.create_connectivity(self.ndim, self.ndim - 1)
 
         # Specify names for the mesh elements
         self.msh.name = "mesh_total"
         self.cell_tags.name = "cell_tags"
         self.facet_tags.name = "facet_tags"
 
-        if params.general.geometry_module == "panels3d" or params.general.geometry_module == "flag2d":
+        if (
+            params.general.geometry_module == "panels3d"
+            or params.general.geometry_module == "flag2d"
+        ):
             self._create_submeshes_from_parent(params)
             self._transfer_mesh_tags_to_submeshes(params)
 
@@ -216,7 +219,9 @@ class FSIDomain:
             self.V1 = dolfinx.fem.FunctionSpace(self.fluid.msh, vec_el_1)
 
             # vec_el_1_og = ufl.VectorElement("Lagrange", self.fluid_undeformed.msh.ufl_cell(), 1)
-            self.V1_undeformed = dolfinx.fem.FunctionSpace(self.fluid_undeformed.msh, vec_el_1)
+            self.V1_undeformed = dolfinx.fem.FunctionSpace(
+                self.fluid_undeformed.msh, vec_el_1
+            )
 
             self.fluid_mesh_displacement = dolfinx.fem.Function(
                 self.V1, name="fluid_mesh_displacement"
@@ -330,7 +335,7 @@ class FSIDomain:
             class FSISubDomain:
                 pass
 
-            submesh.topology.create_connectivity(self.ndim, self.ndim-1)
+            submesh.topology.create_connectivity(self.ndim, self.ndim - 1)
 
             sub_domain = FSISubDomain()
 
@@ -586,7 +591,9 @@ class FSIDomain:
         csv_name = "numpy_fixation_points.csv"
         csv_filename = os.path.join(params.general.output_dir_mesh, csv_name)
         header = "start_x,start_y,start_z,end_x,end_y,end_z,"
-        np.savetxt(csv_filename, self.numpy_pt_total_array, delimiter=",", header=header)
+        np.savetxt(
+            csv_filename, self.numpy_pt_total_array, delimiter=",", header=header
+        )
 
     def read_mesh_files(self, read_mesh_dir, params):
         """Read the mesh from an external file.
@@ -623,7 +630,12 @@ class FSIDomain:
                 class FSISubDomain:
                     pass
 
-                submesh.topology.create_connectivity(self.ndim, self.ndim-1)
+                if not hasattr(self, "ndim"):
+                    self.ndim = submesh.topology.dim
+                else:
+                    assert self.ndim == submesh.topology.dim
+
+                submesh.topology.create_connectivity(self.ndim, self.ndim - 1)
 
                 sub_domain = FSISubDomain()
 
@@ -641,13 +653,19 @@ class FSIDomain:
                 setattr(self, sub_domain_name, sub_domain)
 
                 if sub_domain_name == "fluid":
-                    domain_ufl = ufl.Mesh(self.fluid.msh.ufl_domain().ufl_coordinate_element())
-                    fluid_undeformed = dolfinx.mesh.Mesh(self.comm,
+                    domain_ufl = ufl.Mesh(
+                        self.fluid.msh.ufl_domain().ufl_coordinate_element()
+                    )
+                    fluid_undeformed = dolfinx.mesh.Mesh(
+                        self.comm,
                         self.fluid.msh.topology,
                         self.fluid.msh.geometry,
-                        domain_ufl)
+                        domain_ufl,
+                    )
 
-                    fluid_undeformed.topology.create_connectivity(self.ndim, self.ndim-1)
+                    fluid_undeformed.topology.create_connectivity(
+                        self.ndim, self.ndim - 1
+                    )
 
                     sub_domain_undeformed = FSISubDomain()
 
@@ -667,7 +685,6 @@ class FSIDomain:
                     # assert np.all(self.fluid.msh.geometry.x[:] == self.fluid_undeformed.msh.geometry.x[:])
                     # assert np.shape(self.fluid.msh.geometry.x[:]) == np.shape(self.fluid_undeformed.msh.geometry.x[:])
 
-
             if self.rank == 0:
                 print(f"Finished read {sub_domain_name} mesh.")
 
@@ -682,8 +699,9 @@ class FSIDomain:
 
         csv_name = "numpy_fixation_points.csv"
         csv_filename = os.path.join(read_mesh_dir, csv_name)
-        self.numpy_pt_total_array = np.genfromtxt(csv_filename, delimiter=",", skip_header=1)
-
+        self.numpy_pt_total_array = np.genfromtxt(
+            csv_filename, delimiter=",", skip_header=1
+        )
 
         if params.general.fluid_analysis == True:
             # Create all forms that will eventually be used for mesh rotation/movement
@@ -691,23 +709,21 @@ class FSIDomain:
             vec_el_1 = ufl.VectorElement("Lagrange", self.fluid.msh.ufl_cell(), 1)
             self.V1 = dolfinx.fem.FunctionSpace(self.fluid.msh, vec_el_1)
 
+            self.V1_undeformed = dolfinx.fem.FunctionSpace(
+                self.fluid_undeformed.msh, vec_el_1
+            )
+
             self.fluid_mesh_displacement = dolfinx.fem.Function(
                 self.V1, name="fluid_mesh_displacement"
             )
             self.fluid_mesh_displacement_bc = dolfinx.fem.Function(
                 self.V1, name="fluid_mesh_displacement_bc"
             )
+            self.fluid_mesh_displacement_bc_undeformed = dolfinx.fem.Function(
+                self.V1_undeformed, name="fluid_mesh_displacement_bc"
+            )
             self.total_mesh_displacement = dolfinx.fem.Function(
                 self.V1, name="total_mesh_disp"
-            )
-            self.total_mesh_displacement_k1 = dolfinx.fem.Function(
-                self.V1, name="total_mesh_disp_k1"
-            )
-            self.total_mesh_displacement_k2 = dolfinx.fem.Function(
-                self.V1, name="total_mesh_disp_k2"
-            )
-            self.better_mesh_vel = dolfinx.fem.Function(
-                self.V1, name="better_mesh_vel"
             )
 
     def test_mesh_functionspace(self):
@@ -905,31 +921,42 @@ class FSIDomain:
             return idx_vec
 
         if not hasattr(self, "idx_vec"):
-            self.idx_vec = find_closest_structure_idx(fluid_boundary_pts, global_structure_pts)
+            self.idx_vec = find_closest_structure_idx(
+                fluid_boundary_pts, global_structure_pts
+            )
 
         # Apply the result in the following way:
         # fluid_mesh_point[interior_surface_pt_idx, :] = structure_mesh_point[min_dist_idx, :]
         # Where the interior surface point index comes from the boundary condition functions
         # And the minimum distance idx is the one identified in find_closest_structure_idx
 
-        correction = global_structure_pts[self.idx_vec, :] - self.fluid.msh.geometry.x[self.all_interior_V_dofs, :]
+        correction = (
+            global_structure_pts[self.idx_vec, :]
+            - self.fluid.msh.geometry.x[self.all_interior_V_dofs, :]
+        )
 
-        self.fluid.msh.geometry.x[self.all_interior_V_dofs, :] = global_structure_pts[self.idx_vec, :]
+        self.fluid.msh.geometry.x[self.all_interior_V_dofs, :] = global_structure_pts[
+            self.idx_vec, :
+        ]
 
         for k, dof in enumerate(self.all_interior_V_dofs):
-            if 3*dof > np.shape(self.fluid_mesh_displacement.vector.array[:])[0] - 1:
+            if 3 * dof > np.shape(self.fluid_mesh_displacement.vector.array[:])[0] - 1:
                 break
             else:
-                self.fluid_mesh_displacement.vector.array[3*dof] += correction[k, 0]
-                self.fluid_mesh_displacement.vector.array[3*dof+1] += correction[k, 1]
-                self.fluid_mesh_displacement.vector.array[3*dof+2] += correction[k, 2]
+                self.fluid_mesh_displacement.vector.array[3 * dof] += correction[k, 0]
+                self.fluid_mesh_displacement.vector.array[3 * dof + 1] += correction[
+                    k, 1
+                ]
+                self.fluid_mesh_displacement.vector.array[3 * dof + 2] += correction[
+                    k, 2
+                ]
 
         self.fluid_mesh_displacement.x.scatter_forward()
 
     # def custom_interpolate(self, elasticity):
     #
     # NOTE: this is possibly no longer necessary since forcing
-    # point matching at the interface means we *should* be able to 
+    # point matching at the interface means we *should* be able to
     # use the built in interpolate function versus
     # writing our own nearest neighbor function tranfer each time.
     #
@@ -990,7 +1017,6 @@ class FSIDomain:
 
     #     return vec
 
-
     def move_mesh(self, elasticity, params):
         if self.first_move_mesh:
             # Save the un-moved coordinates for future reference
@@ -1037,6 +1063,24 @@ class FSIDomain:
 
                 return all_exterior_surfaces
 
+            def _all_xmin_xmax_surfaces(x):
+                eps = 1.0e-5
+
+                x_edge = np.logical_or(
+                    x[0] < params.domain.x_min + eps, params.domain.x_max - eps < x[0]
+                )
+
+                return x_edge
+
+            def _all_ymin_ymax_surfaces(x):
+                eps = 1.0e-5
+
+                y_edge = np.logical_or(
+                    x[1] < params.domain.y_min + eps, params.domain.y_max - eps < x[1]
+                )
+
+                return y_edge
+
             self.facet_dim = self.ndim - 1
 
             all_interior_facets = dolfinx.mesh.locate_entities_boundary(
@@ -1047,6 +1091,14 @@ class FSIDomain:
                 self.fluid.msh, self.facet_dim, _all_exterior_surfaces
             )
 
+            all_xmin_xmax_facets = dolfinx.mesh.locate_entities_boundary(
+                self.fluid.msh, self.facet_dim, _all_xmin_xmax_surfaces
+            )
+
+            all_ymin_ymax_facets = dolfinx.mesh.locate_entities_boundary(
+                self.fluid.msh, self.facet_dim, _all_ymin_ymax_surfaces
+            )
+
             self.all_interior_V_dofs = dolfinx.fem.locate_dofs_topological(
                 self.V1, self.facet_dim, all_interior_facets
             )
@@ -1055,40 +1107,70 @@ class FSIDomain:
                 self.V1, self.facet_dim, all_exterior_facets
             )
 
+            self.all_xmin_xmax_V_dofs = dolfinx.fem.locate_dofs_topological(
+                self.V1.sub(0), self.facet_dim, all_xmin_xmax_facets
+            )
+
+            self.all_ymin_ymax_V_dofs = dolfinx.fem.locate_dofs_topological(
+                self.V1.sub(1), self.facet_dim, all_ymin_ymax_facets
+            )
+
         # Interpolate the elasticity displacement (lives on the structure mesh)
         # field onto a function that lives on the fluid mesh
         use_built_in_interpolate = True
 
         if use_built_in_interpolate:
             self.fluid_mesh_displacement_bc_undeformed.interpolate(elasticity.u_delta)
-            self.fluid_mesh_displacement_bc.x.array[:] = self.fluid_mesh_displacement_bc_undeformed.x.array[:]
+            self.fluid_mesh_displacement_bc_undeformed.x.scatter_forward()
+            self.fluid_mesh_displacement_bc.x.array[:] = (
+                self.fluid_mesh_displacement_bc_undeformed.x.array[:]
+            )
             self.fluid_mesh_displacement_bc.x.scatter_forward()
 
         else:
             fluid_mesh_displacement_bc_vec = self.custom_interpolate(elasticity)
             nn_bc_vec = np.shape(self.fluid_mesh_displacement_bc.vector.array[:])[0]
-            self.fluid_mesh_displacement_bc.vector.array[:] = fluid_mesh_displacement_bc_vec[:nn_bc_vec]
+            self.fluid_mesh_displacement_bc.vector.array[:] = (
+                fluid_mesh_displacement_bc_vec[:nn_bc_vec]
+            )
             self.fluid_mesh_displacement_bc.x.scatter_forward()
 
             # print(self.fluid_mesh_displacement_bc.vector.array[self.all_interior_V_dofs])
-
 
         # Set the boundary condition for the walls of the computational domain
         zero_vec = dolfinx.fem.Constant(
             self.fluid.msh, PETSc.ScalarType((0.0, 0.0, 0.0))
         )
 
+        zero_scalar = dolfinx.fem.Constant(self.fluid.msh, PETSc.ScalarType((0.0)))
+
         self.bcx = []
+
         self.bcx.append(
             dolfinx.fem.dirichletbc(
                 self.fluid_mesh_displacement_bc, self.all_interior_V_dofs
             )
         )
 
-        # print("uh_max", np.amax(elasticity.uh.x.array[:]))
-        self.bcx.append(
-            dolfinx.fem.dirichletbc(zero_vec, self.all_exterior_V_dofs, self.V1)
-        )
+        if params.domain.free_slip_along_walls:
+            # print("uh_max", np.amax(elasticity.uh.x.array[:]))
+            self.bcx.append(
+                dolfinx.fem.dirichletbc(
+                    zero_scalar, self.all_xmin_xmax_V_dofs, self.V1.sub(0)
+                )
+            )
+            # print("uh_max", np.amax(elasticity.uh.x.array[:]))
+            self.bcx.append(
+                dolfinx.fem.dirichletbc(
+                    zero_scalar, self.all_ymin_ymax_V_dofs, self.V1.sub(1)
+                )
+            )
+
+        else:
+            # print("uh_max", np.amax(elasticity.uh.x.array[:]))
+            self.bcx.append(
+                dolfinx.fem.dirichletbc(zero_vec, self.all_exterior_V_dofs, self.V1)
+            )
 
         if self.first_move_mesh:
             u = ufl.TrialFunction(self.V1)
@@ -1097,7 +1179,11 @@ class FSIDomain:
             # TODO: use the distance in the diffusion calculation
             # self.a = dolfinx.fem.form(ufl.inner(ufl.grad(u), ufl.grad(v)) * ufl.dx)
             self.a = dolfinx.fem.form(
-                1.0 / self.distance * ufl.inner(ufl.grad(u), ufl.grad(v)) * ufl.dx
+                1.0
+                / self.distance
+                * ufl.inner(ufl.grad(u), ufl.grad(v))
+                * ufl.dx
+                # ufl.inner(ufl.grad(u), ufl.grad(v)) * ufl.dx
             )
             self.L = dolfinx.fem.form(ufl.inner(zero_vec, v) * ufl.dx)
 
@@ -1158,16 +1244,10 @@ class FSIDomain:
         # self._force_interface_node_matching()
 
         # Save this mesh motion as the total mesh displacement
-        self.total_mesh_displacement_k2.x.array[:] = self.total_mesh_displacement_k1.x.array
-        self.total_mesh_displacement_k1.x.array[:] = self.total_mesh_displacement.x.array
-
         self.total_mesh_displacement.vector.array[
             :
         ] += self.fluid_mesh_displacement.vector.array
 
         self.total_mesh_displacement.x.scatter_forward()
-
-        self.better_mesh_vel.x.array[:] = (0.5*self.total_mesh_displacement_k2.x.array - 2.0*self.total_mesh_displacement_k1.x.array + 1.5*self.total_mesh_displacement.x.array)/params.solver.dt
-        self.better_mesh_vel.x.scatter_forward()
 
         self.first_move_mesh = False
