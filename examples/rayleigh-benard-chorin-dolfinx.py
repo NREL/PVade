@@ -60,11 +60,11 @@ x_min = 0.0
 x_max = 3.0
 
 y_min = 0.0
-y_max = 1.0
+y_max = 3.0
 
 h = 0.05
 nx = 50  # 150 # int((x_max - x_min)/h)
-ny = 10  # 50 # int((y_max - y_min)/h)
+ny = 50  # 50 # int((y_max - y_min)/h)
 
 pv_panel_present = True  # empty domain or with a pv panel in the center?
 
@@ -84,8 +84,8 @@ if pv_panel_present:
 
     ndim = 2
 
-    domain_width = 3.0  # box width
-    domain_height = 1.0  #  # box height
+    domain_width = x_max - x_min #3.0  # box width
+    domain_height = y_max - y_min # 1.0  #  # box height
 
     domain_id = gmsh_model.occ.addRectangle(
         0, 0, 0, domain_width, domain_height
@@ -264,18 +264,18 @@ DeltaT = (
     T0_bottom - T0_top
 )  # ? should this be defined as Constant(mesh, PETSc.ScalarType(bottom-top)) ?
 
-# Interpolate initial condition
-# T0_int = Function(S)
-T_n.interpolate(lambda x: (T0_bottom + (x[1] / y_max) * (T0_top - T0_bottom)))
-
-# theta0_int = Function(S)
-theta_n.interpolate(lambda x: (-x[1] / y_max))
-
 # initialize T_n
 # T_n.x.array[:] = DeltaT*theta_n.x.array[:] + T0_bottom # is this necessary?
 
 # keeping these separate in case we want to specify different temperatures for when pv panels are present
 if pv_panel_present == False:
+    # Interpolate initial condition
+    # T0_int = Function(S)
+    T_n.interpolate(lambda x: (T0_bottom + (x[1] / y_max) * (T0_top - T0_bottom)))
+
+    # theta0_int = Function(S)
+    theta_n.interpolate(lambda x: (-x[1] / y_max))
+
     print("applying bottom wall temp = {}".format((T0_bottom - T0_bottom) / DeltaT))
     bottom_wall_dofs = locate_dofs_geometrical(S, bottom_wall)
     bcT_bottom_wall = dirichletbc(
@@ -291,11 +291,22 @@ if pv_panel_present == False:
     bcT = [bcT_top_wall, bcT_bottom_wall]
 
 if pv_panel_present:
+    # Interpolate initial condition
+    # T0_int = Function(S)
+    # T_n.interpolate(lambda x: (T0_bottom + (x[1] / y_max) * (T0_top - T0_bottom)))
+    # T_n.interpolate(PETSc.ScalarType((T0_top - T0_bottom) / DeltaT))
+    T_n.x.array[:] = (T0_top - T0_bottom) / DeltaT
+
+    # theta0_int = Function(S)
+    # theta_n.interpolate(lambda x: (-x[1] / y_max))
+    # theta_n.interpolate(PETSc.ScalarType((T0_top - T0_bottom) / DeltaT))
+    theta_n.x.array[:] = (T0_top - T0_bottom) / DeltaT
+
     # apply temperature of 0 at all walls except PV panel which is 1
     print("applying bottom wall temp = {}".format((T0_bottom - T0_bottom) / DeltaT))
     bottom_wall_dofs = locate_dofs_geometrical(S, bottom_wall)
     bcT_bottom_wall = dirichletbc(
-        PETSc.ScalarType((T0_bottom - T0_bottom) / DeltaT), bottom_wall_dofs, S
+        PETSc.ScalarType((T0_top - T0_bottom) / DeltaT), bottom_wall_dofs, S
     )
 
     print("applying top wall temp = {}".format((T0_top - T0_bottom) / DeltaT))
