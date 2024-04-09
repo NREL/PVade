@@ -133,8 +133,8 @@ class Flow:
 
         """
         # Define fluid properties
-        self.dpdx = dolfinx.fem.Constant(domain.fluid.msh, (0.0, 0.0, 0.0))
-        self.dt_c = dolfinx.fem.Constant(domain.fluid.msh, (params.solver.dt))
+        self.dpdx = dolfinx.fem.Constant(domain.fluid.msh, (0.0, 0.0, 0.0)) # [BS] I'm suprised this is hard-coded - do we not need a pressure gradient to drive the flow?
+        self.dt_c = dolfinx.fem.Constant(domain.fluid.msh, (params.solver.dt)) # [BS] what is the _c?
         self.rho_c = dolfinx.fem.Constant(domain.fluid.msh, (params.fluid.rho))
         nu = dolfinx.fem.Constant(domain.fluid.msh, (params.fluid.nu))
 
@@ -249,14 +249,13 @@ class Flow:
         f = dolfinx.fem.Constant(
             domain.fluid.msh,
             (PETSc.ScalarType(0), PETSc.ScalarType(0), PETSc.ScalarType(0)),
-        )
+        ) # [BS] what is this?
         # Define variational problem for step 1: tentative velocity
         # self.U_ALE = (1.5*self.mesh_vel - 0.5*self.mesh_vel_old) / self.dt_c
         # self.U_ALE = 0.5*(domain.fluid_mesh_displacement + domain.fluid_mesh_displacement_old) / self.dt_c
         # self.U_ALE = self.mesh_vel_old / self.dt_c
         # self.U_ALE = 1.5 * self.mesh_vel -0.5 * self.mesh_vel_old  # / self.dt_c
-        self.U_ALE = 0.5 * (self.mesh_vel + self.mesh_vel_old)  # / self.dt_c
-        # self.U_ALE = self.mesh_vel  # / self.dt_c
+        self.U_ALE = 0.5 * (self.mesh_vel + self.mesh_vel_old)  # / self.dt_c # [BS] what is ALE?
         # self.U_ALE = 0.1*self.mesh_vel + 0.9*self.mesh_vel_old
         # self.U_ALE = domain.fluid_mesh_displacement / self.dt_c
 
@@ -264,7 +263,7 @@ class Flow:
             (1.0 / self.dt_c) * ufl.inner(self.u - self.u_k1, self.v) * ufl.dx
             + ufl.inner(
                 ufl.dot(
-                    U_AB - self.U_ALE,
+                    U_AB - self.U_ALE, # relative vel ignoring vel of mesh?
                     ufl.nabla_grad(U_CN),
                 ),
                 self.v,
@@ -273,6 +272,7 @@ class Flow:
             + (nu + self.nu_T) * ufl.inner(ufl.grad(U_CN), ufl.grad(self.v)) * ufl.dx
             + (1.0 / self.rho_c) * ufl.inner(ufl.grad(self.p_k1), self.v) * ufl.dx
             - (1.0 / self.rho_c) * ufl.inner(self.dpdx, self.v) * ufl.dx
+            # - Ra * inner(theta_n * g, v) * dx # [BS] buoyancy term for temperature
         )
 
         self.a1 = dolfinx.fem.form(ufl.lhs(self.F1))
@@ -295,6 +295,8 @@ class Flow:
             * ufl.dot(ufl.nabla_grad(self.p_k - self.p_k1), self.v)
             * ufl.dx
         )
+
+        # [BS] where should the temperature update go? before or after a3, a4?
 
         # Define a function and the dolfinx.fem.form of the stress
         self.panel_stress = dolfinx.fem.Function(self.T)
