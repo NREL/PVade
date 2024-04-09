@@ -67,13 +67,13 @@ nx = 50  # 150 # int((x_max - x_min)/h)
 ny = 10 # 50  # 50 # int((y_max - y_min)/h)
 
 T0_top_wall = 0
-T0_bottom_wall = 0 #1 #0
+T0_bottom_wall = 1 #1
 T0_pv_panel = 1 # only used if pv_panel_flag == True
 
 pv_panel_flag = False  # empty domain or with a pv panel in the center?
 
-save_fn = 'empty_test_unstable'
-t_final = 0.03 # 0.1  # 0.5 # 0.5 #0.1 # 0.000075
+save_fn = 'empty_test_neutral'
+t_final = 0.4 # 0.03 # 0.1  # 0.5 # 0.5 #0.1 # 0.000075
 
 
 # ================================================================
@@ -262,7 +262,6 @@ if pv_panel_flag:
 # plt.show()
 
 # temperature boundary conditions
-# T0_val = 0.5  # 0.5 #10 # TODO - change this to expression
 
 # non-dimensional temperature
 if T0_bottom_wall != T0_top_wall:
@@ -270,18 +269,20 @@ if T0_bottom_wall != T0_top_wall:
         T0_bottom_wall - T0_top_wall
     )  # ? should this be defined as Constant(mesh, PETSc.ScalarType(bottom-top)) ?
 else:
-    DeltaT = 1 # to avoid divide by zero errors
-T_r = 0.5*(T0_bottom_wall + T0_top_wall) # reference temperature from Oeurtatani et al. 2008
-# T_r = (T0_bottom_wall + T0_top_wall) # reference temperature from Walid
-theta0_bottom_wall = (T0_bottom_wall - T_r) / DeltaT
-theta0_top_wall = (T0_top_wall - T_r) / DeltaT
+    DeltaT = 1 # to avoid divide by zero errors; tested on neutral state and temps stay at zero through entire sim of 0.4s
 
-# initialize T_n
-# T_n.x.array[:] = DeltaT*theta_n.x.array[:] + T0_bottom_wall # is this necessary?
+# reference temperature from Oeurtatani et al. 2008
+T_r = 0.5*(T0_bottom_wall + T0_top_wall) 
+# T_r = (T0_bottom_wall + T0_top_wall) # reference temperature from Walid
+
+# non-dim temperatures at top and bottom walls
+theta0_bottom_wall = (T0_bottom_wall - T_r) / DeltaT # from Oeurtatani et al. 2008
+theta0_top_wall = (T0_top_wall - T_r) / DeltaT # from Oeurtatani et al. 2008
 
 # keeping these separate in case we want to specify different temperatures for when pv panels are present
-if pv_panel_flag == False:
-    # Interpolate initial condition vertically for a smooth gradient of temperature
+if pv_panel_flag == False: # empty domain
+    
+    # Interpolate initial temperature vertically for a smooth gradient
     T_n.interpolate(lambda x: (T0_bottom_wall + (x[1] / y_max) * (T0_top_wall - T0_bottom_wall)))
 
     # non-dimensional temperature
