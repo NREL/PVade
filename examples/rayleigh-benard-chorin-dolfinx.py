@@ -60,19 +60,27 @@ x_min = 0.0
 x_max = 3.0
 
 y_min = 0.0
-y_max = 3.0
+y_max = 1.0 #3.0
 
 h = 0.05
 nx = 50  # 150 # int((x_max - x_min)/h)
-ny = 50  # 50 # int((y_max - y_min)/h)
+ny = 10 # 50  # 50 # int((y_max - y_min)/h)
 
-pv_panel_present = True  # empty domain or with a pv panel in the center?
+T0_top_wall = 0
+T0_bottom_wall = 0 #1 #0
+T0_pv_panel = 1 # only used if pv_panel_flag == True
+
+pv_panel_flag = False  # empty domain or with a pv panel in the center?
+
+save_fn = 'empty_test_unstable'
+t_final = 0.03 # 0.1  # 0.5 # 0.5 #0.1 # 0.000075
+
 
 # ================================================================
 # Build Mesh
 # ================================================================
 
-if pv_panel_present:
+if pv_panel_flag:
     comm = MPI.COMM_WORLD
 
     gmsh.initialize()
@@ -192,6 +200,7 @@ s = TestFunction(S)
 T_n = Function(S)  # for outputting T, calculated from theta for each timestep
 T_n.name = "T_n"
 theta_n = Function(S)
+theta_n.name = "theta_n"
 theta_ = Function(S)
 
 # %% ================================================================
@@ -202,18 +211,14 @@ theta_ = Function(S)
 def left_wall(x):
     return np.isclose(x[0], x_min)
 
-
 def right_wall(x):
     return np.isclose(x[0], x_max)
-
 
 def bottom_wall(x):
     return np.isclose(x[1], y_min)
 
-
 def top_wall(x):
     return np.isclose(x[1], y_max)
-
 
 def internal_boundaries(x):
     tol = 1e-3
@@ -238,7 +243,7 @@ bcu_top_wall = dirichletbc(u_noslip, top_wall_dofs, V)
 
 bcu = [bcu_left_wall, bcu_right_wall, bcu_bottom_wall, bcu_top_wall]
 
-if pv_panel_present:
+if pv_panel_flag:
     boundary_facets = locate_entities_boundary(
         mesh, mesh.topology.dim - 1, internal_boundaries
     )
@@ -257,62 +262,69 @@ if pv_panel_present:
 # plt.show()
 
 # temperature boundary conditions
-T0_top = 0
-T0_bottom = 1
-T0_val = 0.5  # 0.5 #10 # TODO - change this to expression
-DeltaT = (
-    T0_bottom - T0_top
-)  # ? should this be defined as Constant(mesh, PETSc.ScalarType(bottom-top)) ?
+# T0_val = 0.5  # 0.5 #10 # TODO - change this to expression
+
+# non-dimensional temperature
+if T0_bottom_wall != T0_top_wall:
+    DeltaT = (
+        T0_bottom_wall - T0_top_wall
+    )  # ? should this be defined as Constant(mesh, PETSc.ScalarType(bottom-top)) ?
+else:
+    DeltaT = 1 # to avoid divide by zero errors
+T_r = 0.5*(T0_bottom_wall + T0_top_wall) # reference temperature from Oeurtatani et al. 2008
+# T_r = (T0_bottom_wall + T0_top_wall) # reference temperature from Walid
+theta0_bottom_wall = (T0_bottom_wall - T_r) / DeltaT
+theta0_top_wall = (T0_top_wall - T_r) / DeltaT
 
 # initialize T_n
-# T_n.x.array[:] = DeltaT*theta_n.x.array[:] + T0_bottom # is this necessary?
+# T_n.x.array[:] = DeltaT*theta_n.x.array[:] + T0_bottom_wall # is this necessary?
 
 # keeping these separate in case we want to specify different temperatures for when pv panels are present
-if pv_panel_present == False:
-    # Interpolate initial condition
-    # T0_int = Function(S)
-    T_n.interpolate(lambda x: (T0_bottom + (x[1] / y_max) * (T0_top - T0_bottom)))
+if pv_panel_flag == False:
+    # Interpolate initial condition vertically for a smooth gradient of temperature
+    T_n.interpolate(lambda x: (T0_bottom_wall + (x[1] / y_max) * (T0_top_wall - T0_bottom_wall)))
 
-    # theta0_int = Function(S)
-    theta_n.interpolate(lambda x: (-x[1] / y_max))
+    # non-dimensional temperature
+    theta_n.x.array[:] = (T_n.x.array[:] - T_r) / DeltaT # from Oeurtatani et al. 2008
 
-    print("applying bottom wall temp = {}".format((T0_bottom - T0_bottom) / DeltaT))
+    # apply BCs to non-dimensional temperature from Oeurtatani et al. 2008
+    print("applying bottom wall temp = {}".format(theta0_bottom_wall))
     bottom_wall_dofs = locate_dofs_geometrical(S, bottom_wall)
     bcT_bottom_wall = dirichletbc(
-        PETSc.ScalarType((T0_bottom - T0_bottom) / DeltaT), bottom_wall_dofs, S
+        PETSc.ScalarType(theta0_bottom_wall), bottom_wall_dofs, S
     )
 
-    print("applying top wall temp = {}".format((T0_top - T0_bottom) / DeltaT))
+    print("applying top wall temp = {}".format(theta0_top_wall))
     top_wall_dofs = locate_dofs_geometrical(S, top_wall)
     bcT_top_wall = dirichletbc(
-        PETSc.ScalarType((T0_top - T0_bottom) / DeltaT), top_wall_dofs, S
+        PETSc.ScalarType(theta0_top_wall), top_wall_dofs, S
     )
 
     bcT = [bcT_top_wall, bcT_bottom_wall]
 
-if pv_panel_present:
+else:
     # Interpolate initial condition
     # T0_int = Function(S)
-    # T_n.interpolate(lambda x: (T0_bottom + (x[1] / y_max) * (T0_top - T0_bottom)))
-    # T_n.interpolate(PETSc.ScalarType((T0_top - T0_bottom) / DeltaT))
-    T_n.x.array[:] = (T0_top - T0_bottom) / DeltaT
+    # T_n.interpolate(lambda x: (T0_bottom_wall + (x[1] / y_max) * (T0_top_wall - T0_bottom_wall)))
+    # T_n.interpolate(PETSc.ScalarType((T0_top_wall - T0_bottom_wall) / DeltaT))
+    T_n.x.array[:] = (T0_top_wall - T0_bottom_wall) / DeltaT
 
     # theta0_int = Function(S)
     # theta_n.interpolate(lambda x: (-x[1] / y_max))
-    # theta_n.interpolate(PETSc.ScalarType((T0_top - T0_bottom) / DeltaT))
-    theta_n.x.array[:] = (T0_top - T0_bottom) / DeltaT
+    # theta_n.interpolate(PETSc.ScalarType((T0_top_wall - T0_bottom_wall) / DeltaT))
+    theta_n.x.array[:] = (T0_top_wall - T0_bottom_wall) / DeltaT
 
     # apply temperature of 0 at all walls except PV panel which is 1
-    print("applying bottom wall temp = {}".format((T0_bottom - T0_bottom) / DeltaT))
+    print("applying bottom wall temp = {}".format((T0_bottom_wall - T0_bottom_wall) / DeltaT))
     bottom_wall_dofs = locate_dofs_geometrical(S, bottom_wall)
     bcT_bottom_wall = dirichletbc(
-        PETSc.ScalarType((T0_top - T0_bottom) / DeltaT), bottom_wall_dofs, S
+        PETSc.ScalarType((T0_bottom_wall - T0_bottom_wall) / DeltaT), bottom_wall_dofs, S
     )
 
-    print("applying top wall temp = {}".format((T0_top - T0_bottom) / DeltaT))
+    print("applying top wall temp = {}".format((T0_top_wall - T0_bottom_wall) / DeltaT))
     top_wall_dofs = locate_dofs_geometrical(S, top_wall)
     bcT_top_wall = dirichletbc(
-        PETSc.ScalarType((T0_top - T0_bottom) / DeltaT), top_wall_dofs, S
+        PETSc.ScalarType((T0_top_wall - T0_bottom_wall) / DeltaT), top_wall_dofs, S
     )
 
     print("applying internal boundary temp")
@@ -321,7 +333,7 @@ if pv_panel_present:
     )
     boundary_dofs = locate_dofs_topological(S, mesh.topology.dim - 1, boundary_facets)
     bcT_internal_walls = dirichletbc(
-        PETSc.ScalarType((T0_bottom - T0_bottom) / DeltaT), boundary_dofs, S
+        PETSc.ScalarType((T0_bottom_wall - T0_bottom_wall) / DeltaT), boundary_dofs, S
     )
 
     bcT = [bcT_top_wall, bcT_bottom_wall, bcT_internal_walls]
@@ -405,14 +417,14 @@ t = dt_num  # dt # 0.0
 ct = 1  # 0
 save_interval = 1  # 50
 
-t_final = 0.1  # 0.5 # 0.5 #0.1 # 0.000075
 
-if pv_panel_present:
-    save_fn = "rayleigh-benard-pv.xdmf"
-else:
-    save_fn = "rayleigh-benard.xdmf"
 
-with io.XDMFFile(mesh.comm, save_fn, "w") as xdmf:
+# if pv_panel_flag:
+#     save_fn = "rayleigh-benard-pv.xdmf"
+# else:
+#     save_fn = "rayleigh-benard.xdmf"
+
+with io.XDMFFile(mesh.comm, save_fn+".xdmf", "w") as xdmf:
     xdmf.write_mesh(mesh)
     xdmf.write_function(u_n, 0)
     xdmf.write_function(p_n, 0)
@@ -436,9 +448,10 @@ A4.assemble()
 b4 = assemble_vector(L4)
 
 while t < t_final + eps:
-    T_n.x.array[:] = DeltaT * theta_n.x.array[:] + T0_bottom
+    # T_n.x.array[:] = DeltaT * theta_n.x.array[:] + T0_bottom_wall
+    T_n.x.array[:] = DeltaT * theta_n.x.array[:] + T_r # from Ouertatani et al. 2008
 
-    with io.XDMFFile(mesh.comm, save_fn, "a") as xdmf:
+    with io.XDMFFile(mesh.comm, save_fn+".xdmf", "a") as xdmf:
         xdmf.write_function(u_n, t)
         xdmf.write_function(p_n, t)
         xdmf.write_function(T_n, t)
