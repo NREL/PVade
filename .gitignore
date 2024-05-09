@@ -4,8 +4,8 @@
 *.pyc
 *.egg-info/
 
-*.h5
 *.xdmf
+*.h5
 
 docs/_build/
 results/
