@@ -156,11 +156,12 @@ class DomainCreation(TemplateDomainCreation):
                 embedded_lines_tag_list = []
 
                 # Add a bisecting line to the bottom of the panel in the spanwise direction
-                pt_1 = self.gmsh_model.occ.addPoint(0, -half_span, -half_thickness)
-                pt_2 = self.gmsh_model.occ.addPoint(0, half_span, -half_thickness)
+                # apply 0.5 to half_span to shorten torque tube length
+                pt_1 = self.gmsh_model.occ.addPoint(0, -0.5*half_span, -half_thickness)
+                pt_2 = self.gmsh_model.occ.addPoint(0, 0.5*half_span, -half_thickness)
 
                 numpy_pt_list.append(
-                    [0, -half_span, -half_thickness, 0, half_span, -half_thickness]
+                    [0, -0.5*half_span, -half_thickness, 0, 0.5*half_span, -half_thickness]
                 )
 
                 torque_tube_id = self.gmsh_model.occ.addLine(pt_1, pt_2)
@@ -195,19 +196,19 @@ class DomainCreation(TemplateDomainCreation):
 
                     for fp in fixation_pts_list:
                         pt_1 = self.gmsh_model.occ.addPoint(
-                            -half_chord, -half_span + fp, -half_thickness
+                            -0.5*half_chord, -half_span + fp, -half_thickness
                         )
                         pt_2 = self.gmsh_model.occ.addPoint(
-                            half_chord, -half_span + fp, -half_thickness
+                            0.5*half_chord, -half_span + fp, -half_thickness
                         )
 
                         # FIXME: don't add the fixation points into the numpy tagging for now
                         numpy_pt_list.append(
                             [
-                                -half_chord,
+                                -0.5*half_chord,
                                 -half_span + fp,
                                 -half_thickness,
-                                half_chord,
+                                0.5*half_chord,
                                 -half_span + fp,
                                 -half_thickness,
                             ]

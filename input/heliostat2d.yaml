@@ -1,0 +1,57 @@
+general:
+  geometry_module: flag2d
+  output_dir: output/flag2d
+  mesh_only: false
+  structural_analysis: false
+  fluid_analysis: true
+domain:
+  x_min: 0.0
+  x_max: 2.5
+  y_min: 0.0
+  y_max: 0.41
+  l_char: 0.01 #0.006 # .01
+pv_array:
+  panel_chord: 0.35 # Sets the length of the flag (starts outside circle radius)
+  # panel_chord: 0.0 # Sets the length of the flag (starts outside circle radius)
+  panel_span: 0.02 # Sets the radius of the flag pole
+  panel_thickness: 0.02 # Sets the thickness of the flag
+  span_rows: 1
+  stream_rows: 1
+solver:
+  dt: 0.001 # 0.002
+  t_final: 1.0 #30.0
+  solver1_ksp: gmres
+  solver2_ksp: gmres
+  solver3_ksp: gmres
+  solver4_ksp: gmres
+  solver1_pc: hypre
+  solver2_pc: hypre
+  solver3_pc: hypre
+  solver4_pc: hypre
+  save_text_interval: 0.02
+  save_xdmf_interval: 0.02
+fluid:
+  u_ref: 2.0 # 1.0 # 0.2 1.0 2.0
+  time_varying_inflow_bc: false #true
+  rho: 1.0 # 1000.0 # 0.2 1.0 2.0
+  nu: 1.8e-05 #0.001 # Establish re = 20 with diam = 0.1 and u = u_ref
+  dpdx: 0.0
+  turbulence_model: smagorinsky #null
+  periodic: false 
+  bc_y_max: slip # slip noslip free
+  bc_y_min: noslip # slip noslip free
+  # warm_up_time: 0.25 # slip noslip free
+structure:
+  dt : 0.001 # 0.002
+  # rho : 10000.0
+  rho : 10000.0 # 10000.0
+  poissons_ratio: 0.4
+  elasticity_modulus: 1.4e+06
+  body_force_x: 0
+  body_force_y: 0
+  body_force_z: 0 #100
+  bc_list: ["left"]
+  motor_connection: False
+  tube_connection: False
+  beta_relaxation: 0.005
+
