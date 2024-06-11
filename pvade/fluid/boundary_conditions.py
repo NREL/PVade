@@ -127,21 +127,67 @@ class InflowVelocity:
 
         inflow_values = np.zeros((3, x.shape[1]), dtype=PETSc.ScalarType)
 
-        H = 0.41
-        inflow_dy = H - x[1]
-        inflow_dz = H - x[2]
+        H = self.params.domain.y_max # 0.41
+        # inflow_dy = H - x[1]
+        # inflow_dz = H - x[2]
 
-        u_hub = self.params.fluid.u_ref
+        # u_hub = self.params.fluid.u_ref
         z_hub = self.params.pv_array.elevation
 
+        # here, remove inflow velocity dependence on geometry
+        if self.params.fluid.velocity_profile_type == "uniform":
+            print("creating uniform profile")
+
+            # not flagged for time_varying_inflow_bc?? - bc you need the ramp up always?
+            if self.current_time < 0.01: # 2.0:
+                time_vary_u_ref = (
+                    self.params.fluid.u_ref
+                    * (1.0 - np.cos(np.pi / 0.01 * self.current_time))
+                    / 2.0
+                )
+            else:
+                time_vary_u_ref = self.params.fluid.u_ref
+            
+            inflow_values[0] = (
+                time_vary_u_ref
+                # self.params.fluid.u_ref
+            )
+        
+        elif self.params.fluid.velocity_profile_type == "parabolic":
+            print("creating parabolic profile")
+
+            # not flagged for time_varying_inflow_bc?? - bc you need the ramp up always?
+            if self.current_time < 2.0:
+                time_vary_u_ref = (
+                    self.params.fluid.u_ref
+                    * (1.0 - np.cos(np.pi / 2.0 * self.current_time))
+                    / 2.0
+                )
+            else:
+                time_vary_u_ref = self.params.fluid.u_ref
+            # time_vary_u_ref = self.params.fluid.u_ref
+
+            # handle cyl2d and flag2d
+
+            inflow_values[0] = (
+                1.5
+                * time_vary_u_ref
+                * 4.0
+                / 0.1681
+                * x[1]
+                * (self.params.domain.y_max - x[1])
+            )
+
+            # handle cyl3d
+    
         if self.params.general.geometry_module == "cylinder3d":
             inflow_values[0] = (
                 16.0
                 * self.params.fluid.u_ref
                 * x[1]
                 * x[2]
-                * inflow_dy
-                * inflow_dz
+                * H - x[1] # inflow_dy
+                * H - x[2] # inflow_dz
                 / H**4
             )
         elif self.params.general.geometry_module == "cylinder2d":
@@ -153,24 +199,24 @@ class InflowVelocity:
                 * (0.41 - x[1])
                 / (0.41**2)
             )
-        elif self.params.general.geometry_module == "flag2d":
-            if self.current_time < 2.0:
-                time_vary_u_ref = (
-                    self.params.fluid.u_ref
-                    * (1.0 - np.cos(np.pi / 2.0 * self.current_time))
-                    / 2.0
-                )
-            else:
-                time_vary_u_ref = self.params.fluid.u_ref
+        # elif self.params.general.geometry_module == "flag2d":
+        #     if self.current_time < 2.0:
+        #         time_vary_u_ref = (
+        #             self.params.fluid.u_ref
+        #             * (1.0 - np.cos(np.pi / 2.0 * self.current_time))
+        #             / 2.0
+        #         )
+        #     else:
+        #         time_vary_u_ref = self.params.fluid.u_ref
 
-            inflow_values[0] = (
-                1.5
-                * time_vary_u_ref
-                * 4.0
-                / 0.1681
-                * x[1]
-                * (self.params.domain.y_max - x[1])
-            )
+        #     inflow_values[0] = (
+        #         1.5
+        #         * time_vary_u_ref
+        #         * 4.0
+        #         / 0.1681
+        #         * x[1]
+        #         * (self.params.domain.y_max - x[1])
+        #     )
         elif self.params.general.geometry_module == "panels3d":
 
             if self.current_time < 2.0 and self.params.fluid.time_varying_inflow_bc:
@@ -195,6 +241,8 @@ class InflowVelocity:
                 / (np.log((z_hub - d0) / z0))
             )
 
+        print("inflow_values = ", inflow_values[0])
+
         return inflow_values
 
 
@@ -216,10 +264,39 @@ def get_inflow_profile_function(domain, params, functionspace, current_time):
 
     upper_cells = None
 
-    if params.general.geometry_module in ["cylinder3d", "cylinder2d", "flag2d"]:
+    # here, remove inflow velocity dependence on geometry
+    # if params.general.geometry_module in ["cylinder3d", "cylinder2d", "flag2d"]:
+    #     inflow_function.interpolate(inflow_velocity)
+
+    # else:
+    #     z0 = 0.05
+    #     d0 = 0.5
+    #     if ndim == 3:
+    #         upper_cells = dolfinx.mesh.locate_entities(
+    #             domain.fluid.msh, ndim, lambda x: x[2] > d0 + z0
+    #         )
+    #         lower_cells = dolfinx.mesh.locate_entities(
+    #             domain.fluid.msh, ndim, lambda x: x[2] <= d0 + z0
+    #         )
+    #     elif ndim == 2:
+    #         upper_cells = dolfinx.mesh.locate_entities(
+    #             domain.fluid.msh, ndim, lambda x: x[1] > d0 + z0
+    #         )
+    #         lower_cells = dolfinx.mesh.locate_entities(
+    #             domain.fluid.msh, ndim, lambda x: x[1] <= d0 + z0
+    #         )
+        
+    if params.fluid.velocity_profile_type == "parabolic":
+        if domain.rank == 0:
+            print("setting parabolic profile")
         inflow_function.interpolate(inflow_velocity)
 
-    else:
+    elif params.fluid.velocity_profile_type == "uniform":
+        if domain.rank == 0:
+            print("setting uniform profile")
+        inflow_function.interpolate(inflow_velocity)
+
+    elif params.fluid.velocity_profile_type == "loglaw":
         z0 = 0.05
         d0 = 0.5
         if ndim == 3:
@@ -237,6 +314,7 @@ def get_inflow_profile_function(domain, params, functionspace, current_time):
                 domain.fluid.msh, ndim, lambda x: x[1] <= d0 + z0
             )
 
+        # what does this do? zero everything out before defining values of upper cells?
         inflow_function.interpolate(
             lambda x: np.zeros((geom_dim, x.shape[1]), dtype=PETSc.ScalarType)
         )
@@ -285,6 +363,10 @@ def build_velocity_boundary_conditions(domain, params, functionspace, current_ti
     inflow_function, inflow_velocity, upper_cells = get_inflow_profile_function(
         domain, params, functionspace, current_time
     )
+
+    if domain.rank == 0:
+        print('inflow_function = ',inflow_function.x.array[:])
+
     dofs = get_facet_dofs_by_gmsh_tag(domain, functionspace, "x_min")
     bcu.append(dolfinx.fem.dirichletbc(inflow_function, dofs))
 

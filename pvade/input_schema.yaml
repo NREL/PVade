@@ -286,6 +286,21 @@ properties:
     #     required:
     #       - c_w
     properties:
+      velocity_profile_type:
+        default: "uniform"
+        type: "string"
+        description: "The shape of the inflow velocity profile"
+        enum:
+          - "uniform"
+          - "loglaw"
+          - "parabolic"
+      inflow_coeff:
+        default: 1.0
+        minimum: 0.0
+        maximum: 100.0
+        type: "number"
+        description: "When applying a parabolic inflow velocity profile, this coefficient is C in the equation U = (C/H^2)*u_ref*y(H-y)"
+        units: "none"
       u_ref:
         default: 8.0
         minimum: 0.0
