@@ -308,6 +308,20 @@ properties:
         type: "number"
         description: "The velocity of the wind as measured at the panel elevation."
         units: "meter/second"
+      z0:
+        default: 0.01
+        minimum: 0.001
+        maximum: 10.0
+        type: "number"
+        description: "The surface roughness length used in the log law velocity profile."
+        units: "meters"
+      d0:
+        default: 0.5
+        minimum: 0.0
+        maximum: 50.0
+        type: "number"
+        description: "The zero plane displacement height used for the presence of vegetated or urban canopies in the log law velocity profile."
+        units: "meters"
       initialize_with_inflow_bc:
         default: true
         type: "boolean"
