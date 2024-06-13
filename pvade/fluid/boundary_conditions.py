@@ -137,12 +137,12 @@ class InflowVelocity:
                 )
             else:
                 time_vary_u_ref = self.params.fluid.u_ref
-            
+
             inflow_values[0] = (
                 time_vary_u_ref
                 # self.params.fluid.u_ref
             )
-        
+
         elif self.params.fluid.velocity_profile_type == "parabolic":
             print("creating parabolic profile")
             coeff = self.params.fluid.inflow_coeff
@@ -163,7 +163,7 @@ class InflowVelocity:
                 inflow_values[0] = (
                     coeff
                     * time_vary_u_ref
-                    / self.params.domain.y_max**2 #0.1681
+                    / self.params.domain.y_max**2  # 0.1681
                     * x[1]
                     * (self.params.domain.y_max - x[1])
                 )
@@ -175,14 +175,14 @@ class InflowVelocity:
                     * self.params.fluid.u_ref
                     * x[1]
                     * x[2]
-                    * self.params.domain.y_max - x[1] # inflow_dy
-                    * self.params.domain.z_max - x[2] # inflow_dz
-                    / self.params.domain.z_max**4
+                    * self.params.domain.y_max
+                    - x[1] * self.params.domain.z_max  # inflow_dy
+                    - x[2] / self.params.domain.z_max**4  # inflow_dz
                 )
-    
+
         elif self.params.fluid.velocity_profile_type == "loglaw":
             print("creating loglaw profile")
-            
+
             z0 = self.params.fluid.z0
             d0 = self.params.fluid.d0
             z_hub = self.params.pv_array.elevation
@@ -208,7 +208,7 @@ class InflowVelocity:
             elif self.ndim == 2:
                 # print("this is 2d")
                 inflow_values[0] = (
-                    (time_vary_u_ref) # shouldn't this be u_star?
+                    (time_vary_u_ref)  # shouldn't this be u_star?
                     * np.log(((x[1]) - d0) / z0)
                     / (np.log((z_hub - d0) / z0))
                 )
@@ -236,7 +236,7 @@ def get_inflow_profile_function(domain, params, functionspace, current_time):
     inflow_velocity = InflowVelocity(geom_dim, ndim, params, current_time)
 
     upper_cells = None
-      
+
     if params.fluid.velocity_profile_type == "parabolic":
         if domain.rank == 0:
             print("setting parabolic profile")
@@ -250,8 +250,8 @@ def get_inflow_profile_function(domain, params, functionspace, current_time):
     elif params.fluid.velocity_profile_type == "loglaw":
         if domain.rank == 0:
             print("setting loglaw profile")
-        z0 = params.fluid.z0 
-        d0 = params.fluid.d0 
+        z0 = params.fluid.z0
+        d0 = params.fluid.d0
         if ndim == 3:
             upper_cells = dolfinx.mesh.locate_entities(
                 domain.fluid.msh, ndim, lambda x: x[2] > d0 + z0
@@ -318,7 +318,7 @@ def build_velocity_boundary_conditions(domain, params, functionspace, current_ti
     )
 
     if domain.rank == 0:
-        print('inflow_function = ',inflow_function.x.array[:])
+        print("inflow_function = ", inflow_function.x.array[:])
 
     dofs = get_facet_dofs_by_gmsh_tag(domain, functionspace, "x_min")
     bcu.append(dolfinx.fem.dirichletbc(inflow_function, dofs))
