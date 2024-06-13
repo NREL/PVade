@@ -112,6 +112,7 @@ class InflowVelocity:
         self.geom_dim = geom_dim
         self.params = params
         self.current_time = current_time
+        self.first_call_to_inflow_velocity = True
 
     def __call__(self, x):
         """Define an inflow expression for use as boundary condition
@@ -125,38 +126,31 @@ class InflowVelocity:
 
         inflow_values = np.zeros((3, x.shape[1]), dtype=PETSc.ScalarType)
 
-        if self.params.fluid.velocity_profile_type == "uniform":
-            print("creating uniform profile")
+        if self.first_call_to_inflow_velocity:
+            print(f"creating {self.params.fluid.velocity_profile_type} inflow profile")
 
-            # not flagged for time_varying_inflow_bc?? - bc you need the ramp up always?
-            if self.current_time < 0.01 and self.params.fluid.time_varying_inflow_bc:
-                time_vary_u_ref = (
-                    self.params.fluid.u_ref
-                    * (1.0 - np.cos(np.pi / 0.01 * self.current_time))
-                    / 2.0
-                )
-            else:
-                time_vary_u_ref = self.params.fluid.u_ref
+        # Assign time_vary_u_ref, for cases with time_varying_inflow_bc = 0.0:
+        #     time_vary_u_ref = u_ref
+        # for cases with time_varying_inflow_bc > 0.0:
+        #     time_vary_u_ref goes from 0 -> u_ref smoothly over ramp_up_window time
+        #     e.g., start velocity at 0, and by t=1.0 seconds, achieve full inflow speed
 
-            inflow_values[0] = (
-                time_vary_u_ref
-                # self.params.fluid.u_ref
+        ramp_window = self.params.fluid.time_varying_inflow_window
+
+        if ramp_window > 0.0 and self.current_time <= ramp_window:
+            time_vary_u_ref = (
+                self.params.fluid.u_ref
+                * (1.0 - np.cos(np.pi / ramp_window * self.current_time))
+                / 2.0
             )
+        else:
+            time_vary_u_ref = self.params.fluid.u_ref
+
+        if self.params.fluid.velocity_profile_type == "uniform":
+            inflow_values[0] = time_vary_u_ref
 
         elif self.params.fluid.velocity_profile_type == "parabolic":
-            print("creating parabolic profile")
             coeff = self.params.fluid.inflow_coeff
-
-            # not flagged for time_varying_inflow_bc?? - bc you need the ramp up always?
-            if self.current_time < 2.0 and self.params.fluid.time_varying_inflow_bc:
-                time_vary_u_ref = (
-                    self.params.fluid.u_ref
-                    * (1.0 - np.cos(np.pi / 2.0 * self.current_time))
-                    / 2.0
-                )
-            else:
-                time_vary_u_ref = self.params.fluid.u_ref
-            # time_vary_u_ref = self.params.fluid.u_ref
 
             # handle cyl2d and flag2d
             if self.ndim == 2:
@@ -171,30 +165,15 @@ class InflowVelocity:
             # handle cyl3d
             elif self.ndim == 3:
                 inflow_values[0] = (
-                    coeff
-                    * self.params.fluid.u_ref
-                    * x[1]
-                    * x[2]
-                    * self.params.domain.y_max
+                    coeff * time_vary_u_ref * x[1] * x[2] * self.params.domain.y_max
                     - x[1] * self.params.domain.z_max  # inflow_dy
                     - x[2] / self.params.domain.z_max**4  # inflow_dz
                 )
 
         elif self.params.fluid.velocity_profile_type == "loglaw":
-            print("creating loglaw profile")
-
             z0 = self.params.fluid.z0
             d0 = self.params.fluid.d0
             z_hub = self.params.pv_array.elevation
-
-            if self.current_time < 2.0 and self.params.fluid.time_varying_inflow_bc:
-                time_vary_u_ref = (
-                    self.params.fluid.u_ref
-                    * (1.0 - np.cos(np.pi / 2.0 * self.current_time))
-                    / 2.0
-                )
-            else:
-                time_vary_u_ref = self.params.fluid.u_ref
 
             # handle panels3d
             if self.ndim == 3:
@@ -213,7 +192,9 @@ class InflowVelocity:
                     / (np.log((z_hub - d0) / z0))
                 )
 
-        print("inflow_values = ", inflow_values[0])
+        if self.first_call_to_inflow_velocity:
+            print("inflow_values = ", inflow_values[0])
+            self.first_call_to_inflow_velocity = False
 
         return inflow_values
 
