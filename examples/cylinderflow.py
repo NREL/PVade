@@ -1,60 +1,67 @@
-import gmsh
-import os
 import numpy as np
-import matplotlib.pyplot as plt
 import tqdm.autonotebook
 from pathlib import Path
 
+import gmsh
 from mpi4py import MPI
 from petsc4py import PETSc
-
 from basix.ufl import element
+from ufl import (FacetNormal, Measure, TestFunction, TrialFunction,
+                 as_vector, div, dot, dx, inner, lhs, grad, nabla_grad, rhs)
 
-from dolfinx.cpp.mesh import to_type, cell_entity_type
 from dolfinx.fem import (Constant, Function, functionspace,
                          assemble_scalar, dirichletbc, form, locate_dofs_topological, set_bc)
 from dolfinx.fem.petsc import (apply_lifting, assemble_matrix, assemble_vector,
                                create_vector, create_matrix, set_bc)
-from dolfinx.graph import adjacencylist
 from dolfinx.geometry import bb_tree, compute_collisions_points, compute_colliding_cells
-from dolfinx.io import (VTXWriter, distribute_entity_data, gmshio, XDMFFile)
-from dolfinx.mesh import create_mesh, meshtags_from_entities, locate_entities_boundary
-from ufl import (FacetNormal, Identity, Measure, TestFunction, TrialFunction,
-                 as_vector, div, dot, ds, dx, inner, lhs, grad, nabla_grad, rhs, sym, system)
+from dolfinx.io import (VTXWriter, gmshio, XDMFFile)
+from dolfinx.mesh import locate_entities_boundary
 
 
-gmsh.initialize()
+####################################################
+#                                                  #
+#           MESH PARAMETERS                        #
+#                                                  #
+####################################################
 
 L = 2.2
 H = 0.41
 c_x = c_y = 0.2
 r = 0.05
 gdim = 2
+res_min = r / 3
+
+####################################################
+#                                                  #
+#           SET UP MESH                            #
+#                                                  #
+####################################################
+
+gmsh.initialize()
+
 mesh_comm = MPI.COMM_WORLD
 model_rank = 0
+
+# mesh markers
+fluid_marker = 1
+obstacle_marker = 2
+inlet_marker, outlet_marker, wall_marker, edge_marker = 3, 4, 5, 6
+
 if mesh_comm.rank == model_rank:
+
     rectangle = gmsh.model.occ.addRectangle(0, 0, 0, L, H, tag=1)
     obstacle = gmsh.model.occ.addDisk(c_x, c_y, 0, r, r)
     fluid = gmsh.model.occ.cut([(gdim, rectangle)], [(gdim, obstacle)])
     gmsh.model.occ.synchronize()
 
-# add markers
-fluid_marker = 1
-obstacle_marker = 2
-inlet_marker, outlet_marker, wall_marker, edge_marker = 3, 4, 5, 6
-inflow, outflow, walls, edge = [], [], [], []
-
-if mesh_comm.rank == model_rank:
     volumes = gmsh.model.getEntities(dim=gdim)
     assert (len(volumes) == 1)
     gmsh.model.addPhysicalGroup(volumes[0][0], [volumes[0][1]], fluid_marker)
     gmsh.model.setPhysicalName(volumes[0][0], fluid_marker, "Fluid")
-    #gmsh.model.addPhysicalGroup(volumes[1][0], [volumes[1][1]], obstacle_marker)
-    #gmsh.model.setPhysicalName(volumes[1][0], obstacle_marker, "Obstacle")
 
-
-if mesh_comm.rank == model_rank:
+    # set sections
     boundaries = gmsh.model.getBoundary(volumes, oriented=False)
+    inflow, outflow, walls, edge = [], [], [], []
     for boundary in boundaries:
         center_of_mass = gmsh.model.occ.getCenterOfMass(boundary[0], boundary[1])
         if np.allclose(center_of_mass, [0, H / 2, 0]):
@@ -74,15 +81,7 @@ if mesh_comm.rank == model_rank:
     gmsh.model.addPhysicalGroup(1, edge, edge_marker)
     gmsh.model.setPhysicalName(1, edge_marker, "Obstacle Edge")
 
-# Create distance field from obstacle.
-# Add threshold of mesh sizes based on the distance field
-# LcMax -                  /--------
-#                      /
-# LcMin -o---------/
-#        |         |       |
-#       Point    DistMin DistMax
-res_min = r / 3
-if mesh_comm.rank == model_rank:
+    # set resolution
     distance_field = gmsh.model.mesh.field.add("Distance")
     gmsh.model.mesh.field.setNumbers(distance_field, "EdgesList", edge)
     threshold_field = gmsh.model.mesh.field.add("Threshold")
@@ -95,8 +94,7 @@ if mesh_comm.rank == model_rank:
     gmsh.model.mesh.field.setNumbers(min_field, "FieldsList", [threshold_field])
     gmsh.model.mesh.field.setAsBackgroundMesh(min_field)
 
-# generate the mesh
-if mesh_comm.rank == model_rank:
+    # generate the mesh
     gmsh.option.setNumber("Mesh.Algorithm", 8)
     gmsh.option.setNumber("Mesh.RecombinationAlgorithm", 2)
     gmsh.option.setNumber("Mesh.RecombineAll", 1)
@@ -108,7 +106,13 @@ if mesh_comm.rank == model_rank:
 mesh, _, ft = gmshio.model_to_mesh(gmsh.model, mesh_comm, model_rank, gdim=gdim)
 ft.name = "Facet markers"
 
-# problem specific parameters
+
+####################################################
+#                                                  #
+#           PROBLEM PARAMETERS                     #
+#                                                  #
+####################################################
+
 t = 0
 T = 1 / 25                      # Final time
 dt = 1 / 250                 # Time step size
@@ -116,14 +120,6 @@ num_steps = int(T / dt)
 k = Constant(mesh, PETSc.ScalarType(dt))
 mu = Constant(mesh, PETSc.ScalarType(0.001))  # Dynamic viscosity
 rho = Constant(mesh, PETSc.ScalarType(1))     # Density
-
-# boundary conditions
-v_cg2 = element("Lagrange", mesh.topology.cell_name(), 2, shape=(mesh.geometry.dim, ))
-s_cg1 = element("Lagrange", mesh.topology.cell_name(), 1)
-V = functionspace(mesh, v_cg2)
-Q = functionspace(mesh, s_cg1)
-
-fdim = mesh.topology.dim - 1
 
 class InletVelocity():
     def __init__(self, t):
@@ -133,6 +129,36 @@ class InletVelocity():
         values = np.zeros((gdim, x.shape[1]), dtype=PETSc.ScalarType)
         values[0] = 4 * 1.5 * np.sin(self.t * np.pi / 8) * x[1] * (0.41 - x[1]) / (0.41**2)
         return values
+    
+
+####################################################
+#                                                  #
+#           SET UP PROBLEM                         #
+#                                                  #
+####################################################
+
+def _all_interior_surfaces(x):
+    eps = 1.0e-5
+    x_min = 0
+    x_max = L
+    y_min = 0
+    y_max = H
+
+    x_mid = np.logical_and(
+        x_min + eps < x[0], x[0] < x_max - eps
+    )
+    y_mid = np.logical_and(
+        y_min + eps < x[1], x[1] < y_max - eps
+    )
+    return np.logical_and( x_mid, y_mid )
+
+# boundary conditions
+v_cg2 = element("Lagrange", mesh.topology.cell_name(), 2, shape=(mesh.geometry.dim, ))
+s_cg1 = element("Lagrange", mesh.topology.cell_name(), 1)
+V = functionspace(mesh, v_cg2)
+Q = functionspace(mesh, s_cg1)
+
+fdim = mesh.topology.dim - 1
 
 # Inlet
 u_inlet = Function(V)
@@ -149,29 +175,7 @@ bcu = [bcu_inflow, bcu_obstacle, bcu_walls]
 bcp_outlet = dirichletbc(PETSc.ScalarType(0), locate_dofs_topological(Q, fdim, ft.find(outlet_marker)), Q)
 bcp = [bcp_outlet]
 
-
-
-def _all_interior_surfaces(x):
-    eps = 1.0e-5
- 
-    x_min = 0
-    x_max = L
-    y_min = 0
-    y_max = H
-
-    x_mid = np.logical_and(
-        x_min + eps < x[0], x[0] < x_max - eps
-    )
-    y_mid = np.logical_and(
-        y_min + eps < x[1], x[1] < y_max - eps
-    )
- 
-    all_interior_surfaces = np.logical_and(
-        x_mid, y_mid
-    )
- 
-    return all_interior_surfaces
-
+# get interior points
 facet_dim = 1
 all_interior_facets = locate_entities_boundary(
     mesh, facet_dim, _all_interior_surfaces
@@ -186,8 +190,13 @@ print(all_interior_V_dofs)
 # show that we can shift the cylinder mesh points to the right
 mesh.geometry.x[all_interior_V_dofs,0] += 0.01
 
-# Variational form setup
+####################################################
+#                                                  #
+#           SET UP EQUATIONS                       #
+#                                                  #
+####################################################
 
+# Variational form setup
 u = TrialFunction(V)
 v = TestFunction(V)
 u_ = Function(V)
@@ -268,7 +277,14 @@ back_cells = colliding_cells.links(1)
 if mesh.comm.rank == 0:
     p_diff = np.zeros(num_steps, dtype=PETSc.ScalarType)
 
-# solve time-dependent problem
+
+####################################################
+#                                                  #
+#           SOLVE TIME-DEPENDENT PROBLEM           #
+#                                                  #
+####################################################
+
+# output folders
 folder = Path("results")
 folder.mkdir(exist_ok=True, parents=True)
 vtx_u = VTXWriter(mesh.comm, "results/dfg2D-3-u.bp", [u_], engine="BP4")
@@ -279,6 +295,7 @@ vtx_p.write(t)
 xdmf_file.write_mesh(mesh)
 xdmf_file.write_function(u_, t)
 
+# time step loop
 progress = tqdm.autonotebook.tqdm(desc="Solving PDE", total=num_steps)
 for i in range(num_steps):
     progress.update(1)
@@ -359,6 +376,8 @@ for i in range(num_steps):
             if pressure is not None:
                 p_diff[i] -= pressure[0]
                 break
+
+# close output folders
 vtx_u.close()
 vtx_p.close()
 xdmf_file.close()
