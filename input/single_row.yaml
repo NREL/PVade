@@ -38,8 +38,11 @@ solver:
   save_text_interval: .02 #0.01
   save_xdmf_interval: .02 #0.01
 fluid:
-  time_varying_inflow_bc: false # true
+  velocity_profile_type: loglaw
+  time_varying_inflow_window: 0.0 # true
   u_ref: 16.0
+  z0: 0.005 #m
+  d0: 0.05 #m
   rho: 1.0
   nu: 1.8e-05
   turbulence_model:  smagorinsky #null #  
