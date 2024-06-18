@@ -52,19 +52,15 @@ if mesh_comm.rank == model_rank:
     rectangle = gmsh.model.occ.addRectangle(0, 0, 0, L, H, tag=1)
     obstacle = gmsh.model.occ.addDisk(c_x, c_y, 0, r, r)
     fluid = gmsh.model.occ.cut([(gdim, rectangle)], [(gdim, obstacle)], tag=3)[0][0][1]
-    print(rectangle)
-    print(obstacle)
-    print(fluid)
     obstacle = gmsh.model.occ.addDisk(c_x, c_y, 0, r, r)
-    print(obstacle)
-    fused = gmsh.model.occ.fuse([(gdim, fluid)], [(gdim, obstacle)])[0][0][1]
-    # gmsh.model.occ.fragment([(2, 1)], [(2, fused)])
     gmsh.model.occ.synchronize()
 
     volumes = gmsh.model.getEntities(dim=gdim)
-    assert (len(volumes) == 1)
+    assert (len(volumes) == 2)
     gmsh.model.addPhysicalGroup(volumes[0][0], [volumes[0][1]], fluid_marker)
     gmsh.model.setPhysicalName(volumes[0][0], fluid_marker, "Fluid")
+    gmsh.model.addPhysicalGroup(volumes[1][0], [volumes[1][1]], obstacle_marker)
+    gmsh.model.setPhysicalName(volumes[1][0], obstacle_marker, "Obstacle")
 
     # set sections
     boundaries = gmsh.model.getBoundary(volumes, oriented=False)
@@ -195,7 +191,7 @@ all_interior_V_dofs = locate_dofs_topological(
 print(all_interior_V_dofs)
 
 # show that we can shift the cylinder mesh points to the right
-mesh.geometry.x[all_interior_V_dofs,0] += 0.01
+#mesh.geometry.x[all_interior_V_dofs,0] += 0.01
 
 ####################################################
 #                                                  #
