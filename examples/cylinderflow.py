@@ -13,7 +13,6 @@ from dolfinx.fem import (Constant, Function, functionspace,
                          assemble_scalar, dirichletbc, form, locate_dofs_topological, set_bc)
 from dolfinx.fem.petsc import (apply_lifting, assemble_matrix, assemble_vector,
                                create_vector, create_matrix, set_bc)
-from dolfinx.geometry import bb_tree, compute_collisions_points, compute_colliding_cells
 from dolfinx.io import (VTXWriter, gmshio, XDMFFile)
 from dolfinx.mesh import locate_entities_boundary
 
@@ -30,6 +29,7 @@ c_x = c_y = 0.2
 r = 0.05
 gdim = 2
 res_min = r / 3
+mesh_order = 2
 
 ####################################################
 #                                                  #
@@ -103,7 +103,7 @@ if mesh_comm.rank == model_rank:
     gmsh.option.setNumber("Mesh.RecombineAll", 1)
     gmsh.option.setNumber("Mesh.SubdivisionAlgorithm", 1)
     gmsh.model.mesh.generate(gdim)
-    gmsh.model.mesh.setOrder(2)
+    gmsh.model.mesh.setOrder(mesh_order)
     gmsh.model.mesh.optimize("Netgen")
 
 mesh, _, ft = gmshio.model_to_mesh(gmsh.model, mesh_comm, model_rank, gdim=gdim)
@@ -132,6 +132,19 @@ class InletVelocity():
         values = np.zeros((gdim, x.shape[1]), dtype=PETSc.ScalarType)
         values[0] = 4 * 1.5 * np.sin(self.t * np.pi / 8) * x[1] * (0.41 - x[1]) / (0.41**2)
         return values
+
+class UDelta():
+    def __init__(self, t):
+        self.t = t
+
+    def __call__(self, x):
+        values = np.zeros((gdim, x.shape[1]), dtype=PETSc.ScalarType)
+        values[0] = 0.1
+        return values
+
+# currently unused
+x_shift = 0.01
+y_shift = 0.1
     
 
 ####################################################
@@ -155,14 +168,53 @@ def _all_interior_surfaces(x):
     )
     return np.logical_and( x_mid, y_mid )
 
+def _all_exterior_surfaces(x):
+    eps = 1.0e-5
+    x_min = 0
+    x_max = L
+    y_min = 0
+    y_max = H
+
+    x_edge = np.logical_or(
+        x[0] < x_min + eps, x_max - eps < x[0]
+    )
+    y_edge = np.logical_or(
+        x[1] < y_min + eps, y_max - eps < x[1]
+    )
+    return np.logical_or( x_edge, y_edge )
+
 # boundary conditions
 v_cg2 = element("Lagrange", mesh.topology.cell_name(), 2, shape=(mesh.geometry.dim, ))
+v_cg_mesh = element("Lagrange", mesh.topology.cell_name(), mesh_order, shape=(mesh.geometry.dim, ))
 s_cg1 = element("Lagrange", mesh.topology.cell_name(), 1)
 V = functionspace(mesh, v_cg2)
+V_mesh = functionspace(mesh, v_cg_mesh)
 Q = functionspace(mesh, s_cg1)
 
 fdim = mesh.topology.dim - 1
 
+# get interior points
+facet_dim = 1
+all_interior_facets = locate_entities_boundary(
+    mesh, facet_dim, _all_interior_surfaces
+)
+all_interior_V_mesh_dofs = locate_dofs_topological(
+    V_mesh, facet_dim, all_interior_facets
+)
+all_exterior_facets = locate_entities_boundary(
+    mesh, facet_dim, _all_exterior_surfaces
+)
+all_exterior_V_mesh_dofs = locate_dofs_topological(
+    V_mesh, facet_dim, all_exterior_facets
+)
+
+# Mesh
+u_delta = UDelta(0)
+mesh_displacement = Function(V)
+mesh_displacement.interpolate(u_delta)
+bcx_in = dirichletbc(mesh_displacement, all_interior_V_mesh_dofs)
+bcx_out = dirichletbc(Constant(mesh, PETSc.ScalarType((0.0, 0.0))), all_exterior_V_mesh_dofs, V_mesh)
+bcx = [bcx_in, bcx_out]
 # Inlet
 u_inlet = Function(V)
 inlet_velocity = InletVelocity(t)
@@ -177,21 +229,6 @@ bcu = [bcu_inflow, bcu_obstacle, bcu_walls]
 # Outlet
 bcp_outlet = dirichletbc(PETSc.ScalarType(0), locate_dofs_topological(Q, fdim, ft.find(outlet_marker)), Q)
 bcp = [bcp_outlet]
-
-# get interior points
-facet_dim = 1
-all_interior_facets = locate_entities_boundary(
-    mesh, facet_dim, _all_interior_surfaces
-)
-all_interior_V_dofs = locate_dofs_topological(
-    V, facet_dim, all_interior_facets
-)
-
-# show the interior degrees of freedom around the cylinder
-print(all_interior_V_dofs)
-
-# show that we can shift the cylinder mesh points to the right
-#mesh.geometry.x[all_interior_V_dofs,0] += 0.01
 
 ####################################################
 #                                                  #
@@ -238,6 +275,14 @@ A3 = assemble_matrix(a3)
 A3.assemble()
 b3 = create_vector(L3)
 
+# mesh movement
+a4 = form(inner(grad(u), grad(v)) * dx)
+zero_vec = Constant(mesh, PETSc.ScalarType((0.0, 0.0)))
+L4 = form(inner(zero_vec, v) * dx)
+A4 = assemble_matrix(a4, bcs=bcx)
+A4.assemble()
+b4 = create_vector(L4)
+
 # setup solvers
 solver1 = PETSc.KSP().create(mesh.comm)
 solver1.setOperators(A1)
@@ -258,6 +303,12 @@ solver3.setType(PETSc.KSP.Type.CG)
 pc3 = solver3.getPC()
 pc3.setType(PETSc.PC.Type.SOR)
 
+solver4 = PETSc.KSP().create(mesh.comm)
+solver4.setOperators(A4)
+solver4.setType(PETSc.KSP.Type.CG)
+pc4 = solver4.getPC()
+pc4.setType(PETSc.PC.Type.JACOBI)
+
 # compute drag and lift coefficients
 n = -FacetNormal(mesh)  # Normal pointing out of obstacle
 dObs = Measure("ds", domain=mesh, subdomain_data=ft, subdomain_id=edge_marker)
@@ -269,16 +320,6 @@ if mesh.comm.rank == 0:
     C_L = np.zeros(num_steps, dtype=PETSc.ScalarType)
     t_u = np.zeros(num_steps, dtype=np.float64)
     t_p = np.zeros(num_steps, dtype=np.float64)
-
-# compute pressures in front of and behind cylinder
-tree = bb_tree(mesh, mesh.geometry.dim)
-points = np.array([[0.15, 0.2, 0], [0.25, 0.2, 0]])
-cell_candidates = compute_collisions_points(tree, points)
-colliding_cells = compute_colliding_cells(mesh, cell_candidates, points)
-front_cells = colliding_cells.links(0)
-back_cells = colliding_cells.links(1)
-if mesh.comm.rank == 0:
-    p_diff = np.zeros(num_steps, dtype=PETSc.ScalarType)
 
 
 ####################################################
@@ -342,43 +383,46 @@ for i in range(num_steps):
     solver3.solve(b3, u_.vector)
     u_.x.scatter_forward()
 
+    # Step 4: Solve for mesh movement
+    A4.zeroEntries()
+    assemble_matrix(A4, a4, bcs=bcx)
+    A4.assemble()
+    with b4.localForm() as loc:
+        loc.set(0)
+    assemble_vector(b4, L4)
+    apply_lifting(b4, [a4], [bcx])
+    b4.ghostUpdate(addv=PETSc.InsertMode.ADD_VALUES, mode=PETSc.ScatterMode.REVERSE)
+    set_bc(b4, bcx)
+    solver4.solve(b4, mesh_displacement.vector)
+    mesh_displacement.x.scatter_forward()
+
+    # Move mesh
+    with mesh_displacement.vector.localForm() as vals_local:
+        vals = vals_local.array
+        vals = vals.reshape(-1, 2)
+    mesh.geometry.x[:, :2] += vals[:, :]
+
     # Write solutions to file
     vtx_u.write(t)
     vtx_p.write(t)
     xdmf_file.write_function(u_, t)
+    xdmf_file.write_function(mesh_displacement, t)
 
     # Update variable with solution form this time step
     with u_.vector.localForm() as loc_, u_n.vector.localForm() as loc_n, u_n1.vector.localForm() as loc_n1:
         loc_n.copy(loc_n1)
         loc_.copy(loc_n)
 
-    # Compute physical quantities
+    # Compute physical quantities (just lift and drag now)
     # For this to work in paralell, we gather contributions from all processors
     # to processor zero and sum the contributions.
     drag_coeff = mesh.comm.gather(assemble_scalar(drag), root=0)
     lift_coeff = mesh.comm.gather(assemble_scalar(lift), root=0)
-    p_front = None
-    if len(front_cells) > 0:
-        p_front = p_.eval(points[0], front_cells[:1])
-    p_front = mesh.comm.gather(p_front, root=0)
-    p_back = None
-    if len(back_cells) > 0:
-        p_back = p_.eval(points[1], back_cells[:1])
-    p_back = mesh.comm.gather(p_back, root=0)
     if mesh.comm.rank == 0:
         t_u[i] = t
         t_p[i] = t - dt / 2
         C_D[i] = sum(drag_coeff)
         C_L[i] = sum(lift_coeff)
-        # Choose first pressure that is found from the different processors
-        for pressure in p_front:
-            if pressure is not None:
-                p_diff[i] = pressure[0]
-                break
-        for pressure in p_back:
-            if pressure is not None:
-                p_diff[i] -= pressure[0]
-                break
 
 # close output folders
 vtx_u.close()
