@@ -29,6 +29,7 @@ c_x = c_y = 0.2
 r = 0.05
 gdim = 2
 res_min = r / 3
+mesh_order = 2
 
 ####################################################
 #                                                  #
@@ -102,7 +103,7 @@ if mesh_comm.rank == model_rank:
     gmsh.option.setNumber("Mesh.RecombineAll", 1)
     gmsh.option.setNumber("Mesh.SubdivisionAlgorithm", 1)
     gmsh.model.mesh.generate(gdim)
-    gmsh.model.mesh.setOrder(2)
+    gmsh.model.mesh.setOrder(mesh_order)
     gmsh.model.mesh.optimize("Netgen")
 
 mesh, _, ft = gmshio.model_to_mesh(gmsh.model, mesh_comm, model_rank, gdim=gdim)
@@ -181,8 +182,10 @@ def _all_exterior_surfaces(x):
 
 # boundary conditions
 v_cg2 = element("Lagrange", mesh.topology.cell_name(), 2, shape=(mesh.geometry.dim, ))
+v_cg_mesh = element("Lagrange", mesh.topology.cell_name(), mesh_order, shape=(mesh.geometry.dim, ))
 s_cg1 = element("Lagrange", mesh.topology.cell_name(), 1)
 V = functionspace(mesh, v_cg2)
+V_mesh = functionspace(mesh, v_cg_mesh)
 Q = functionspace(mesh, s_cg1)
 
 fdim = mesh.topology.dim - 1
@@ -192,22 +195,22 @@ facet_dim = 1
 all_interior_facets = locate_entities_boundary(
     mesh, facet_dim, _all_interior_surfaces
 )
-all_interior_V_dofs = locate_dofs_topological(
-    V, facet_dim, all_interior_facets
+all_interior_V_mesh_dofs = locate_dofs_topological(
+    V_mesh, facet_dim, all_interior_facets
 )
 all_exterior_facets = locate_entities_boundary(
     mesh, facet_dim, _all_exterior_surfaces
 )
-all_exterior_V_dofs = locate_dofs_topological(
-    V, facet_dim, all_exterior_facets
+all_exterior_V_mesh_dofs = locate_dofs_topological(
+    V_mesh, facet_dim, all_exterior_facets
 )
 
 # Mesh
 u_delta = UDelta(t)
-mesh_displacement_bc = Function(V)
+mesh_displacement_bc = Function(V_mesh)
 mesh_displacement_bc.interpolate(u_delta)
-bcx_in = dirichletbc(mesh_displacement_bc, all_interior_V_dofs)
-bcx_out = dirichletbc(Constant(mesh, PETSc.ScalarType((0.0, 0.0))), all_exterior_V_dofs, V)
+bcx_in = dirichletbc(mesh_displacement_bc, all_interior_V_mesh_dofs)
+bcx_out = dirichletbc(Constant(mesh, PETSc.ScalarType((0.0, 0.0))), all_exterior_V_mesh_dofs, V_mesh)
 bcx = [bcx_in, bcx_out]
 # Inlet
 u_inlet = Function(V)
@@ -231,13 +234,15 @@ bcp = [bcp_outlet]
 ####################################################
 
 # Mesh movement setup
-mesh_displacement = Function(V)
-total_mesh_displacement = Function(V)
+mesh_displacement = Function(V_mesh)
+total_mesh_displacement = Function(V_mesh)
 total_mesh_displacement.name = "Mesh Displacement"
 
 # Variational form setup
 u = TrialFunction(V)
 v = TestFunction(V)
+u_mesh = TrialFunction(V_mesh)
+v_mesh = TestFunction(V_mesh)
 u_ = Function(V)
 u_.name = "u"
 u_s = Function(V)
@@ -275,9 +280,9 @@ A3.assemble()
 b3 = create_vector(L3)
 
 # mesh movement
-a4 = form(inner(grad(u), grad(v)) * dx)
+a4 = form(inner(grad(u_mesh), grad(v_mesh)) * dx)
 zero_vec = Constant(mesh, PETSc.ScalarType((0.0, 0.0)))
-L4 = form(inner(zero_vec, v) * dx)
+L4 = form(inner(zero_vec, v_mesh) * dx)
 A4 = assemble_matrix(a4, bcs=bcx)
 A4.assemble()
 b4 = create_vector(L4)
