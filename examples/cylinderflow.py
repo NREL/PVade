@@ -139,12 +139,9 @@ class UDelta():
 
     def __call__(self, x):
         values = np.zeros((gdim, x.shape[1]), dtype=PETSc.ScalarType)
-        values[0] = 0.1
+        values[0] = 0.1  * np.cos(self.t * np.pi / 3)           # x shift
+        values[1] = 0.01 * np.sin(self.t * np.pi / 4)           # y shift  
         return values
-
-# currently unused
-x_shift = 0.01
-y_shift = 0.1
     
 
 ####################################################
@@ -209,7 +206,7 @@ all_exterior_V_mesh_dofs = locate_dofs_topological(
 )
 
 # Mesh
-u_delta = UDelta(0)
+u_delta = UDelta(t)
 mesh_displacement = Function(V)
 mesh_displacement.interpolate(u_delta)
 bcx_in = dirichletbc(mesh_displacement, all_interior_V_mesh_dofs)
@@ -348,6 +345,9 @@ for i in range(num_steps):
     # Update inlet velocity
     inlet_velocity.t = t
     u_inlet.interpolate(inlet_velocity)
+    # Update mesh perturbation
+    u_delta.t = t
+    mesh_displacement.interpolate(u_delta)
 
     # Step 1: Tentative velocity step
     A1.zeroEntries()
