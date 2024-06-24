@@ -9,10 +9,11 @@ from basix.ufl import element
 from ufl import (FacetNormal, Measure, TestFunction, TrialFunction,
                  as_vector, div, dot, dx, inner, lhs, grad, nabla_grad, rhs)
 
-from dolfinx.fem import (Constant, Function, functionspace,
+from dolfinx.fem import (Constant, Function, functionspace, FunctionSpace,
                          assemble_scalar, dirichletbc, form, locate_dofs_topological, set_bc)
 from dolfinx.fem.petsc import (apply_lifting, assemble_matrix, assemble_vector,
                                create_vector, create_matrix, set_bc)
+from dolfinx.geometry import bb_tree, compute_collisions_points, compute_colliding_cells
 from dolfinx.io import (VTXWriter, gmshio, XDMFFile)
 from dolfinx.mesh import locate_entities_boundary
 
@@ -29,7 +30,6 @@ c_x = c_y = 0.2
 r = 0.05
 gdim = 2
 res_min = r / 3
-mesh_order = 2
 
 ####################################################
 #                                                  #
@@ -103,7 +103,7 @@ if mesh_comm.rank == model_rank:
     gmsh.option.setNumber("Mesh.RecombineAll", 1)
     gmsh.option.setNumber("Mesh.SubdivisionAlgorithm", 1)
     gmsh.model.mesh.generate(gdim)
-    gmsh.model.mesh.setOrder(mesh_order)
+    gmsh.model.mesh.setOrder(2)
     gmsh.model.mesh.optimize("Netgen")
 
 mesh, _, ft = gmshio.model_to_mesh(gmsh.model, mesh_comm, model_rank, gdim=gdim)
@@ -182,10 +182,8 @@ def _all_exterior_surfaces(x):
 
 # boundary conditions
 v_cg2 = element("Lagrange", mesh.topology.cell_name(), 2, shape=(mesh.geometry.dim, ))
-v_cg_mesh = element("Lagrange", mesh.topology.cell_name(), mesh_order, shape=(mesh.geometry.dim, ))
 s_cg1 = element("Lagrange", mesh.topology.cell_name(), 1)
 V = functionspace(mesh, v_cg2)
-V_mesh = functionspace(mesh, v_cg_mesh)
 Q = functionspace(mesh, s_cg1)
 
 fdim = mesh.topology.dim - 1
@@ -195,14 +193,14 @@ facet_dim = 1
 all_interior_facets = locate_entities_boundary(
     mesh, facet_dim, _all_interior_surfaces
 )
-all_interior_V_mesh_dofs = locate_dofs_topological(
-    V_mesh, facet_dim, all_interior_facets
+all_interior_V_dofs = locate_dofs_topological(
+    V, facet_dim, all_interior_facets
 )
 all_exterior_facets = locate_entities_boundary(
     mesh, facet_dim, _all_exterior_surfaces
 )
-all_exterior_V_mesh_dofs = locate_dofs_topological(
-    V_mesh, facet_dim, all_exterior_facets
+all_exterior_V_dofs = locate_dofs_topological(
+    V, facet_dim, all_exterior_facets
 )
 
 # Mesh
@@ -210,8 +208,8 @@ u_delta = UDelta(t)
 mesh_displacement = Function(V)
 mesh_displacement_bc = Function(V)
 mesh_displacement_bc.interpolate(u_delta)
-bcx_in = dirichletbc(mesh_displacement_bc, all_interior_V_mesh_dofs)
-bcx_out = dirichletbc(Constant(mesh, PETSc.ScalarType((0.0, 0.0))), all_exterior_V_mesh_dofs, V_mesh)
+bcx_in = dirichletbc(mesh_displacement_bc, all_interior_V_dofs)
+bcx_out = dirichletbc(Constant(mesh, PETSc.ScalarType((0.0, 0.0))), all_exterior_V_dofs, V)
 bcx = [bcx_in, bcx_out]
 # Inlet
 u_inlet = Function(V)
