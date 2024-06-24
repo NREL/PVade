@@ -233,6 +233,10 @@ bcp = [bcp_outlet]
 #                                                  #
 ####################################################
 
+# Mesh movement setup
+total_mesh_displacement = Function(V)
+total_mesh_displacement.name = "Mesh Displacement"
+
 # Variational form setup
 u = TrialFunction(V)
 v = TestFunction(V)
@@ -334,7 +338,7 @@ xdmf_file = XDMFFile(MPI.COMM_WORLD, "results/velocity.xdmf", "w")
 vtx_u.write(t)
 vtx_p.write(t)
 xdmf_file.write_mesh(mesh)
-xdmf_file.write_function(u_, t)
+xdmf_file.write_function(total_mesh_displacement, t)
 
 # time step loop
 progress = tqdm.autonotebook.tqdm(desc="Solving PDE", total=num_steps)
@@ -402,11 +406,14 @@ for i in range(num_steps):
         vals = vals.reshape(-1, 2)
     mesh.geometry.x[:, :2] += vals[:, :]
 
+    # Track total mesh movement for visualization
+    total_mesh_displacement.vector.array[:] += mesh_displacement.vector.array
+    total_mesh_displacement.x.scatter_forward()
+
     # Write solutions to file
     vtx_u.write(t)
     vtx_p.write(t)
-    xdmf_file.write_function(u_, t)
-    xdmf_file.write_function(mesh_displacement, t)
+    xdmf_file.write_function(total_mesh_displacement, t)
 
     # Update variable with solution form this time step
     with u_.vector.localForm() as loc_, u_n.vector.localForm() as loc_n, u_n1.vector.localForm() as loc_n1:
