@@ -208,8 +208,9 @@ all_exterior_V_mesh_dofs = locate_dofs_topological(
 # Mesh
 u_delta = UDelta(t)
 mesh_displacement = Function(V)
-mesh_displacement.interpolate(u_delta)
-bcx_in = dirichletbc(mesh_displacement, all_interior_V_mesh_dofs)
+mesh_displacement_bc = Function(V)
+mesh_displacement_bc.interpolate(u_delta)
+bcx_in = dirichletbc(mesh_displacement_bc, all_interior_V_mesh_dofs)
 bcx_out = dirichletbc(Constant(mesh, PETSc.ScalarType((0.0, 0.0))), all_exterior_V_mesh_dofs, V_mesh)
 bcx = [bcx_in, bcx_out]
 # Inlet
@@ -334,11 +335,12 @@ folder = Path("results")
 folder.mkdir(exist_ok=True, parents=True)
 vtx_u = VTXWriter(mesh.comm, "results/dfg2D-3-u.bp", [u_], engine="BP4")
 vtx_p = VTXWriter(mesh.comm, "results/dfg2D-3-p.bp", [p_], engine="BP4")
-xdmf_file = XDMFFile(MPI.COMM_WORLD, "results/velocity.xdmf", "w")
+j = 0
+with XDMFFile(MPI.COMM_WORLD, f"results/displacement_{j}.xdmf", "w") as xdmf_file:
+    xdmf_file.write_mesh(mesh)
+    xdmf_file.write_function(total_mesh_displacement, t)
 vtx_u.write(t)
 vtx_p.write(t)
-xdmf_file.write_mesh(mesh)
-xdmf_file.write_function(total_mesh_displacement, t)
 
 # time step loop
 progress = tqdm.autonotebook.tqdm(desc="Solving PDE", total=num_steps)
@@ -346,12 +348,13 @@ for i in range(num_steps):
     progress.update(1)
     # Update current time step
     t += dt
+    j += 1
     # Update inlet velocity
     inlet_velocity.t = t
     u_inlet.interpolate(inlet_velocity)
     # Update mesh perturbation
     u_delta.t = t
-    mesh_displacement.interpolate(u_delta)
+    #mesh_displacement_bc.interpolate(u_delta)
 
     # Step 1: Tentative velocity step
     A1.zeroEntries()
@@ -413,8 +416,10 @@ for i in range(num_steps):
     # Write solutions to file
     vtx_u.write(t)
     vtx_p.write(t)
-    xdmf_file.write_function(total_mesh_displacement, t)
-
+    with XDMFFile(MPI.COMM_WORLD, f"results/displacement_{j}.xdmf", "w") as xdmf_file:
+        xdmf_file.write_mesh(mesh)
+        xdmf_file.write_function(total_mesh_displacement, t)
+   
     # Update variable with solution form this time step
     with u_.vector.localForm() as loc_, u_n.vector.localForm() as loc_n, u_n1.vector.localForm() as loc_n1:
         loc_n.copy(loc_n1)
@@ -434,4 +439,3 @@ for i in range(num_steps):
 # close output folders
 vtx_u.close()
 vtx_p.close()
-xdmf_file.close()
