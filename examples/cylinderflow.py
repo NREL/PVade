@@ -231,7 +231,9 @@ bcu_inflow = dirichletbc(u_inlet, locate_dofs_topological(V, fdim, ft.find(inlet
 u_nonslip = np.array((0,) * mesh.geometry.dim, dtype=PETSc.ScalarType)
 bcu_walls = dirichletbc(u_nonslip, locate_dofs_topological(V, fdim, ft.find(wall_marker)), V)
 # Obstacle
-bcu_obstacle = dirichletbc(u_nonslip, locate_dofs_topological(V, fdim, ft.find(edge_marker)), V)
+mesh_speed = DiskVelocity(t)
+u_nonslip_moving = mesh_speed(mesh.geometry.x)
+bcu_obstacle = dirichletbc(u_nonslip_moving, locate_dofs_topological(V, fdim, ft.find(edge_marker)), V)
 bcu = [bcu_inflow, bcu_obstacle, bcu_walls]
 # Outlet
 bcp_outlet = dirichletbc(PETSc.ScalarType(0), locate_dofs_topological(Q, fdim, ft.find(outlet_marker)), Q)
