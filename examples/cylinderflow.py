@@ -376,6 +376,9 @@ for i in range(num_steps):
     u_s.x.scatter_forward()
 
     # Step 2: Pressure corrrection step
+    A2.zeroEntries()
+    assemble_matrix(A2, a2, bcs=bcp)
+    A2.assemble()
     with b2.localForm() as loc:
         loc.set(0)
     assemble_vector(b2, L2)
@@ -389,6 +392,9 @@ for i in range(num_steps):
     p_.x.scatter_forward()
 
     # Step 3: Velocity correction step
+    A3.zeroEntries()
+    assemble_matrix(A3, a3)
+    A3.assemble()
     with b3.localForm() as loc:
         loc.set(0)
     assemble_vector(b3, L3)
