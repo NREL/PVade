@@ -132,19 +132,26 @@ class InletVelocity():
         values = np.zeros((gdim, x.shape[1]), dtype=PETSc.ScalarType)
         values[0] = 4 * 1.5 * np.sin(self.t * np.pi / 8) * x[1] * (0.41 - x[1]) / (0.41**2)
         return values
-
-class DiskDisplacement():
-    def __init__(self, t, dt):
+    
+class DiskVelocity():
+    def __init__(self, t):
         self.t = t
-        self.dt = dt
 
     def __call__(self, x):
         values = np.zeros((gdim, x.shape[1]), dtype=PETSc.ScalarType)
         freq = [0.4, 0.6]  # Hz
         ampl = [0.05, 0.03]
-        values[0] = ampl[0]  * np.sin(self.t * 2*np.pi * freq[0]) * 2*np.pi * freq[0] * self.dt          # x shift
-        values[1] = ampl[1]  * np.cos(self.t * 2*np.pi * freq[1]) * 2*np.pi * freq[1] * self.dt          # y shift
+        values[0] = ampl[0]  * np.sin(self.t * 2*np.pi * freq[0]) * 2*np.pi * freq[0]          # x shift
+        values[1] = ampl[1]  * np.cos(self.t * 2*np.pi * freq[1]) * 2*np.pi * freq[1]          # y shift
         return values
+
+class DiskDisplacement():
+    def __init__(self, t, dt):
+        self.velocity = DiskVelocity(t)
+        self.dt = dt
+
+    def __call__(self, x):
+        return self.velocity(x) * self.dt
     
 
 ####################################################
@@ -359,7 +366,7 @@ for i in range(num_steps):
     inlet_velocity.t = t
     u_inlet.interpolate(inlet_velocity)
     # Update mesh perturbation
-    mesh_delta.t = t
+    mesh_delta.velocity.t = t
     mesh_displacement_bc.interpolate(mesh_delta)
 
     # Step 1: Tentative velocity step
