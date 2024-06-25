@@ -117,7 +117,7 @@ ft.name = "Facet markers"
 ####################################################
 
 t = 0
-T = 1 / 125                      # Final time
+T = 2                      # Final time
 dt = 1 / 250                 # Time step size
 num_steps = int(T / dt)
 k = Constant(mesh, PETSc.ScalarType(dt))
@@ -133,14 +133,16 @@ class InletVelocity():
         values[0] = 4 * 1.5 * np.sin(self.t * np.pi / 8) * x[1] * (0.41 - x[1]) / (0.41**2)
         return values
 
-class UDelta():
-    def __init__(self, t):
+class DiskDisplacement():
+    def __init__(self, t, dt):
         self.t = t
+        self.dt = dt
 
     def __call__(self, x):
         values = np.zeros((gdim, x.shape[1]), dtype=PETSc.ScalarType)
-        values[0] = 0.1  * np.cos(self.t * np.pi / 3)           # x shift
-        values[1] = 0.01 * np.sin(self.t * np.pi / 4)           # y shift  
+        freq = [12, 20]  # Hz
+        #values[0] = -0.6   * ( np.cos(self.t * 2*np.pi * freq[0]) - np.cos( (self.t-self.dt) * 2*np.pi * freq[0]) )           # x shift
+        values[1] =  0.02   * ( np.sin(self.t * 2*np.pi * freq[1]) - np.sin( (self.t-self.dt) * 2*np.pi * freq[1]) )           # y shift
         return values
     
 
@@ -206,9 +208,9 @@ all_exterior_V_mesh_dofs = locate_dofs_topological(
 )
 
 # Mesh
-u_delta = UDelta(t)
+mesh_delta = DiskDisplacement(t, dt)
 mesh_displacement_bc = Function(V_mesh)
-mesh_displacement_bc.interpolate(u_delta)
+mesh_displacement_bc.interpolate(mesh_delta)
 bcx_in = dirichletbc(mesh_displacement_bc, all_interior_V_mesh_dofs)
 bcx_out = dirichletbc(Constant(mesh, PETSc.ScalarType((0.0, 0.0))), all_exterior_V_mesh_dofs, V_mesh)
 bcx = [bcx_in, bcx_out]
@@ -353,8 +355,8 @@ for i in range(num_steps):
     inlet_velocity.t = t
     u_inlet.interpolate(inlet_velocity)
     # Update mesh perturbation
-    u_delta.t = t
-    mesh_displacement_bc.interpolate(u_delta)
+    mesh_delta.t = t
+    mesh_displacement_bc.interpolate(mesh_delta)
 
     # Step 1: Tentative velocity step
     A1.zeroEntries()
