@@ -140,7 +140,7 @@ class DiskDisplacement():
 
     def __call__(self, x):
         values = np.zeros((gdim, x.shape[1]), dtype=PETSc.ScalarType)
-        freq = [2, 3]  # Hz
+        freq = [0.4, 0.6]  # Hz
         ampl = [0.05, 0.03]
         values[0] = ampl[0]  * np.sin(self.t * 2*np.pi * freq[0]) * 2*np.pi * freq[0] * self.dt          # x shift
         values[1] = ampl[1]  * np.cos(self.t * 2*np.pi * freq[1]) * 2*np.pi * freq[1] * self.dt          # y shift
@@ -340,9 +340,12 @@ folder = Path("results")
 folder.mkdir(exist_ok=True, parents=True)
 vtx_u = VTXWriter(mesh.comm, "results/dfg2D-3-u.bp", [u_], engine="BP4")
 vtx_p = VTXWriter(mesh.comm, "results/dfg2D-3-p.bp", [p_], engine="BP4")
-xdmf_file = XDMFFile(MPI.COMM_WORLD, f"results/displacement.xdmf", "w")
-xdmf_file.write_mesh(mesh)
-xdmf_file.write_function(total_mesh_displacement, t)
+xdmf_m = XDMFFile(MPI.COMM_WORLD, f"results/displacement.xdmf", "w")
+xdmf_m.write_mesh(mesh)
+xdmf_m.write_function(total_mesh_displacement, t)
+xdmf_u = XDMFFile(MPI.COMM_WORLD, f"results/velocity.xdmf", "w")
+xdmf_u.write_mesh(mesh)
+xdmf_u.write_function(u_, t)
 vtx_u.write(t)
 vtx_p.write(t)
 
@@ -419,7 +422,8 @@ for i in range(num_steps):
     # Write solutions to file
     vtx_u.write(t)
     vtx_p.write(t)
-    xdmf_file.write_function(total_mesh_displacement, t)
+    xdmf_m.write_function(total_mesh_displacement, t)
+    xdmf_u.write_function(u_, t)
    
     # Update variable with solution form this time step
     with u_.vector.localForm() as loc_, u_n.vector.localForm() as loc_n, u_n1.vector.localForm() as loc_n1:
@@ -440,4 +444,5 @@ for i in range(num_steps):
 # close output folders
 vtx_u.close()
 vtx_p.close()
-xdmf_file.close()
+xdmf_m.close()
+xdmf_u.close()
