@@ -140,9 +140,10 @@ class DiskDisplacement():
 
     def __call__(self, x):
         values = np.zeros((gdim, x.shape[1]), dtype=PETSc.ScalarType)
-        freq = [12, 20]  # Hz
-        #values[0] = -0.6   * ( np.cos(self.t * 2*np.pi * freq[0]) - np.cos( (self.t-self.dt) * 2*np.pi * freq[0]) )           # x shift
-        values[1] =  0.02   * ( np.sin(self.t * 2*np.pi * freq[1]) - np.sin( (self.t-self.dt) * 2*np.pi * freq[1]) )           # y shift
+        freq = [2, 3]  # Hz
+        ampl = [0.05, 0.03]
+        values[0] = ampl[0]  * np.sin(self.t * 2*np.pi * freq[0]) * 2*np.pi * freq[0] * self.dt          # x shift
+        values[1] = ampl[1]  * np.cos(self.t * 2*np.pi * freq[1]) * 2*np.pi * freq[1] * self.dt          # y shift
         return values
     
 
