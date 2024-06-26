@@ -6,14 +6,41 @@ import gmsh
 from mpi4py import MPI
 from petsc4py import PETSc
 from basix.ufl import element
-from ufl import (FacetNormal, Measure, TestFunction, TrialFunction,
-                 as_vector, div, dot, dx, inner, lhs, grad, nabla_grad, rhs)
+from ufl import (
+    FacetNormal,
+    Measure,
+    TestFunction,
+    TrialFunction,
+    as_vector,
+    div,
+    dot,
+    dx,
+    inner,
+    lhs,
+    grad,
+    nabla_grad,
+    rhs,
+)
 
-from dolfinx.fem import (Constant, Function, functionspace,
-                         assemble_scalar, dirichletbc, form, locate_dofs_topological, set_bc)
-from dolfinx.fem.petsc import (apply_lifting, assemble_matrix, assemble_vector,
-                               create_vector, create_matrix, set_bc)
-from dolfinx.io import (VTXWriter, gmshio, XDMFFile)
+from dolfinx.fem import (
+    Constant,
+    Function,
+    functionspace,
+    assemble_scalar,
+    dirichletbc,
+    form,
+    locate_dofs_topological,
+    set_bc,
+)
+from dolfinx.fem.petsc import (
+    apply_lifting,
+    assemble_matrix,
+    assemble_vector,
+    create_vector,
+    create_matrix,
+    set_bc,
+)
+from dolfinx.io import VTXWriter, gmshio, XDMFFile
 from dolfinx.mesh import locate_entities_boundary
 
 
@@ -56,7 +83,7 @@ if mesh_comm.rank == model_rank:
     gmsh.model.occ.synchronize()
 
     volumes = gmsh.model.getEntities(dim=gdim)
-    assert (len(volumes) == 2)
+    assert len(volumes) == 2
     gmsh.model.addPhysicalGroup(volumes[0][0], [volumes[0][1]], fluid_marker)
     gmsh.model.setPhysicalName(volumes[0][0], fluid_marker, "Fluid")
     gmsh.model.addPhysicalGroup(volumes[1][0], [volumes[1][1]], obstacle_marker)
@@ -71,7 +98,9 @@ if mesh_comm.rank == model_rank:
             inflow.append(boundary[1])
         elif np.allclose(center_of_mass, [L, H / 2, 0]):
             outflow.append(boundary[1])
-        elif np.allclose(center_of_mass, [L / 2, H, 0]) or np.allclose(center_of_mass, [L / 2, 0, 0]):
+        elif np.allclose(center_of_mass, [L / 2, H, 0]) or np.allclose(
+            center_of_mass, [L / 2, 0, 0]
+        ):
             walls.append(boundary[1])
         else:
             edge.append(boundary[1])
@@ -117,23 +146,27 @@ ft.name = "Facet markers"
 ####################################################
 
 t = 0
-T = 2                      # Final time
-dt = 1 / 250                 # Time step size
+T = 2.0  # Final time
+dt = 1 / 500  # Time step size
 num_steps = int(T / dt)
 k = Constant(mesh, PETSc.ScalarType(dt))
 mu = Constant(mesh, PETSc.ScalarType(0.001))  # Dynamic viscosity
-rho = Constant(mesh, PETSc.ScalarType(1))     # Density
+rho = Constant(mesh, PETSc.ScalarType(1))  # Density
 
-class InletVelocity():
+
+class InletVelocity:
     def __init__(self, t):
         self.t = t
 
     def __call__(self, x):
         values = np.zeros((gdim, x.shape[1]), dtype=PETSc.ScalarType)
-        values[0] = 4 * 1.5 * np.sin(self.t * np.pi / 8) * x[1] * (0.41 - x[1]) / (0.41**2)
+        values[0] = (
+            4 * 1.5 * np.sin(self.t * np.pi / 8) * x[1] * (0.41 - x[1]) / (0.41**2)
+        )
         return values
-    
-class DiskVelocity():
+
+
+class DiskVelocity:
     def __init__(self, t):
         self.t = t
 
@@ -141,24 +174,30 @@ class DiskVelocity():
         values = np.zeros((gdim, x.shape[1]), dtype=PETSc.ScalarType)
         freq = [0.4, 0.6]  # Hz
         ampl = [0.05, 0.03]
-        values[0] = ampl[0]  * np.sin(self.t * 2*np.pi * freq[0]) * 2*np.pi * freq[0]          # x shift
-        values[1] = ampl[1]  * np.cos(self.t * 2*np.pi * freq[1]) * 2*np.pi * freq[1]          # y shift
+        values[0] = (
+            ampl[0] * np.sin(self.t * 2 * np.pi * freq[0]) * 2 * np.pi * freq[0]
+        )  # x shift
+        values[1] = (
+            ampl[1] * np.cos(self.t * 2 * np.pi * freq[1]) * 2 * np.pi * freq[1]
+        )  # y shift
         return values
 
-class DiskDisplacement():
+
+class DiskDisplacement:
     def __init__(self, t, dt):
         self.velocity = DiskVelocity(t)
         self.dt = dt
 
     def __call__(self, x):
         return self.velocity(x) * self.dt
-    
+
 
 ####################################################
 #                                                  #
 #           SET UP PROBLEM                         #
 #                                                  #
 ####################################################
+
 
 def _all_interior_surfaces(x):
     eps = 1.0e-5
@@ -167,13 +206,10 @@ def _all_interior_surfaces(x):
     y_min = 0
     y_max = H
 
-    x_mid = np.logical_and(
-        x_min + eps < x[0], x[0] < x_max - eps
-    )
-    y_mid = np.logical_and(
-        y_min + eps < x[1], x[1] < y_max - eps
-    )
-    return np.logical_and( x_mid, y_mid )
+    x_mid = np.logical_and(x_min + eps < x[0], x[0] < x_max - eps)
+    y_mid = np.logical_and(y_min + eps < x[1], x[1] < y_max - eps)
+    return np.logical_and(x_mid, y_mid)
+
 
 def _all_exterior_surfaces(x):
     eps = 1.0e-5
@@ -182,17 +218,16 @@ def _all_exterior_surfaces(x):
     y_min = 0
     y_max = H
 
-    x_edge = np.logical_or(
-        x[0] < x_min + eps, x_max - eps < x[0]
-    )
-    y_edge = np.logical_or(
-        x[1] < y_min + eps, y_max - eps < x[1]
-    )
-    return np.logical_or( x_edge, y_edge )
+    x_edge = np.logical_or(x[0] < x_min + eps, x_max - eps < x[0])
+    y_edge = np.logical_or(x[1] < y_min + eps, y_max - eps < x[1])
+    return np.logical_or(x_edge, y_edge)
+
 
 # boundary conditions
-v_cg2 = element("Lagrange", mesh.topology.cell_name(), 2, shape=(mesh.geometry.dim, ))
-v_cg_mesh = element("Lagrange", mesh.topology.cell_name(), mesh_order, shape=(mesh.geometry.dim, ))
+v_cg2 = element("Lagrange", mesh.topology.cell_name(), 2, shape=(mesh.geometry.dim,))
+v_cg_mesh = element(
+    "Lagrange", mesh.topology.cell_name(), mesh_order, shape=(mesh.geometry.dim,)
+)
 s_cg1 = element("Lagrange", mesh.topology.cell_name(), 1)
 V = functionspace(mesh, v_cg2)
 V_mesh = functionspace(mesh, v_cg_mesh)
@@ -202,15 +237,11 @@ fdim = mesh.topology.dim - 1
 
 # get interior points
 facet_dim = 1
-all_interior_facets = locate_entities_boundary(
-    mesh, facet_dim, _all_interior_surfaces
-)
+all_interior_facets = locate_entities_boundary(mesh, facet_dim, _all_interior_surfaces)
 all_interior_V_mesh_dofs = locate_dofs_topological(
     V_mesh, facet_dim, all_interior_facets
 )
-all_exterior_facets = locate_entities_boundary(
-    mesh, facet_dim, _all_exterior_surfaces
-)
+all_exterior_facets = locate_entities_boundary(mesh, facet_dim, _all_exterior_surfaces)
 all_exterior_V_mesh_dofs = locate_dofs_topological(
     V_mesh, facet_dim, all_exterior_facets
 )
@@ -219,24 +250,52 @@ all_exterior_V_mesh_dofs = locate_dofs_topological(
 mesh_delta = DiskDisplacement(t, dt)
 mesh_displacement_bc = Function(V_mesh)
 mesh_displacement_bc.interpolate(mesh_delta)
+
+# This needs to be on the "V" space since it will affect the
+# fluid velocity calculations (not tied to mesh nodes)
+mesh_vel = Function(V)
+mesh_vel_bc = Function(V)
+mesh_vel_bc.interpolate(mesh_displacement_bc)
+mesh_vel_bc.x.array[:] /= dt
+
+
 bcx_in = dirichletbc(mesh_displacement_bc, all_interior_V_mesh_dofs)
-bcx_out = dirichletbc(Constant(mesh, PETSc.ScalarType((0.0, 0.0))), all_exterior_V_mesh_dofs, V_mesh)
+bcx_out = dirichletbc(
+    Constant(mesh, PETSc.ScalarType((0.0, 0.0))), all_exterior_V_mesh_dofs, V_mesh
+)
 bcx = [bcx_in, bcx_out]
 # Inlet
 u_inlet = Function(V)
 inlet_velocity = InletVelocity(t)
 u_inlet.interpolate(inlet_velocity)
-bcu_inflow = dirichletbc(u_inlet, locate_dofs_topological(V, fdim, ft.find(inlet_marker)))
+bcu_inflow = dirichletbc(
+    u_inlet, locate_dofs_topological(V, fdim, ft.find(inlet_marker))
+)
 # Walls
 u_nonslip = np.array((0,) * mesh.geometry.dim, dtype=PETSc.ScalarType)
-bcu_walls = dirichletbc(u_nonslip, locate_dofs_topological(V, fdim, ft.find(wall_marker)), V)
+bcu_walls = dirichletbc(
+    u_nonslip, locate_dofs_topological(V, fdim, ft.find(wall_marker)), V
+)
+
 # Obstacle
-mesh_speed = DiskVelocity(t)
-u_nonslip_moving = mesh_speed(mesh.geometry.x)
-bcu_obstacle = dirichletbc(u_nonslip_moving, locate_dofs_topological(V, fdim, ft.find(edge_marker)), V)
+# TODO: Melissa will fix this,
+# refactor this such that everything is expressed in terms of a velocity
+# i.e., the boundary conditions on the cylinder are for velocity,
+# the bcs at the edge are 0 velocity, solve for mesh_vel
+# then scale it by dt to get displacement
+# mesh_speed = DiskVelocity(t)
+# u_nonslip_moving = mesh_speed(mesh.geometry.x)
+# bcu_obstacle = dirichletbc(u_nonslip_moving, locate_dofs_topological(V, fdim, ft.find(edge_marker)), V)
+
+# Separated out just to make sure i don't miss parentheses...
+cylinder_dofs = locate_dofs_topological(V, fdim, ft.find(edge_marker))
+bcu_obstacle = dirichletbc(mesh_vel_bc, cylinder_dofs)
+
 bcu = [bcu_inflow, bcu_obstacle, bcu_walls]
 # Outlet
-bcp_outlet = dirichletbc(PETSc.ScalarType(0), locate_dofs_topological(Q, fdim, ft.find(outlet_marker)), Q)
+bcp_outlet = dirichletbc(
+    PETSc.ScalarType(0), locate_dofs_topological(Q, fdim, ft.find(outlet_marker)), Q
+)
 bcp = [bcp_outlet]
 
 ####################################################
@@ -269,7 +328,7 @@ phi = Function(Q)
 # first step
 f = Constant(mesh, PETSc.ScalarType((0, 0)))
 F1 = rho / k * dot(u - u_n, v) * dx
-F1 += inner(dot(1.5 * u_n - 0.5 * u_n1, 0.5 * nabla_grad(u + u_n)), v) * dx
+F1 += inner(dot(1.5 * u_n - 0.5 * u_n1 - mesh_vel, 0.5 * nabla_grad(u + u_n)), v) * dx
 F1 += 0.5 * mu * inner(grad(u + u_n), grad(v)) * dx - dot(p_, div(v)) * dx
 F1 += dot(f, v) * dx
 a1 = form(lhs(F1))
@@ -284,7 +343,7 @@ A2 = assemble_matrix(a2, bcs=bcp)
 A2.assemble()
 b2 = create_vector(L2)
 
-# last step 
+# last step
 a3 = form(rho * dot(u, v) * dx)
 L3 = form(rho * dot(u_s, v) * dx - k * dot(nabla_grad(phi), v) * dx)
 A3 = assemble_matrix(a3)
@@ -371,6 +430,9 @@ for i in range(num_steps):
     mesh_delta.velocity.t = t
     mesh_displacement_bc.interpolate(mesh_delta)
 
+    mesh_vel_bc.interpolate(mesh_displacement_bc)
+    mesh_vel_bc.x.array[:] /= dt
+
     # Step 1: Tentative velocity step
     A1.zeroEntries()
     assemble_matrix(A1, a1, bcs=bcu)
@@ -422,7 +484,10 @@ for i in range(num_steps):
     b4.ghostUpdate(addv=PETSc.InsertMode.ADD_VALUES, mode=PETSc.ScatterMode.REVERSE)
     set_bc(b4, bcx)
     solver4.solve(b4, mesh_displacement.vector)
-    mesh_displacement.x.scatter_forward()
+    mesh_displacement.x.scatter_forward
+
+    mesh_vel.interpolate(mesh_displacement)
+    mesh_vel.x.array[:] /= dt
 
     # Move mesh
     with mesh_displacement.vector.localForm() as vals_local:
@@ -439,7 +504,7 @@ for i in range(num_steps):
     vtx_p.write(t)
     xdmf_m.write_function(total_mesh_displacement, t)
     xdmf_u.write_function(u_, t)
-   
+
     # Update variable with solution form this time step
     with u_.vector.localForm() as loc_, u_n.vector.localForm() as loc_n, u_n1.vector.localForm() as loc_n1:
         loc_n.copy(loc_n1)
