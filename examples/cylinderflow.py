@@ -250,52 +250,44 @@ all_exterior_V_mesh_dofs = locate_dofs_topological(
 mesh_delta = DiskDisplacement(t, dt)
 mesh_displacement_bc = Function(V_mesh)
 mesh_displacement_bc.interpolate(mesh_delta)
-
-# This needs to be on the "V" space since it will affect the
-# fluid velocity calculations (not tied to mesh nodes)
-mesh_vel = Function(V)
-mesh_vel_bc = Function(V)
-mesh_vel_bc.interpolate(mesh_displacement_bc)
-mesh_vel_bc.x.array[:] /= dt
-
-
 bcx_in = dirichletbc(mesh_displacement_bc, all_interior_V_mesh_dofs)
-bcx_out = dirichletbc(
-    Constant(mesh, PETSc.ScalarType((0.0, 0.0))), all_exterior_V_mesh_dofs, V_mesh
-)
+zero_vec = Constant(mesh, PETSc.ScalarType((0.0, 0.0)))
+bcx_out = dirichletbc(zero_vec, all_exterior_V_mesh_dofs, V_mesh)
 bcx = [bcx_in, bcx_out]
 # Inlet
 u_inlet = Function(V)
 inlet_velocity = InletVelocity(t)
 u_inlet.interpolate(inlet_velocity)
-bcu_inflow = dirichletbc(
-    u_inlet, locate_dofs_topological(V, fdim, ft.find(inlet_marker))
-)
+dofs_inflow = locate_dofs_topological(V, fdim, ft.find(inlet_marker))
+bcu_inflow = dirichletbc(u_inlet, dofs_inflow)
 # Walls
 u_nonslip = np.array((0,) * mesh.geometry.dim, dtype=PETSc.ScalarType)
-bcu_walls = dirichletbc(
-    u_nonslip, locate_dofs_topological(V, fdim, ft.find(wall_marker)), V
-)
+dofs_walls = locate_dofs_topological(V, fdim, ft.find(wall_marker))
+bcu_walls = dirichletbc(u_nonslip, dofs_walls, V)
 
 # Obstacle
+mesh_vel_bc = Function(V)
+mesh_vel_bc.interpolate(mesh_displacement_bc)
+mesh_vel_bc.x.array[:] /= dt
+
+
 # TODO: Melissa will fix this,
 # refactor this such that everything is expressed in terms of a velocity
 # i.e., the boundary conditions on the cylinder are for velocity,
 # the bcs at the edge are 0 velocity, solve for mesh_vel
 # then scale it by dt to get displacement
-# mesh_speed = DiskVelocity(t)
-# u_nonslip_moving = mesh_speed(mesh.geometry.x)
-# bcu_obstacle = dirichletbc(u_nonslip_moving, locate_dofs_topological(V, fdim, ft.find(edge_marker)), V)
+# Obstacle
+#mesh_speed = DiskVelocity(t)
+#u_nonslip_moving = Function(V)
+#u_nonslip_moving.interpolate(mesh_speed)
+#bcu_obstacle = dirichletbc(u_nonslip_moving, locate_dofs_topological(V, fdim, ft.find(edge_marker)))
 
-# Separated out just to make sure i don't miss parentheses...
-cylinder_dofs = locate_dofs_topological(V, fdim, ft.find(edge_marker))
-bcu_obstacle = dirichletbc(mesh_vel_bc, cylinder_dofs)
-
+dofs_obstacle = locate_dofs_topological(V, fdim, ft.find(edge_marker))
+bcu_obstacle = dirichletbc(mesh_vel_bc, dofs_obstacle)
 bcu = [bcu_inflow, bcu_obstacle, bcu_walls]
 # Outlet
-bcp_outlet = dirichletbc(
-    PETSc.ScalarType(0), locate_dofs_topological(Q, fdim, ft.find(outlet_marker)), Q
-)
+dofs_outlet = locate_dofs_topological(Q, fdim, ft.find(outlet_marker))
+bcp_outlet = dirichletbc(PETSc.ScalarType(0), dofs_outlet, Q)
 bcp = [bcp_outlet]
 
 ####################################################
@@ -308,6 +300,9 @@ bcp = [bcp_outlet]
 mesh_displacement = Function(V_mesh)
 total_mesh_displacement = Function(V_mesh)
 total_mesh_displacement.name = "Mesh Displacement"
+# This needs to be on the "V" space since it will affect the
+# fluid velocity calculations (not tied to mesh nodes):
+mesh_vel = Function(V)
 
 # Variational form setup
 u = TrialFunction(V)
@@ -352,7 +347,6 @@ b3 = create_vector(L3)
 
 # mesh movement
 a4 = form(inner(grad(u_mesh), grad(v_mesh)) * dx)
-zero_vec = Constant(mesh, PETSc.ScalarType((0.0, 0.0)))
 L4 = form(inner(zero_vec, v_mesh) * dx)
 A4 = assemble_matrix(a4, bcs=bcx)
 A4.assemble()
