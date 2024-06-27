@@ -146,7 +146,7 @@ ft.name = "Facet markers"
 ####################################################
 
 t = 0
-T = 0.5  # Final time
+T = 2  # Final time
 dt = 1 / 500  # Time step size
 num_steps = int(T / dt)
 k = Constant(mesh, PETSc.ScalarType(dt))
@@ -239,7 +239,7 @@ all_exterior_V_mesh_dofs = locate_dofs_topological(
 
 # Mesh
 mesh_speed = DiskVelocity(t)
-mesh_vel_bc = Function(V)
+mesh_vel_bc = Function(V_mesh)
 mesh_vel_bc.interpolate(mesh_speed)
 bcx_in = dirichletbc(mesh_vel_bc, all_interior_V_mesh_dofs)
 zero_vec = Constant(mesh, PETSc.ScalarType((0.0, 0.0)))
@@ -256,8 +256,10 @@ u_nonslip = np.array((0,) * mesh.geometry.dim, dtype=PETSc.ScalarType)
 dofs_walls = locate_dofs_topological(V, fdim, ft.find(wall_marker))
 bcu_walls = dirichletbc(u_nonslip, dofs_walls, V)
 # Obstacle
+nonslip_bc = Function(V)
+nonslip_bc.interpolate(mesh_speed)
 dofs_obstacle = locate_dofs_topological(V, fdim, ft.find(edge_marker))
-bcu_obstacle = dirichletbc(mesh_vel_bc, dofs_obstacle)
+bcu_obstacle = dirichletbc(nonslip_bc, dofs_obstacle)
 bcu = [bcu_inflow, bcu_obstacle, bcu_walls]
 # Outlet
 dofs_outlet = locate_dofs_topological(Q, fdim, ft.find(outlet_marker))
@@ -397,6 +399,7 @@ for i in range(num_steps):
     # Update mesh perturbation
     mesh_speed.t = t
     mesh_vel_bc.interpolate(mesh_speed)
+    nonslip_bc.interpolate(mesh_speed)
 
     # Step 1: Tentative velocity step
     A1.zeroEntries()
