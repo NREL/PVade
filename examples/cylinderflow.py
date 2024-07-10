@@ -150,34 +150,9 @@ ft.name = "Facet markers"
 t = 0
 T = 2  # Final time
 dt = 1 / 500  # Time step size
-num_steps = int(T / dt)
-k = Constant(mesh, PETSc.ScalarType(dt))
-mu = Constant(mesh, PETSc.ScalarType(0.001))  # Dynamic viscosity
-rho = Constant(mesh, PETSc.ScalarType(1))  # Density
-
-
-class InletVelocity:
-    def __init__(self, t):
-        self.t = t
-
-    def __call__(self, x):
-        values = np.zeros((gdim, x.shape[1]), dtype=PETSc.ScalarType)
-        values[0] = 1
-        return values
-
-
-class DiskVelocity:
-    def __init__(self, t):
-        self.t = t
-
-    def __call__(self, x):
-        values = np.zeros((gdim, x.shape[1]), dtype=PETSc.ScalarType)
-        freq = 0.6  # Hz
-        ampl = 0.03
-        values[1] = (
-            ampl * np.cos(self.t * 2 * np.pi * freq) * 2 * np.pi * freq
-        )  # y shift
-        return values
+Re = 100
+disk_freq = 0.6 # Hz
+disk_ampl = 0.03
 
 
 ####################################################
@@ -186,7 +161,32 @@ class DiskVelocity:
 #                                                  #
 ####################################################
 
+num_steps = int(T / dt)
+k = Constant(mesh, PETSc.ScalarType(dt))
+mu = Constant(mesh, PETSc.ScalarType(1/Re))  # Dynamic viscosity
+rho = Constant(mesh, PETSc.ScalarType(1))  # Density
+u_inf = 1
 
+class InletVelocity:
+    def __init__(self, t):
+        self.t = t
+
+    def __call__(self, x):
+        values = np.zeros((gdim, x.shape[1]), dtype=PETSc.ScalarType)
+        values[0] = u_inf
+        return values
+
+class DiskVelocity:
+    def __init__(self, t):
+        self.t = t
+
+    def __call__(self, x):
+        values = np.zeros((gdim, x.shape[1]), dtype=PETSc.ScalarType)
+        values[1] = (
+            disk_ampl * np.cos(self.t * 2 * np.pi * disk_freq) * 2 * np.pi * disk_freq
+        )  # y shift
+        return values
+    
 def _all_interior_surfaces(x):
     eps = 1.0e-5
     x_min = 0
