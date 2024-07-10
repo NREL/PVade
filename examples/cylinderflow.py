@@ -1,6 +1,7 @@
 import numpy as np
 import tqdm.autonotebook
 from pathlib import Path
+from random import random
 
 import gmsh
 from mpi4py import MPI
@@ -148,11 +149,12 @@ ft.name = "Facet markers"
 ####################################################
 
 t = 0
-T = 2  # Final time
+T = 30  # Final time
 dt = 1 / 500  # Time step size
+T_noise = 30  # time that arbitrary noise ends
 Re = 100
 disk_freq = 0.6 # Hz
-disk_ampl = 0.03
+disk_ampl = 0
 
 
 ####################################################
@@ -166,6 +168,7 @@ k = Constant(mesh, PETSc.ScalarType(dt))
 mu = Constant(mesh, PETSc.ScalarType(1/Re))  # Dynamic viscosity
 rho = Constant(mesh, PETSc.ScalarType(1))  # Density
 u_inf = 1
+ampl_noise = 0.01
 
 class InletVelocity:
     def __init__(self, t):
@@ -173,7 +176,13 @@ class InletVelocity:
 
     def __call__(self, x):
         values = np.zeros((gdim, x.shape[1]), dtype=PETSc.ScalarType)
-        values[0] = u_inf
+        if self.t < T_noise:
+            def noise():
+                return random() * 2 - 1  # between -1 and 1, noninclusive
+            velocities = [u_inf + ampl_noise * noise() for _ in range(len(values[0]))]
+            values[0] = velocities
+        else:
+            values[0] = u_inf
         return values
 
 class DiskVelocity:
