@@ -247,9 +247,8 @@ u_inlet.interpolate(inlet_velocity)
 dofs_inflow = locate_dofs_topological(V, fdim, ft.find(inlet_marker))
 bcu_inflow = dirichletbc(u_inlet, dofs_inflow)
 # Walls
-u_nonslip = np.array((0,) * mesh.geometry.dim, dtype=PETSc.ScalarType)
-dofs_walls = locate_dofs_topological(V, fdim, ft.find(wall_marker))
-bcu_walls = dirichletbc(u_nonslip, dofs_walls, V)
+dofs_walls = locate_dofs_topological(V.sub(1), fdim, ft.find(wall_marker))
+bcu_walls = dirichletbc(PETSc.ScalarType(0), dofs_walls, V.sub(1))
 # Obstacle
 nonslip_bc = Function(V)
 nonslip_bc.interpolate(mesh_speed)
