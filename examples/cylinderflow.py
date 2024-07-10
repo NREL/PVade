@@ -160,9 +160,7 @@ class InletVelocity:
 
     def __call__(self, x):
         values = np.zeros((gdim, x.shape[1]), dtype=PETSc.ScalarType)
-        values[0] = (
-            4 * 1.5 * np.sin(self.t * np.pi / 8) * x[1] * (0.41 - x[1]) / (0.41**2)
-        )
+        values[0] = 1
         return values
 
 
