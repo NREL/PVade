@@ -507,6 +507,13 @@ for i in range(num_steps):
         C_D[i] = sum(drag_coeff)
         C_L[i] = sum(lift_coeff)
 
+np.savetxt(
+    "drag_over_time.csv", np.vstack((t_u, C_D)).T, delimiter=",", header="time,drag"
+)
+np.savetxt(
+    "lift_over_time.csv", np.vstack((t_u, C_L)).T, delimiter=",", header="time,lift"
+)
+
 # close output folders
 vtx_u.close()
 vtx_p.close()
