@@ -148,12 +148,14 @@ ft.name = "Facet markers"
 #                                                  #
 ####################################################
 
+strouhal = 6
+
 t = 0
-T = 50.0  # Final time
-dt = 0.05  # Time step size
-T_noise = 30  # time that arbitrary noise ends
+T = 20 + 15*strouhal  # Final time
+dt = strouhal / 150  # Time step size
+T_noise = 5  # time that arbitrary noise ends
 save_interval = 0.5
-save_every_n = int(save_interval / dt)
+
 Re = 100
 disk_freq = 0.6  # Hz
 disk_ampl = 0
@@ -166,6 +168,7 @@ disk_ampl = 0
 ####################################################
 
 num_steps = int(T / dt)
+save_every_n = int(save_interval / dt)
 k = Constant(mesh, PETSc.ScalarType(dt))
 mu = Constant(mesh, PETSc.ScalarType(1 / Re))  # Dynamic viscosity
 rho = Constant(mesh, PETSc.ScalarType(1))  # Density
