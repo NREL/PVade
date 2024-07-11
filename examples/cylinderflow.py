@@ -52,11 +52,11 @@ from dolfinx.mesh import locate_entities_boundary
 ####################################################
 
 d = 1
-L = 32.5*d
-H = 10*d
-c_x = 12.5*d
-c_y = 5*d
-r = 0.5*d
+L = 32.5 * d
+H = 10 * d
+c_x = 12.5 * d
+c_y = 5 * d
+r = 0.5 * d
 gdim = 2
 res_min = r / 3
 mesh_order = 2
@@ -149,11 +149,13 @@ ft.name = "Facet markers"
 ####################################################
 
 t = 0
-T = 30  # Final time
-dt = 1 / 500  # Time step size
+T = 50.0  # Final time
+dt = 0.05  # Time step size
 T_noise = 30  # time that arbitrary noise ends
+save_interval = 0.5
+save_every_n = int(save_interval / dt)
 Re = 100
-disk_freq = 0.6 # Hz
+disk_freq = 0.6  # Hz
 disk_ampl = 0
 
 
@@ -165,10 +167,11 @@ disk_ampl = 0
 
 num_steps = int(T / dt)
 k = Constant(mesh, PETSc.ScalarType(dt))
-mu = Constant(mesh, PETSc.ScalarType(1/Re))  # Dynamic viscosity
+mu = Constant(mesh, PETSc.ScalarType(1 / Re))  # Dynamic viscosity
 rho = Constant(mesh, PETSc.ScalarType(1))  # Density
 u_inf = 1
 ampl_noise = 0.01
+
 
 class InletVelocity:
     def __init__(self, t):
@@ -177,13 +180,16 @@ class InletVelocity:
     def __call__(self, x):
         values = np.zeros((gdim, x.shape[1]), dtype=PETSc.ScalarType)
         if self.t < T_noise:
+
             def noise():
                 return random() * 2 - 1  # between -1 and 1, noninclusive
+
             velocities = [u_inf + ampl_noise * noise() for _ in range(len(values[0]))]
             values[0] = velocities
         else:
             values[0] = u_inf
         return values
+
 
 class DiskVelocity:
     def __init__(self, t):
@@ -195,7 +201,8 @@ class DiskVelocity:
             disk_ampl * np.cos(self.t * 2 * np.pi * disk_freq) * 2 * np.pi * disk_freq
         )  # y shift
         return values
-    
+
+
 def _all_interior_surfaces(x):
     eps = 1.0e-5
     x_min = 0
@@ -402,9 +409,10 @@ for i in range(num_steps):
     inlet_velocity.t = t
     u_inlet.interpolate(inlet_velocity)
     # Update mesh perturbation
-    mesh_speed.t = t
-    mesh_vel_bc.interpolate(mesh_speed)
-    nonslip_bc.interpolate(mesh_speed)
+    if disk_ampl > 0.0:
+        mesh_speed.t = t
+        mesh_vel_bc.interpolate(mesh_speed)
+        nonslip_bc.interpolate(mesh_speed)
 
     # Step 1: Tentative velocity step
     A1.zeroEntries()
@@ -447,36 +455,38 @@ for i in range(num_steps):
     u_.x.scatter_forward()
 
     # Step 4: Solve for mesh movement
-    A4.zeroEntries()
-    assemble_matrix(A4, a4, bcs=bcx)
-    A4.assemble()
-    with b4.localForm() as loc:
-        loc.set(0)
-    assemble_vector(b4, L4)
-    apply_lifting(b4, [a4], [bcx])
-    b4.ghostUpdate(addv=PETSc.InsertMode.ADD_VALUES, mode=PETSc.ScatterMode.REVERSE)
-    set_bc(b4, bcx)
-    solver4.solve(b4, mesh_vel.vector)
-    mesh_vel.x.scatter_forward()
+    if disk_ampl > 0.0:
+        A4.zeroEntries()
+        assemble_matrix(A4, a4, bcs=bcx)
+        A4.assemble()
+        with b4.localForm() as loc:
+            loc.set(0)
+        assemble_vector(b4, L4)
+        apply_lifting(b4, [a4], [bcx])
+        b4.ghostUpdate(addv=PETSc.InsertMode.ADD_VALUES, mode=PETSc.ScatterMode.REVERSE)
+        set_bc(b4, bcx)
+        solver4.solve(b4, mesh_vel.vector)
+        mesh_vel.x.scatter_forward()
 
-    mesh_displacement.interpolate(mesh_vel)
-    mesh_displacement.x.array[:] *= dt
+        mesh_displacement.interpolate(mesh_vel)
+        mesh_displacement.x.array[:] *= dt
 
-    # Move mesh
-    with mesh_displacement.vector.localForm() as vals_local:
-        vals = vals_local.array
-        vals = vals.reshape(-1, 2)
-    mesh.geometry.x[:, :2] += vals[:, :]
+        # Move mesh
+        with mesh_displacement.vector.localForm() as vals_local:
+            vals = vals_local.array
+            vals = vals.reshape(-1, 2)
+        mesh.geometry.x[:, :2] += vals[:, :]
 
-    # Track total mesh movement for visualization
-    total_mesh_displacement.vector.array[:] += mesh_displacement.vector.array
-    total_mesh_displacement.x.scatter_forward()
+        # Track total mesh movement for visualization
+        total_mesh_displacement.vector.array[:] += mesh_displacement.vector.array
+        total_mesh_displacement.x.scatter_forward()
 
     # Write solutions to file
-    vtx_u.write(t)
-    vtx_p.write(t)
-    xdmf_m.write_function(total_mesh_displacement, t)
-    xdmf_u.write_function(u_, t)
+    if (i + 1) % save_every_n == 0:
+        vtx_u.write(t)
+        vtx_p.write(t)
+        xdmf_m.write_function(total_mesh_displacement, t)
+        xdmf_u.write_function(u_, t)
 
     # Update variable with solution form this time step
     with u_.vector.localForm() as loc_, u_n.vector.localForm() as loc_n, u_n1.vector.localForm() as loc_n1:
