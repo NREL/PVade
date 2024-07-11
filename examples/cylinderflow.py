@@ -149,7 +149,7 @@ ft.name = "Facet markers"
 ####################################################
 
 t = 0
-T = 50.0  # Final time
+T = 100.0  # Final time
 dt = 0.05  # Time step size
 T_noise = 30  # time that arbitrary noise ends
 save_interval = 0.5
@@ -503,6 +503,13 @@ for i in range(num_steps):
         t_p[i] = t - dt / 2
         C_D[i] = sum(drag_coeff)
         C_L[i] = sum(lift_coeff)
+
+np.savetxt(
+    "drag_over_time.csv", np.vstack((t_u, C_D)).T, delimiter=",", header="time,drag"
+)
+np.savetxt(
+    "lift_over_time.csv", np.vstack((t_u, C_L)).T, delimiter=",", header="time,lift"
+)
 
 # close output folders
 vtx_u.close()
