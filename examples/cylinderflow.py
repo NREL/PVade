@@ -21,6 +21,7 @@ from ufl import (
     grad,
     nabla_grad,
     rhs,
+    Identity,
 )
 
 from dolfinx.fem import (
@@ -148,7 +149,7 @@ ft.name = "Facet markers"
 #                                                  #
 ####################################################
 
-strouhal_period = 1/.1727
+strouhal_period = 1 / 0.1727
 
 t = 0
 <<<<<<< HEAD
@@ -158,7 +159,7 @@ T_noise = 30  # time that arbitrary noise ends
 =======
 T_noise = 5  # time that arbitrary noise ends
 T1 = 20
-T2 = 90 + 15*strouhal_period  # Final time
+T2 = 90 + 15 * strouhal_period  # Final time
 dt1 = strouhal_period / 150  # Time step size
 dt2 = strouhal_period / 150 / 4
 dt = dt1
@@ -176,7 +177,7 @@ disk_ampl = 0
 #                                                  #
 ####################################################
 
-num_steps = int(T1 / dt1) + int((T2-T1) / dt2)
+num_steps = int(T1 / dt1) + int((T2 - T1) / dt2)
 save_every_n = int(save_interval / dt)
 k = Constant(mesh, PETSc.ScalarType(dt))
 mu = Constant(mesh, PETSc.ScalarType(1 / Re))  # Dynamic viscosity
@@ -381,15 +382,41 @@ pc4.setType(PETSc.PC.Type.JACOBI)
 # compute drag and lift coefficients
 n = -FacetNormal(mesh)  # Normal pointing out of obstacle
 dObs = Measure("ds", domain=mesh, subdomain_data=ft, subdomain_id=edge_marker)
-u_t = inner(as_vector((n[1], -n[0])), u_)
-drag = form(2 / 0.1 * (mu / rho * inner(grad(u_t), n) * n[1] - p_ * n[0]) * dObs)
-lift = form(-2 / 0.1 * (mu / rho * inner(grad(u_t), n) * n[0] + p_ * n[1]) * dObs)
+# u_t = inner(as_vector((n[1], -n[0])), u_)
+# drag = form(2 / 0.1 * (mu / rho * inner(grad(u_t), n) * n[1] - p_ * n[0]) * dObs)
+# lift = form(-2 / 0.1 * (mu / rho * inner(grad(u_t), n) * n[0] + p_ * n[1]) * dObs)
 if mesh.comm.rank == 0:
     C_D = np.zeros(num_steps, dtype=PETSc.ScalarType)
     C_L = np.zeros(num_steps, dtype=PETSc.ScalarType)
     t_u = np.zeros(num_steps, dtype=np.float64)
     t_p = np.zeros(num_steps, dtype=np.float64)
 
+
+def sigma(u, p, nu, rho):
+    """
+    Convenience expression for fluid stress, sigma
+
+    Args:
+        u (dolfinx.fem.Function): Velocity
+        p (dolfinx.fem.Function): Pressure
+        nu (float, dolfinx.fem.Function): Viscosity
+
+    Returns:
+        ufl.dolfinx.fem.form: Stress in fluid, $2 nu epsilon (u)$
+    """
+    return (mu) * (grad(u) + grad(u).T) - p * Identity(len(u))
+    # return 2 * nu * rho * epsilon(u) - p * ufl.Identity(len(u))
+
+
+stress = sigma(u_, p_, mu, rho)
+
+facet_normal = FacetNormal(mesh)
+
+# Compute traction vector
+traction = dot(stress, -facet_normal)
+
+lift = form(traction[1] * dObs)
+drag = form(traction[0] * dObs)
 
 ####################################################
 #                                                  #
@@ -410,7 +437,6 @@ xdmf_u.write_mesh(mesh)
 xdmf_u.write_function(u_, t)
 vtx_u.write(t)
 vtx_p.write(t)
-
 # time step loop
 progress = tqdm.autonotebook.tqdm(desc="Solving PDE", total=num_steps)
 for i in range(num_steps):
@@ -418,6 +444,7 @@ for i in range(num_steps):
     # Update current time step
     if t >= T1:
         dt = dt2
+        k.value = dt
     t += dt
     # Update inlet velocity
     inlet_velocity.t = t
@@ -515,15 +542,21 @@ for i in range(num_steps):
     if mesh.comm.rank == 0:
         t_u[i] = t
         t_p[i] = t - dt / 2
-        C_D[i] = sum(drag_coeff)
-        C_L[i] = sum(lift_coeff)
+        C_D[i] = sum(drag_coeff) / (0.5 * rho.value * u_inf**2 * d)
+        C_L[i] = sum(lift_coeff) / (0.5 * rho.value * u_inf**2 * d)
 
 if mesh.comm.rank == 0:
     np.savetxt(
-        "drag_over_time.csv", np.vstack((t_u, C_D)).T, delimiter=",", header="time,drag"
+        "results/drag_over_time.csv",
+        np.vstack((t_u, C_D)).T,
+        delimiter=",",
+        header="time,drag",
     )
     np.savetxt(
-        "lift_over_time.csv", np.vstack((t_u, C_L)).T, delimiter=",", header="time,lift"
+        "results/lift_over_time.csv",
+        np.vstack((t_u, C_L)).T,
+        delimiter=",",
+        header="time,lift",
     )
 
 # close output folders
