@@ -2,7 +2,7 @@ general:
   geometry_module: panels3d
   output_dir: output/heliostat
   mesh_only: false
-  structural_analysis: false
+  structural_analysis: true
   fluid_analysis: true
 domain:
   x_min: -20
@@ -19,14 +19,14 @@ pv_array:
   panel_chord: 10.42
   panel_span: 11.41
   panel_thickness: 0.1
-  tracker_angle: 45 #0
+  tracker_angle: 0
   span_spacing: 1.0
   span_rows: 1
   # span_fixation_pts: [0.6, 6.9, 13.2, 18.3, 22.4]
-  span_fixation_pts: [13.2]
+  span_fixation_pts: [5.705]
 solver:
   dt: .01 #0.0025
-  t_final: 2.0 #20.0 # 10.0
+  t_final: 20.0 #20.0 # 10.0
   solver1_ksp: gmres
   solver2_ksp: gmres
   solver3_ksp: gmres
