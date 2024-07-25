@@ -153,16 +153,16 @@ strouhal_period = 1 / 0.1727
 
 t = 0
 T_noise = 5  # time that arbitrary noise ends
-T1 = 20
-T2 = 90 + 15 * strouhal_period  # Final time
+T1 = 20 * strouhal_period
+T2 = T1  # Final time
 dt1 = strouhal_period / 150  # Time step size
 dt2 = strouhal_period / 150 / 4
 dt = dt1
 save_interval = 0.5
 
 Re = 100
-disk_freq = 0.6  # Hz
-disk_ampl = 0
+disk_freq = 1.1 / strouhal_period  # Hz
+disk_ampl = 0.25
 
 
 ####################################################
@@ -204,10 +204,11 @@ class DiskVelocity:
 
     def __call__(self, x):
         values = np.zeros((gdim, x.shape[1]), dtype=PETSc.ScalarType)
-        values[1] = (
-            disk_ampl * np.cos(self.t * 2 * np.pi * disk_freq) * 2 * np.pi * disk_freq
-        )  # y shift
+        values[1] = self.y_shift()
         return values
+    
+    def y_shift(self):
+        return disk_ampl * np.cos(self.t * 2 * np.pi * disk_freq) * 2 * np.pi * disk_freq
 
 
 def _all_interior_surfaces(x):
@@ -380,6 +381,7 @@ dObs = Measure("ds", domain=mesh, subdomain_data=ft, subdomain_id=edge_marker)
 # drag = form(2 / 0.1 * (mu / rho * inner(grad(u_t), n) * n[1] - p_ * n[0]) * dObs)
 # lift = form(-2 / 0.1 * (mu / rho * inner(grad(u_t), n) * n[0] + p_ * n[1]) * dObs)
 if mesh.comm.rank == 0:
+    y = np.zeros(num_steps, dtype=PETSc.ScalarType)
     C_D = np.zeros(num_steps, dtype=PETSc.ScalarType)
     C_L = np.zeros(num_steps, dtype=PETSc.ScalarType)
     t_u = np.zeros(num_steps, dtype=np.float64)
@@ -431,6 +433,7 @@ xdmf_u.write_mesh(mesh)
 xdmf_u.write_function(u_, t)
 vtx_u.write(t)
 vtx_p.write(t)
+y_cylinder_displacement = 0
 # time step loop
 progress = tqdm.autonotebook.tqdm(desc="Solving PDE", total=num_steps)
 for i in range(num_steps):
@@ -505,6 +508,7 @@ for i in range(num_steps):
 
         mesh_displacement.interpolate(mesh_vel)
         mesh_displacement.x.array[:] *= dt
+        y_cylinder_displacement += mesh_speed.y_shift()*dt
 
         # Move mesh
         with mesh_displacement.vector.localForm() as vals_local:
@@ -538,6 +542,7 @@ for i in range(num_steps):
         t_p[i] = t - dt / 2
         C_D[i] = sum(drag_coeff) / (0.5 * rho.value * u_inf**2 * d)
         C_L[i] = sum(lift_coeff) / (0.5 * rho.value * u_inf**2 * d)
+        y[i] = y_cylinder_displacement
 
 if mesh.comm.rank == 0:
     np.savetxt(
@@ -551,6 +556,12 @@ if mesh.comm.rank == 0:
         np.vstack((t_u, C_L)).T,
         delimiter=",",
         header="time,lift",
+    )
+    np.savetxt(
+        "results/y_over_time.csv",
+        np.vstack((t_u, y)).T,
+        delimiter=",",
+        header="time,y",
     )
 
 # close output folders
