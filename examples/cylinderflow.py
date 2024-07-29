@@ -54,9 +54,9 @@ from dolfinx.mesh import locate_entities_boundary
 
 d = 1
 L = 32.5 * d
-H = 10 * d
+H = 20 * d
 c_x = 12.5 * d
-c_y = 5 * d
+c_y = 10 * d
 r = 0.5 * d
 gdim = 2
 res_min = r / 3
