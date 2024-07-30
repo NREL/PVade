@@ -1,0 +1,58 @@
+general:
+  test: False
+  geometry_module: panels3d
+  output_dir: output/panels3d
+  mesh_only: False
+  structural_analysis: True
+  fluid_analysis: True
+domain:
+  x_min: -20
+  x_max: 100
+  y_min: -30
+  y_max: 30 
+  z_min: 0
+  z_max: 20
+  l_char: 4
+pv_array:
+  stream_rows: 3
+  elevation: 1.5
+  stream_spacing: 7.0
+  panel_chord: 2.0
+  panel_span: 7.0
+  panel_thickness: 0.1
+  tracker_angle: 0
+  span_spacing: 12.0
+  span_rows: 3
+  span_fixation_pts: 3.5
+solver:
+  dt: .1
+  t_final: 10.0 
+  solver1_ksp: cg
+  solver2_ksp: cg
+  solver3_ksp: cg
+  solver4_ksp: gmres
+  solver1_pc: jacobi
+  solver2_pc: jacobi
+  solver3_pc: jacobi
+  solver4_pc: jacobi
+  save_text_interval: .1
+  save_xdmf_interval: .1 
+fluid:
+  u_ref: 1.0
+  nu: 0.01
+  turbulence_model:  smagorinsky 
+  periodic: false 
+  bc_y_max: slip 
+  bc_y_min: slip 
+  bc_z_max: slip 
+  bc_z_min: noslip 
+  wind_direction: 250 
+structure:
+  dt : 0.1
+  elasticity_modulus: 1.0e+03
+  poissons_ratio: 0.3
+  body_force_x: 0
+  body_force_y: 0
+  body_force_z: 0 
+  bc_list: [left ]
+  tube_connection: True
