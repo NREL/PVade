@@ -60,4 +60,4 @@ ax[1, 1].set_xlabel("y, vertical position shift")
 ax[1, 1].set_ylabel("Lift Coefficient")
 
 plt.tight_layout()
-plt.show()
+plt.savefig('results/comparison.jpg')
