@@ -429,15 +429,18 @@ drag = form(traction[0] * dObs)
 #                                                  #
 ####################################################
 
+# specifiy output folder
+output_folder = "results"
+
 # output folders
-folder = Path("results")
+folder = Path(output_folder)
 folder.mkdir(exist_ok=True, parents=True)
-vtx_u = VTXWriter(mesh.comm, "results/dfg2D-3-u.bp", [u_], engine="BP4")
-vtx_p = VTXWriter(mesh.comm, "results/dfg2D-3-p.bp", [p_], engine="BP4")
-xdmf_m = XDMFFile(MPI.COMM_WORLD, f"results/displacement.xdmf", "w")
+vtx_u = VTXWriter(mesh.comm, f"{output_folder}/dfg2D-3-u.bp", [u_], engine="BP4")
+vtx_p = VTXWriter(mesh.comm, f"{output_folder}/dfg2D-3-p.bp", [p_], engine="BP4")
+xdmf_m = XDMFFile(MPI.COMM_WORLD, f"{output_folder}/displacement.xdmf", "w")
 xdmf_m.write_mesh(mesh)
 xdmf_m.write_function(total_mesh_displacement, t)
-xdmf_u = XDMFFile(MPI.COMM_WORLD, f"results/velocity.xdmf", "w")
+xdmf_u = XDMFFile(MPI.COMM_WORLD, f"{output_folder}/velocity.xdmf", "w")
 xdmf_u.write_mesh(mesh)
 xdmf_u.write_function(u_, t)
 vtx_u.write(t)
@@ -558,19 +561,19 @@ for i in range(num_steps):
 
 if mesh.comm.rank == 0:
     np.savetxt(
-        "results/drag_over_time.csv",
+        f"{output_folder}/drag_over_time.csv",
         np.vstack((t_u, C_D)).T,
         delimiter=",",
         header="time,drag",
     )
     np.savetxt(
-        "results/lift_over_time.csv",
+        f"{output_folder}/lift_over_time.csv",
         np.vstack((t_u, C_L)).T,
         delimiter=",",
         header="time,lift",
     )
     np.savetxt(
-        "results/y_over_time.csv",
+        f"{output_folder}/y_over_time.csv",
         np.vstack((t_u, y)).T,
         delimiter=",",
         header="time,y",
