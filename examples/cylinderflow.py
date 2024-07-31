@@ -206,9 +206,11 @@ class DiskVelocity:
         values = np.zeros((gdim, x.shape[1]), dtype=PETSc.ScalarType)
         values[1] = self.y_shift()
         return values
-    
+
     def y_shift(self):
-        return disk_ampl * np.cos(self.t * 2 * np.pi * disk_freq) * 2 * np.pi * disk_freq
+        return (
+            disk_ampl * np.cos(self.t * 2 * np.pi * disk_freq) * 2 * np.pi * disk_freq
+        )
 
 
 def _all_interior_surfaces(x):
@@ -299,6 +301,8 @@ total_mesh_displacement.name = "Mesh Displacement"
 # This needs to be on the "V" space since it will affect the
 # fluid velocity calculations (not tied to mesh nodes):
 mesh_vel = Function(V)
+mesh_vel_old = Function(V)
+mesh_vel_at_halfstep = 0.5 * (mesh_vel + mesh_vel_old)
 
 # Variational form setup
 u = TrialFunction(V)
@@ -319,7 +323,12 @@ phi = Function(Q)
 # first step
 f = Constant(mesh, PETSc.ScalarType((0, 0)))
 F1 = rho / k * dot(u - u_n, v) * dx
-F1 += inner(dot(1.5 * u_n - 0.5 * u_n1 - mesh_vel, 0.5 * nabla_grad(u + u_n)), v) * dx
+F1 += (
+    inner(
+        dot(1.5 * u_n - 0.5 * u_n1 - mesh_vel_at_halfstep, 0.5 * nabla_grad(u + u_n)), v
+    )
+    * dx
+)
 F1 += 0.5 * mu * inner(grad(u + u_n), grad(v)) * dx - dot(p_, div(v)) * dx
 F1 += dot(f, v) * dx
 a1 = form(lhs(F1))
@@ -494,6 +503,9 @@ for i in range(num_steps):
 
     # Step 4: Solve for mesh movement
     if disk_ampl > 0.0:
+        # Update old mesh velocity to store the last timestep's mesh velocity
+        mesh_vel_old.x.array[:] = mesh_vel.x.array[:]
+
         A4.zeroEntries()
         assemble_matrix(A4, a4, bcs=bcx)
         A4.assemble()
@@ -508,7 +520,7 @@ for i in range(num_steps):
 
         mesh_displacement.interpolate(mesh_vel)
         mesh_displacement.x.array[:] *= dt
-        y_cylinder_displacement += mesh_speed.y_shift()*dt
+        y_cylinder_displacement += mesh_speed.y_shift() * dt
 
         # Move mesh
         with mesh_displacement.vector.localForm() as vals_local:
