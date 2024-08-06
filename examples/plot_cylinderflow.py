@@ -59,5 +59,10 @@ ax[1, 1].plot(y_data[cutoff:], lift[cutoff:])
 ax[1, 1].set_xlabel("y, vertical position shift")
 ax[1, 1].set_ylabel("Lift Coefficient")
 
+CLmax = np.max(lift[1500:])
+print(f"Found max lift coefficient after stabilization of {CLmax}")
+CDmean = np.mean(drag[1500:])
+print(f"Found mean drag coefficient after stabilization of {CDmean}")
+
 plt.tight_layout()
 plt.savefig('results/comparison.jpg')
