@@ -14,16 +14,16 @@ domain:
   l_char: 1.25 # 1.0
 pv_array:
   stream_rows: 1
-  elevation: 5.59
+  elevation: 5.5
   stream_spacing: 10.0 # number from chris ivanov, distance from pier to edge of fixed tilt
-  panel_chord: 10.42
-  panel_span: 11.41
+  panel_chord: 10.0
+  panel_span: 11.0
   panel_thickness: 0.1
   tracker_angle: 0
   span_spacing: 1.0
   span_rows: 1
   # span_fixation_pts: [0.6, 6.9, 13.2, 18.3, 22.4]
-  span_fixation_pts: [5.705]
+  span_fixation_pts: [5.5]
 solver:
   dt: .01 #0.0025
   t_final: 20.0 #20.0 # 10.0
@@ -39,7 +39,7 @@ solver:
   save_xdmf_interval: .02 #0.01
 fluid:
   time_varying_inflow_bc: false # true
-  u_ref: 8.0
+  u_ref: 2.0
   rho: 1.0
   nu: 1.8e-05
   turbulence_model:  smagorinsky #null #  
