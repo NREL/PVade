@@ -36,14 +36,14 @@ For this example, the following values are used, as shown in the input file (`in
    .. table:: Parameter settings
 
       ==================================== =====
-      par. dim.                            Value
+      parameter [units]                    Value
       ==================================== =====
-      :math:`L [m]`                        60
-      :math:`H [m]`                        40
-      :math:`chord [m]`                    10.0
-      :math:`span [m]`                     11.0
-      :math:`elevation [m]`                5.5
-      :math:`tracker angle [degrees]`      0
+      L [m]                                60
+      H [m]                                40
+      chord [m]                            10.0
+      span [m]                             11.0
+      elevation [m]                        5.5
+      tracker angle [degrees]              0
       ==================================== =====
 
 
@@ -58,4 +58,7 @@ However, this example is best run on a supercomputer using the included batch sc
 
     sbatch run.sh
 
+This example yields the following result:
 
+.. image:: pictures/heliostat3d/heliostat_demo.gif
+  :alt: Alternative text
