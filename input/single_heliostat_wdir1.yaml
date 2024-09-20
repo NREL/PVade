@@ -19,7 +19,7 @@ pv_array:
   panel_chord: 10.42
   panel_span: 11.41
   panel_thickness: 0.1
-  tracker_angle: 0
+  tracker_angle: 75
   span_spacing: 1.0
   span_rows: 1
   # span_fixation_pts: [0.6, 6.9, 13.2, 18.3, 22.4]
@@ -47,7 +47,7 @@ fluid:
   bc_y_min: slip # slip noslip free
   bc_z_max: slip # slip noslip free
   bc_z_min: noslip # slip noslip free
-  wind_direction: 211 # slip noslip free
+  wind_direction: 237 # slip noslip free
 structure:
   dt : 0.01 # 0.1
   rho: 124.0
