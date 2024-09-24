@@ -387,6 +387,7 @@ class Flow:
 
         self.lift_form_list = []
         self.drag_form_list = []
+        self.lift_z_form_list = []
 
         for panel_id in range(
             int(params.pv_array.stream_rows * params.pv_array.span_rows)
@@ -441,6 +442,29 @@ class Flow:
                 )
 
             self.drag_form_list[-1] = dolfinx.fem.form(self.drag_form_list[-1])
+
+            self.lift_z_form_list.append(0)
+            if self.ndim == 3:
+                self.lift_z_form_list[-1] += self.traction[2] * ds_fluid(
+                    domain.domain_markers[f"left_{panel_id:.0f}"]["idx"]
+                )
+                self.lift_z_form_list[-1] += self.traction[2] * ds_fluid(
+                    domain.domain_markers[f"top_{panel_id:.0f}"]["idx"]
+                )
+                self.lift_z_form_list[-1] += self.traction[2] * ds_fluid(
+                    domain.domain_markers[f"right_{panel_id:.0f}"]["idx"]
+                )
+                self.lift_z_form_list[-1] += self.traction[2] * ds_fluid(
+                    domain.domain_markers[f"bottom_{panel_id:.0f}"]["idx"]
+                )
+                self.lift_z_form_list[-1] += self.traction[2] * ds_fluid(
+                    domain.domain_markers[f"front_{panel_id:.0f}"]["idx"]
+                )
+                self.lift_z_form_list[-1] += self.traction[2] * ds_fluid(
+                    domain.domain_markers[f"back_{panel_id:.0f}"]["idx"]
+                )
+
+                self.lift_z_form_list[-1] = dolfinx.fem.form(self.lift_z_form_list[-1])
 
     def _assemble_system(self, params):
         """Pre-assemble all LHS matrices and RHS vectors
@@ -742,6 +766,7 @@ class Flow:
 
         self.lift_coeff_list = []
         self.drag_coeff_list = []
+        self.lift_z_coeff_list = []
 
         for panel_id in range(params.pv_array.num_panels):
             lift_coeff_local = dolfinx.fem.assemble_scalar(
@@ -760,9 +785,23 @@ class Flow:
                 np.array(drag_coeff_local, dtype=np.float64), drag_coeff_array, root=0
             )
 
+            if self.ndim == 3:
+                lift_z_coeff_local = dolfinx.fem.assemble_scalar(
+                    self.lift_z_form_list[panel_id]
+                )
+                lift_z_coeff_array = np.zeros(self.num_procs, dtype=np.float64)
+                self.comm.Gather(
+                    np.array(lift_z_coeff_local, dtype=np.float64),
+                    lift_z_coeff_array,
+                    root=0,
+                )
+            else:
+                lift_z_coeff_array = np.zeros(self.num_procs, dtype=np.float64)
+
             if self.rank == 0:
                 self.lift_coeff_list.append(np.sum(lift_coeff_array))
                 self.drag_coeff_list.append(np.sum(drag_coeff_array))
+                self.lift_z_coeff_list.append(np.sum(lift_z_coeff_array))
 
         if self.rank == 0:
             if self.first_call_to_solver:
@@ -775,7 +814,7 @@ class Flow:
 
                     for panel_id in range(params.pv_array.num_panels):
                         fp.write(
-                            f",Lift_{panel_id:.0f},Drag_{panel_id:.0f},Lift_ND_{panel_id:.0f},Drag_ND_{panel_id:.0f}"
+                            f",Lift_{panel_id:.0f},Drag_{panel_id:.0f},Lift_Z_{panel_id:.0f},Lift_ND_{panel_id:.0f},Drag_ND_{panel_id:.0f},Lift_Z_ND_{panel_id:.0f}"
                         )
 
                     fp.write("\n")
@@ -787,6 +826,7 @@ class Flow:
 
                     lift_coeff = self.lift_coeff_list[panel_id]
                     drag_coeff = self.drag_coeff_list[panel_id]
+                    lift_z_coeff = self.lift_z_coeff_list[panel_id]
 
                     lift_coeff_nd = (
                         2.0
@@ -810,8 +850,19 @@ class Flow:
                         )
                     )
 
+                    lift_z_coeff_nd = (
+                        2.0
+                        * lift_z_coeff
+                        / (
+                            params.fluid.rho
+                            * params.fluid.u_ref**2
+                            * 2.0
+                            * params.pv_array.panel_span
+                        )
+                    )
+
                     fp.write(
-                        f",{lift_coeff:.9e},{drag_coeff:.9e},{lift_coeff_nd:.9e},{drag_coeff_nd:.9e}"
+                        f",{lift_coeff:.9e},{drag_coeff:.9e},{lift_z_coeff:.9e},{lift_coeff_nd:.9e},{drag_coeff_nd:.9e},{lift_z_coeff_nd:.9e}"
                     )
 
                     # print(f"Lift = {lift_coeff} ({lift_coeff_nd})")
