@@ -4,11 +4,11 @@ import os
 import numpy as np
 
 from pvade.fluid.FlowManager import Flow
-from pvade.DataStream import DataStream
-from pvade.Parameters import SimParams
-from pvade.Utilities import get_input_file, write_metrics
+from pvade.IO.DataStream import DataStream
+from pvade.IO.Parameters import SimParams
+from pvade.IO.Utilities import get_input_file, write_metrics
 from pvade.geometry.MeshManager import FSIDomain
-from ns_main import main
+from pvade_main import main
 
 from dolfinx.common import TimingType, list_timings
 import cProfile

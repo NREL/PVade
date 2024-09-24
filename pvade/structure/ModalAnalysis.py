@@ -47,9 +47,9 @@ class ModalAnalysis:
         P1 = ufl.VectorElement("Lagrange", domain.structure.msh.ufl_cell(), 2)
         self.V = dolfinx.fem.FunctionSpace(domain.structure.msh, P1)
 
-        self.W = dolfinx.fem.FunctionSpace(
-            domain.structure.msh, ("Discontinuous Lagrange", 0)
-        )
+        # self.W = dolfinx.fem.FunctionSpace(
+        #     domain.structure.msh, ("Discontinuous Lagrange", 0)
+        # )
 
         self.first_call_to_solver = True
 

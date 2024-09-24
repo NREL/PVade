@@ -1,7 +1,8 @@
 from pvade.fluid.FlowManager import Flow
-from pvade.DataStream import DataStream
-from pvade.Parameters import SimParams
-from pvade.Utilities import get_input_file, write_metrics
+from pvade.IO.DataStream import DataStream
+from pvade.fsi.FSI import FSI
+from pvade.IO.Parameters import SimParams
+from pvade.IO.Utilities import get_input_file, write_metrics
 from pvade.geometry.MeshManager import FSIDomain
 
 from dolfinx.common import TimingType, list_timings
@@ -11,7 +12,7 @@ import tqdm.autonotebook
 import numpy as np
 
 
-from pvade.structure.ElasticityManager import Elasticity
+from pvade.structure.StructureMain import Structure
 import os
 
 
@@ -47,7 +48,7 @@ def main(input_file=None):
     # sys.exit()
 
     flow = Flow(domain, fluid_analysis)
-    elasticity = Elasticity(domain, structural_analysis, params)
+    structure = Structure(domain, structural_analysis, params)
 
     if fluid_analysis == True:
         flow = Flow(domain, fluid_analysis)
@@ -57,16 +58,16 @@ def main(input_file=None):
         flow.build_forms(domain, params)
 
     if structural_analysis == True:
-        elasticity.build_boundary_conditions(domain, params)
+        structure.build_boundary_conditions(domain, params)
         # # # Build the fluid forms
-        elasticity.build_forms(domain, params)
+        structure.build_forms(domain, params)
 
     if structural_analysis == True and fluid_analysis == True:
         # pass
-        domain.move_mesh(elasticity, params)
+        domain.move_mesh(structure, params)
 
-    dataIO = DataStream(domain, flow, elasticity, params)
-
+    dataIO = DataStream(domain, flow, structure, params)
+    FSI_inter = FSI(domain, flow, structure, params)
     # if domain.rank == 0:
     #     progress = tqdm.autonotebook.tqdm(
     #         desc="Solving PDE", total=params.solver.t_steps
@@ -90,11 +91,11 @@ def main(input_file=None):
             and current_time > params.fluid.warm_up_time
         ):  # :# TODO: add condition to work with fluid time step
             if fluid_analysis == True:
-                elasticity.stress_predicted.x.array[:] = (
-                    2.0 * elasticity.stress.x.array - elasticity.stress_old.x.array
+                structure.elasticity.stress_predicted.x.array[:] = (
+                    2.0 * structure.elasticity.stress.x.array - structure.elasticity.stress_old.x.array
                 )
 
-            elasticity.solve(params, dataIO)
+            structure.solve(params, dataIO)
 
             # if fluid_analysis == True:
             #     dataIO.fluid_struct(domain, flow, elasticity, params)
@@ -102,7 +103,7 @@ def main(input_file=None):
             # flow.adjust_dpdx_for_constant_flux(params)
             if fluid_analysis == True:
                 # pass
-                domain.move_mesh(elasticity, params)
+                domain.move_mesh(structure, params)
 
         if fluid_analysis == True and not params.general.debug_mesh_motion_only:
             flow.solve(domain, params, current_time)
@@ -113,7 +114,7 @@ def main(input_file=None):
             and current_time > params.fluid.warm_up_time
         ):  # :# TODO: add condition to work with fluid time step
             if fluid_analysis == True:
-                dataIO.fluid_struct(domain, flow, elasticity, params)
+                FSI_inter.fluid_struct(domain, flow, structure, params)
 
         if (k + 1) % params.solver.save_xdmf_interval_n == 0:
             if fluid_analysis == True:
@@ -139,7 +140,7 @@ def main(input_file=None):
             ):
 
                 local_def_max = np.amax(
-                    np.sum(elasticity.u.vector.array.reshape(-1, 3) ** 2, axis=1)
+                    np.sum(structure.elasticity.u.vector.array.reshape(-1, 3) ** 2, axis=1)
                 )
                 global_def_max_list = np.zeros(params.num_procs, dtype=np.float64)
                 params.comm.Gather(local_def_max, global_def_max_list, root=0)
@@ -150,7 +151,7 @@ def main(input_file=None):
                     print(
                         f"| Max Deformation = {np.sqrt(np.amax(global_def_max_list)):.2e}"
                     )
-                dataIO.save_XDMF_files(elasticity, domain, current_time)
+                dataIO.save_XDMF_files(structure, domain, current_time)
 
     list_timings(params.comm, [TimingType.wall])
 

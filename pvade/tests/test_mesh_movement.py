@@ -5,7 +5,7 @@ import numpy as np
 import os
 import matplotlib.pyplot as plt
 
-from pvade.Parameters import SimParams
+from pvade.IO.Parameters import SimParams
 from pvade.geometry.MeshManager import FSIDomain
 
 input_path = "pvade/tests/input/yaml/"

@@ -3,7 +3,7 @@ import dolfinx
 import numpy as np
 import os
 
-from pvade.Parameters import SimParams
+from pvade.IO.Parameters import SimParams
 from pvade.geometry.MeshManager import FSIDomain
 
 
