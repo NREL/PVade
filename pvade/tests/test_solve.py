@@ -79,7 +79,7 @@ def test_fsi2():
 
     input_file = os.path.join(input_path, "flag2d.yaml")  # get_input_file()
 
-    params, elasticity, flow = main(input_file=input_file)
+    params, structure, flow = main(input_file=input_file)
 
     pos_filename = os.path.join(params.general.output_dir_sol, "accel_pos.csv")
     lift_and_drag_filename = os.path.join(
