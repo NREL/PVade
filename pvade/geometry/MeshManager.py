@@ -1132,17 +1132,17 @@ class FSIDomain:
         if use_built_in_interpolate:
             self.fluid_mesh_displacement_bc_undeformed.interpolate(structure.elasticity.u_delta)
             self.fluid_mesh_displacement_bc_undeformed.x.scatter_forward()
-            self.fluid_mesh_displacement_bc.x.array[
-                :
-            ] = self.fluid_mesh_displacement_bc_undeformed.x.array[:]
+            self.fluid_mesh_displacement_bc.x.array[:] = (
+                self.fluid_mesh_displacement_bc_undeformed.x.array[:]
+            )
             self.fluid_mesh_displacement_bc.x.scatter_forward()
 
         else:
             fluid_mesh_displacement_bc_vec = self.custom_interpolate(structure.elasticity)
             nn_bc_vec = np.shape(self.fluid_mesh_displacement_bc.vector.array[:])[0]
-            self.fluid_mesh_displacement_bc.vector.array[
-                :
-            ] = fluid_mesh_displacement_bc_vec[:nn_bc_vec]
+            self.fluid_mesh_displacement_bc.vector.array[:] = (
+                fluid_mesh_displacement_bc_vec[:nn_bc_vec]
+            )
             self.fluid_mesh_displacement_bc.x.scatter_forward()
 
             # print(self.fluid_mesh_displacement_bc.vector.array[self.all_interior_V_dofs])
