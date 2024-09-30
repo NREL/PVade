@@ -142,15 +142,19 @@ class FSIDomain:
         # Only rank 0 builds the geometry and meshes the domain
         if self.rank == 0:
             if (
-                (params.general.geometry_module == "panels3d"
-                 or params.general.geometry_module == "heliostats3d")
+                (
+                    params.general.geometry_module == "panels3d"
+                    or params.general.geometry_module == "heliostats3d"
+                )
                 and params.general.fluid_analysis == True
                 and params.general.structural_analysis == True
             ):
                 self.geometry.build_FSI(params)
             elif (
-                (params.general.geometry_module == "panels3d" 
-                 or params.general.geometry_module == "heliostats3d")
+                (
+                    params.general.geometry_module == "panels3d"
+                    or params.general.geometry_module == "heliostats3d"
+                )
                 and params.general.fluid_analysis == False
                 and params.general.structural_analysis == True
             ):
@@ -882,7 +886,6 @@ class FSIDomain:
             xdmf_file.write_function(self.distance, 0.0)
 
     def _force_interface_node_matching(self):
-
         # Get the coordinates of each point from the mesh objects
         fluid_pts = self.fluid.msh.geometry.x
         fluid_boundary_pts = fluid_pts[self.all_interior_V_dofs, :]
@@ -913,7 +916,6 @@ class FSIDomain:
 
         @jit(nopython=True)
         def find_closest_structure_idx(fluid_pts, structure_pts):
-
             idx_vec = np.zeros(np.shape(fluid_pts)[0], dtype=np.int64)
 
             for k, pt in enumerate(fluid_pts):
@@ -1130,17 +1132,17 @@ class FSIDomain:
         if use_built_in_interpolate:
             self.fluid_mesh_displacement_bc_undeformed.interpolate(structure.elasticity.u_delta)
             self.fluid_mesh_displacement_bc_undeformed.x.scatter_forward()
-            self.fluid_mesh_displacement_bc.x.array[:] = (
-                self.fluid_mesh_displacement_bc_undeformed.x.array[:]
-            )
+            self.fluid_mesh_displacement_bc.x.array[
+                :
+            ] = self.fluid_mesh_displacement_bc_undeformed.x.array[:]
             self.fluid_mesh_displacement_bc.x.scatter_forward()
 
         else:
             fluid_mesh_displacement_bc_vec = self.custom_interpolate(structure.elasticity)
             nn_bc_vec = np.shape(self.fluid_mesh_displacement_bc.vector.array[:])[0]
-            self.fluid_mesh_displacement_bc.vector.array[:] = (
-                fluid_mesh_displacement_bc_vec[:nn_bc_vec]
-            )
+            self.fluid_mesh_displacement_bc.vector.array[
+                :
+            ] = fluid_mesh_displacement_bc_vec[:nn_bc_vec]
             self.fluid_mesh_displacement_bc.x.scatter_forward()
 
             # print(self.fluid_mesh_displacement_bc.vector.array[self.all_interior_V_dofs])

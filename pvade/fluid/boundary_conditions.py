@@ -162,12 +162,32 @@ class InflowVelocity:
                     * (self.params.domain.y_max - x[1])
                 )
 
+<<<<<<< HEAD
             # handle cyl3d
             elif self.ndim == 3:
                 inflow_values[0] = (
                     coeff * time_vary_u_ref * x[1] * x[2] * self.params.domain.y_max
                     - x[1] * self.params.domain.z_max  # inflow_dy
                     - x[2] / self.params.domain.z_max**4  # inflow_dz
+=======
+            inflow_values[0] = (
+                1.5
+                * time_vary_u_ref
+                * 4.0
+                / 0.1681
+                * x[1]
+                * (self.params.domain.y_max - x[1])
+            )
+        elif (
+            self.params.general.geometry_module == "panels3d"
+            or self.params.general.geometry_module == "heliostats3d"
+        ):
+            if self.current_time < 2.0 and self.params.fluid.time_varying_inflow_bc:
+                time_vary_u_ref = (
+                    self.params.fluid.u_ref
+                    * (1.0 - np.cos(np.pi / 2.0 * self.current_time))
+                    / 2.0
+>>>>>>> bc8c3ee (black formatting)
                 )
 
         elif self.params.fluid.velocity_profile_type == "loglaw":
