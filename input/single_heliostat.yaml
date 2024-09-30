@@ -1,5 +1,5 @@
 general:
-  geometry_module: panels3d
+  geometry_module: heliostats3d
   output_dir: output/heliostat
   mesh_only: false
   structural_analysis: true

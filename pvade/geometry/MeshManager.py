@@ -67,6 +67,7 @@ class FSIDomain:
         if (
             params.general.geometry_module == "panels2d"
             or params.general.geometry_module == "panels3d"
+            or params.general.geometry_module == "heliostats3d"
         ):
             for panel_id in range(
                 params.pv_array.stream_rows * params.pv_array.span_rows
@@ -141,13 +142,15 @@ class FSIDomain:
         # Only rank 0 builds the geometry and meshes the domain
         if self.rank == 0:
             if (
-                params.general.geometry_module == "panels3d"
+                (params.general.geometry_module == "panels3d"
+                 or params.general.geometry_module == "heliostats3d")
                 and params.general.fluid_analysis == True
                 and params.general.structural_analysis == True
             ):
                 self.geometry.build_FSI(params)
             elif (
-                params.general.geometry_module == "panels3d"
+                (params.general.geometry_module == "panels3d" 
+                 or params.general.geometry_module == "heliostats3d")
                 and params.general.fluid_analysis == False
                 and params.general.structural_analysis == True
             ):
@@ -205,6 +208,7 @@ class FSIDomain:
 
         if (
             params.general.geometry_module == "panels3d"
+            or params.general.geometry_module == "heliostats3d"
             or params.general.geometry_module == "flag2d"
         ):
             self._create_submeshes_from_parent(params)

@@ -171,7 +171,7 @@ class InflowVelocity:
                 * x[1]
                 * (self.params.domain.y_max - x[1])
             )
-        elif self.params.general.geometry_module == "panels3d":
+        elif (self.params.general.geometry_module == "panels3d" or self.params.general.geometry_module == "heliostats3d"):
 
             if self.current_time < 2.0 and self.params.fluid.time_varying_inflow_bc:
                 time_vary_u_ref = (
@@ -295,6 +295,7 @@ def build_velocity_boundary_conditions(domain, params, functionspace, current_ti
         if (
             params.general.geometry_module == "panels2d"
             or params.general.geometry_module == "panels3d"
+            or params.general.geometry_module == "heliostats3d"
             or params.general.geometry_module == "flag2d"
         ):
             for location in (

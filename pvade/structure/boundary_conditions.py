@@ -142,7 +142,7 @@ class InflowVelocity:
                 * (0.41 - x[1])
                 / (0.41**2)
             )
-        elif self.params.general.example == "panels3d":
+        elif (self.params.general.example == "panels3d" or self.params.general.example == "heliostats3d"):
             inflow_values[0] = (
                 (self.params.fluid.u_ref)
                 * np.log(((x[2]) - d0) / z0)
