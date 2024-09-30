@@ -311,6 +311,7 @@ def build_velocity_boundary_conditions(domain, params, functionspace, current_ti
         if (
             params.general.geometry_module == "panels2d"
             or params.general.geometry_module == "panels3d"
+            or params.general.geometry_module == "heliostats3d"
             or params.general.geometry_module == "flag2d"
         ):
             for location in (
