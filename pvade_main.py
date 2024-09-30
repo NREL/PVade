@@ -39,8 +39,8 @@ def main(input_file=None):
 
     if params.general.mesh_only == True:
         list_timings(params.comm, [TimingType.wall])
-        elasticity, flow = [], []
-        return params, elasticity, flow
+        structure, flow = [], []
+        return params, structure, flow
 
     # Check to ensure mesh node matching for periodic simulations
     # if domain.periodic_simulation:
@@ -155,14 +155,14 @@ def main(input_file=None):
 
     list_timings(params.comm, [TimingType.wall])
 
-    return params, elasticity, flow
+    return params, structure, flow
 
 
 # Print profiling results
 if __name__ == "__main__":
     profiler = cProfile.Profile()
     profiler.enable()
-    params, elasticity, flow = main()
+    params, structure, flow = main()
     profiler.disable()
 
     if params.rank == 0:
@@ -177,4 +177,4 @@ if __name__ == "__main__":
             sys.stdout = sys.__stdout__
 
         if not params.general.mesh_only:
-            write_metrics(flow, elasticity, prof_filename=prof_txt_filename)
+            write_metrics(flow, structure.elasticity, prof_filename=prof_txt_filename)
