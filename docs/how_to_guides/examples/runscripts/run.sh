@@ -15,4 +15,4 @@ module load mamba
 mamba activate pvade
 export OMP_NUM_THREADS=1
 
-mpirun -np 104 python -u /home/bstanisl/pvade/PVade/ns_main.py --input_file /home/bstanisl/pvade/PVade/input/single_heliostat.yaml 64  cg none 1
+mpirun -np 104 python -u /home/bstanisl/pvade/PVade/ns_main.py --input_file /home/bstanisl/pvade/PVade/input/single_heliostat.yaml
