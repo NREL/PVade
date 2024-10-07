@@ -140,21 +140,23 @@ class FSIDomain:
 
         # Only rank 0 builds the geometry and meshes the domain
         if self.rank == 0:
-            if (
-                params.general.geometry_module == "panels3d"
-                and params.general.fluid_analysis == True
-                and params.general.structural_analysis == True
-            ):
+            if ( params.general.geometry_module == "panels3d" ):
+                if (params.general.fluid_analysis == True
+                and params.general.structural_analysis == True):
+                    self.geometry.build_FSI(params)
+                elif (params.general.fluid_analysis == False
+                and params.general.structural_analysis == True):
+                    self.geometry.build_structure(params)
+                else:
+                    self.geometry.build_FSI(params)
+            elif ( params.general.geometry_module == "flag2d" ):
                 self.geometry.build_FSI(params)
-            elif (
-                params.general.geometry_module == "panels3d"
-                and params.general.fluid_analysis == False
-                and params.general.structural_analysis == True
-            ):
-                self.geometry.build_structure(params)
             else:
                 self.geometry.build_FSI(params)
-
+                
+                
+            
+            
             # Build the domain markers for each surface and cell
             if hasattr(self.geometry, "domain_markers"):
                 # If the "build" process created domain markers, use those directly...
@@ -206,6 +208,7 @@ class FSIDomain:
         if (
             params.general.geometry_module == "panels3d"
             or params.general.geometry_module == "flag2d"
+            or params.general.geometry_module == "panels2d"
         ):
             self._create_submeshes_from_parent(params)
             self._transfer_mesh_tags_to_submeshes(params)
@@ -1017,7 +1020,7 @@ class FSIDomain:
 
     #     return vec
 
-    def move_mesh(self, elasticity, params):
+    def move_mesh(self, structure, params):
         if self.first_move_mesh:
             # Save the un-moved coordinates for future reference
             # self.fluid.msh.initial_position = self.fluid.msh.geometry.x[:, :]
@@ -1120,7 +1123,7 @@ class FSIDomain:
         use_built_in_interpolate = True
 
         if use_built_in_interpolate:
-            self.fluid_mesh_displacement_bc_undeformed.interpolate(elasticity.u_delta)
+            self.fluid_mesh_displacement_bc_undeformed.interpolate(structure.elasticity.u_delta)
             self.fluid_mesh_displacement_bc_undeformed.x.scatter_forward()
             self.fluid_mesh_displacement_bc.x.array[:] = (
                 self.fluid_mesh_displacement_bc_undeformed.x.array[:]
@@ -1128,7 +1131,7 @@ class FSIDomain:
             self.fluid_mesh_displacement_bc.x.scatter_forward()
 
         else:
-            fluid_mesh_displacement_bc_vec = self.custom_interpolate(elasticity)
+            fluid_mesh_displacement_bc_vec = self.custom_interpolate(structure.elasticity)
             nn_bc_vec = np.shape(self.fluid_mesh_displacement_bc.vector.array[:])[0]
             self.fluid_mesh_displacement_bc.vector.array[:] = (
                 fluid_mesh_displacement_bc_vec[:nn_bc_vec]
