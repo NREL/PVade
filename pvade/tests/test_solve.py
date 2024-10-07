@@ -116,7 +116,7 @@ def test_fsi2():
         ]
     )
 
-    lift_and_drag_data_truth = np.array(
+    lift_and_drag_data_tuth = np.array(
         [
             [
                 1.000000000e-03,
@@ -302,8 +302,12 @@ def test_fsi2():
     )
 
     assert np.allclose(pos_data, pos_data_truth)
-    print(lift_and_drag_data) 
-    assert np.allclose(lift_and_drag_data, lift_and_drag_data_truth)
+    print(lift_and_drag_data)
+
+    assert np.allclose(lift_and_drag_data, lift_and_drag_data_tuth) ## assert np.allclose(lift_and_drag_data, lift_and_drag_data_truth)
+
+    
+
 
 
 # @pytest.mark.unit
