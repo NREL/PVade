@@ -515,7 +515,9 @@ class Flow:
             params (:obj:`pvade.Parameters.SimParams`): A SimParams object
         """
 
-        if params.fluid.time_varying_inflow_bc:
+        ramp_window = params.fluid.time_varying_inflow_window
+
+        if ramp_window > 0.0 and current_time <= ramp_window:
             self.inflow_velocity.current_time = current_time
             if self.upper_cells is not None:
                 self.inflow_profile.interpolate(self.inflow_velocity, self.upper_cells)
