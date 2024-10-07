@@ -385,86 +385,92 @@ class Flow:
             "ds", domain=domain.fluid.msh, subdomain_data=domain.fluid.facet_tags
         )
 
-        self.lift_form_list = []
-        self.drag_form_list = []
-        self.lift_z_form_list = []
+        self.integrated_force_x_form = []
+        self.integrated_force_y_form = []
+        self.integrated_force_z_form = []
 
         for panel_id in range(
             int(params.pv_array.stream_rows * params.pv_array.span_rows)
         ):
-            self.lift_form_list.append(0)
-            self.lift_form_list[-1] += self.traction[1] * ds_fluid(
-                domain.domain_markers[f"left_{panel_id:.0f}"]["idx"]
-            )
-            self.lift_form_list[-1] += self.traction[1] * ds_fluid(
-                domain.domain_markers[f"top_{panel_id:.0f}"]["idx"]
-            )
-            self.lift_form_list[-1] += self.traction[1] * ds_fluid(
-                domain.domain_markers[f"right_{panel_id:.0f}"]["idx"]
-            )
-            self.lift_form_list[-1] += self.traction[1] * ds_fluid(
-                domain.domain_markers[f"bottom_{panel_id:.0f}"]["idx"]
-            )
-            if self.ndim == 3:
-                self.lift_form_list[-1] += self.traction[1] * ds_fluid(
-                    domain.domain_markers[f"front_{panel_id:.0f}"]["idx"]
-                )
-                self.lift_form_list[-1] += self.traction[1] * ds_fluid(
-                    domain.domain_markers[f"back_{panel_id:.0f}"]["idx"]
-                )
-
-            self.lift_form_list[-1] = dolfinx.fem.form(self.lift_form_list[-1])
-
             # for loc in ["top_0", "bottom_0", "left_0", "right_0"]:
             #     idx = domain.domain_markers[loc]["idx"]
             #     s = dolfinx.fem.assemble_scalar(dolfinx.fem.form(1.0*ds_fluid(idx)))
             #     print(f"loc = {loc}, idx = {idx}, s = {s}")
 
-            self.drag_form_list.append(0)
-            self.drag_form_list[-1] += self.traction[0] * ds_fluid(
+            self.integrated_force_x_form.append(0)
+            self.integrated_force_x_form[-1] += self.traction[0] * ds_fluid(
                 domain.domain_markers[f"left_{panel_id:.0f}"]["idx"]
             )
-            self.drag_form_list[-1] += self.traction[0] * ds_fluid(
+            self.integrated_force_x_form[-1] += self.traction[0] * ds_fluid(
                 domain.domain_markers[f"top_{panel_id:.0f}"]["idx"]
             )
-            self.drag_form_list[-1] += self.traction[0] * ds_fluid(
+            self.integrated_force_x_form[-1] += self.traction[0] * ds_fluid(
                 domain.domain_markers[f"right_{panel_id:.0f}"]["idx"]
             )
-            self.drag_form_list[-1] += self.traction[0] * ds_fluid(
+            self.integrated_force_x_form[-1] += self.traction[0] * ds_fluid(
                 domain.domain_markers[f"bottom_{panel_id:.0f}"]["idx"]
             )
             if self.ndim == 3:
-                self.drag_form_list[-1] += self.traction[0] * ds_fluid(
+                self.integrated_force_x_form[-1] += self.traction[0] * ds_fluid(
                     domain.domain_markers[f"front_{panel_id:.0f}"]["idx"]
                 )
-                self.drag_form_list[-1] += self.traction[0] * ds_fluid(
+                self.integrated_force_x_form[-1] += self.traction[0] * ds_fluid(
                     domain.domain_markers[f"back_{panel_id:.0f}"]["idx"]
                 )
 
-            self.drag_form_list[-1] = dolfinx.fem.form(self.drag_form_list[-1])
+            self.integrated_force_x_form[-1] = dolfinx.fem.form(
+                self.integrated_force_x_form[-1]
+            )
 
-            self.lift_z_form_list.append(0)
+            self.integrated_force_y_form.append(0)
+            self.integrated_force_y_form[-1] += self.traction[1] * ds_fluid(
+                domain.domain_markers[f"left_{panel_id:.0f}"]["idx"]
+            )
+            self.integrated_force_y_form[-1] += self.traction[1] * ds_fluid(
+                domain.domain_markers[f"top_{panel_id:.0f}"]["idx"]
+            )
+            self.integrated_force_y_form[-1] += self.traction[1] * ds_fluid(
+                domain.domain_markers[f"right_{panel_id:.0f}"]["idx"]
+            )
+            self.integrated_force_y_form[-1] += self.traction[1] * ds_fluid(
+                domain.domain_markers[f"bottom_{panel_id:.0f}"]["idx"]
+            )
             if self.ndim == 3:
-                self.lift_z_form_list[-1] += self.traction[2] * ds_fluid(
+                self.integrated_force_y_form[-1] += self.traction[1] * ds_fluid(
+                    domain.domain_markers[f"front_{panel_id:.0f}"]["idx"]
+                )
+                self.integrated_force_y_form[-1] += self.traction[1] * ds_fluid(
+                    domain.domain_markers[f"back_{panel_id:.0f}"]["idx"]
+                )
+
+            self.integrated_force_y_form[-1] = dolfinx.fem.form(
+                self.integrated_force_y_form[-1]
+            )
+
+            self.integrated_force_z_form.append(0)
+            if self.ndim == 3:
+                self.integrated_force_z_form[-1] += self.traction[2] * ds_fluid(
                     domain.domain_markers[f"left_{panel_id:.0f}"]["idx"]
                 )
-                self.lift_z_form_list[-1] += self.traction[2] * ds_fluid(
+                self.integrated_force_z_form[-1] += self.traction[2] * ds_fluid(
                     domain.domain_markers[f"top_{panel_id:.0f}"]["idx"]
                 )
-                self.lift_z_form_list[-1] += self.traction[2] * ds_fluid(
+                self.integrated_force_z_form[-1] += self.traction[2] * ds_fluid(
                     domain.domain_markers[f"right_{panel_id:.0f}"]["idx"]
                 )
-                self.lift_z_form_list[-1] += self.traction[2] * ds_fluid(
+                self.integrated_force_z_form[-1] += self.traction[2] * ds_fluid(
                     domain.domain_markers[f"bottom_{panel_id:.0f}"]["idx"]
                 )
-                self.lift_z_form_list[-1] += self.traction[2] * ds_fluid(
+                self.integrated_force_z_form[-1] += self.traction[2] * ds_fluid(
                     domain.domain_markers[f"front_{panel_id:.0f}"]["idx"]
                 )
-                self.lift_z_form_list[-1] += self.traction[2] * ds_fluid(
+                self.integrated_force_z_form[-1] += self.traction[2] * ds_fluid(
                     domain.domain_markers[f"back_{panel_id:.0f}"]["idx"]
                 )
 
-                self.lift_z_form_list[-1] = dolfinx.fem.form(self.lift_z_form_list[-1])
+                self.integrated_force_z_form[-1] = dolfinx.fem.form(
+                    self.integrated_force_z_form[-1]
+                )
 
     def _assemble_system(self, params):
         """Pre-assemble all LHS matrices and RHS vectors
@@ -764,44 +770,48 @@ class Flow:
 
     def compute_lift_and_drag(self, params, current_time):
 
-        self.lift_coeff_list = []
-        self.drag_coeff_list = []
-        self.lift_z_coeff_list = []
+        self.integrated_force_x = []
+        self.integrated_force_y = []
+        self.integrated_force_z = []
 
         for panel_id in range(params.pv_array.num_panels):
-            lift_coeff_local = dolfinx.fem.assemble_scalar(
-                self.lift_form_list[panel_id]
+            integrated_force_x_local = dolfinx.fem.assemble_scalar(
+                self.integrated_force_x_form[panel_id]
             )
-            lift_coeff_array = np.zeros(self.num_procs, dtype=np.float64)
+            integrated_force_x_array = np.zeros(self.num_procs, dtype=np.float64)
             self.comm.Gather(
-                np.array(lift_coeff_local, dtype=np.float64), lift_coeff_array, root=0
+                np.array(integrated_force_x_local, dtype=np.float64),
+                integrated_force_x_array,
+                root=0,
             )
 
-            drag_coeff_local = dolfinx.fem.assemble_scalar(
-                self.drag_form_list[panel_id]
+            integrated_force_y_local = dolfinx.fem.assemble_scalar(
+                self.integrated_force_y_form[panel_id]
             )
-            drag_coeff_array = np.zeros(self.num_procs, dtype=np.float64)
+            integrated_force_y_array = np.zeros(self.num_procs, dtype=np.float64)
             self.comm.Gather(
-                np.array(drag_coeff_local, dtype=np.float64), drag_coeff_array, root=0
+                np.array(integrated_force_y_local, dtype=np.float64),
+                integrated_force_y_array,
+                root=0,
             )
 
             if self.ndim == 3:
-                lift_z_coeff_local = dolfinx.fem.assemble_scalar(
-                    self.lift_z_form_list[panel_id]
+                integrated_force_z_local = dolfinx.fem.assemble_scalar(
+                    self.integrated_force_z_form[panel_id]
                 )
-                lift_z_coeff_array = np.zeros(self.num_procs, dtype=np.float64)
+                integrated_force_z_array = np.zeros(self.num_procs, dtype=np.float64)
                 self.comm.Gather(
-                    np.array(lift_z_coeff_local, dtype=np.float64),
-                    lift_z_coeff_array,
+                    np.array(integrated_force_z_local, dtype=np.float64),
+                    integrated_force_z_array,
                     root=0,
                 )
             else:
-                lift_z_coeff_array = np.zeros(self.num_procs, dtype=np.float64)
+                integrated_force_z_array = np.zeros(self.num_procs, dtype=np.float64)
 
             if self.rank == 0:
-                self.lift_coeff_list.append(np.sum(lift_coeff_array))
-                self.drag_coeff_list.append(np.sum(drag_coeff_array))
-                self.lift_z_coeff_list.append(np.sum(lift_z_coeff_array))
+                self.integrated_force_x.append(np.sum(integrated_force_x_array))
+                self.integrated_force_y.append(np.sum(integrated_force_y_array))
+                self.integrated_force_z.append(np.sum(integrated_force_z_array))
 
         if self.rank == 0:
             if self.first_call_to_solver:
@@ -814,7 +824,7 @@ class Flow:
 
                     for panel_id in range(params.pv_array.num_panels):
                         fp.write(
-                            f",Lift_{panel_id:.0f},Drag_{panel_id:.0f},Lift_Z_{panel_id:.0f},Lift_ND_{panel_id:.0f},Drag_ND_{panel_id:.0f},Lift_Z_ND_{panel_id:.0f}"
+                            f",fx_{panel_id:.0f},fy_{panel_id:.0f},fz_{panel_id:.0f},fx_nd_{panel_id:.0f},fy_nd_{panel_id:.0f},fz_nd_{panel_id:.0f}"
                         )
 
                     fp.write("\n")
@@ -824,13 +834,13 @@ class Flow:
 
                 for panel_id in range(params.pv_array.num_panels):
 
-                    lift_coeff = self.lift_coeff_list[panel_id]
-                    drag_coeff = self.drag_coeff_list[panel_id]
-                    lift_z_coeff = self.lift_z_coeff_list[panel_id]
+                    fx = self.integrated_force_x[panel_id]
+                    fy = self.integrated_force_y[panel_id]
+                    fz = self.integrated_force_z[panel_id]
 
-                    lift_coeff_nd = (
+                    fx_nd = (
                         2.0
-                        * lift_coeff
+                        * fx
                         / (
                             params.fluid.rho
                             * params.fluid.u_ref**2
@@ -839,9 +849,9 @@ class Flow:
                         )
                     )
 
-                    drag_coeff_nd = (
+                    fy_nd = (
                         2.0
-                        * drag_coeff
+                        * fy
                         / (
                             params.fluid.rho
                             * params.fluid.u_ref**2
@@ -850,9 +860,9 @@ class Flow:
                         )
                     )
 
-                    lift_z_coeff_nd = (
+                    fz_nd = (
                         2.0
-                        * lift_z_coeff
+                        * fz
                         / (
                             params.fluid.rho
                             * params.fluid.u_ref**2
@@ -862,11 +872,11 @@ class Flow:
                     )
 
                     fp.write(
-                        f",{lift_coeff:.9e},{drag_coeff:.9e},{lift_z_coeff:.9e},{lift_coeff_nd:.9e},{drag_coeff_nd:.9e},{lift_z_coeff_nd:.9e}"
+                        f",{fx:.9e},{fy:.9e},{fz:.9e},{fx_nd:.9e},{fy_nd:.9e},{fz_nd:.9e}"
                     )
 
-                    # print(f"Lift = {lift_coeff} ({lift_coeff_nd})")
-                    # print(f"Drag = {drag_coeff} ({drag_coeff_nd})")
+                    # print(f"Lift = {fy} ({fy_nd})")
+                    # print(f"Drag = {fx} ({fx_nd})")
 
                 fp.write("\n")
 
