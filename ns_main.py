@@ -34,7 +34,7 @@ def main(input_file=None):
         domain.read_mesh_files(params.general.input_mesh_dir, params)
     else:
         domain.build(params)
-        domain.write_mesh_files(params)
+        # domain.write_mesh_files(params)
 
     if params.general.mesh_only == True:
         list_timings(params.comm, [TimingType.wall])
