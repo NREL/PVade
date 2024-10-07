@@ -3,5 +3,7 @@
 !/.readthedocs.yaml
 *.pyc
 *.egg-info/
+*.h5
+*.xdmf
 
 docs/_build/
