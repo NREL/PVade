@@ -304,7 +304,9 @@ def test_fsi2():
     assert np.allclose(pos_data, pos_data_truth)
     print(lift_and_drag_data)
 
-    assert np.allclose(lift_and_drag_data, lift_and_drag_data_tuth) ## assert np.allclose(lift_and_drag_data, lift_and_drag_data_truth)
+    assert np.allclose(
+        lift_and_drag_data, lift_and_drag_data_tuth
+    )  ## assert np.allclose(lift_and_drag_data, lift_and_drag_data_truth)
 
     
 
