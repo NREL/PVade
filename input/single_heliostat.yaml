@@ -1,0 +1,62 @@
+general:
+  geometry_module: heliostats3d
+  output_dir: output/heliostat
+  mesh_only: false
+  structural_analysis: true
+  fluid_analysis: true
+domain:
+  x_min: -20
+  x_max: 40
+  y_min: -20
+  y_max: 20 # 20+39 39 is panel to panel 
+  z_min: 0
+  z_max: 40
+  l_char: 1.25 # 1.0
+pv_array:
+  stream_rows: 1
+  elevation: 5.5
+  stream_spacing: 10.0 # number from chris ivanov, distance from pier to edge of fixed tilt
+  panel_chord: 10.0
+  panel_span: 11.0
+  panel_thickness: 0.1
+  tracker_angle: 0
+  span_spacing: 1.0
+  span_rows: 1
+  # span_fixation_pts: [0.6, 6.9, 13.2, 18.3, 22.4]
+  span_fixation_pts: [5.5]
+solver:
+  dt: .01 #0.0025
+  t_final: 20.0 #20.0 # 10.0
+  solver1_ksp: gmres
+  solver2_ksp: gmres
+  solver3_ksp: gmres
+  solver4_ksp: gmres
+  solver1_pc: hypre
+  solver2_pc: hypre
+  solver3_pc: hypre
+  solver4_pc: hypre
+  save_text_interval: .02 #0.01
+  save_xdmf_interval: .02 #0.01
+fluid:
+  time_varying_inflow_bc: false # true
+  u_ref: 2.0
+  rho: 1.0
+  nu: 1.8e-05
+  turbulence_model:  smagorinsky #null #  
+  bc_y_max: slip # slip noslip free
+  bc_y_min: slip # slip noslip free
+  bc_z_max: slip # slip noslip free
+  bc_z_min: noslip # slip noslip free
+  wind_direction: 270 # slip noslip free
+structure:
+  dt : 0.01 # 0.1
+  rho: 124.0
+  poissons_ratio: 0.3
+  elasticity_modulus: 1.0e+09 # 1.0e+03
+  body_force_x: 0
+  body_force_y: 0
+  body_force_z: 0 #100
+  bc_list: []
+  motor_connection: true
+  tube_connection: true
+  beta_relaxation: 0.005

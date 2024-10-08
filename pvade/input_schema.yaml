@@ -156,7 +156,7 @@ properties:
       panel_chord:
         default: 2.0
         minimum: 0.0
-        maximum: 10.0
+        maximum: 12.0
         type: "number"
         description: "The length of the panels from the leading to the trailing edge."
         units: "meter"
