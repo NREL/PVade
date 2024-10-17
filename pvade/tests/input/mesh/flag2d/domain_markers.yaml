@@ -1,0 +1,51 @@
+_current_idx: 11
+bottom_0:
+  entity: facet
+  gmsh_tags:
+  - 6
+  idx: 6
+fluid:
+  entity: cell
+  gmsh_tags:
+  - 4
+  idx: 10
+left_0:
+  entity: facet
+  gmsh_tags:
+  - 5
+  idx: 5
+right_0:
+  entity: facet
+  gmsh_tags:
+  - 7
+  idx: 7
+structure:
+  entity: cell
+  gmsh_tags:
+  - 3
+  idx: 9
+top_0:
+  entity: facet
+  gmsh_tags:
+  - 8
+  idx: 8
+x_max:
+  entity: facet
+  gmsh_tags:
+  - 3
+  idx: 3
+x_min:
+  entity: facet
+  gmsh_tags:
+  - 2
+  idx: 2
+y_max:
+  entity: facet
+  gmsh_tags:
+  - 4
+  idx: 4
+y_min:
+  entity: facet
+  gmsh_tags:
+  - 1
+  idx: 1

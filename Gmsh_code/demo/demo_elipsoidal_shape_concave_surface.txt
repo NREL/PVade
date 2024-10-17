@@ -1,0 +1,111 @@
+//+
+SetFactory("OpenCASCADE");
+
+/* create whole box domain */
+Box(1) = {0, 0, 0, 50, 100, 50};
+
+/* create surface on ground (shape shaded by the hill) */
+
+nx = 10;
+ny = 10;
+
+// create all points at front line
+
+p_f = newp;
+For I In {0:nx}
+x = 10+I*30/nx;
+y = 30+(20^2-20^2/15^2*(x-25)^2)^0.5;
+z = 0;
+Point(p_f+I) = {x,y,z,1};
+EndFor
+
+// create all points at rear line
+
+p_b = newp;
+For I In {0:nx-2}
+x = 10+(I+1)*30/nx;
+y = 30-(20^2-20^2/15^2*(x-25)^2)^0.5;
+z = 0;
+Point(p_b+I) = {x,y,z,1};
+EndFor
+
+// create curves at front of bottom surface
+
+l_b_f = newc;
+For I In {0:nx-1}
+Line(l_b_f+I) = {p_f+I, p_f+I+1};
+EndFor
+
+// create curves at back of bottom surface
+
+l_b_b = newc;
+Line(l_b_b) = {p_f, p_b};       
+For I In {1:nx-2}
+Line(l_b_b+I) = {p_b+I-1, p_b+I};
+EndFor
+Line(l_b_b+nx-1) = {p_b+nx-2, p_f+nx};
+
+
+// create curve loop
+
+cl_b = newcl;
+Curve Loop(cl_b) = {l_b_f:l_b_f+nx-1, -l_b_b-nx+1:-l_b_b};
+// create bottom surface
+s_b = news;
+Surface(s_b) = {cl_b};
+
+/* create mountain surface */
+
+p_s = newp;
+For I In {1:nx-1}
+    x = 10+I*30/nx;
+    For J In {1:ny-1}
+
+        // create point for each x
+
+        y = 30-(20^2-20^2/15^2*(x-25)^2)^0.5+2*(20^2-20^2/15^2*(x-25)^2)^0.5/ny*J;
+        z = 20*(1-(x-25)^2/15^2-(y-30)^2/20^2)^0.5;
+        Point(p_s+(ny-1)*(I-1)+J-1) = {x,y,z,1};
+    EndFor
+EndFor
+
+l_s = newc;
+
+For I In {1:nx-1}
+    For J In {1:ny-1}
+        If (J == 1)
+           BSpline(l_s+ny*(I-1)) = {p_b+I-1, p_s+(ny-1)*(I-1)+J-1};
+        Else
+           BSpline(l_s+ny*(I-1)+J-1) = {p_s+(ny-1)*(I-1)+J-2, p_s+(ny-1)*(I-1)+J-1};
+        EndIf
+    EndFor
+    BSpline(l_s+ny*(I-1)+ny-1) = {p_s+(ny-1)*(I-1)+ny-2, p_f+I};
+EndFor
+
+cl_s = newcl;
+For I In {1:nx-1}
+    If (I == 1)
+       Curve Loop(cl_s) = {-l_b_b, l_b_f, -l_s-ny*(I-1)-ny+1:-l_s-ny*(I-1)};
+    Else
+       Curve Loop(cl_s+I-1) = {l_s+ny*(I-2):l_s+ny*(I-2)+ny-1, l_b_f+I-1, -(l_s+ny*(I-1)+ny-1):-(l_s+ny*(I-1)), -l_b_b-I+1};
+    EndIf
+EndFor
+
+Curve Loop(cl_s+nx-1) = {l_b_f+nx-1, -l_b_b-nx+1,  l_s+ny*(nx-2):l_s+ny*(nx-2)+ny-1};
+
+s_s = news;
+For I In {0:nx-1}
+    Printf('%g', I);
+    Surface(s_s+I) = {cl_s+I};
+EndFor
+
+/* create mountain volume */
+
+sl_s = newsl;
+Surface Loop(sl_s) = {s_b, s_s:s_s+nx-1};
+v_m = newv;
+Volume(v_m) = {sl_s};
+
+/* subtract the mountain volume from the whole domain */
+
+BooleanDifference{ Volume{1}; Delete; }{ Volume{v_m}; Delete; }
