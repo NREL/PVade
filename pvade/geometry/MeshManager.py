@@ -67,6 +67,7 @@ class FSIDomain:
         if (
             params.general.geometry_module == "panels2d"
             or params.general.geometry_module == "panels3d"
+            or params.general.geometry_module == "heliostats3d"
         ):
             for panel_id in range(
                 params.pv_array.stream_rows * params.pv_array.span_rows
@@ -141,13 +142,19 @@ class FSIDomain:
         # Only rank 0 builds the geometry and meshes the domain
         if self.rank == 0:
             if (
-                params.general.geometry_module == "panels3d"
+                (
+                    params.general.geometry_module == "panels3d"
+                    or params.general.geometry_module == "heliostats3d"
+                )
                 and params.general.fluid_analysis == True
                 and params.general.structural_analysis == True
             ):
                 self.geometry.build_FSI(params)
             elif (
-                params.general.geometry_module == "panels3d"
+                (
+                    params.general.geometry_module == "panels3d"
+                    or params.general.geometry_module == "heliostats3d"
+                )
                 and params.general.fluid_analysis == False
                 and params.general.structural_analysis == True
             ):
@@ -205,6 +212,7 @@ class FSIDomain:
 
         if (
             params.general.geometry_module == "panels3d"
+            or params.general.geometry_module == "heliostats3d"
             or params.general.geometry_module == "flag2d"
         ):
             self._create_submeshes_from_parent(params)
@@ -874,7 +882,6 @@ class FSIDomain:
             xdmf_file.write_function(self.distance, 0.0)
 
     def _force_interface_node_matching(self):
-
         # Get the coordinates of each point from the mesh objects
         fluid_pts = self.fluid.msh.geometry.x
         fluid_boundary_pts = fluid_pts[self.all_interior_V_dofs, :]
@@ -905,7 +912,6 @@ class FSIDomain:
 
         @jit(nopython=True)
         def find_closest_structure_idx(fluid_pts, structure_pts):
-
             idx_vec = np.zeros(np.shape(fluid_pts)[0], dtype=np.int64)
 
             for k, pt in enumerate(fluid_pts):

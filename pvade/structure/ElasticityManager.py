@@ -115,16 +115,106 @@ class Elasticity:
                 x1 = 0.6
                 x2 = 0.2
                 corner = [x1, x2]
+
+                east_edge = np.logical_and(
+                    corner[0] - eps < x[0], x[0] < corner[0] + eps
+                )
+                north_edge = np.logical_and(
+                    corner[1] - eps < x[1], x[1] < corner[1] + eps
+                )
+
+                north_east_corner = np.logical_and(east_edge, north_edge)
+
             else:
-                tracker_angle_rad = np.radians(params.pv_array.tracker_angle)
-                x1 = 0.5 * params.pv_array.panel_chord * np.cos(tracker_angle_rad)
-                x2 = 0.5 * params.pv_array.panel_thickness * np.sin(tracker_angle_rad)
-                corner = [x1 - x2, 0.5 * params.pv_array.panel_span]
+                new_method = True
 
-            east_edge = np.logical_and(corner[0] - eps < x[0], x[0] < corner[0] + eps)
-            north_edge = np.logical_and(corner[1] - eps < x[1], x[1] < corner[1] + eps)
+                if not new_method:
+                    tracker_angle_rad = np.radians(params.pv_array.tracker_angle)
+                    x1 = 0.5 * params.pv_array.panel_chord * np.cos(tracker_angle_rad)
+                    x2 = (
+                        0.5
+                        * params.pv_array.panel_thickness
+                        * np.sin(tracker_angle_rad)
+                    )
+                    corner = [x1 - x2, 0.5 * params.pv_array.panel_span]
 
-            north_east_corner = np.logical_and(east_edge, north_edge)
+                    east_edge = np.logical_and(
+                        corner[0] - eps < x[0], x[0] < corner[0] + eps
+                    )
+                    north_edge = np.logical_and(
+                        corner[1] - eps < x[1], x[1] < corner[1] + eps
+                    )
+
+                    north_east_corner = np.logical_and(east_edge, north_edge)
+
+                else:
+                    tracker_angle_rad = np.radians(params.pv_array.tracker_angle)
+
+                    Ry = np.array(
+                        [
+                            [np.cos(tracker_angle_rad), 0.0, np.sin(tracker_angle_rad)],
+                            [0.0, 1.0, 0.0],
+                            [
+                                -np.sin(tracker_angle_rad),
+                                0.0,
+                                np.cos(tracker_angle_rad),
+                            ],
+                        ]
+                    )
+
+                    array_rotation = (params.fluid.wind_direction + 90.0) % 360.0
+                    array_rotation_rad = np.radians(array_rotation)
+
+                    Rz = np.array(
+                        [
+                            [
+                                np.cos(array_rotation_rad),
+                                -np.sin(array_rotation_rad),
+                                0.0,
+                            ],
+                            [
+                                np.sin(array_rotation_rad),
+                                np.cos(array_rotation_rad),
+                                0.0,
+                            ],
+                            [0.0, 0.0, 1.0],
+                        ]
+                    )
+
+                    reference_position = np.array(
+                        [
+                            0.5 * params.pv_array.panel_chord,
+                            0.5 * params.pv_array.panel_span,
+                            -0.5 * params.pv_array.panel_thickness,
+                        ]
+                    )
+
+                    rotated_position = np.dot(reference_position, Ry.T)
+                    rotated_position = np.dot(rotated_position, Rz.T)
+
+                    final_position = rotated_position + np.array(
+                        [0.0, 0.0, params.pv_array.elevation]
+                    )
+
+                    if params.rank == 0:
+                        print(
+                            f"Measuring panel deformation at (x, y, z) position {final_position}"
+                        )
+
+                    eps = 1.0e-4
+                    near_x = np.logical_and(
+                        final_position[0] - eps < x[0], x[0] < final_position[0] + eps
+                    )
+                    near_y = np.logical_and(
+                        final_position[1] - eps < x[1], x[1] < final_position[1] + eps
+                    )
+                    near_z = np.logical_and(
+                        final_position[2] - eps < x[2], x[2] < final_position[2] + eps
+                    )
+
+                    north_east_corner = np.logical_and(
+                        near_x, np.logical_and(near_y, near_z)
+                    )
 
             return north_east_corner
 

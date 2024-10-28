@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<!DOCTYPE Xdmf SYSTEM "Xdmf.dtd" []>
+<Xdmf Version="3.0" xmlns:xi="http://www.w3.org/2001/XInclude">
+  <Domain>
+    <Grid Name="fluid_mesh.xdmf" GridType="Uniform">
+      <Topology TopologyType="Triangle" NumberOfElements="9622" NodesPerElement="3">
+        <DataItem Dimensions="9622 3" NumberType="Int" Format="HDF">fluid_mesh.h5:/Mesh/fluid_mesh.xdmf/topology</DataItem>
+      </Topology>
+      <Geometry GeometryType="XYZ">
+        <DataItem Dimensions="5035 3" Format="HDF">fluid_mesh.h5:/Mesh/fluid_mesh.xdmf/geometry</DataItem>
+      </Geometry>
+    </Grid>
+    <Grid Name="cell_tags" GridType="Uniform">
+      <xi:include xpointer="xpointer(/Xdmf/Domain/Grid/Geometry)" />
+      <Topology TopologyType="Triangle" NumberOfElements="9622" NodesPerElement="3">
+        <DataItem Dimensions="9622 3" NumberType="Int" Format="HDF">fluid_mesh.h5:/MeshTags/cell_tags/topology</DataItem>
+      </Topology>
+      <Attribute Name="cell_tags" AttributeType="Scalar" Center="Cell">
+        <DataItem Dimensions="9622 1" Format="HDF">fluid_mesh.h5:/MeshTags/cell_tags/Values</DataItem>
+      </Attribute>
+    </Grid>
+    <Grid Name="facet_tags" GridType="Uniform">
+      <xi:include xpointer="xpointer(/Xdmf/Domain/Grid/Geometry)" />
+      <Topology TopologyType="PolyLine" NumberOfElements="14657" NodesPerElement="2">
+        <DataItem Dimensions="14657 2" NumberType="Int" Format="HDF">fluid_mesh.h5:/MeshTags/facet_tags/topology</DataItem>
+      </Topology>
+      <Attribute Name="facet_tags" AttributeType="Scalar" Center="Cell">
+        <DataItem Dimensions="14657 1" Format="HDF">fluid_mesh.h5:/MeshTags/facet_tags/Values</DataItem>
+      </Attribute>
+    </Grid>
+  </Domain>
+</Xdmf>

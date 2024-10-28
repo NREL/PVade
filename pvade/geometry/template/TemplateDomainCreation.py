@@ -102,7 +102,10 @@ class TemplateDomainCreation:
             else:
                 if params.general.geometry_module == "cylinder3d":
                     domain_markers[f"cylinder_side"]["gmsh_tags"].append(surf_id)
-                elif params.general.geometry_module == "panels3d":
+                elif (
+                    params.general.geometry_module == "panels3d"
+                    or params.general.geometry_module == "heliostats3d"
+                ):
                     # tgging in 3d starts with all panels then moves to domain boundaries
                     # false panels start after boundary
                     if surf_id < surf_tag_list[0][1] + num_of_panel_facets * (
