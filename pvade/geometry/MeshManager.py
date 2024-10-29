@@ -161,10 +161,6 @@ class FSIDomain:
                 self.geometry.build_structure(params)
             else:
                 self.geometry.build_FSI(params)
-                
-                
-            
-            
             # Build the domain markers for each surface and cell
             if hasattr(self.geometry, "domain_markers"):
                 # If the "build" process created domain markers, use those directly...
@@ -1130,7 +1126,9 @@ class FSIDomain:
         use_built_in_interpolate = True
 
         if use_built_in_interpolate:
-            self.fluid_mesh_displacement_bc_undeformed.interpolate(structure.elasticity.u_delta)
+            self.fluid_mesh_displacement_bc_undeformed.interpolate(
+                structure.elasticity.u_delta
+            )
             self.fluid_mesh_displacement_bc_undeformed.x.scatter_forward()
             self.fluid_mesh_displacement_bc.x.array[:] = (
                 self.fluid_mesh_displacement_bc_undeformed.x.array[:]
@@ -1138,7 +1136,9 @@ class FSIDomain:
             self.fluid_mesh_displacement_bc.x.scatter_forward()
 
         else:
-            fluid_mesh_displacement_bc_vec = self.custom_interpolate(structure.elasticity)
+            fluid_mesh_displacement_bc_vec = self.custom_interpolate(
+                structure.elasticity
+            )
             nn_bc_vec = np.shape(self.fluid_mesh_displacement_bc.vector.array[:])[0]
             self.fluid_mesh_displacement_bc.vector.array[:] = (
                 fluid_mesh_displacement_bc_vec[:nn_bc_vec]

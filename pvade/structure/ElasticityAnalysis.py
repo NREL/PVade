@@ -67,7 +67,6 @@ class Elasticity:
         self.gamma = 0.5 + self.alpha_f - self.alpha_m
         self.beta = (self.gamma + 0.5) ** 2 / 4.0
 
-
         # time step
         self.dt_st = dolfinx.fem.Constant(domain.structure.msh, (params.structure.dt))
 
@@ -551,7 +550,8 @@ class Elasticity:
         # self.unorm = self.u.x.norm()
 
         try:
-            idx = self.north_east_corner_dofs[0]
+            idx = structure.north_east_corner_dofs[0]
+            # idx = self.north_east_corner_dofs[0]
             nw_corner_accel = self.u.vector.array[3 * idx : 3 * idx + 3].astype(
                 np.float64
             )

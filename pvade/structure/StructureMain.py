@@ -57,11 +57,9 @@ class Structure:
         #     dcm = import_module(domain_creation_module)
         # except:
         #     raise ValueError(f"Could not import {domain_creation_module}")
-        
-        # init physics  
+
+        # init physics
         self.elasticity = Elasticity(domain, structural_analysis, params)
-
-
 
         # P1 = ufl.VectorElement("Lagrange", domain.structure.msh.ufl_cell(), 2)
         # self.V = dolfinx.fem.FunctionSpace(domain.structure.msh, P1)
@@ -91,7 +89,6 @@ class Structure:
         self.hmin = np.zeros(1)
         self.comm.Allreduce(hmin_local, self.hmin, op=MPI.MIN)
         self.hmin = self.hmin[0]
-
 
         self.num_V_dofs = self.elasticity.num_V_dofs
         if self.rank == 0:
@@ -123,8 +120,6 @@ class Structure:
             print(
                 f"mu = {self.μ} lambda = {self.λ} E = {self.E} nu = {self.ν} density = {self.rho.value}"
             )
-
-        
 
         def _north_east_corner(x):
             eps = 1.0e-6
@@ -232,8 +227,7 @@ class Structure:
             params (:obj:`pvade.Parameters.SimParams`): A SimParams object
 
         """
-        self.elasticity.build_forms( domain, params, self)
-
+        self.elasticity.build_forms(domain, params, self)
 
         # # Define trial and test functions for deformation
         # # self.du = ufl.TrialFunction(self.V)
@@ -516,7 +510,7 @@ class Structure:
 
     def solve(self, params, dataIO):
 
-        self.elasticity.solve( params, dataIO, self)
+        self.elasticity.solve(params, dataIO, self)
         # # def σ(v):
         # #     """Return an expression for the stress σ given a displacement field"""
         # #     return 2.0 * self.μ * ufl.sym(ufl.grad(v)) + self.λ * ufl.tr(

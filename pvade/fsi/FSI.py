@@ -49,7 +49,6 @@ class FSI:
         self.num_procs = params.num_procs
         self.ndim = domain.fluid.msh.topology.dim
 
-    
     def fluid_struct(self, domain, flow, structure, params):
         # print("tst")
 
