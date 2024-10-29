@@ -69,7 +69,6 @@ def test_move_mesh():
 
     # Create a dummy elasticity object that we can prescribe displacement values for
 
-    
     class dummy_elasticity:
         def __init__(self, domain, x_shift, y_shift, z_shift):
             # Build a dummy displacement function to test mesh movement with
@@ -80,11 +79,11 @@ def test_move_mesh():
             self.u_delta.vector.array[0::3] = x_shift
             self.u_delta.vector.array[1::3] = y_shift
             self.u_delta.vector.array[2::3] = z_shift
-    
+
     class dummy_structure:
-        def __init__(self,domain, x_shift, y_shift, z_shift):
+        def __init__(self, domain, x_shift, y_shift, z_shift):
             self.elasticity = dummy_elasticity(domain, x_shift, y_shift, z_shift)
-    
+
     # Specify the distance to shift the structure in the x, y, and z direction
     x_shift = 0.05
     y_shift = 0.1

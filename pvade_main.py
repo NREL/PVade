@@ -92,7 +92,8 @@ def main(input_file=None):
         ):  # :# TODO: add condition to work with fluid time step
             if fluid_analysis == True:
                 structure.elasticity.stress_predicted.x.array[:] = (
-                    2.0 * structure.elasticity.stress.x.array - structure.elasticity.stress_old.x.array
+                    2.0 * structure.elasticity.stress.x.array
+                    - structure.elasticity.stress_old.x.array
                 )
 
             structure.solve(params, dataIO)
@@ -140,7 +141,9 @@ def main(input_file=None):
             ):
 
                 local_def_max = np.amax(
-                    np.sum(structure.elasticity.u.vector.array.reshape(-1, 3) ** 2, axis=1)
+                    np.sum(
+                        structure.elasticity.u.vector.array.reshape(-1, 3) ** 2, axis=1
+                    )
                 )
                 global_def_max_list = np.zeros(params.num_procs, dtype=np.float64)
                 params.comm.Gather(local_def_max, global_def_max_list, root=0)
