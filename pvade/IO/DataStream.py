@@ -32,7 +32,7 @@ class DataStream:
 
     """
 
-    def __init__(self, domain, flow, elasticity, params):
+    def __init__(self, domain, flow, structure, params):
         """Initialize the DataStream object
 
         This initializes an object that manages the I/O for all of PVade.
@@ -77,10 +77,10 @@ class DataStream:
             with XDMFFile(self.comm, self.results_filename_structure, "w") as xdmf_file:
                 tt = 0.0
                 xdmf_file.write_mesh(domain.structure.msh)
-                xdmf_file.write_function(elasticity.u, 0.0)
-                xdmf_file.write_function(elasticity.stress, 0.0)
-                xdmf_file.write_function(elasticity.v_old, 0.0)
-                xdmf_file.write_function(elasticity.sigma_vm_h, 0.0)
+                xdmf_file.write_function(structure.elasticity.u, 0.0)
+                xdmf_file.write_function(structure.elasticity.stress, 0.0)
+                xdmf_file.write_function(structure.elasticity.v_old, 0.0)
+                xdmf_file.write_function(structure.elasticity.sigma_vm_h, 0.0)
 
         if self.comm.rank == 0 and self.comm.size > 1 and params.general.test == True:
             self.log_filename_structure = f"{params.general.output_dir_sol}/log_str.txt"
@@ -155,10 +155,10 @@ class DataStream:
 
         elif fsi_object.name == "structure":
             with XDMFFile(self.comm, self.results_filename_structure, "a") as xdmf_file:
-                xdmf_file.write_function(fsi_object.u, tt)
-                xdmf_file.write_function(fsi_object.stress, tt)
-                xdmf_file.write_function(fsi_object.v_old, tt)
-                xdmf_file.write_function(fsi_object.sigma_vm_h, tt)
+                xdmf_file.write_function(fsi_object.elasticity.u, tt)
+                xdmf_file.write_function(fsi_object.elasticity.stress, tt)
+                xdmf_file.write_function(fsi_object.elasticity.v_old, tt)
+                xdmf_file.write_function(fsi_object.elasticity.sigma_vm_h, tt)
 
         else:
             raise ValueError(
@@ -172,20 +172,20 @@ class DataStream:
             with open(self.log_filename, "a") as fp:
                 fp.write(f"{string_to_print}\n")
 
-    def fluid_struct(self, domain, flow, elasticity, params):
-        # print("tst")
+    # def fluid_struct(self, domain, flow, elasticity, params):
+    #     # print("tst")
 
-        elasticity.stress_old.x.array[:] = elasticity.stress.x.array
-        elasticity.stress_old.x.scatter_forward()
+    #     elasticity.stress_old.x.array[:] = elasticity.stress.x.array
+    #     elasticity.stress_old.x.scatter_forward()
 
-        elasticity.stress.interpolate(flow.panel_stress_undeformed)
-        elasticity.stress.x.scatter_forward()
+    #     elasticity.stress.interpolate(flow.panel_stress_undeformed)
+    #     elasticity.stress.x.scatter_forward()
 
-        beta = params.structure.beta_relaxation
+    #     beta = params.structure.beta_relaxation
 
-        elasticity.stress.x.array[:] = (
-            beta * elasticity.stress.x.array
-            + (1.0 - beta) * elasticity.stress_predicted.x.array
-        )
+    #     elasticity.stress.x.array[:] = (
+    #         beta * elasticity.stress.x.array
+    #         + (1.0 - beta) * elasticity.stress_predicted.x.array
+    #     )
 
-        elasticity.stress.x.scatter_forward()
+    #     elasticity.stress.x.scatter_forward()

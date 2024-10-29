@@ -3,9 +3,9 @@ import os
 import sys
 
 from pvade.geometry.MeshManager import FSIDomain
-from pvade.DataStream import DataStream
-from pvade.Parameters import SimParams
-from pvade.Utilities import get_input_file, write_metrics
+from pvade.IO.DataStream import DataStream
+from pvade.IO.Parameters import SimParams
+from pvade.IO.Utilities import get_input_file, write_metrics
 
 input_path = "pvade/tests/input/yaml/"
 
