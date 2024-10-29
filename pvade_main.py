@@ -35,7 +35,7 @@ def main(input_file=None):
         domain.read_mesh_files(params.general.input_mesh_dir, params)
     else:
         domain.build(params)
-        domain.write_mesh_files(params)
+        # domain.write_mesh_files(params)
 
     if params.general.mesh_only == True:
         list_timings(params.comm, [TimingType.wall])
@@ -125,11 +125,11 @@ def main(input_file=None):
                     print(f"| CFL = {flow.cfl_max:.4f}")
 
                     if params.pv_array.num_panels == 1:
-                        lift_coeff = flow.lift_coeff_list[0]
-                        drag_coeff = flow.drag_coeff_list[0]
+                        fx = flow.integrated_force_x[0]
+                        fy = flow.integrated_force_y[0]
 
-                        print(f"| Lift = {lift_coeff:.4f}")
-                        print(f"| Drag = {drag_coeff:.4f}")
+                        print(f"| f_x (drag) = {fx:.4f}")
+                        print(f"| f_y (lift) = {fy:.4f}")
 
                 dataIO.save_XDMF_files(flow, domain, current_time)
 
