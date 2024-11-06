@@ -58,6 +58,11 @@ class Flow:
             self.T = dolfinx.fem.FunctionSpace(domain.fluid.msh, P3)
             self.T_undeformed = dolfinx.fem.FunctionSpace(
                 domain.fluid_undeformed.msh, P3
+
+            if thermal_analysis == True:
+                # Temperature (Scalar)
+                # P? = ufl.FiniteElement("Lagrange", domain.fluid.msh.ufl_cell(), 1)
+                # self.theta = dolfinx.fem.FunctionSpace(domain.fluid.msh, P?)
             )
 
             P4 = ufl.FiniteElement("DG", domain.fluid.msh.ufl_cell(), 0)
