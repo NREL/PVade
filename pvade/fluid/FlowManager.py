@@ -21,7 +21,7 @@ from pvade.fluid.boundary_conditions import (
 class Flow:
     """This class solves the CFD problem"""
 
-    def __init__(self, domain, fluid_analysis):
+    def __init__(self, domain, fluid_analysis, thermal_analysis):
         """Initialize the fluid solver
 
         This method initialize the Flow object, namely, it creates all the
@@ -35,6 +35,7 @@ class Flow:
 
         """
         self.fluid_analysis = fluid_analysis
+        self.thermal_analysis = thermal_analysis
         self.name = "fluid"
 
         if fluid_analysis == False:
@@ -58,12 +59,11 @@ class Flow:
             self.T = dolfinx.fem.FunctionSpace(domain.fluid.msh, P3)
             self.T_undeformed = dolfinx.fem.FunctionSpace(
                 domain.fluid_undeformed.msh, P3
+            )
 
             if thermal_analysis == True:
                 # Temperature (Scalar)
-                # P? = ufl.FiniteElement("Lagrange", domain.fluid.msh.ufl_cell(), 1)
-                # self.theta = dolfinx.fem.FunctionSpace(domain.fluid.msh, P?)
-            )
+                self.S = dolfinx.fem.FunctionSpace(domain.fluid.msh, P1)
 
             P4 = ufl.FiniteElement("DG", domain.fluid.msh.ufl_cell(), 0)
 
@@ -121,6 +121,8 @@ class Flow:
         self.bcp = build_pressure_boundary_conditions(domain, params, self.Q)
         # self.bcp = []
 
+        self.bcT = build_temperature_boundary_conditions(domain, params, self.S)
+
     def build_forms(self, domain, params):
         """Builds all variational statements
 
@@ -137,6 +139,8 @@ class Flow:
             params (:obj:`pvade.Parameters.SimParams`): A SimParams object
 
         """
+        thermal_analysis = self.thermal_analysis
+
         # Define fluid properties
         self.dpdx = dolfinx.fem.Constant(domain.fluid.msh, (0.0, 0.0, 0.0))
         self.dt_c = dolfinx.fem.Constant(domain.fluid.msh, (params.solver.dt))
@@ -155,6 +159,13 @@ class Flow:
         self.u_k = dolfinx.fem.Function(self.V, name="velocity ")
         self.u_k1 = dolfinx.fem.Function(self.V)
         self.u_k2 = dolfinx.fem.Function(self.V)
+
+        if thermal_analysis == True:
+            # Define trial and test functions for temperature
+            self.theta = ufl.TrialFunction(self.S)
+            self.s = ufl.TestFunction(self.S)
+            self.theta_k = dolfinx.fem.Function(self.S, name="temperature ")
+            self.theta_k1 = dolfinx.fem.Function(self.S)
 
         self.mesh_vel = dolfinx.fem.Function(self.V, name="mesh_displacement")
         self.mesh_vel_old = dolfinx.fem.Function(self.V)
@@ -279,6 +290,8 @@ class Flow:
             + (1.0 / self.rho_c) * ufl.inner(ufl.grad(self.p_k1), self.v) * ufl.dx
             - (1.0 / self.rho_c) * ufl.inner(self.dpdx, self.v) * ufl.dx
         )
+        if thermal_analysis == True:
+            self.F1 -= self.beta * ufl.inner((self.theta_k1-self.theta_r) * self.g, self.v) * ufl.dx # buoyancy term
 
         self.a1 = dolfinx.fem.form(ufl.lhs(self.F1))
         self.L1 = dolfinx.fem.form(ufl.rhs(self.F1))
@@ -594,6 +607,7 @@ class Flow:
         self.u_k2.x.array[:] = self.u_k1.x.array
         self.u_k1.x.array[:] = self.u_k.x.array
         self.p_k1.x.array[:] = self.p_k.x.array
+        self.theta_k1.x.array[:] = self.theta_k.x.array
         self.mesh_vel_old.x.array[:] = self.mesh_vel.x.array
 
         if self.first_call_to_solver:
