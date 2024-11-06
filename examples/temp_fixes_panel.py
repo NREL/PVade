@@ -221,6 +221,7 @@ beta = Constant(mesh, PETSc.ScalarType(beta_f)) # [1/K] thermal expansion coeffi
 alpha = Constant(mesh, PETSc.ScalarType(alpha_f)) # thermal diffusivity [m2/s]
 rho = Constant(mesh, PETSc.ScalarType(rho_f)) # density [kg/m3]
 mu = Constant(mesh, PETSc.ScalarType(mu_f)) # dynamic viscosity [Ns/m2] # Re = 100
+nu = Constant(mesh, PETSc.ScalarType(nu_f)) # dynamic viscosity [Ns/m2] # Re = 100
 
 dt = Constant(mesh, PETSc.ScalarType(dt_num))
 
@@ -427,22 +428,21 @@ U_AB = 1.5 * u_ - 0.5 * u_n
 
 use_pressure_in_F1 = True
 
-# using nu
-# F1 = (1.0 / dt) * inner(u - u_n, v) * dx
-# F1 += inner(dot(U_AB, nabla_grad(U_CN)), v) * dx # convection
-# F1 += nu * inner(grad(U_CN), grad(v)) * dx # viscosity # + or - ??
-# F1 -= beta * inner((T_n-T_r) * g, v) * dx # buoyancy # THIS ONE WITH POSITIVE G INPUT PARAMETER
-# if use_pressure_in_F1:
-#     F1 += (1.0 / rho) *inner(grad(p_), v) * dx
+# using nu (pvade form)
+F1 = (1.0 / dt) * inner(u - u_n, v) * dx
+F1 += inner(dot(U_AB, nabla_grad(U_CN)), v) * dx # convection
+F1 += nu * inner(grad(U_CN), grad(v)) * dx # viscosity # + or - ??
+F1 -= beta * inner((T_n-T_r) * g, v) * dx # buoyancy # THIS ONE WITH POSITIVE G INPUT PARAMETER
+if use_pressure_in_F1:
+    F1 += (1.0 / rho) *inner(grad(p_), v) * dx
 
 # using rho and mu
-F1 = (rho / dt) * inner(u - u_n, v) * dx
-F1 += rho * inner(dot(U_AB, nabla_grad(U_CN)), v) * dx # convection
-F1 += mu * inner(grad(U_CN), grad(v)) * dx # viscosity # + or - ??
-# F1 -= beta * inner((T_n-T_r) * g, v) * dx # buoyancy # THIS ONE WITH POSITIVE G INPUT PARAMETER
-F1 -= rho * beta * inner((T_n-T_r) * g, v) * dx # buoyancy # THIS ONE WITH POSITIVE G INPUT PARAMETER
-if use_pressure_in_F1:
-    F1 += inner(grad(p_), v) * dx
+# F1 = (rho / dt) * inner(u - u_n, v) * dx
+# F1 += rho * inner(dot(U_AB, nabla_grad(U_CN)), v) * dx # convection
+# F1 += mu * inner(grad(U_CN), grad(v)) * dx # viscosity # + or - ??
+# F1 -= rho * beta * inner((T_n-T_r) * g, v) * dx # buoyancy # THIS ONE WITH POSITIVE G INPUT PARAMETER
+# if use_pressure_in_F1:
+#     F1 += inner(grad(p_), v) * dx
 
 a1 = form(lhs(F1))  # dependent on u
 L1 = form(rhs(F1))
