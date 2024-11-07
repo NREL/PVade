@@ -382,3 +382,53 @@ def build_pressure_boundary_conditions(domain, params, functionspace):
     bcp.append(dolfinx.fem.dirichletbc(zero_scalar, dofs, functionspace))
 
     return bcp
+
+def build_temperature_boundary_conditions(domain, params, functionspace):
+    """Build all boundary conditions on temperature
+
+    This method builds all the boundary conditions associated with temperature and stores in a list, ``bcT``.
+
+    Args:
+        domain (:obj:`pvade.geometry.MeshManager.Domain`): A Domain object
+        params (:obj:`pvade.Parameters.SimParams`): A SimParams object
+    """
+    ndim = domain.ndim
+
+    if ndim == 2:
+        bc_location_list = ["y_min", "y_max"]
+    
+    # Define temperature boundary conditions
+    bcT = []
+
+    T_ambient_scalar = dolfinx.fem.Constant(domain.fluid.msh, PETSc.ScalarType(params.fluid.T_ambient))
+    left_wall_dofs = get_facet_dofs_by_gmsh_tag(domain, functionspace, "x_min")
+    bcT.append(dolfinx.fem.dirichletbc(PETSc.ScalarType(T_ambient_scalar), left_wall_dofs, functionspace))
+
+    T_bottom_scalar = dolfinx.fem.Constant(domain.fluid.msh, PETSc.ScalarType(params.fluid.T_bottom))
+    if ndim == 2: # TODO - need to add if statement for 3d using z_min instead of y_min 
+        bottom_wall_dofs = get_facet_dofs_by_gmsh_tag(domain, functionspace, "y_min")
+    bcT.append(dolfinx.fem.dirichletbc(PETSc.ScalarType(T_bottom_scalar), bottom_wall_dofs, functionspace))
+
+    for panel_id in range(params.pv_array.stream_rows * params.pv_array.span_rows):
+        if (
+            params.general.geometry_module == "panels2d"
+            or params.general.geometry_module == "panels3d"
+            or params.general.geometry_module == "heliostats3d"
+            or params.general.geometry_module == "flag2d"
+        ):
+            for location in (
+                f"bottom_{panel_id}",
+                f"top_{panel_id}",
+                f"left_{panel_id}",
+                f"right_{panel_id}",
+                f"front_{panel_id}",
+                f"back_{panel_id}",
+            ):
+                T0_pv_panel_scalar = dolfinx.fem.Constant(domain.fluid.msh, PETSc.ScalarType(params.fluid.T0_pv_panel))
+
+                panel_sfc_dofs = get_facet_dofs_by_gmsh_tag(domain, functionspace, location)
+                bc = dolfinx.fem.dirichletbc(T0_pv_panel_scalar, panel_sfc_dofs, functionspace)
+
+                bcT.append(bc)
+
+    return bcT
