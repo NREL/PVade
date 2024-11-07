@@ -101,7 +101,7 @@ save_fn = 'temp_panel_neutral'
 
 pv_panel_flag = True  # empty domain or with a pv panel in the center
 
-t_final = 2.0 # 1.0 # 10.0 # 20.0 # 120.0
+t_final = 2.0 # 2.0 # 1.0 # 10.0 # 20.0 # 120.0
 dt_num = 0.01 # 0.01 #0.001
 
 # ================================================================
@@ -283,8 +283,13 @@ class LowerWallTemperature():
 
     def __call__(self, x):
         values = np.zeros((1, x.shape[1]), dtype=PETSc.ScalarType)
-        x0 = 0.75 * x_max # start of ramp down
-        values[0] = (T0_bottom_wall + ((x[0]-x0) / x_max) * (T_ambient - T0_bottom_wall))
+
+        # linear rampdown of temperature along lower wall
+        # x0 = 0.75 * x_max # start of ramp down
+        # values[0] = (T0_bottom_wall + ((x[0]-x0) / x_max) * (T_ambient - T0_bottom_wall))
+        
+        # stepchange -> constant temperature along bottom wall
+        values[0] = PETSc.ScalarType(T0_bottom_wall)
         return values
 
 def left_wall(x):
@@ -378,7 +383,7 @@ T_n.x.array[:] = PETSc.ScalarType(T_ambient)
 if t_bc_flag == 'rampdown':
     rampdown_cells = locate_entities(mesh, mesh.geometry.dim, lambda x: x[0] > (0.75*x_max))
     T_bottom = Function(S)
-    T_bottom.interpolate(lambda x: np.full((1, x.shape[1]), T0_bottom_wall, dtype=PETSc.ScalarType)) # how do I initialize as a constant?
+    T_bottom.interpolate(lambda x: np.full((1, x.shape[1]), T0_bottom_wall, dtype=PETSc.ScalarType))
     bottom_wall_dofs = locate_dofs_geometrical(S, bottom_wall)
     bottom_wall_temperature = LowerWallTemperature()
     T_bottom.interpolate(bottom_wall_temperature, rampdown_cells)
@@ -387,10 +392,11 @@ if t_bc_flag == 'rampdown':
 elif t_bc_flag == 'stepchange':
     heated_cells = locate_entities(mesh, mesh.geometry.dim, lambda x: x[0] < (0.75*x_max))
     T_bottom = Function(S)
-    T_bottom.interpolate(lambda x: np.full((1, x.shape[1]), T_ambient, dtype=PETSc.ScalarType)) # how do I initialize as a constant?
+    T_bottom.interpolate(lambda x: np.full((1, x.shape[1]), T_ambient, dtype=PETSc.ScalarType))
     bottom_wall_dofs = locate_dofs_geometrical(S, bottom_wall)
     bottom_wall_temperature = LowerWallTemperature()
     T_bottom.interpolate(bottom_wall_temperature, heated_cells)
+    # T_bottom.interpolate(PETSc.ScalarType(T_bottom), heated_cells)
 
 bcT_bottom_wall = dirichletbc(T_bottom, bottom_wall_dofs)
 
@@ -413,6 +419,7 @@ if pv_panel_flag:
 
     bcT.append(bcT_internal_walls)
 
+# set_bc(T_n.vector,bcT)
 
 # ================================================================
 # Build All Forms

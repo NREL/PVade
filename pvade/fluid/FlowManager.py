@@ -15,6 +15,7 @@ import warnings
 from pvade.fluid.boundary_conditions import (
     build_velocity_boundary_conditions,
     build_pressure_boundary_conditions,
+    build_temperature_boundary_conditions,
 )
 
 
@@ -146,6 +147,9 @@ class Flow:
         self.dt_c = dolfinx.fem.Constant(domain.fluid.msh, (params.solver.dt))
         self.rho_c = dolfinx.fem.Constant(domain.fluid.msh, (params.fluid.rho))
         nu = dolfinx.fem.Constant(domain.fluid.msh, (params.fluid.nu))
+        if thermal_analysis == True:
+            self.g = dolfinx.fem.Constant(domain.fluid.msh, PETSc.ScalarType((0, params.fluid.g)))
+            self.beta_c = dolfinx.fem.Constant(domain.fluid.msh, PETSc.ScalarType(params.fluid.beta)) # [1/K] thermal expansion coefficient
 
         # Define trial and test functions for velocity
         self.u = ufl.TrialFunction(self.V)
@@ -291,7 +295,8 @@ class Flow:
             - (1.0 / self.rho_c) * ufl.inner(self.dpdx, self.v) * ufl.dx
         )
         if thermal_analysis == True:
-            self.F1 -= self.beta * ufl.inner((self.theta_k1-self.theta_r) * self.g, self.v) * ufl.dx # buoyancy term
+            self.theta_r = dolfinx.fem.Constant(domain.fluid.msh, PETSc.ScalarType(params.fluid.T_ambient)) # reference temperature
+            self.F1 -= self.beta_c * ufl.inner((self.theta_k1-self.theta_r) * self.g, self.v) * ufl.dx # buoyancy term
 
         self.a1 = dolfinx.fem.form(ufl.lhs(self.F1))
         self.L1 = dolfinx.fem.form(ufl.rhs(self.F1))
