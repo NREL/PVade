@@ -27,6 +27,7 @@ def main(input_file=None):
 
     fluid_analysis = params.general.fluid_analysis
     structural_analysis = params.general.structural_analysis
+    thermal_analysis = params.general.thermal_analysis
 
     # Initialize the domain and construct the initial mesh
     domain = FSIDomain(params)
@@ -47,7 +48,7 @@ def main(input_file=None):
     # domain.check_mesh_periodicity(params)
     # sys.exit()
 
-    flow = Flow(domain, fluid_analysis)
+    flow = Flow(domain, fluid_analysis, thermal_analysis)
     structure = Structure(domain, structural_analysis, params)
 
     if fluid_analysis == True:
