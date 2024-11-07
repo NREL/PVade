@@ -42,6 +42,10 @@ properties:
         default: true
         type: "boolean"
         description: "If true, conduct a fluid analysis"
+      thermal_analysis:
+        default: true
+        type: "boolean"
+        description: "If true, conduct a fluid analysis with buoyancy and a temperature analysis"
 
   domain:
     additionalProperties: false
@@ -352,7 +356,20 @@ properties:
         minimum: 1.0e-06
         type: "number"
         description: "The kinematic viscosity of the fluid."
-        units: "meter^s/second"
+        units: "meter^s/second" # should this be meter^2/second?
+      g:
+        default: 9.81
+        minimum: 0.0
+        maximum: 100.0
+        type: "number"
+        description: "Gravitational acceleration."
+        units: "meter/second^2"
+      beta:
+        default: 0.00333
+        minimum: 1.0e-06
+        type: "number"
+        description: "The thermal expansion coefficient of the fluid."
+        units: "1/Kelvin"
       dpdx:
         default: 0.0
         minimum: 0.0
@@ -415,6 +432,27 @@ properties:
         default: 0.0
         type: "number"
         desciption: "The amount of time, in seconds, to solve the fluid solution for before un-freezing the structure and beginning to solve the FSI in a coupled manner. Warming up the fluid for e.g., 0.5 seconds helps establish a more appropriate fluid solution around the panels and can improve stability by avoiding a sudden shock associated with a bad initial condition at t=0."
+      T_ambient:
+        default: 300.0
+        minimum: 1.0
+        maximum: 500.0
+        type: "number"
+        description: "The ambient temperature of the fluid."
+        units: "Kelvin"
+      T_bottom:
+        default: 320.0
+        minimum: 1.0
+        maximum: 500.0
+        type: "number"
+        description: "The ground temperature."
+        units: "Kelvin"
+      T0_panel:
+        default: 320.0
+        minimum: 1.0
+        maximum: 500.0
+        type: "number"
+        description: "The initial PV panel temperature."
+        units: "Kelvin"
 
   structure:
     additionalProperties: false
