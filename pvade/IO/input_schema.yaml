@@ -221,56 +221,56 @@ properties:
       solver1_ksp:
         default: "cg"
         type: "string"
-        description: "The solver to use for fluid solve 1 of 4"
+        description: "The solver to use for fluid solve 1 of 5"
         enum:
           - "cg"
           - "gmres"
       solver2_ksp:
         default: "cg"
         type: "string"
-        description: "The solver to use for fluid solve 2 of 4"
+        description: "The solver to use for fluid solve 2 of 5"
         enum:
           - "cg"
           - "gmres"
       solver3_ksp:
         default: "cg"
         type: "string"
-        description: "The solver to use for fluid solve 3 of 4"
+        description: "The solver to use for fluid solve 3 of 5"
         enum:
           - "cg"
           - "gmres"
-      solver4_ksp:
+      solver5_ksp:
         default: "cg"
         type: "string"
-        description: "The solver to use for fluid solve 4 of 4"
+        description: "The solver to use for fluid solve 5 of 5"
         enum:
           - "cg"
           - "gmres"    
       solver1_pc:
         default: "hypre"
         type: "string"
-        description: "The preconditioner to use for fluid solve 1 of 4"
+        description: "The preconditioner to use for fluid solve 1 of 5"
         enum:
           - "jacobi"
           - "hypre"
       solver2_pc:
         default: "hypre"
         type: "string"
-        description: "The preconditioner to use for fluid solve 2 of 4"
+        description: "The preconditioner to use for fluid solve 2 of 5"
         enum:
           - "jacobi"
           - "hypre"
       solver3_pc:
         default: "hypre"
         type: "string"
-        description: "The preconditioner to use for fluid solve 3 of 4"
+        description: "The preconditioner to use for fluid solve 3 of 5"
         enum:
           - "jacobi"
           - "hypre"
-      solver4_pc:
+      solver5_pc:
         default: "hypre"
         type: "string"
-        description: "The preconditioner to use for fluid solve 3 of 4"
+        description: "The preconditioner to use for fluid solve 5 of 5"
         enum:
           - "jacobi"
           - "hypre"    

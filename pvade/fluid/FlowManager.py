@@ -364,10 +364,10 @@ class Flow:
 
         # Create a dolfinx.fem.form for projecting stress onto a tensor function space
         # e.g., panel_stress.assign(project(stress, T))
-        self.a4 = dolfinx.fem.form(
+        self.a5 = dolfinx.fem.form(
             ufl.inner(ufl.TrialFunction(self.T), ufl.TestFunction(self.T)) * ufl.dx
         )
-        self.L4 = dolfinx.fem.form(
+        self.L5 = dolfinx.fem.form(
             ufl.inner(self.stress, ufl.TestFunction(self.T)) * ufl.dx
         )
 
@@ -376,10 +376,10 @@ class Flow:
         cfl_form = ufl.sqrt(ufl.inner(self.u_k, self.u_k)) * self.dt_c / cell_diam
 
         self.cfl_vec = dolfinx.fem.Function(self.DG)
-        self.a5 = dolfinx.fem.form(
+        self.a6 = dolfinx.fem.form(
             ufl.inner(ufl.TrialFunction(self.DG), ufl.TestFunction(self.DG)) * ufl.dx
         )
-        self.L5 = dolfinx.fem.form(
+        self.L6 = dolfinx.fem.form(
             ufl.inner(cfl_form, ufl.TestFunction(self.DG)) * ufl.dx
         )
 
@@ -549,20 +549,20 @@ class Flow:
         self.A1 = dolfinx.fem.petsc.assemble_matrix(self.a1, bcs=self.bcu)
         self.A2 = dolfinx.fem.petsc.assemble_matrix(self.a2, bcs=self.bcp)
         self.A3 = dolfinx.fem.petsc.assemble_matrix(self.a3)
-        self.A4 = dolfinx.fem.petsc.assemble_matrix(self.a4)
         self.A5 = dolfinx.fem.petsc.assemble_matrix(self.a5)
+        self.A6 = dolfinx.fem.petsc.assemble_matrix(self.a6)
 
         self.A1.assemble()
         self.A2.assemble()
         self.A3.assemble()
-        self.A4.assemble()
         self.A5.assemble()
+        self.A6.assemble()
 
         self.b1 = dolfinx.fem.petsc.assemble_vector(self.L1)
         self.b2 = dolfinx.fem.petsc.assemble_vector(self.L2)
         self.b3 = dolfinx.fem.petsc.assemble_vector(self.L3)
-        self.b4 = dolfinx.fem.petsc.assemble_vector(self.L4)
         self.b5 = dolfinx.fem.petsc.assemble_vector(self.L5)
+        self.b6 = dolfinx.fem.petsc.assemble_vector(self.L6)
 
         self.solver_1 = PETSc.KSP().create(self.comm)
         self.solver_1.setOperators(self.A1)
@@ -582,17 +582,17 @@ class Flow:
         self.solver_3.getPC().setType(params.solver.solver3_pc)
         self.solver_3.setFromOptions()
 
-        self.solver_4 = PETSc.KSP().create(self.comm)
-        self.solver_4.setOperators(self.A4)
-        self.solver_4.setType(params.solver.solver4_ksp)
-        self.solver_4.getPC().setType(params.solver.solver4_pc)
-        self.solver_4.setFromOptions()
-
         self.solver_5 = PETSc.KSP().create(self.comm)
         self.solver_5.setOperators(self.A5)
-        self.solver_5.setType("cg")
-        self.solver_5.getPC().setType("jacobi")
+        self.solver_5.setType(params.solver.solver5_ksp)
+        self.solver_5.getPC().setType(params.solver.solver5_pc)
         self.solver_5.setFromOptions()
+
+        self.solver_6 = PETSc.KSP().create(self.comm)
+        self.solver_6.setOperators(self.A6)
+        self.solver_6.setType("cg")
+        self.solver_6.getPC().setType("jacobi")
+        self.solver_6.setFromOptions()
 
     def solve(self, domain, params, current_time):
         """Solve for a single timestep advancement
@@ -640,7 +640,7 @@ class Flow:
         # Update the velocity according to the pressure field
         self._solver_step_3(params)
 
-        self._solver_step_4(params)
+        self._solver_step_5(params)
         # Compute the CFL number
         self.compute_cfl()
 
@@ -768,8 +768,8 @@ class Flow:
         self.solver_3.solve(self.b3, self.u_k.vector)
         self.u_k.x.scatter_forward()
 
-    def _solver_step_4(self, params):
-        """Solve step 3: velocity update
+    def _solver_step_5(self, params):
+        """Solve step 5: velocity update
 
         Here we update the tentative velocity with the effect of the modified,
         continuity-enforcing pressure field.
@@ -777,22 +777,22 @@ class Flow:
         Args:
             params (:obj:`pvade.Parameters.SimParams`): A SimParams object
         """
-        self.A4.zeroEntries()
-        self.A4 = dolfinx.fem.petsc.assemble_matrix(self.A4, self.a4)
-        self.A4.assemble()
-        self.solver_4.setOperators(self.A4)
+        self.A5.zeroEntries()
+        self.A5 = dolfinx.fem.petsc.assemble_matrix(self.A5, self.a5)
+        self.A5.assemble()
+        self.solver_5.setOperators(self.A5)
 
         # Step 3: Velocity correction step
-        with self.b4.localForm() as loc:
+        with self.b5.localForm() as loc:
             loc.set(0)
 
-        self.b4 = dolfinx.fem.petsc.assemble_vector(self.b4, self.L4)
+        self.b5 = dolfinx.fem.petsc.assemble_vector(self.b5, self.L5)
 
-        self.b4.ghostUpdate(
+        self.b5.ghostUpdate(
             addv=PETSc.InsertMode.ADD_VALUES, mode=PETSc.ScatterMode.REVERSE
         )
 
-        self.solver_4.solve(self.b4, self.panel_stress.vector)
+        self.solver_5.solve(self.b5, self.panel_stress.vector)
         self.panel_stress.x.scatter_forward()
         self.panel_stress_undeformed.x.array[:] = self.panel_stress.x.array[:]
         self.panel_stress_undeformed.x.scatter_forward()
@@ -809,21 +809,21 @@ class Flow:
             None
         """
 
-        self.A5.zeroEntries()
-        self.A5 = dolfinx.fem.petsc.assemble_matrix(self.A5, self.a5)
-        self.A5.assemble()
-        self.solver_5.setOperators(self.A5)
+        self.A6.zeroEntries()
+        self.A6 = dolfinx.fem.petsc.assemble_matrix(self.A6, self.a6)
+        self.A6.assemble()
+        self.solver_6.setOperators(self.A6)
 
-        with self.b5.localForm() as loc:
+        with self.b6.localForm() as loc:
             loc.set(0)
 
-        self.b5 = dolfinx.fem.petsc.assemble_vector(self.b5, self.L5)
+        self.b6 = dolfinx.fem.petsc.assemble_vector(self.b6, self.L6)
 
-        self.b5.ghostUpdate(
+        self.b6.ghostUpdate(
             addv=PETSc.InsertMode.ADD_VALUES, mode=PETSc.ScatterMode.REVERSE
         )
 
-        self.solver_5.solve(self.b5, self.cfl_vec.vector)
+        self.solver_6.solve(self.b6, self.cfl_vec.vector)
         self.cfl_vec.x.scatter_forward()
 
         cfl_max_local = np.amax(self.cfl_vec.vector.array)
