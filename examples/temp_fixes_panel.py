@@ -358,7 +358,7 @@ if pv_panel_flag:
 
     bcu.append(bcu_internal_walls)
 
-u_n.interpolate(u_inlet)
+# u_n.interpolate(u_inlet) # trying without initial conditions
 # set_bc(u_n.vector,bcu)
 
 # Pressure Boundary Conditions
@@ -424,6 +424,12 @@ if pv_panel_flag:
 # ================================================================
 # Build All Forms
 # ==================================================================
+
+print('shape of theta_k1 = ',np.shape(T_n.x.array[:]))
+print('shape of g = ',np.shape(g[:]))
+print('shape of V = ',V.dofmap.index_map.size_global)
+print('shape of S = ',S.dofmap.index_map.size_global)
+exit()
 
 # step 1: tentative velocity
 

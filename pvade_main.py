@@ -48,11 +48,14 @@ def main(input_file=None):
     # domain.check_mesh_periodicity(params)
     # sys.exit()
 
+    if params.general.debug_flag == True:
+        print('before Flow init')
+    
     flow = Flow(domain, fluid_analysis, thermal_analysis)
     structure = Structure(domain, structural_analysis, params)
 
     if fluid_analysis == True:
-        flow = Flow(domain, fluid_analysis)
+        flow = Flow(domain, fluid_analysis, thermal_analysis)
         # # # Specify the boundary conditions
         flow.build_boundary_conditions(domain, params)
         # # # Build the fluid forms
@@ -143,7 +146,7 @@ def main(input_file=None):
 
                 local_def_max = np.amax(
                     np.sum(
-                        structure.elasticity.u.vector.array.reshape(-1, 3) ** 2, axis=1
+                        structure.elasticity.u.vector.array.reshape(-1, domain.ndim) ** 2, axis=1
                     )
                 )
                 global_def_max_list = np.zeros(params.num_procs, dtype=np.float64)

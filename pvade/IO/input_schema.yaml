@@ -46,6 +46,11 @@ properties:
         default: true
         type: "boolean"
         description: "If true, conduct a fluid analysis with buoyancy and a temperature analysis"
+      debug_flag:
+        default: false
+        type: "boolean"
+        description: "If true, allows all print statements"
+
 
   domain:
     additionalProperties: false
@@ -191,7 +196,7 @@ properties:
     properties:
       dt:
         default: 0.002
-        minimum: 0.0
+        minimum: 0.00001
         type: "number"
         description: "The timestep size to use in both the fluid and structural solver."
         units: "second"
@@ -209,9 +214,9 @@ properties:
         units: "second"
       save_xdmf_interval:
         default: 0.1
-        minimum: 0.0
+        minimum: 0.00001
         type: "number"
-        description: "The interval to use between saving visualization/XDMF output files."
+        description: "The interval to use between saving visualization/XDMF output files. Must be same as or larger than dt."
         units: "second"
       solver1_ksp:
         default: "cg"
@@ -415,7 +420,7 @@ properties:
         type: "number"
         description: "The ground temperature."
         units: "Kelvin"
-      T0_panel:
+      T0_panel: # might not belong in "fluid" section
         default: 320.0
         minimum: 1.0
         maximum: 500.0

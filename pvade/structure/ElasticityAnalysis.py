@@ -356,16 +356,27 @@ class Elasticity:
         # self.f = ufl.as_vector((0*self.ρ * self.ω**2 * x[0], self.ρ * self.ω**2 * x[1], 0.0))
         # self.T = dolfinx.fem.Constant(domain.structure.msh, PETSc.ScalarType((0, 1.e-3, 0)))
         # self.f = dolfinx.fem.Constant(domain.structure.msh, PETSc.ScalarType((0,100,100)))
-        self.f = dolfinx.fem.Constant(
-            domain.structure.msh,
-            PETSc.ScalarType(
-                (
-                    params.structure.body_force_x,
-                    params.structure.body_force_y,
-                    params.structure.body_force_z,
-                )
-            ),
-        )
+        if domain.ndim == 2:
+            self.f = dolfinx.fem.Constant(
+                domain.structure.msh,
+                PETSc.ScalarType(
+                    (
+                        params.structure.body_force_x,
+                        params.structure.body_force_y,
+                    )
+                ),
+            )
+        elif domain.ndim == 3:
+            self.f = dolfinx.fem.Constant(
+                domain.structure.msh,
+                PETSc.ScalarType(
+                    (
+                        params.structure.body_force_x,
+                        params.structure.body_force_y,
+                        params.structure.body_force_z,
+                    )
+                ),
+            )
         self.ds = ufl.Measure("ds", domain=domain.structure.msh)
         n = ufl.FacetNormal(domain.structure.msh)
 
