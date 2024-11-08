@@ -48,6 +48,7 @@ class DataStream:
         self.rank = params.rank
         self.num_procs = params.num_procs
         self.ndim = domain.fluid.msh.topology.dim
+        self.thermal_analysis = params.general.thermal_analysis
 
         self.log_filename = f"{params.general.output_dir_sol}/log.txt"
         if self.rank == 0:
@@ -67,6 +68,9 @@ class DataStream:
                 xdmf_file.write_function(flow.p_k, 0.0)
                 xdmf_file.write_function(flow.panel_stress, 0.0)
                 xdmf_file.write_function(domain.total_mesh_displacement, 0.0)
+
+                if params.general.thermal_analysis == True:
+                    xdmf_file.write_function(flow.theta_k, 0.0)
 
         # If doing a structure simulation, start a structure solution file
         if params.general.structural_analysis == True:
@@ -152,6 +156,8 @@ class DataStream:
                 xdmf_file.write_function(fsi_object.p_k, tt)
                 xdmf_file.write_function(fsi_object.panel_stress, tt)
                 xdmf_file.write_function(domain.total_mesh_displacement, tt)
+                if self.thermal_analysis == True:
+                    xdmf_file.write_function(fsi_object.theta_k, tt)
 
         elif fsi_object.name == "structure":
             with XDMFFile(self.comm, self.results_filename_structure, "a") as xdmf_file:

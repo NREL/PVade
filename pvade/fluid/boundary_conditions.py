@@ -69,9 +69,14 @@ def build_vel_bc_by_type(bc_type, domain, functionspace, bc_location):
         print(f"Setting '{bc_type}' BC on {bc_location}")
 
     if bc_type == "noslip":
-        zero_vec = dolfinx.fem.Constant(
-            domain.fluid.msh, PETSc.ScalarType((0.0, 0.0, 0.0))
-        )
+        if domain.ndim == 2:
+            zero_vec = dolfinx.fem.Constant(
+                domain.fluid.msh, PETSc.ScalarType((0.0, 0.0))
+            )
+        elif domain.ndim == 3:
+            zero_vec = dolfinx.fem.Constant(
+                domain.fluid.msh, PETSc.ScalarType((0.0, 0.0, 0.0))
+            )
 
         dofs = get_facet_dofs_by_gmsh_tag(domain, functionspace, bc_location)
 
@@ -101,7 +106,11 @@ def build_vel_bc_by_type(bc_type, domain, functionspace, bc_location):
 
 
 class InflowVelocity:
+<<<<<<< HEAD
     def __init__(self, geom_dim, ndim, params, current_time):
+=======
+    def __init__(self, ndim, params, current_time):
+>>>>>>> c556e3c (added buoyancy term, ndim updates for 2d 3d issues, running without errors)
         """Inflow velocity object
 
         Args:
@@ -109,7 +118,10 @@ class InflowVelocity:
             params (:obj:`pvade.Parameters.SimParams`): A SimParams object
         """
         self.ndim = ndim
+<<<<<<< HEAD
         self.geom_dim = geom_dim
+=======
+>>>>>>> c556e3c (added buoyancy term, ndim updates for 2d 3d issues, running without errors)
         self.params = params
         self.current_time = current_time
         self.first_call_to_inflow_velocity = True
@@ -124,7 +136,14 @@ class InflowVelocity:
             np.ndarray: Value of velocity at each coordinate in input array
         """
 
+<<<<<<< HEAD
         inflow_values = np.zeros((3, x.shape[1]), dtype=PETSc.ScalarType)
+=======
+        z0 = 0.005 #0.05
+        d0 = 0.0 #0.5
+
+        inflow_values = np.zeros((self.ndim, x.shape[1]), dtype=PETSc.ScalarType)
+>>>>>>> c556e3c (added buoyancy term, ndim updates for 2d 3d issues, running without errors)
 
         if self.first_call_to_inflow_velocity:
             print(f"creating {self.params.fluid.velocity_profile_type} inflow profile")
@@ -230,11 +249,18 @@ def get_inflow_profile_function(domain, params, functionspace, current_time):
     # numpy array has the correct size, e.g.:
     #
     # np.zeros((geom_dim, x.shape[1]). dtype=...)
-    geom_dim = domain.fluid.msh.geometry.dim
+    # geom_dim = domain.fluid.msh.geometry.dim
+    # print('geom_dim = ',geom_dim)
 
     inflow_function = dolfinx.fem.Function(functionspace)
+    # if params.general.debug_flag == True:
+    #     print('functionspace = ',functionspace)
 
+<<<<<<< HEAD
     inflow_velocity = InflowVelocity(geom_dim, ndim, params, current_time)
+=======
+    inflow_velocity = InflowVelocity(ndim, params, current_time)
+>>>>>>> c556e3c (added buoyancy term, ndim updates for 2d 3d issues, running without errors)
 
     upper_cells = None
 
@@ -270,7 +296,7 @@ def get_inflow_profile_function(domain, params, functionspace, current_time):
 
         # what does this do? zero everything out before defining values of upper cells?
         inflow_function.interpolate(
-            lambda x: np.zeros((geom_dim, x.shape[1]), dtype=PETSc.ScalarType)
+            lambda x: np.zeros((ndim, x.shape[1]), dtype=PETSc.ScalarType)
         )
 
         inflow_function.interpolate(inflow_velocity, upper_cells)
@@ -409,7 +435,7 @@ def build_temperature_boundary_conditions(domain, params, functionspace):
             return values
     
     ndim = domain.ndim
-  
+     
     # Define temperature boundary conditions
     bcT = []
 
@@ -417,6 +443,9 @@ def build_temperature_boundary_conditions(domain, params, functionspace):
     T_ambient_scalar = dolfinx.fem.Constant(domain.fluid.msh, PETSc.ScalarType(params.fluid.T_ambient))
     left_wall_dofs = get_facet_dofs_by_gmsh_tag(domain, functionspace, "x_min")
     bcT.append(dolfinx.fem.dirichletbc(PETSc.ScalarType(T_ambient_scalar), left_wall_dofs, functionspace))
+
+    # if params.general.debug_flag == True:
+    #     print('applied left wall temperature bc')
 
     # lower wall BCs
     heated_cells = None
@@ -426,14 +455,15 @@ def build_temperature_boundary_conditions(domain, params, functionspace):
     T_bottom = dolfinx.fem.Function(functionspace)
 
     # initialize all cells with ambient temperature
-    T_bottom.interpolate(lambda x: np.full((1, x.shape[1]), params.fluid.T_ambient, dtype=PETSc.ScalarType)) 
-
-    # T_bottom_scalar = dolfinx.fem.Constant(domain.fluid.msh, PETSc.ScalarType(params.fluid.T_bottom))
+    # T_bottom.interpolate(lambda x: np.full((1, x.shape[1]), params.fluid.T_ambient, dtype=PETSc.ScalarType)) 
     if ndim == 2: # TODO - need to add if statement for 3d using z_min instead of y_min 
         bottom_wall_dofs = get_facet_dofs_by_gmsh_tag(domain, functionspace, "y_min")
-    bottom_wall_temperature = LowerWallTemperature()
-    T_bottom.interpolate(bottom_wall_temperature, heated_cells) # apply T_bottom to only heated cells
-    bcT.append(dolfinx.fem.dirichletbc(PETSc.ScalarType(T_bottom), bottom_wall_dofs, functionspace))
+    # bottom_wall_temperature = LowerWallTemperature()
+    # T_bottom.interpolate(bottom_wall_temperature, heated_cells) # apply T_bottom to only heated cells
+    # bcT.append(dolfinx.fem.dirichletbc(PETSc.ScalarType(T_bottom), bottom_wall_dofs, functionspace))
+
+    T_bottom_scalar = dolfinx.fem.Constant(domain.fluid.msh, PETSc.ScalarType(params.fluid.T_bottom))
+    bcT.append(dolfinx.fem.dirichletbc(PETSc.ScalarType(T_bottom_scalar), bottom_wall_dofs, functionspace))
 
     # panel surface BCs
     for panel_id in range(params.pv_array.stream_rows * params.pv_array.span_rows):
@@ -448,8 +478,8 @@ def build_temperature_boundary_conditions(domain, params, functionspace):
                 f"top_{panel_id}",
                 f"left_{panel_id}",
                 f"right_{panel_id}",
-                f"front_{panel_id}",
-                f"back_{panel_id}",
+                # f"front_{panel_id}", # not valid in panels2d?
+                # f"back_{panel_id}",
             ):
                 T0_pv_panel_scalar = dolfinx.fem.Constant(domain.fluid.msh, PETSc.ScalarType(params.fluid.T0_panel))
 
@@ -457,5 +487,8 @@ def build_temperature_boundary_conditions(domain, params, functionspace):
                 bc = dolfinx.fem.dirichletbc(T0_pv_panel_scalar, panel_sfc_dofs, functionspace)
 
                 bcT.append(bc)
+
+    if params.general.debug_flag == True:
+        print('built temperature boundary conditions')
 
     return bcT

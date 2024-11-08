@@ -74,8 +74,10 @@ class Flow:
             self.first_call_to_surface_pressure = True
 
             # Store the dimension of the problem for convenience
-            self.ndim = domain.fluid.msh.topology.dim
+            # self.ndim = domain.fluid.msh.topology.dim
+            self.ndim = domain.ndim
             self.facet_dim = self.ndim - 1
+            print('ndim = ', self.ndim)
 
             # find hmin in mesh
             num_cells = domain.fluid.msh.topology.index_map(self.ndim).size_local
@@ -122,7 +124,14 @@ class Flow:
         self.bcp = build_pressure_boundary_conditions(domain, params, self.Q)
         # self.bcp = []
 
-        self.bcT = build_temperature_boundary_conditions(domain, params, self.S)
+        # if self.rank == 0 and params.general.debug_flag == True:
+        #     print('applied pressure boundary conditions') # does pass here
+
+        if params.general.thermal_analysis == True:
+            self.bcT = build_temperature_boundary_conditions(domain, params, self.S)
+
+        # if self.rank == 0 and params.general.debug_flag == True:
+        #     print('applied temperature boundary conditions')
 
     def build_forms(self, domain, params):
         """Builds all variational statements
@@ -143,12 +152,18 @@ class Flow:
         thermal_analysis = self.thermal_analysis
 
         # Define fluid properties
-        self.dpdx = dolfinx.fem.Constant(domain.fluid.msh, (0.0, 0.0, 0.0))
+        if self.ndim == 2:
+            self.dpdx = dolfinx.fem.Constant(domain.fluid.msh, (0.0, 0.0))
+        elif self.ndim == 3:
+            self.dpdx = dolfinx.fem.Constant(domain.fluid.msh, (0.0, 0.0, 0.0))
         self.dt_c = dolfinx.fem.Constant(domain.fluid.msh, (params.solver.dt))
         self.rho_c = dolfinx.fem.Constant(domain.fluid.msh, (params.fluid.rho))
         nu = dolfinx.fem.Constant(domain.fluid.msh, (params.fluid.nu))
         if thermal_analysis == True:
-            self.g = dolfinx.fem.Constant(domain.fluid.msh, PETSc.ScalarType((0, params.fluid.g)))
+            if self.ndim == 2:
+                self.g = dolfinx.fem.Constant(domain.fluid.msh, PETSc.ScalarType((0, params.fluid.g)))
+            elif self.ndim == 2:
+                self.g = dolfinx.fem.Constant(domain.fluid.msh, PETSc.ScalarType((0, 0, params.fluid.g)))               
             self.beta_c = dolfinx.fem.Constant(domain.fluid.msh, PETSc.ScalarType(params.fluid.beta)) # [1/K] thermal expansion coefficient
 
         # Define trial and test functions for velocity
@@ -165,11 +180,13 @@ class Flow:
         self.u_k2 = dolfinx.fem.Function(self.V)
 
         if thermal_analysis == True:
+            # print('ndim = ',self.ndim)
             # Define trial and test functions for temperature
             self.theta = ufl.TrialFunction(self.S)
             self.s = ufl.TestFunction(self.S)
             self.theta_k = dolfinx.fem.Function(self.S, name="temperature ")
             self.theta_k1 = dolfinx.fem.Function(self.S)
+            self.theta_r = dolfinx.fem.Function(self.S) # reference temperature
 
         self.mesh_vel = dolfinx.fem.Function(self.V, name="mesh_displacement")
         self.mesh_vel_old = dolfinx.fem.Function(self.V)
@@ -181,6 +198,7 @@ class Flow:
         self.p_k = dolfinx.fem.Function(self.Q, name="pressure")
         self.p_k1 = dolfinx.fem.Function(self.Q)
 
+        # initial conditions
         if params.fluid.initialize_with_inflow_bc:
             # self.inflow_profile = dolfinx.fem.Function(self.V)
             # self.inflow_profile.interpolate(lambda x: np.vstack((x[0], x[1],x[2])))
@@ -199,6 +217,15 @@ class Flow:
             # flags.append((self.u_k2.x.array[:] == self.inflow_profile.x.array).all())
 
             # assert all(flags), "initialiazation not done correctly"
+
+        if thermal_analysis == True:
+            # initialize air temperature everywhere to be the ambient temperature
+            self.theta_k1.x.array[:] = PETSc.ScalarType(params.fluid.T_ambient)
+            # self.theta_k.x.array[:] = PETSc.ScalarType(params.fluid.T_ambient) # is it ok to initialize T_k a nd T_k1 as the same value??
+            self.theta_r.x.array[:] = PETSc.ScalarType(params.fluid.T_ambient)
+
+        if params.general.debug_flag == True:
+            dolfinx.fem.petsc.set_bc(self.theta_k.vector,self.bcT)
 
         # Define expressions used in variational forms
         # Crank-Nicolson velocity
@@ -280,6 +307,12 @@ class Flow:
         # self.U_ALE = 0.1*self.mesh_vel + 0.9*self.mesh_vel_old
         # self.U_ALE = domain.fluid_mesh_displacement / self.dt_c
 
+        # if params.general.debug_flag == True:
+        #     print('shape of theta_k1 = ',np.shape(self.theta_k1.x.array[:]))
+        #     print('shape of g = ',np.shape(self.g[:]))
+        #     print('shape of V = ',self.V.dofmap.index_map.size_global)
+        #     print('shape of S = ',self.S.dofmap.index_map.size_global)
+
         self.F1 = (
             (1.0 / self.dt_c) * ufl.inner(self.u - self.u_k1, self.v) * ufl.dx
             + ufl.inner(
@@ -295,7 +328,6 @@ class Flow:
             - (1.0 / self.rho_c) * ufl.inner(self.dpdx, self.v) * ufl.dx
         )
         if thermal_analysis == True:
-            self.theta_r = dolfinx.fem.Constant(domain.fluid.msh, PETSc.ScalarType(params.fluid.T_ambient)) # reference temperature
             self.F1 -= self.beta_c * ufl.inner((self.theta_k1-self.theta_r) * self.g, self.v) * ufl.dx # buoyancy term
 
         self.a1 = dolfinx.fem.form(ufl.lhs(self.F1))
@@ -355,11 +387,17 @@ class Flow:
         outlet_cells = dolfinx.mesh.locate_entities(
             domain.fluid.msh, self.ndim, lambda x: x[0] > params.domain.x_max - 1
         )
-        self.flux_plane = dolfinx.fem.Function(self.V)
-        self.flux_plane.interpolate(
-            lambda x: (np.ones(x.shape[1]), np.zeros(x.shape[1]), np.zeros(x.shape[1])),
-            outlet_cells,
-        )
+        self.flux_plane = dolfinx.fem.Function(self.V) # marker function that masks the u component velocity at the outlet
+        if self.ndim == 2:
+            self.flux_plane.interpolate(
+                lambda x: (np.ones(x.shape[1]), np.zeros(x.shape[1])),
+                outlet_cells,
+            )
+        elif self.ndim == 3:
+            self.flux_plane.interpolate(
+                lambda x: (np.ones(x.shape[1]), np.zeros(x.shape[1]), np.zeros(x.shape[1])),
+                outlet_cells,
+            )
 
         # self.flux_plane = Expression('x[0] < cutoff ? 0.0 : 1.0', cutoff=domain.x_range[1]-1.0, degree=1)
         # self.flux_dx = ufl.Measure("dx", domain=domain.fluid.msh)  # not needed ?
@@ -614,7 +652,8 @@ class Flow:
         self.u_k2.x.array[:] = self.u_k1.x.array
         self.u_k1.x.array[:] = self.u_k.x.array
         self.p_k1.x.array[:] = self.p_k.x.array
-        self.theta_k1.x.array[:] = self.theta_k.x.array
+        if params.general.thermal_analysis == True:
+            self.theta_k1.x.array[:] = self.theta_k.x.array
         self.mesh_vel_old.x.array[:] = self.mesh_vel.x.array
 
         if self.first_call_to_solver:
