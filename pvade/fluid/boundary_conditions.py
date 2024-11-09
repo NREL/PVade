@@ -116,6 +116,7 @@ class InflowVelocity:
         self.ndim = ndim
         self.params = params
         self.current_time = current_time
+        print('InflowVelocity initialized')
 
     def __call__(self, x):
         """Define an inflow expression for use as boundary condition
@@ -130,6 +131,9 @@ class InflowVelocity:
         z0 = 0.005 #0.05
         d0 = 0.0 #0.5
 
+        print('self.ndim = ', self.ndim)
+        print('x.shape = ', x.shape)
+        print('x.shape[1] = ', x.shape[1])
         inflow_values = np.zeros((self.ndim, x.shape[1]), dtype=PETSc.ScalarType)
 
         H = 0.41
@@ -201,6 +205,9 @@ class InflowVelocity:
                 * np.log(((x[1]) - d0) / z0)
                 / (np.log((z_hub - d0) / z0))
             )
+            print('inflow_values = ', inflow_values)
+
+        print('InflowVelocity called')
 
         return inflow_values
 
@@ -223,6 +230,7 @@ def get_inflow_profile_function(domain, params, functionspace, current_time):
     #     print('functionspace = ',functionspace)
 
     inflow_velocity = InflowVelocity(ndim, params, current_time)
+    print('inflow_velocity = ', inflow_velocity)
 
     upper_cells = None
 

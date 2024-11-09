@@ -239,6 +239,14 @@ properties:
         enum:
           - "cg"
           - "gmres"
+      solver4_ksp:
+        default: "gmres"
+        type: "string"
+        description: "The solver to use for fluid solve 4 of 5"
+        enum:
+          - "cg" # not tested
+          - "gmres"
+          - "preonly" # for debugging
       solver5_ksp:
         default: "cg"
         type: "string"
@@ -267,6 +275,12 @@ properties:
         enum:
           - "jacobi"
           - "hypre"
+      solver4_pc:
+        default: "lu"
+        type: "string"
+        description: "The preconditioner to use for fluid solve 4 of 5"
+        enum:
+          - "lu"
       solver5_pc:
         default: "hypre"
         type: "string"
@@ -344,6 +358,12 @@ properties:
         type: "number"
         description: "The thermal expansion coefficient of the fluid."
         units: "1/Kelvin"
+      alpha:
+        default: 2.25e-05
+        minimum: 1.0e-06
+        type: "number"
+        description: "The thermal diffusivity of the fluid."
+        units: "meter^2/s"
       dpdx:
         default: 0.0
         minimum: 0.0

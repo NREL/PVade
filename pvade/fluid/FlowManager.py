@@ -165,6 +165,7 @@ class Flow:
             elif self.ndim == 2:
                 self.g = dolfinx.fem.Constant(domain.fluid.msh, PETSc.ScalarType((0, 0, params.fluid.g)))               
             self.beta_c = dolfinx.fem.Constant(domain.fluid.msh, PETSc.ScalarType(params.fluid.beta)) # [1/K] thermal expansion coefficient
+            self.alpha_c = dolfinx.fem.Constant(domain.fluid.msh, PETSc.ScalarType(params.fluid.alpha)) #  thermal diffusivity
 
         # Define trial and test functions for velocity
         self.u = ufl.TrialFunction(self.V)
@@ -221,7 +222,7 @@ class Flow:
         if thermal_analysis == True:
             # initialize air temperature everywhere to be the ambient temperature
             self.theta_k1.x.array[:] = PETSc.ScalarType(params.fluid.T_ambient)
-            # self.theta_k.x.array[:] = PETSc.ScalarType(params.fluid.T_ambient) # is it ok to initialize T_k a nd T_k1 as the same value??
+            self.theta_k.x.array[:] = PETSc.ScalarType(params.fluid.T_ambient)
             self.theta_r.x.array[:] = PETSc.ScalarType(params.fluid.T_ambient)
 
         if params.general.debug_flag == True:
@@ -327,8 +328,8 @@ class Flow:
             + (1.0 / self.rho_c) * ufl.inner(ufl.grad(self.p_k1), self.v) * ufl.dx
             - (1.0 / self.rho_c) * ufl.inner(self.dpdx, self.v) * ufl.dx
         )
-        if thermal_analysis == True:
-            self.F1 -= self.beta_c * ufl.inner((self.theta_k1-self.theta_r) * self.g, self.v) * ufl.dx # buoyancy term
+        # if thermal_analysis == True:
+        #     self.F1 -= self.beta_c * ufl.inner((self.theta_k1-self.theta_r) * self.g, self.v) * ufl.dx # buoyancy term
 
         self.a1 = dolfinx.fem.form(ufl.lhs(self.F1))
         self.L1 = dolfinx.fem.form(ufl.rhs(self.F1))
@@ -351,7 +352,16 @@ class Flow:
             * ufl.dx
         )
 
-        # Define a function and the dolfinx.fem.form of the stress
+        # Define variational problem for step 4: temperature
+        self.F4 = (
+            (1.0 / self.dt_c) * ufl.inner(self.theta - self.theta_k1, self.s) * ufl.dx # theta = unknown, T_n = temp from previous timestep
+            + self.alpha_c * ufl.inner(ufl.nabla_grad(self.theta), ufl.nabla_grad(self.s)) * ufl.dx
+            + ufl.inner(ufl.dot(self.u_k, ufl.nabla_grad(self.theta)), self.s) * ufl.dx
+        )
+        self.a4 = dolfinx.fem.form(ufl.lhs(self.F4))
+        self.L4 = dolfinx.fem.form(ufl.rhs(self.F4))
+
+        # Define a function and the dolfinx.fem.form of the stress (step 5)
         self.panel_stress = dolfinx.fem.Function(self.T)
         self.panel_stress_undeformed = dolfinx.fem.Function(self.T_undeformed)
         self.stress = sigma(self.u_k, self.p_k, nu + self.nu_T, self.rho_c)
@@ -549,18 +559,21 @@ class Flow:
         self.A1 = dolfinx.fem.petsc.assemble_matrix(self.a1, bcs=self.bcu)
         self.A2 = dolfinx.fem.petsc.assemble_matrix(self.a2, bcs=self.bcp)
         self.A3 = dolfinx.fem.petsc.assemble_matrix(self.a3)
+        self.A4 = dolfinx.fem.petsc.assemble_matrix(self.a4, bcs=self.bcT)
         self.A5 = dolfinx.fem.petsc.assemble_matrix(self.a5)
         self.A6 = dolfinx.fem.petsc.assemble_matrix(self.a6)
 
         self.A1.assemble()
         self.A2.assemble()
         self.A3.assemble()
+        self.A4.assemble()
         self.A5.assemble()
         self.A6.assemble()
 
         self.b1 = dolfinx.fem.petsc.assemble_vector(self.L1)
         self.b2 = dolfinx.fem.petsc.assemble_vector(self.L2)
         self.b3 = dolfinx.fem.petsc.assemble_vector(self.L3)
+        self.b4 = dolfinx.fem.petsc.assemble_vector(self.L4)
         self.b5 = dolfinx.fem.petsc.assemble_vector(self.L5)
         self.b6 = dolfinx.fem.petsc.assemble_vector(self.L6)
 
@@ -581,6 +594,12 @@ class Flow:
         self.solver_3.setType(params.solver.solver3_ksp)
         self.solver_3.getPC().setType(params.solver.solver3_pc)
         self.solver_3.setFromOptions()
+
+        self.solver_4 = PETSc.KSP().create(self.comm)
+        self.solver_4.setOperators(self.A4)
+        self.solver_4.setType(params.solver.solver4_ksp)
+        self.solver_4.getPC().setType(params.solver.solver4_pc)
+        self.solver_4.setFromOptions()
 
         self.solver_5 = PETSc.KSP().create(self.comm)
         self.solver_5.setOperators(self.A5)
@@ -637,6 +656,9 @@ class Flow:
 
         # Update the velocity according to the pressure field
         self._solver_step_3(params)
+
+        # Calculate the temperature field
+        self._solver_step_4(params)
 
         self._solver_step_5(params)
         # Compute the CFL number
@@ -766,11 +788,43 @@ class Flow:
         self.solver_3.solve(self.b3, self.u_k.vector)
         self.u_k.x.scatter_forward()
 
-    def _solver_step_5(self, params):
-        """Solve step 5: velocity update
+    def _solver_step_4(self, params):
+        """Solve step 4: Solves for temperature using the advection-diffusion equation
 
-        Here we update the tentative velocity with the effect of the modified,
-        continuity-enforcing pressure field.
+        Args:
+            params (:obj:`pvade.Parameters.SimParams`): A SimParams object
+        """
+                # Step 0: Re-assemble A1 since using an implicit convective term
+        self.A4.zeroEntries()
+        self.A4 = dolfinx.fem.petsc.assemble_matrix(self.A4, self.a4, bcs=self.bcT)
+        self.A4.assemble()
+
+        # Step 1: Tentative velocity step
+        with self.b4.localForm() as loc:
+            loc.set(0)
+
+        self.b4 = dolfinx.fem.petsc.assemble_vector(self.b4, self.L4)
+
+        dolfinx.fem.petsc.apply_lifting(self.b4, [self.a4], [self.bcT])
+
+        self.b1.ghostUpdate(
+            addv=PETSc.InsertMode.ADD_VALUES, mode=PETSc.ScatterMode.REVERSE
+        )
+
+        dolfinx.fem.petsc.set_bc(self.b4, self.bcT)
+
+        self.solver_4.solve(self.b4, self.theta_k.vector)
+        self.theta_k.x.scatter_forward()
+
+        # compute max temperature for printing
+        theta_max_local = np.amax(self.theta_k.vector.array)
+
+        self.theta_max = np.zeros(1)
+        self.comm.Allreduce(theta_max_local, self.theta_max, op=MPI.MAX)
+        self.theta_max = self.theta_max[0]
+
+    def _solver_step_5(self, params):
+        """Solve step 5: Projects stress onto a tensor function space
 
         Args:
             params (:obj:`pvade.Parameters.SimParams`): A SimParams object
