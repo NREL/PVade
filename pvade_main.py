@@ -135,6 +135,8 @@ def main(input_file=None):
 
                         print(f"| f_x (drag) = {fx:.4f}")
                         print(f"| f_y (lift) = {fy:.4f}")
+                        if thermal_analysis == True:
+                            print(f"| T = {flow.theta_max:.4f}")
 
                 dataIO.save_XDMF_files(flow, domain, current_time)
 

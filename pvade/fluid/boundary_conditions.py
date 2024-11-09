@@ -106,11 +106,7 @@ def build_vel_bc_by_type(bc_type, domain, functionspace, bc_location):
 
 
 class InflowVelocity:
-<<<<<<< HEAD
-    def __init__(self, geom_dim, ndim, params, current_time):
-=======
     def __init__(self, ndim, params, current_time):
->>>>>>> c556e3c (added buoyancy term, ndim updates for 2d 3d issues, running without errors)
         """Inflow velocity object
 
         Args:
@@ -118,13 +114,9 @@ class InflowVelocity:
             params (:obj:`pvade.Parameters.SimParams`): A SimParams object
         """
         self.ndim = ndim
-<<<<<<< HEAD
-        self.geom_dim = geom_dim
-=======
->>>>>>> c556e3c (added buoyancy term, ndim updates for 2d 3d issues, running without errors)
         self.params = params
         self.current_time = current_time
-        self.first_call_to_inflow_velocity = True
+        print('InflowVelocity initialized')
 
     def __call__(self, x):
         """Define an inflow expression for use as boundary condition
@@ -136,14 +128,7 @@ class InflowVelocity:
             np.ndarray: Value of velocity at each coordinate in input array
         """
 
-<<<<<<< HEAD
-        inflow_values = np.zeros((3, x.shape[1]), dtype=PETSc.ScalarType)
-=======
-        z0 = 0.005 #0.05
-        d0 = 0.0 #0.5
-
         inflow_values = np.zeros((self.ndim, x.shape[1]), dtype=PETSc.ScalarType)
->>>>>>> c556e3c (added buoyancy term, ndim updates for 2d 3d issues, running without errors)
 
         if self.first_call_to_inflow_velocity:
             print(f"creating {self.params.fluid.velocity_profile_type} inflow profile")
@@ -181,32 +166,12 @@ class InflowVelocity:
                     * (self.params.domain.y_max - x[1])
                 )
 
-<<<<<<< HEAD
             # handle cyl3d
             elif self.ndim == 3:
                 inflow_values[0] = (
                     coeff * time_vary_u_ref * x[1] * x[2] * self.params.domain.y_max
                     - x[1] * self.params.domain.z_max  # inflow_dy
                     - x[2] / self.params.domain.z_max**4  # inflow_dz
-=======
-            inflow_values[0] = (
-                1.5
-                * time_vary_u_ref
-                * 4.0
-                / 0.1681
-                * x[1]
-                * (self.params.domain.y_max - x[1])
-            )
-        elif (
-            self.params.general.geometry_module == "panels3d"
-            or self.params.general.geometry_module == "heliostats3d"
-        ):
-            if self.current_time < 2.0 and self.params.fluid.time_varying_inflow_bc:
-                time_vary_u_ref = (
-                    self.params.fluid.u_ref
-                    * (1.0 - np.cos(np.pi / 2.0 * self.current_time))
-                    / 2.0
->>>>>>> bc8c3ee (black formatting)
                 )
 
         elif self.params.fluid.velocity_profile_type == "loglaw":
@@ -256,11 +221,7 @@ def get_inflow_profile_function(domain, params, functionspace, current_time):
     # if params.general.debug_flag == True:
     #     print('functionspace = ',functionspace)
 
-<<<<<<< HEAD
-    inflow_velocity = InflowVelocity(geom_dim, ndim, params, current_time)
-=======
     inflow_velocity = InflowVelocity(ndim, params, current_time)
->>>>>>> c556e3c (added buoyancy term, ndim updates for 2d 3d issues, running without errors)
 
     upper_cells = None
 
