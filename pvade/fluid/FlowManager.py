@@ -77,7 +77,7 @@ class Flow:
             # self.ndim = domain.fluid.msh.topology.dim
             self.ndim = domain.ndim
             self.facet_dim = self.ndim - 1
-            print('ndim = ', self.ndim)
+            # print('ndim = ', self.ndim)
 
             # find hmin in mesh
             num_cells = domain.fluid.msh.topology.index_map(self.ndim).size_local
@@ -328,8 +328,8 @@ class Flow:
             + (1.0 / self.rho_c) * ufl.inner(ufl.grad(self.p_k1), self.v) * ufl.dx
             - (1.0 / self.rho_c) * ufl.inner(self.dpdx, self.v) * ufl.dx
         )
-        # if thermal_analysis == True:
-        #     self.F1 -= self.beta_c * ufl.inner((self.theta_k1-self.theta_r) * self.g, self.v) * ufl.dx # buoyancy term
+        if thermal_analysis == True:
+            self.F1 -= self.beta_c * ufl.inner((self.theta_k1-self.theta_r) * self.g, self.v) * ufl.dx # buoyancy term
 
         self.a1 = dolfinx.fem.form(ufl.lhs(self.F1))
         self.L1 = dolfinx.fem.form(ufl.rhs(self.F1))
@@ -627,6 +627,7 @@ class Flow:
 
         if params.fluid.time_varying_inflow_bc:
             self.inflow_velocity.current_time = current_time
+            
             if self.upper_cells is not None:
                 self.inflow_profile.interpolate(self.inflow_velocity, self.upper_cells)
             else:
@@ -659,6 +660,7 @@ class Flow:
 
         # Calculate the temperature field
         self._solver_step_4(params)
+        # self.theta_k.x.scatter_forward()
 
         self._solver_step_5(params)
         # Compute the CFL number
@@ -807,7 +809,7 @@ class Flow:
 
         dolfinx.fem.petsc.apply_lifting(self.b4, [self.a4], [self.bcT])
 
-        self.b1.ghostUpdate(
+        self.b4.ghostUpdate(
             addv=PETSc.InsertMode.ADD_VALUES, mode=PETSc.ScatterMode.REVERSE
         )
 
