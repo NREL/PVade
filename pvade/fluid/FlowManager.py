@@ -167,6 +167,15 @@ class Flow:
             self.beta_c = dolfinx.fem.Constant(domain.fluid.msh, PETSc.ScalarType(params.fluid.beta)) # [1/K] thermal expansion coefficient
             self.alpha_c = dolfinx.fem.Constant(domain.fluid.msh, PETSc.ScalarType(params.fluid.alpha)) #  thermal diffusivity
 
+            # Compute approximate Peclet number to assess if SUPG stabilization is needed
+            Pe_approx = params.fluid.u_ref * params.domain.l_char / (2.0 * params.fluid.alpha)
+            if self.rank == 0:
+                if params.general.debug_flag == True:
+                    print('l_char = {:.2E}'.format(params.domain.l_char))
+                    print('alpha = {:.2E}'.format(params.fluid.alpha))
+
+                print('Pe approx = {:.2E}'.format(Pe_approx))
+
         # Define trial and test functions for velocity
         self.u = ufl.TrialFunction(self.V)
         self.v = ufl.TestFunction(self.V)
