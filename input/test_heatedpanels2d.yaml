@@ -38,7 +38,7 @@ fluid:
   nu: 15.89e-5 #0.001
   g: 9.81
   beta: 0.00333
-  alpha: 2.25e-05 # high Pe # 0.00225 # low Pe (no stability needed)
+  alpha: 0.00225 # low Pe (no stability needed) # 2.25e-05 # high Pe
   turbulence_model: 
   periodic: false 
   bc_y_max: slip # slip noslip free

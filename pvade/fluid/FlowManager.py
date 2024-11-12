@@ -168,13 +168,21 @@ class Flow:
             self.alpha_c = dolfinx.fem.Constant(domain.fluid.msh, PETSc.ScalarType(params.fluid.alpha)) #  thermal diffusivity
 
             # Compute approximate Peclet number to assess if SUPG stabilization is needed
-            Pe_approx = params.fluid.u_ref * params.domain.l_char / (2.0 * params.fluid.alpha)
+            self.Pe_approx = params.fluid.u_ref * params.domain.l_char / (2.0 * params.fluid.alpha)
+            
+            if self.Pe_approx > 1.0:
+                self.stabilizing = True
+                if self.rank == 0:
+                    print('Pe > 1, so SUPG stabilization applied')
+            else:
+                self.stabilizing = False
+
             if self.rank == 0:
                 if params.general.debug_flag == True:
                     print('l_char = {:.2E}'.format(params.domain.l_char))
                     print('alpha = {:.2E}'.format(params.fluid.alpha))
 
-                print('Pe approx = {:.2E}'.format(Pe_approx))
+                print('Pe approx = {:.2E}'.format(self.Pe_approx))
 
         # Define trial and test functions for velocity
         self.u = ufl.TrialFunction(self.V)
@@ -360,6 +368,9 @@ class Flow:
             * ufl.dot(ufl.nabla_grad(self.p_k - self.p_k1), self.v)
             * ufl.dx
         )
+        if self.stabilizing == True:
+            # Residual: the "strong" form of the governing equation
+            self.r = (1.0 / self.dt_c)*(self.theta - self.theta_k1) + ufl.dot(self.u_k, ufl.nabla_grad(self.theta)) - self.alpha_c*ufl.div(ufl.grad(self.theta))
 
         # Define variational problem for step 4: temperature
         self.F4 = (
@@ -367,6 +378,17 @@ class Flow:
             + self.alpha_c * ufl.inner(ufl.nabla_grad(self.theta), ufl.nabla_grad(self.s)) * ufl.dx
             + ufl.inner(ufl.dot(self.u_k, ufl.nabla_grad(self.theta)), self.s) * ufl.dx
         )
+        
+        if self.stabilizing == True:
+            # Donea and Huerta 2003 (Eq 2.64)
+            h = ufl.CellDiameter(domain.fluid.msh)
+            u_mag = ufl.sqrt(ufl.dot(self.u_k, self.u_k)) # magnitude of vector
+            Pe = u_mag*h/(2.0*self.alpha_c) # Peclet number
+            tau = (h/(2.0*u_mag))*(1.0 + 1.0/Pe)**(-1)
+            stab = tau * ufl.dot(self.u_k, ufl.grad(self.s)) * self.r * ufl.dx
+
+            self.F4 += stab
+        
         self.a4 = dolfinx.fem.form(ufl.lhs(self.F4))
         self.L4 = dolfinx.fem.form(ufl.rhs(self.F4))
 
