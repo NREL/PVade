@@ -214,7 +214,6 @@ def get_inflow_profile_function(domain, params, functionspace, current_time):
     #
     # np.zeros((geom_dim, x.shape[1]). dtype=...)
     # geom_dim = domain.fluid.msh.geometry.dim
-    # print('geom_dim = ',geom_dim)
 
     inflow_function = dolfinx.fem.Function(functionspace)
     # if params.general.debug_flag == True:
@@ -258,8 +257,6 @@ def get_inflow_profile_function(domain, params, functionspace, current_time):
         inflow_function.interpolate(
             lambda x: np.zeros((ndim, x.shape[1]), dtype=PETSc.ScalarType)
         )
-
-        # print('upper_cells = ', upper_cells)
 
         if len(upper_cells) == 0:
             print('Warning: z0 and d0 may be outside the size of the domain') # just a bandaid for now
@@ -389,7 +386,6 @@ def build_temperature_boundary_conditions(domain, params, functionspace):
             pass
 
         def __call__(self, x):
-            # print('x.shape[1] in LowerWallTemperature = ',x.shape[1])
             values = np.zeros((1, x.shape[1]), dtype=PETSc.ScalarType)
 
             # linear rampdown of temperature along lower wall
@@ -413,7 +409,7 @@ def build_temperature_boundary_conditions(domain, params, functionspace):
     # if params.general.debug_flag == True:
     #     print('applied left wall temperature bc')
 
-    # lower wall BCs
+    # lower wall BCs ============================================================================
     # t_bc_flag = 'uniform' # potentially move to input file
     t_bc_flag = 'stepchange' # potentially move to input file
 
@@ -450,6 +446,7 @@ def build_temperature_boundary_conditions(domain, params, functionspace):
             or params.general.geometry_module == "heliostats3d"
             or params.general.geometry_module == "flag2d"
         ):
+
             for location in (
                 f"bottom_{panel_id}",
                 f"top_{panel_id}",

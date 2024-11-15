@@ -135,8 +135,15 @@ def main(input_file=None):
 
                         print(f"| f_x (drag) = {fx:.4f}")
                         print(f"| f_y (lift) = {fy:.4f}")
-                        if thermal_analysis == True:
-                            print(f"| T = {flow.theta_max:.4f}")
+                    else:
+                        # still print info, but just for first row
+                        fx = flow.integrated_force_x[0]
+                        fy = flow.integrated_force_y[0]
+
+                        print(f"| f_x (drag) of 1st row = {fx:.4f}")
+                        print(f"| f_y (lift) of 1st row = {fy:.4f}")
+                    if thermal_analysis == True:
+                        print(f"| T = {flow.theta_max:.4f}")
 
                 dataIO.save_XDMF_files(flow, domain, current_time)
 
