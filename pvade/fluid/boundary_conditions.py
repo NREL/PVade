@@ -126,8 +126,8 @@ class InflowVelocity:
         Returns:
             np.ndarray: Value of velocity at each coordinate in input array
         """
-        z0 = 0.005 #0.05
-        d0 = 0.0 #0.5
+        z0 = 0.05
+        d0 = 0.5
 
         inflow_values = np.zeros((self.ndim, x.shape[1]), dtype=PETSc.ScalarType)
 
@@ -230,8 +230,8 @@ def get_inflow_profile_function(domain, params, functionspace, current_time):
         inflow_function.interpolate(inflow_velocity)
 
     else:
-        z0 = 0.005 #0.05
-        d0 = 0.0 #0.5
+        z0 = 0.05
+        d0 = 0.5
         if ndim == 3:
             upper_cells = dolfinx.mesh.locate_entities(
                 domain.fluid.msh, ndim, lambda x: x[2] > d0 + z0

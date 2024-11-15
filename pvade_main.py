@@ -48,8 +48,8 @@ def main(input_file=None):
     # domain.check_mesh_periodicity(params)
     # sys.exit()
 
-    if params.general.debug_flag == True:
-        print('before Flow init')
+    # if params.general.debug_flag == True:
+    #     print('before Flow init')
     
     flow = Flow(domain, fluid_analysis, thermal_analysis)
     structure = Structure(domain, structural_analysis, params)
