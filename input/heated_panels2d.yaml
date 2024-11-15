@@ -1,0 +1,67 @@
+general:
+  geometry_module: panels2d
+  output_dir: output/heatedpanels2d
+  mesh_only: false
+  structural_analysis: True
+  fluid_analysis: True
+  thermal_analysis: True
+  debug_flag: True
+domain:
+  x_min: -10
+  x_max: 50
+  y_min: 0
+  y_max: 20
+  l_char: 0.05
+pv_array:
+  stream_rows: 1
+  elevation: 1.5
+  stream_spacing: 7.0
+  panel_chord: 2.0
+  panel_span: 7.0
+  panel_thickness: 0.1
+  tracker_angle: 30.
+solver:
+  dt: .001 # .001
+  t_final: 10.0
+  solver1_ksp: gmres
+  solver2_ksp: cg
+  solver3_ksp: cg
+  solver4_ksp: gmres
+  solver1_pc: jacobi
+  solver2_pc: jacobi
+  solver3_pc: jacobi
+  solver4_pc: lu
+  save_text_interval: 0.001 # must be same as or bigger than dt
+  save_xdmf_interval: 0.001
+fluid:
+  u_ref: 0.8
+  nu: 0.001 #15.89e-5 #0.001
+  g: 9.81
+  beta: 0.00333
+  alpha: 2.25e-05 # high Pe # 0.00225 # low Pe (no stability needed) # 
+  turbulence_model: 
+  periodic: false 
+  bc_y_max: slip # slip noslip free
+  bc_y_min: noslip # slip noslip free
+  T_ambient: 300.0
+  T_bottom: 320.0
+  T0_panel: 340.0
+structure:
+    dt : .001 # 0.002
+    # rho : 10000.0
+    # rho : 10000.0 # 10000.0
+    poissons_ratio: 0.3
+    elasticity_modulus: 1.0e+05
+    body_force_x: 0
+    body_force_y: -1
+    body_force_z: 0 #100
+    bc_list: ["top"]
+    motor_connection: False
+    tube_connection: False
+    beta_relaxation: 0.005
+
+    # elasticity_modulus: 1.0e+09
+    # poissons_ratio: 0.3
+    # body_force_x: 0
+    # body_force_y: 0
+    # bc_list: ["left"]
