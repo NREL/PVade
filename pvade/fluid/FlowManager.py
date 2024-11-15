@@ -376,7 +376,7 @@ class Flow:
         self.F4 = (
             (1.0 / self.dt_c) * ufl.inner(self.theta - self.theta_k1, self.s) * ufl.dx # theta = unknown, T_n = temp from previous timestep
             + self.alpha_c * ufl.inner(ufl.nabla_grad(self.theta), ufl.nabla_grad(self.s)) * ufl.dx
-            + ufl.inner(ufl.dot(self.u_k, ufl.nabla_grad(self.theta)), self.s) * ufl.dx
+            + ufl.inner(ufl.dot(self.u_k, ufl.nabla_grad(self.theta)), self.s) * ufl.dx # todo: subtract mesh vel from this and from residual
         )
         
         if self.stabilizing == True:

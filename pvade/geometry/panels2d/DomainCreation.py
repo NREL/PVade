@@ -150,6 +150,11 @@ class DomainCreation(TemplateDomainCreation):
                 0,
             )
 
+            self._add_to_domain_markers(f"left_{panel_id:.0f}",  [1 + 4*(panel_id+1) ], "facet")
+            self._add_to_domain_markers(f"bottom_{panel_id:.0f}", [2 + 4*(panel_id+1)], "facet")
+            self._add_to_domain_markers(f"right_{panel_id:.0f}", [3 + 4*(panel_id+1)], "facet")
+            self._add_to_domain_markers(f"top_{panel_id:.0f}",   [4 + 4*(panel_id+1)], "facet")
+
         # Remove each panel from the overall domain
         # self.gmsh_model.occ.cut([(2, domain)], [(2, panel_box)])
         self.gmsh_model.occ.fragment(domain_tag_list, panel_tag_list)
@@ -181,21 +186,16 @@ class DomainCreation(TemplateDomainCreation):
             elif np.allclose(com[1], params.domain.y_max):
                 self._add_to_domain_markers("y_max", [surf_id], "facet")
 
-        self._add_to_domain_markers("left_0", [5], "facet")
-        self._add_to_domain_markers("bottom_0", [6], "facet")
-        self._add_to_domain_markers("right_0", [7], "facet")
-        self._add_to_domain_markers("top_0", [8], "facet")
-
         # Tag objects as either structure or fluid
         vol_tag_list = self.gmsh_model.occ.getEntities(self.ndim)
-        print(vol_tag_list)
+        print('vol_tag_list = ', vol_tag_list)
         structure_vol_list = []
         fluid_vol_list = []
 
         for k, vol_tag in enumerate(vol_tag_list):
             vol_id = vol_tag[1]
 
-            if k == 0:
+            if k < params.pv_array.stream_rows:
                 # Solid Cell
                 structure_vol_list.append(vol_id)
                 print("structure", vol_id)

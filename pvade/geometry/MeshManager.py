@@ -143,7 +143,7 @@ class FSIDomain:
         # Only rank 0 builds the geometry and meshes the domain
         if self.rank == 0:
             if (
-                (
+                ( # should we add panels2d?
                     params.general.geometry_module == "panels3d"
                     or params.general.geometry_module == "heliostats3d"
                 )
@@ -184,7 +184,7 @@ class FSIDomain:
 
             self._generate_mesh()
 
-            self.ndim = self.geometry.ndim #gmsh_model.get_dimension()
+            self.ndim = self.geometry.ndim #gmsh_model.get_dimension() # ?? should this be domain.ndim?
 
         # When finished, rank 0 needs to tell other ranks about how the domain_markers dictionary was created
         # and what values it holds. This is important now since the number of indices "idx" generated in the
@@ -196,8 +196,6 @@ class FSIDomain:
         self.ndim = self.comm.bcast(self.ndim, root=0)
         
         
-        print('self.ndim = ',self.ndim)
-
         # All ranks receive their portion of the mesh from rank 0 (like an MPI scatter)
         self.msh, self.cell_tags, self.facet_tags = dolfinx.io.gmshio.model_to_mesh(
             self.geometry.gmsh_model,

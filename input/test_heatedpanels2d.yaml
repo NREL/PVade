@@ -1,6 +1,6 @@
 general:
   geometry_module: panels2d
-  output_dir: output/heatedpanels2d
+  output_dir: output/test_heatedpanels2d
   mesh_only: false
   structural_analysis: True
   fluid_analysis: True
@@ -8,14 +8,14 @@ general:
   debug_flag: True
 domain:
   x_min: -0.3
-  x_max: 0.7 #1.0 # 50
+  x_max: 1.0 #0.7 #1.0 # 50
   y_min: 0
   y_max: 0.4 # 20
   l_char: 0.006 #83 #0.9
 pv_array:
-  stream_rows: 1
+  stream_rows: 3
   elevation: 0.15
-  stream_spacing: 7.0
+  stream_spacing: 0.2 #
   panel_chord: 0.1 # 2.0
   panel_span: 7.0
   panel_thickness: 0.03 # 0.1
@@ -38,7 +38,7 @@ fluid:
   nu: 15.89e-5 #0.001
   g: 9.81
   beta: 0.00333
-  alpha: 0.00225 # low Pe (no stability needed) # 2.25e-05 # high Pe
+  alpha: 2.25e-05 # high Pe # 0.00225 # low Pe (no stability needed) # 
   turbulence_model: 
   periodic: false 
   bc_y_max: slip # slip noslip free

@@ -140,7 +140,7 @@ properties:
         units: "meter"
       stream_spacing:
         default: 7.0
-        minimum: 1.0
+        minimum: 0.01 #1.0
         maximum: 32.0
         type: "number"
         description: "The separation between panel rows in the streamwise direction."
