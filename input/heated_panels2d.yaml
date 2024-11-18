@@ -34,6 +34,9 @@ solver:
   save_text_interval: 0.001 # must be same as or bigger than dt
   save_xdmf_interval: 0.001
 fluid:
+  velocity_profile_type: uniform # loglaw
+  time_varying_inflow_window: 0.0
+  initialize_with_inflow_bc: true
   u_ref: 0.8
   nu: 0.001 #15.89e-5 #0.001
   g: 9.81

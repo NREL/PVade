@@ -129,8 +129,8 @@ class InflowVelocity:
 
         inflow_values = np.zeros((self.ndim, x.shape[1]), dtype=PETSc.ScalarType)
 
-        if self.first_call_to_inflow_velocity:
-            print(f"creating {self.params.fluid.velocity_profile_type} inflow profile")
+        # if self.first_call_to_inflow_velocity:
+        #     print(f"creating {self.params.fluid.velocity_profile_type} inflow profile")
 
         # Assign time_vary_u_ref, for cases with time_varying_inflow_bc = 0.0:
         #     time_vary_u_ref = u_ref
@@ -195,9 +195,9 @@ class InflowVelocity:
                     / (np.log((z_hub - d0) / z0))
                 )
 
-        if self.first_call_to_inflow_velocity:
-            print("inflow_values = ", inflow_values[0])
-            self.first_call_to_inflow_velocity = False
+        # if self.first_call_to_inflow_velocity:
+        #     print("inflow_values = ", inflow_values[0])
+        #     self.first_call_to_inflow_velocity = False
 
         return inflow_values
 
