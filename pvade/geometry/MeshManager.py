@@ -162,7 +162,6 @@ class FSIDomain:
                 self.geometry.build_structure(params)
             else:
                 self.geometry.build_FSI(params)
-
             # Build the domain markers for each surface and cell
             if hasattr(self.geometry, "domain_markers"):
                 # If the "build" process created domain markers, use those directly...

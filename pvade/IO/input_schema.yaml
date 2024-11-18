@@ -309,6 +309,21 @@ properties:
     #     required:
     #       - c_w
     properties:
+      velocity_profile_type:
+        default: "uniform"
+        type: "string"
+        description: "The shape of the inflow velocity profile"
+        enum:
+          - "uniform"
+          - "loglaw"
+          - "parabolic"
+      inflow_coeff:
+        default: 1.0
+        minimum: 0.0
+        maximum: 100.0
+        type: "number"
+        description: "When applying a parabolic inflow velocity profile, this coefficient is C in the equation U = (C/H^2)*u_ref*y(H-y)"
+        units: "none"
       u_ref:
         default: 8.0
         minimum: 0.0
@@ -316,14 +331,30 @@ properties:
         type: "number"
         description: "The velocity of the wind as measured at the panel elevation."
         units: "meter/second"
+      z0:
+        default: 0.05
+        minimum: 0.001
+        maximum: 10.0
+        type: "number"
+        description: "The surface roughness length used in the log law velocity profile."
+        units: "meters"
+      d0:
+        default: 0.5
+        minimum: 0.0
+        maximum: 50.0
+        type: "number"
+        description: "The zero plane displacement height used for the presence of vegetated or urban canopies in the log law velocity profile."
+        units: "meters"
       initialize_with_inflow_bc:
         default: true
         type: "boolean"
         description: "If true, use the inflow boundary condition to interpolate a non-zero initial velocity throughout the domain (even if that does not respect interior boundary conditions), if false, initial velocity is zero."
-      time_varying_inflow_bc:
-        default: false
-        type: "boolean"
-        description: "If true, the inflow boundary condition will be re-evaluated at each time step, if false, the inflow function is treated as constant and will not be re-evaluated after the initial t=0 state."
+      time_varying_inflow_window:
+        default: 0.0
+        minimum: 0.0
+        type: "number"
+        description: "The amount of time over which the inflow condition should 'ramp up' to the full value of u_ref, smoothed using a cosine function. A value of 0 means the flow starts with inflow_vel = u_ref, values > 0 mean the flow starts at rest and smoothly increases until time = time_varying_inflow_window, where inflow_vel = u_ref."
+        units: "second"
       rho:
         default: 1.0
         # minimum: 0.001
