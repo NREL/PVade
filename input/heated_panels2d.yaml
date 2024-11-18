@@ -11,7 +11,7 @@ domain:
   x_max: 50
   y_min: 0
   y_max: 20
-  l_char: 0.05
+  l_char: 0.1
 pv_array:
   stream_rows: 1
   elevation: 1.5
