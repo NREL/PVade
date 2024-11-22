@@ -162,7 +162,7 @@ class DomainCreation(TemplateDomainCreation):
 
         self.gmsh_model.occ.synchronize()
         self.numpy_pt_total_array = []
-        self.numpy_pt_total_array = np.zeros((1, 6)) + np.nan
+        self.numpy_pt_total_array = np.zeros((params.pv_array.stream_rows, 6)) + np.nan # np.zeros((1, 6)) + np.nan
 
         # Surfaces are the entities with dimension equal to the mesh dimension -1
         surf_tag_list = self.gmsh_model.occ.getEntities(self.ndim - 1)
