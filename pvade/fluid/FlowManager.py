@@ -996,7 +996,7 @@ class Flow:
                         / (
                             params.fluid.rho
                             * params.fluid.u_ref**2
-                            * 2.0
+                            * params.pv_array.panel_chord
                             * params.pv_array.panel_span
                         )
                     )
@@ -1007,7 +1007,7 @@ class Flow:
                         / (
                             params.fluid.rho
                             * params.fluid.u_ref**2
-                            * 2.0
+                            * params.pv_array.panel_chord
                             * params.pv_array.panel_span
                         )
                     )
@@ -1018,7 +1018,7 @@ class Flow:
                         / (
                             params.fluid.rho
                             * params.fluid.u_ref**2
-                            * 2.0
+                            * params.pv_array.panel_chord
                             * params.pv_array.panel_span
                         )
                     )
