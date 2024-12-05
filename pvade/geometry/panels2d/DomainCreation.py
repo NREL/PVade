@@ -247,3 +247,49 @@ class DomainCreation(TemplateDomainCreation):
 
         # self._add_to_domain_markers("structure", structure_surf_list, "facet")
         # self._add_to_domain_markers("fluid", fluid_surf_list, "facet")
+
+
+    def set_length_scales(self, params, domain_markers):
+        """This function call defines the characteristic length for the mesh in locations of interst
+        LcMin,LcMax,DistMin and DistMax are used to create a refined mesh in specific locations
+        which results in a high fidelity mesh without using a uniform element size in the whole mesh.
+        """
+       
+        all_pts = self.gmsh_model.occ.getEntities(0)
+        #self.gmsh_model.mesh.setSize(all_pts, params.domain.l_char)
+
+        outflow = self.gmsh_model.mesh.field.add("Distance")
+        self.gmsh_model.mesh.field.setNumbers(
+            outflow, "FacesList", domain_markers["x_max"]["gmsh_tags"]
+        )
+            
+        outflow_thresh = self.gmsh_model.mesh.field.add("Threshold")
+        self.gmsh_model.mesh.field.setNumber(outflow_thresh, "IField", outflow)
+        self.gmsh_model.mesh.field.setNumber(outflow_thresh, "LcMin", 2.0 * params.domain.l_char)
+        self.gmsh_model.mesh.field.setNumber(outflow_thresh, "LcMax", params.domain.l_char)
+        self.gmsh_model.mesh.field.setNumber(outflow_thresh, "DistMin", 10.)
+        self.gmsh_model.mesh.field.setNumber(outflow_thresh, "DistMax", 20.)
+
+        near_panel_tags = []
+
+        for key, val in domain_markers.items():
+            if "bottom" in key or "top" in key or "left" in key or "right" in key:
+                near_panel_tags.append(val["gmsh_tags"][0])
+        
+        near_panel = self.gmsh_model.mesh.field.add("Distance")
+        self.gmsh_model.mesh.field.setNumbers(
+            near_panel, "EdgesList", near_panel_tags
+        )
+            
+        near_panel_thresh = self.gmsh_model.mesh.field.add("Threshold")
+        self.gmsh_model.mesh.field.setNumber(near_panel_thresh, "IField", near_panel)
+        self.gmsh_model.mesh.field.setNumber(near_panel_thresh, "LcMin", params.domain.l_char)
+        self.gmsh_model.mesh.field.setNumber(near_panel_thresh, "LcMax", 25.0 * params.domain.l_char)
+        self.gmsh_model.mesh.field.setNumber(near_panel_thresh, "DistMin", 10.)
+        self.gmsh_model.mesh.field.setNumber(near_panel_thresh, "DistMax", 40.)
+
+        minimum = self.gmsh_model.mesh.field.add("Min")
+        self.gmsh_model.mesh.field.setNumbers(minimum, "FieldsList", [near_panel_thresh, outflow_thresh])
+
+        self.gmsh_model.mesh.field.setAsBackgroundMesh(near_panel_thresh)
+

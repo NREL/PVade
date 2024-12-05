@@ -424,7 +424,7 @@ def build_temperature_boundary_conditions(domain, params, functionspace):
         # x_span = params.domain.x_max - params.domain.x_min
 
         # only applying Tbottom to cells from x=0 to x=0.75*x_max to avoid jet at the outlet sfc due to pressure BCa at exit
-        heated_cells = dolfinx.mesh.locate_entities(domain.fluid.msh, ndim, lambda x: x[0] < (0.75*params.domain.x_max))
+        heated_cells = dolfinx.mesh.locate_entities(domain.fluid.msh, ndim, lambda x: x[0] < (0.375*params.domain.x_max))
         T_bottom_function = dolfinx.fem.Function(functionspace)
 
         # initialize all cells with ambient temperature
