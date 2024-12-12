@@ -5,7 +5,7 @@ import numpy as np
 import os
 import matplotlib.pyplot as plt
 
-from pvade.Parameters import SimParams
+from pvade.IO.Parameters import SimParams
 from pvade.geometry.MeshManager import FSIDomain
 
 input_path = "pvade/tests/input/yaml/"
@@ -68,6 +68,7 @@ def test_move_mesh():
     domain.read_mesh_files(os.path.join(params.general.output_dir, "mesh"), params)
 
     # Create a dummy elasticity object that we can prescribe displacement values for
+
     class dummy_elasticity:
         def __init__(self, domain, x_shift, y_shift, z_shift):
             # Build a dummy displacement function to test mesh movement with
@@ -79,13 +80,19 @@ def test_move_mesh():
             self.u_delta.vector.array[1::3] = y_shift
             self.u_delta.vector.array[2::3] = z_shift
 
+    class dummy_structure:
+        def __init__(self, domain, x_shift, y_shift, z_shift):
+            self.elasticity = dummy_elasticity(domain, x_shift, y_shift, z_shift)
+
     # Specify the distance to shift the structure in the x, y, and z direction
     x_shift = 0.05
     y_shift = 0.1
     z_shift = 0.2
 
     # Build the elasticity, prescribe those motions for u_delta (used to move the mesh)
-    elasticity = dummy_elasticity(domain, x_shift, y_shift, z_shift)
+    Structure = dummy_structure(domain, x_shift, y_shift, z_shift)
+    elasticity = Structure.elasticity
+    # elasticity = dummy_elasticity(domain, x_shift, y_shift, z_shift)
 
     # Make a copy of the locations before for testing
     fluid_coords_before = np.copy(domain.fluid.msh.geometry.x)
@@ -121,7 +128,7 @@ def test_move_mesh():
     )
 
     # Move the mesh by the amount prescribed in u_delta
-    domain.move_mesh(elasticity, params)
+    domain.move_mesh(Structure, params)
 
     # Get a copy of the new positions
     fluid_coords_after = np.copy(domain.fluid.msh.geometry.x[:])
