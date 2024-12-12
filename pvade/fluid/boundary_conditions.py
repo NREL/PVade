@@ -259,7 +259,9 @@ def get_inflow_profile_function(domain, params, functionspace, current_time):
         )
 
         if len(upper_cells) == 0:
-            print('Warning: z0 and d0 may be outside the size of the domain') # just a bandaid for now
+            print(
+                "Warning: z0 and d0 may be outside the size of the domain"
+            )  # just a bandaid for now
 
         inflow_function.interpolate(inflow_velocity, upper_cells)
 
@@ -371,6 +373,7 @@ def build_pressure_boundary_conditions(domain, params, functionspace):
 
     return bcp
 
+
 def build_temperature_boundary_conditions(domain, params, functionspace):
     """Build all boundary conditions on temperature
 
@@ -380,7 +383,8 @@ def build_temperature_boundary_conditions(domain, params, functionspace):
         domain (:obj:`pvade.geometry.MeshManager.Domain`): A Domain object
         params (:obj:`pvade.Parameters.SimParams`): A SimParams object
     """
-    class LowerWallTemperature():
+
+    class LowerWallTemperature:
         # copied from https://jsdokken.com/dolfinx-tutorial/chapter2/ns_code2.html
         def __init__(self):
             pass
@@ -391,18 +395,20 @@ def build_temperature_boundary_conditions(domain, params, functionspace):
             # linear rampdown of temperature along lower wall
             # x0 = 0.75 * x_max # start of ramp down
             # values[0] = (T0_bottom_wall + ((x[0]-x0) / x_max) * (T_ambient - T0_bottom_wall))
-            
+
             # stepchange -> constant temperature along bottom wall # this method is most stable with pressure exit BC
             values[0] = PETSc.ScalarType(params.fluid.T_bottom)
             return values
-    
+
     ndim = domain.ndim
-     
+
     # Define temperature boundary conditions
     bcT = []
 
     # left wall BCs
-    T_ambient_scalar = dolfinx.fem.Constant(domain.fluid.msh, PETSc.ScalarType(params.fluid.T_ambient))
+    T_ambient_scalar = dolfinx.fem.Constant(
+        domain.fluid.msh, PETSc.ScalarType(params.fluid.T_ambient)
+    )
     left_wall_dofs = get_facet_dofs_by_gmsh_tag(domain, functionspace, "x_min")
     bcT.append(dolfinx.fem.dirichletbc(T_ambient_scalar, left_wall_dofs, functionspace))
 
@@ -411,32 +417,44 @@ def build_temperature_boundary_conditions(domain, params, functionspace):
 
     # lower wall BCs ============================================================================
     # t_bc_flag = 'uniform' # potentially move to input file
-    t_bc_flag = 'stepchange' # potentially move to input file
+    t_bc_flag = "stepchange"  # potentially move to input file
 
     if ndim == 2:
         bottom_wall_dofs = get_facet_dofs_by_gmsh_tag(domain, functionspace, "y_min")
     elif ndim == 3:
         bottom_wall_dofs = get_facet_dofs_by_gmsh_tag(domain, functionspace, "z_min")
 
-    if t_bc_flag == 'stepchange':
+    if t_bc_flag == "stepchange":
         heated_cells = None
 
         # x_span = params.domain.x_max - params.domain.x_min
 
         # only applying Tbottom to cells from x=0 to x=0.75*x_max to avoid jet at the outlet sfc due to pressure BCa at exit
-        heated_cells = dolfinx.mesh.locate_entities(domain.fluid.msh, ndim, lambda x: x[0] < (0.375*params.domain.x_max))
+        heated_cells = dolfinx.mesh.locate_entities(
+            domain.fluid.msh, ndim, lambda x: x[0] < (0.375 * params.domain.x_max)
+        )
         T_bottom_function = dolfinx.fem.Function(functionspace)
 
         # initialize all cells with ambient temperature
-        T_bottom_function.interpolate(lambda x: np.full((1, x.shape[1]), params.fluid.T_ambient, dtype=PETSc.ScalarType)) 
-        
+        T_bottom_function.interpolate(
+            lambda x: np.full(
+                (1, x.shape[1]), params.fluid.T_ambient, dtype=PETSc.ScalarType
+            )
+        )
+
         bottom_wall_temperature = LowerWallTemperature()
-        T_bottom_function.interpolate(bottom_wall_temperature, heated_cells) # apply T_bottom to only heated cells
+        T_bottom_function.interpolate(
+            bottom_wall_temperature, heated_cells
+        )  # apply T_bottom to only heated cells
         bcT.append(dolfinx.fem.dirichletbc(T_bottom_function, bottom_wall_dofs))
 
-    elif t_bc_flag == 'uniform':
-        T_bottom_scalar = dolfinx.fem.Constant(domain.fluid.msh, PETSc.ScalarType(params.fluid.T_bottom))
-        bcT.append(dolfinx.fem.dirichletbc(T_bottom_scalar, bottom_wall_dofs, functionspace))
+    elif t_bc_flag == "uniform":
+        T_bottom_scalar = dolfinx.fem.Constant(
+            domain.fluid.msh, PETSc.ScalarType(params.fluid.T_bottom)
+        )
+        bcT.append(
+            dolfinx.fem.dirichletbc(T_bottom_scalar, bottom_wall_dofs, functionspace)
+        )
 
     # panel surface BCs
     for panel_id in range(params.pv_array.stream_rows * params.pv_array.span_rows):
@@ -455,10 +473,16 @@ def build_temperature_boundary_conditions(domain, params, functionspace):
                 # f"front_{panel_id}", # not valid in panels2d?
                 # f"back_{panel_id}",
             ):
-                T0_pv_panel_scalar = dolfinx.fem.Constant(domain.fluid.msh, PETSc.ScalarType(params.fluid.T0_panel))
+                T0_pv_panel_scalar = dolfinx.fem.Constant(
+                    domain.fluid.msh, PETSc.ScalarType(params.fluid.T0_panel)
+                )
 
-                panel_sfc_dofs = get_facet_dofs_by_gmsh_tag(domain, functionspace, location)
-                bc = dolfinx.fem.dirichletbc(T0_pv_panel_scalar, panel_sfc_dofs, functionspace)
+                panel_sfc_dofs = get_facet_dofs_by_gmsh_tag(
+                    domain, functionspace, location
+                )
+                bc = dolfinx.fem.dirichletbc(
+                    T0_pv_panel_scalar, panel_sfc_dofs, functionspace
+                )
 
                 bcT.append(bc)
 

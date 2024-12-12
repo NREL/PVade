@@ -161,28 +161,38 @@ class Flow:
         nu = dolfinx.fem.Constant(domain.fluid.msh, (params.fluid.nu))
         if thermal_analysis == True:
             if self.ndim == 2:
-                self.g = dolfinx.fem.Constant(domain.fluid.msh, PETSc.ScalarType((0, params.fluid.g)))
+                self.g = dolfinx.fem.Constant(
+                    domain.fluid.msh, PETSc.ScalarType((0, params.fluid.g))
+                )
             elif self.ndim == 2:
-                self.g = dolfinx.fem.Constant(domain.fluid.msh, PETSc.ScalarType((0, 0, params.fluid.g)))               
-            self.beta_c = dolfinx.fem.Constant(domain.fluid.msh, PETSc.ScalarType(params.fluid.beta)) # [1/K] thermal expansion coefficient
-            self.alpha_c = dolfinx.fem.Constant(domain.fluid.msh, PETSc.ScalarType(params.fluid.alpha)) #  thermal diffusivity
+                self.g = dolfinx.fem.Constant(
+                    domain.fluid.msh, PETSc.ScalarType((0, 0, params.fluid.g))
+                )
+            self.beta_c = dolfinx.fem.Constant(
+                domain.fluid.msh, PETSc.ScalarType(params.fluid.beta)
+            )  # [1/K] thermal expansion coefficient
+            self.alpha_c = dolfinx.fem.Constant(
+                domain.fluid.msh, PETSc.ScalarType(params.fluid.alpha)
+            )  #  thermal diffusivity
 
             # Compute approximate Peclet number to assess if SUPG stabilization is needed
-            self.Pe_approx = params.fluid.u_ref * params.domain.l_char / (2.0 * params.fluid.alpha)
-            
+            self.Pe_approx = (
+                params.fluid.u_ref * params.domain.l_char / (2.0 * params.fluid.alpha)
+            )
+
             if self.Pe_approx > 1.0:
                 self.stabilizing = True
                 if self.rank == 0:
-                    print('Pe > 1, so SUPG stabilization applied')
+                    print("Pe > 1, so SUPG stabilization applied")
             else:
                 self.stabilizing = False
 
             if self.rank == 0:
                 if params.general.debug_flag == True:
-                    print('l_char = {:.2E}'.format(params.domain.l_char))
-                    print('alpha = {:.2E}'.format(params.fluid.alpha))
+                    print("l_char = {:.2E}".format(params.domain.l_char))
+                    print("alpha = {:.2E}".format(params.fluid.alpha))
 
-                print('Pe approx = {:.2E}'.format(self.Pe_approx))
+                print("Pe approx = {:.2E}".format(self.Pe_approx))
 
         # Define trial and test functions for velocity
         self.u = ufl.TrialFunction(self.V)
@@ -204,7 +214,7 @@ class Flow:
             self.s = ufl.TestFunction(self.S)
             self.theta_k = dolfinx.fem.Function(self.S, name="temperature ")
             self.theta_k1 = dolfinx.fem.Function(self.S)
-            self.theta_r = dolfinx.fem.Function(self.S) # reference temperature
+            self.theta_r = dolfinx.fem.Function(self.S)  # reference temperature
 
         self.mesh_vel = dolfinx.fem.Function(self.V, name="mesh_displacement")
         self.mesh_vel_old = dolfinx.fem.Function(self.V)
@@ -243,7 +253,7 @@ class Flow:
             self.theta_r.x.array[:] = PETSc.ScalarType(params.fluid.T_ambient)
 
         if params.general.debug_flag == True:
-            dolfinx.fem.petsc.set_bc(self.theta_k.vector,self.bcT)
+            dolfinx.fem.petsc.set_bc(self.theta_k.vector, self.bcT)
 
         # Define expressions used in variational forms
         # Crank-Nicolson velocity
@@ -346,7 +356,11 @@ class Flow:
             - (1.0 / self.rho_c) * ufl.inner(self.dpdx, self.v) * ufl.dx
         )
         if thermal_analysis == True:
-            self.F1 -= self.beta_c * ufl.inner((self.theta_k1-self.theta_r) * self.g, self.v) * ufl.dx # buoyancy term
+            self.F1 -= (
+                self.beta_c
+                * ufl.inner((self.theta_k1 - self.theta_r) * self.g, self.v)
+                * ufl.dx
+            )  # buoyancy term
 
         self.a1 = dolfinx.fem.form(ufl.lhs(self.F1))
         self.L1 = dolfinx.fem.form(ufl.rhs(self.F1))
@@ -370,25 +384,34 @@ class Flow:
         )
         if self.stabilizing == True:
             # Residual: the "strong" form of the governing equation
-            self.r = (1.0 / self.dt_c)*(self.theta - self.theta_k1) + ufl.dot(self.u_k, ufl.nabla_grad(self.theta)) - self.alpha_c*ufl.div(ufl.grad(self.theta))
+            self.r = (
+                (1.0 / self.dt_c) * (self.theta - self.theta_k1)
+                + ufl.dot(self.u_k, ufl.nabla_grad(self.theta))
+                - self.alpha_c * ufl.div(ufl.grad(self.theta))
+            )
 
         # Define variational problem for step 4: temperature
         self.F4 = (
-            (1.0 / self.dt_c) * ufl.inner(self.theta - self.theta_k1, self.s) * ufl.dx # theta = unknown, T_n = temp from previous timestep
-            + self.alpha_c * ufl.inner(ufl.nabla_grad(self.theta), ufl.nabla_grad(self.s)) * ufl.dx
-            + ufl.inner(ufl.dot(self.u_k, ufl.nabla_grad(self.theta)), self.s) * ufl.dx # todo: subtract mesh vel from this and from residual
+            (1.0 / self.dt_c)
+            * ufl.inner(self.theta - self.theta_k1, self.s)
+            * ufl.dx  # theta = unknown, T_n = temp from previous timestep
+            + self.alpha_c
+            * ufl.inner(ufl.nabla_grad(self.theta), ufl.nabla_grad(self.s))
+            * ufl.dx
+            + ufl.inner(ufl.dot(self.u_k, ufl.nabla_grad(self.theta)), self.s)
+            * ufl.dx  # todo: subtract mesh vel from this and from residual
         )
-        
+
         if self.stabilizing == True:
             # Donea and Huerta 2003 (Eq 2.64)
             h = ufl.CellDiameter(domain.fluid.msh)
-            u_mag = ufl.sqrt(ufl.dot(self.u_k, self.u_k)) # magnitude of vector
-            Pe = u_mag*h/(2.0*self.alpha_c) # Peclet number
-            tau = (h/(2.0*u_mag))*(1.0 + 1.0/Pe)**(-1)
+            u_mag = ufl.sqrt(ufl.dot(self.u_k, self.u_k))  # magnitude of vector
+            Pe = u_mag * h / (2.0 * self.alpha_c)  # Peclet number
+            tau = (h / (2.0 * u_mag)) * (1.0 + 1.0 / Pe) ** (-1)
             stab = tau * ufl.dot(self.u_k, ufl.grad(self.s)) * self.r * ufl.dx
 
             self.F4 += stab
-        
+
         self.a4 = dolfinx.fem.form(ufl.lhs(self.F4))
         self.L4 = dolfinx.fem.form(ufl.rhs(self.F4))
 
@@ -428,7 +451,9 @@ class Flow:
         outlet_cells = dolfinx.mesh.locate_entities(
             domain.fluid.msh, self.ndim, lambda x: x[0] > params.domain.x_max - 1
         )
-        self.flux_plane = dolfinx.fem.Function(self.V) # marker function that masks the u component velocity at the outlet
+        self.flux_plane = dolfinx.fem.Function(
+            self.V
+        )  # marker function that masks the u component velocity at the outlet
         if self.ndim == 2:
             self.flux_plane.interpolate(
                 lambda x: (np.ones(x.shape[1]), np.zeros(x.shape[1])),
@@ -436,7 +461,11 @@ class Flow:
             )
         elif self.ndim == 3:
             self.flux_plane.interpolate(
-                lambda x: (np.ones(x.shape[1]), np.zeros(x.shape[1]), np.zeros(x.shape[1])),
+                lambda x: (
+                    np.ones(x.shape[1]),
+                    np.zeros(x.shape[1]),
+                    np.zeros(x.shape[1]),
+                ),
                 outlet_cells,
             )
 
@@ -660,7 +689,7 @@ class Flow:
 
         if ramp_window > 0.0 and current_time <= ramp_window:
             self.inflow_velocity.current_time = current_time
-            
+
             if self.upper_cells is not None:
                 self.inflow_profile.interpolate(self.inflow_velocity, self.upper_cells)
             else:
@@ -829,7 +858,7 @@ class Flow:
         Args:
             params (:obj:`pvade.Parameters.SimParams`): A SimParams object
         """
-                # Step 0: Re-assemble A1 since using an implicit convective term
+        # Step 0: Re-assemble A1 since using an implicit convective term
         self.A4.zeroEntries()
         self.A4 = dolfinx.fem.petsc.assemble_matrix(self.A4, self.a4, bcs=self.bcT)
         self.A4.assemble()

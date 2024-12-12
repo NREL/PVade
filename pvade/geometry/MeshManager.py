@@ -143,7 +143,7 @@ class FSIDomain:
         # Only rank 0 builds the geometry and meshes the domain
         if self.rank == 0:
             if (
-                ( # should we add panels2d?
+                (  # should we add panels2d?
                     params.general.geometry_module == "panels3d"
                     or params.general.geometry_module == "heliostats3d"
                 )
@@ -183,7 +183,9 @@ class FSIDomain:
 
             self._generate_mesh()
 
-            self.ndim = self.geometry.ndim #gmsh_model.get_dimension() # ?? should this be domain.ndim?
+            self.ndim = (
+                self.geometry.ndim
+            )  # gmsh_model.get_dimension() # ?? should this be domain.ndim?
 
         # When finished, rank 0 needs to tell other ranks about how the domain_markers dictionary was created
         # and what values it holds. This is important now since the number of indices "idx" generated in the
@@ -193,8 +195,7 @@ class FSIDomain:
         self.domain_markers = self.comm.bcast(self.domain_markers, root=0)
         self.numpy_pt_total_array = self.comm.bcast(self.numpy_pt_total_array, root=0)
         self.ndim = self.comm.bcast(self.ndim, root=0)
-        
-        
+
         # All ranks receive their portion of the mesh from rank 0 (like an MPI scatter)
         self.msh, self.cell_tags, self.facet_tags = dolfinx.io.gmshio.model_to_mesh(
             self.geometry.gmsh_model,
@@ -205,8 +206,6 @@ class FSIDomain:
             ),
             gdim=self.ndim,
         )
-
-       
 
         self.msh.topology.create_connectivity(self.ndim, self.ndim - 1)
 
@@ -1247,10 +1246,10 @@ class FSIDomain:
         with self.fluid_mesh_displacement.vector.localForm() as vals_local:
             vals = vals_local.array
             vals = vals.reshape(-1, self.ndim)
-        
+
         # Move the mesh by those values: new = original + displacement
         # self.fluid.msh.geometry.x[:, :] = self.fluid.msh.initial_position[:, :] + vals[:, :]
-        self.fluid.msh.geometry.x[:, :self.ndim] += vals[:, :]
+        self.fluid.msh.geometry.x[:, : self.ndim] += vals[:, :]
 
         # # Obtain the vector of values for the mesh motion in a way that
         # # keeps the ghost values (needed for the mesh update)

@@ -50,7 +50,7 @@ def main(input_file=None):
 
     # if params.general.debug_flag == True:
     #     print('before Flow init')
-    
+
     flow = Flow(domain, fluid_analysis, thermal_analysis)
     structure = Structure(domain, structural_analysis, params)
 
@@ -155,7 +155,9 @@ def main(input_file=None):
 
                 local_def_max = np.amax(
                     np.sum(
-                        structure.elasticity.u.vector.array.reshape(-1, domain.ndim) ** 2, axis=1
+                        structure.elasticity.u.vector.array.reshape(-1, domain.ndim)
+                        ** 2,
+                        axis=1,
                     )
                 )
                 global_def_max_list = np.zeros(params.num_procs, dtype=np.float64)
