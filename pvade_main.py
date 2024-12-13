@@ -27,6 +27,7 @@ def main(input_file=None):
 
     fluid_analysis = params.general.fluid_analysis
     structural_analysis = params.general.structural_analysis
+    thermal_analysis = params.general.thermal_analysis
 
     # Initialize the domain and construct the initial mesh
     domain = FSIDomain(params)
@@ -47,11 +48,14 @@ def main(input_file=None):
     # domain.check_mesh_periodicity(params)
     # sys.exit()
 
-    flow = Flow(domain, fluid_analysis)
+    # if params.general.debug_flag == True:
+    #     print('before Flow init')
+
+    flow = Flow(domain, fluid_analysis, thermal_analysis)
     structure = Structure(domain, structural_analysis, params)
 
     if fluid_analysis == True:
-        flow = Flow(domain, fluid_analysis)
+        flow = Flow(domain, fluid_analysis, thermal_analysis)
         # # # Specify the boundary conditions
         flow.build_boundary_conditions(domain, params)
         # # # Build the fluid forms
@@ -131,6 +135,15 @@ def main(input_file=None):
 
                         print(f"| f_x (drag) = {fx:.4f}")
                         print(f"| f_y (lift) = {fy:.4f}")
+                    else:
+                        # still print info, but just for first row
+                        fx = flow.integrated_force_x[0]
+                        fy = flow.integrated_force_y[0]
+
+                        print(f"| f_x (drag) of 1st row = {fx:.4f}")
+                        print(f"| f_y (lift) of 1st row = {fy:.4f}")
+                    if thermal_analysis == True:
+                        print(f"| T = {flow.theta_max:.4f}")
 
                 dataIO.save_XDMF_files(flow, domain, current_time)
 
@@ -142,7 +155,9 @@ def main(input_file=None):
 
                 local_def_max = np.amax(
                     np.sum(
-                        structure.elasticity.u.vector.array.reshape(-1, 3) ** 2, axis=1
+                        structure.elasticity.u.vector.array.reshape(-1, domain.ndim)
+                        ** 2,
+                        axis=1,
                     )
                 )
                 global_def_max_list = np.zeros(params.num_procs, dtype=np.float64)
