@@ -150,10 +150,18 @@ class DomainCreation(TemplateDomainCreation):
                 0,
             )
 
-            self._add_to_domain_markers(f"left_{panel_id:.0f}",  [1 + 4*(panel_id+1) ], "facet")
-            self._add_to_domain_markers(f"bottom_{panel_id:.0f}", [2 + 4*(panel_id+1)], "facet")
-            self._add_to_domain_markers(f"right_{panel_id:.0f}", [3 + 4*(panel_id+1)], "facet")
-            self._add_to_domain_markers(f"top_{panel_id:.0f}",   [4 + 4*(panel_id+1)], "facet")
+            self._add_to_domain_markers(
+                f"left_{panel_id:.0f}", [1 + 4 * (panel_id + 1)], "facet"
+            )
+            self._add_to_domain_markers(
+                f"bottom_{panel_id:.0f}", [2 + 4 * (panel_id + 1)], "facet"
+            )
+            self._add_to_domain_markers(
+                f"right_{panel_id:.0f}", [3 + 4 * (panel_id + 1)], "facet"
+            )
+            self._add_to_domain_markers(
+                f"top_{panel_id:.0f}", [4 + 4 * (panel_id + 1)], "facet"
+            )
 
         # Remove each panel from the overall domain
         # self.gmsh_model.occ.cut([(2, domain)], [(2, panel_box)])
@@ -162,7 +170,9 @@ class DomainCreation(TemplateDomainCreation):
 
         self.gmsh_model.occ.synchronize()
         self.numpy_pt_total_array = []
-        self.numpy_pt_total_array = np.zeros((params.pv_array.stream_rows, 6)) + np.nan # np.zeros((1, 6)) + np.nan
+        self.numpy_pt_total_array = (
+            np.zeros((params.pv_array.stream_rows, 6)) + np.nan
+        )  # np.zeros((1, 6)) + np.nan
 
         # Surfaces are the entities with dimension equal to the mesh dimension -1
         surf_tag_list = self.gmsh_model.occ.getEntities(self.ndim - 1)
@@ -188,7 +198,7 @@ class DomainCreation(TemplateDomainCreation):
 
         # Tag objects as either structure or fluid
         vol_tag_list = self.gmsh_model.occ.getEntities(self.ndim)
-        print('vol_tag_list = ', vol_tag_list)
+        print("vol_tag_list = ", vol_tag_list)
         structure_vol_list = []
         fluid_vol_list = []
 
@@ -248,48 +258,54 @@ class DomainCreation(TemplateDomainCreation):
         # self._add_to_domain_markers("structure", structure_surf_list, "facet")
         # self._add_to_domain_markers("fluid", fluid_surf_list, "facet")
 
-
     def set_length_scales(self, params, domain_markers):
         """This function call defines the characteristic length for the mesh in locations of interst
         LcMin,LcMax,DistMin and DistMax are used to create a refined mesh in specific locations
         which results in a high fidelity mesh without using a uniform element size in the whole mesh.
         """
-       
+
         all_pts = self.gmsh_model.occ.getEntities(0)
-        #self.gmsh_model.mesh.setSize(all_pts, params.domain.l_char)
+        # self.gmsh_model.mesh.setSize(all_pts, params.domain.l_char)
 
         outflow = self.gmsh_model.mesh.field.add("Distance")
         self.gmsh_model.mesh.field.setNumbers(
             outflow, "FacesList", domain_markers["x_max"]["gmsh_tags"]
         )
-            
+
         outflow_thresh = self.gmsh_model.mesh.field.add("Threshold")
         self.gmsh_model.mesh.field.setNumber(outflow_thresh, "IField", outflow)
-        self.gmsh_model.mesh.field.setNumber(outflow_thresh, "LcMin", 2.0 * params.domain.l_char)
-        self.gmsh_model.mesh.field.setNumber(outflow_thresh, "LcMax", params.domain.l_char)
-        self.gmsh_model.mesh.field.setNumber(outflow_thresh, "DistMin", 10.)
-        self.gmsh_model.mesh.field.setNumber(outflow_thresh, "DistMax", 20.)
+        self.gmsh_model.mesh.field.setNumber(
+            outflow_thresh, "LcMin", 2.0 * params.domain.l_char
+        )
+        self.gmsh_model.mesh.field.setNumber(
+            outflow_thresh, "LcMax", params.domain.l_char
+        )
+        self.gmsh_model.mesh.field.setNumber(outflow_thresh, "DistMin", 10.0)
+        self.gmsh_model.mesh.field.setNumber(outflow_thresh, "DistMax", 20.0)
 
         near_panel_tags = []
 
         for key, val in domain_markers.items():
             if "bottom" in key or "top" in key or "left" in key or "right" in key:
                 near_panel_tags.append(val["gmsh_tags"][0])
-        
+
         near_panel = self.gmsh_model.mesh.field.add("Distance")
-        self.gmsh_model.mesh.field.setNumbers(
-            near_panel, "EdgesList", near_panel_tags
-        )
-            
+        self.gmsh_model.mesh.field.setNumbers(near_panel, "EdgesList", near_panel_tags)
+
         near_panel_thresh = self.gmsh_model.mesh.field.add("Threshold")
         self.gmsh_model.mesh.field.setNumber(near_panel_thresh, "IField", near_panel)
-        self.gmsh_model.mesh.field.setNumber(near_panel_thresh, "LcMin", params.domain.l_char)
-        self.gmsh_model.mesh.field.setNumber(near_panel_thresh, "LcMax", 25.0 * params.domain.l_char)
-        self.gmsh_model.mesh.field.setNumber(near_panel_thresh, "DistMin", 10.)
-        self.gmsh_model.mesh.field.setNumber(near_panel_thresh, "DistMax", 40.)
+        self.gmsh_model.mesh.field.setNumber(
+            near_panel_thresh, "LcMin", params.domain.l_char
+        )
+        self.gmsh_model.mesh.field.setNumber(
+            near_panel_thresh, "LcMax", 25.0 * params.domain.l_char
+        )
+        self.gmsh_model.mesh.field.setNumber(near_panel_thresh, "DistMin", 10.0)
+        self.gmsh_model.mesh.field.setNumber(near_panel_thresh, "DistMax", 40.0)
 
         minimum = self.gmsh_model.mesh.field.add("Min")
-        self.gmsh_model.mesh.field.setNumbers(minimum, "FieldsList", [near_panel_thresh, outflow_thresh])
+        self.gmsh_model.mesh.field.setNumbers(
+            minimum, "FieldsList", [near_panel_thresh, outflow_thresh]
+        )
 
         self.gmsh_model.mesh.field.setAsBackgroundMesh(near_panel_thresh)
-
