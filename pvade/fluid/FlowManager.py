@@ -164,7 +164,7 @@ class Flow:
                 self.g = dolfinx.fem.Constant(
                     domain.fluid.msh, PETSc.ScalarType((0, params.fluid.g))
                 )
-            elif self.ndim == 2:
+            elif self.ndim == 3:
                 self.g = dolfinx.fem.Constant(
                     domain.fluid.msh, PETSc.ScalarType((0, 0, params.fluid.g))
                 )
