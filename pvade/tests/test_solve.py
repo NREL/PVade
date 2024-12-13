@@ -38,8 +38,9 @@ def test_flow_3dpanels():
     print("struct shape = ", np.shape(domain.structure.msh.geometry.x))
 
     fluid_analysis = params.general.fluid_analysis
+    thermal_analysis = params.general.thermal_analysis
     # Initialize the function spaces for the flow
-    flow = Flow(domain, fluid_analysis)
+    flow = Flow(domain, fluid_analysis, thermal_analysis)
 
     # # # Specify the boundary conditions
     flow.build_boundary_conditions(domain, params)
