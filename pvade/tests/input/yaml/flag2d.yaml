@@ -2,8 +2,8 @@ general:
   geometry_module: flag2d
   output_dir: pvade/tests/output/flag2d
   mesh_only: false
-  structural_analysis: true
-  fluid_analysis: true
+  structural_analysis: False
+  fluid_analysis: True
   input_mesh_dir: pvade/tests/input/mesh/flag2d
 domain:
   x_min: 0.0
@@ -24,12 +24,10 @@ solver:
   solver1_ksp: gmres
   solver2_ksp: gmres
   solver3_ksp: gmres
-  solver4_ksp: gmres
   solver5_ksp: gmres
   solver1_pc: hypre
   solver2_pc: hypre
   solver3_pc: hypre
-  solver4_pc: lu
   solver5_pc: hypre
   save_text_interval: 0.02
   save_xdmf_interval: 0.02

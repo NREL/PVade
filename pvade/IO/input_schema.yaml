@@ -43,7 +43,7 @@ properties:
         type: "boolean"
         description: "If true, conduct a fluid analysis"
       thermal_analysis:
-        default: true
+        default: false
         type: "boolean"
         description: "If true, conduct a fluid analysis with buoyancy and a temperature analysis"
       debug_flag:

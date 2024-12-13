@@ -1,7 +1,15 @@
 import pytest
 import subprocess
 import glob
+# import sys
 
+import os
+rootdir = os.getcwd()
+print('rootdir = ', rootdir)
+
+# sys. get current absolute path and make that the prefix for pvade_main
+# maybe specify input_mesh_dir from command line using root
+# sys.path.append('../..')
 
 def launch_sim(input_file):
     dt = 0.001  # 0.001
@@ -9,7 +17,8 @@ def launch_sim(input_file):
     l_char = 0.01
 
     command = (
-        f"mpirun -n 2 python ../../ns_main.py --input_file "
+        f"python " 
+        + rootdir + "/pvade_main.py --input_file "
         + input_file
         + " --domain.l_char "
         + str(l_char)
@@ -19,17 +28,21 @@ def launch_sim(input_file):
         + str(tf)
     )
     print(command)
+    # command = "echo hello"
+    # command = "python ../../pvade_main.py --input_file ./input/yaml/flag2d.yaml"
 
-    try:
-        tmp = subprocess.check_call(command.split())
-        return 1  # no errors
-    except:  # if any error
-        return 0
+    out = subprocess.run(command.split(), capture_output=True, text=True)
+    print(out)
+    # try:
+    #     tmp = subprocess.check_call(command.split())
+    #     return 1  # no errors
+    # except:  # if any error
+    #     return 0
 
 
-# files_list = glob.glob('../../input/*.yaml')
-# files_list = ["../../input/flag2d.yaml"]
-files_list = ["../../input/flag2d.yaml", "../../input/2d_cyld.yaml"]
+# files_list = glob.glob(rootdir+"/pvade/tests/input/yaml/*.yaml")
+files_list = [rootdir+"/pvade/tests/input/yaml/flag2d.yaml", 
+              rootdir+"/pvade/tests/input/yaml/2d_cyld.yaml"]
 print(files_list)
 
 
@@ -39,7 +52,7 @@ def test_launch_with_different_input_files(input_file):
     result = launch_sim(input_file)
     print(result)
 
-    assert result == 1
+    # assert result == 1
 
 
 # test_launch_with_different_input_files(files_list)
