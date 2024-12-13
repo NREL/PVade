@@ -22,7 +22,7 @@ from pvade.fluid.boundary_conditions import (
 class Flow:
     """This class solves the CFD problem"""
 
-    def __init__(self, domain, fluid_analysis, thermal_analysis):
+    def __init__(self, domain, fluid_analysis, thermal_analysis=False):
         """Initialize the fluid solver
 
         This method initialize the Flow object, namely, it creates all the

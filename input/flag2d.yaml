@@ -2,7 +2,7 @@ general:
   geometry_module: flag2d
   output_dir: output/flag2d
   mesh_only: false
-  structural_analysis: False
+  structural_analysis: True
   fluid_analysis: True
 domain:
   x_min: 0.0

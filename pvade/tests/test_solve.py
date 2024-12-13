@@ -15,7 +15,10 @@ import cProfile
 import sys
 import tqdm.autonotebook
 
-input_path = "pvade/tests/input/yaml/"
+rootdir = os.getcwd()
+print('rootdir = ', rootdir)
+
+input_path = rootdir+"/pvade/tests/input/yaml/"
 
 solve_iter = 10
 
@@ -32,15 +35,15 @@ def test_flow_3dpanels():
 
     # Initialize the domain and construct the initial mesh
     domain = FSIDomain(params)
-    domain.read_mesh_files("pvade/tests/input/mesh/panels3d/", params)
+    domain.read_mesh_files(rootdir+"/pvade/tests/input/mesh/panels3d/", params)
 
     print("fluid shape = ", np.shape(domain.fluid.msh.geometry.x))
     print("struct shape = ", np.shape(domain.structure.msh.geometry.x))
 
     fluid_analysis = params.general.fluid_analysis
-    thermal_analysis = params.general.thermal_analysis
+    # thermal_analysis = params.general.thermal_analysis
     # Initialize the function spaces for the flow
-    flow = Flow(domain, fluid_analysis, thermal_analysis)
+    flow = Flow(domain, fluid_analysis) #, thermal_analysis)
 
     # # # Specify the boundary conditions
     flow.build_boundary_conditions(domain, params)
@@ -82,10 +85,12 @@ def test_fsi2():
 
     params, structure, flow = main(input_file=input_file)
 
-    pos_filename = os.path.join(params.general.output_dir_sol, "accel_pos.csv")
+    pos_filename = os.path.join(rootdir+"/"+params.general.output_dir_sol, "accel_pos.csv")
     lift_and_drag_filename = os.path.join(
-        params.general.output_dir_sol, "lift_and_drag.csv"
+        rootdir+"/"+params.general.output_dir_sol, "lift_and_drag.csv"
     )
+    print('pos_filename = ',pos_filename)
+    print('lift_and_drag_filename = ',lift_and_drag_filename)
 
     pos_data = np.genfromtxt(pos_filename, skip_header=1, delimiter=",")
     lift_and_drag_data = np.genfromtxt(
@@ -301,6 +306,8 @@ def test_fsi2():
             ],
         ]
     )
+
+    # print('pos_data = ', pos_data)
 
     assert np.allclose(pos_data, pos_data_truth)
     print(lift_and_drag_data)
