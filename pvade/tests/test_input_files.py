@@ -17,7 +17,7 @@ def launch_sim(input_file):
     l_char = 0.01
 
     command = (
-        f"python " 
+        f"mpirun -n 2 python " 
         + rootdir + "/pvade_main.py --input_file "
         + input_file
         + " --domain.l_char "
