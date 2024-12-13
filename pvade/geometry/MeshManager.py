@@ -643,7 +643,7 @@ class FSIDomain:
                 class FSISubDomain:
                     pass
 
-                if not hasattr(self, "ndim"):
+                if self.ndim is None:
                     self.ndim = submesh.topology.dim
                 else:
                     assert self.ndim == submesh.topology.dim
