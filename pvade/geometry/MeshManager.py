@@ -584,6 +584,14 @@ class FSIDomain:
                     params.general.output_dir_mesh, gmsh_mesh_name
                 )
                 gmsh.write(gmsh_mesh_filename)
+                # with dolfinx.io.XDMFFile(self.comm, gmsh_mesh_filename, "w") as xdmf:
+                #     sub_domain.msh.name = mesh_name
+                #     xdmf.write_mesh(sub_domain.msh)
+                #     xdmf.write_meshtags(sub_domain.cell_tags)
+                #     sub_domain.msh.topology.create_connectivity(
+                #         self.ndim - 1, self.ndim
+                #     )
+                #     xdmf.write_meshtags(sub_domain.facet_tags)
 
                 if self.rank == 0:
                     print(f"Finished writing {sub_domain_name} mesh.")

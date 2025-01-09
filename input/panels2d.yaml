@@ -3,13 +3,13 @@ general:
   output_dir: output/panels2d
   mesh_only: false
   structural_analysis: True
-  fluid_analysis: True
+  fluid_analysis: false
 domain:
   x_min: -10
   x_max: 50
   y_min: 0
   y_max: 20
-  l_char: 0.9
+  l_char: 0.09
 pv_array:
   stream_rows: 1
   elevation: 1.5
@@ -17,18 +17,18 @@ pv_array:
   panel_chord: 2.0
   panel_span: 7.0
   panel_thickness: 0.1
-  tracker_angle: 30. #30.0
+  tracker_angle: 0 # 30. #30.0
 solver:
-  dt: .001
-  t_final: 10.0
+  dt: .01
+  t_final: 2.0
   solver1_ksp: gmres
   solver2_ksp: cg
   solver3_ksp: cg
   solver1_pc: jacobi
   solver2_pc: jacobi
   solver3_pc: jacobi
-  save_text_interval: 0.001
-  save_xdmf_interval: 0.001
+  save_text_interval: 0.01
+  save_xdmf_interval: 0.01
 fluid:
   u_ref: 0.8
   nu: 0.001
@@ -37,15 +37,15 @@ fluid:
   bc_y_max: slip # slip noslip free
   bc_y_min: noslip # slip noslip free
 structure:
-    dt : .001 # 0.002
+    dt : .01 # 0.002
     # rho : 10000.0
     # rho : 10000.0 # 10000.0
     poissons_ratio: 0.3
     elasticity_modulus: 1.0e+05
     body_force_x: 0
-    body_force_y: -1
+    body_force_y: -10
     body_force_z: 0 #100
-    bc_list: ["top"]
+    bc_list: ["left",'right']
     motor_connection: False
     tube_connection: False
     beta_relaxation: 0.005

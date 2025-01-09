@@ -167,8 +167,9 @@ class Elasticity:
         # self.bcu, self.inflow_profile = build_velocity_boundary_conditions(
         #     domain, params, self.V
         # )
-
+        self.bc = []
         self.bc = build_structure_boundary_conditions(domain, params, self.V)
+        print(self.bc)
 
     def update_a(self, u, u_old, v_old, a_old, dt, beta, ufl=True):
         # Update formula for acceleration

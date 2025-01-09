@@ -75,9 +75,10 @@ class Flow:
             num_cells = domain.fluid.msh.topology.index_map(self.ndim).size_local
             h = dolfinx.cpp.mesh.h(domain.fluid.msh, self.ndim, range(num_cells))
 
-            # This value of hmin is local to the mesh portion owned by the process
+            
             hmin_local = np.amin(h)
 
+            print(hmin_local)
             # collect the minimum hmin from all processes
             self.hmin = np.zeros(1)
             self.comm.Allreduce(hmin_local, self.hmin, op=MPI.MIN)

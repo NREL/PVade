@@ -5,7 +5,7 @@ general:
   mesh_only: False
   # input_mesh_dir: output/panels3d/mesh
   structural_analysis: True
-  fluid_analysis: False
+  fluid_analysis: True
 domain:
   x_min: -20
   x_max: 100
@@ -15,15 +15,15 @@ domain:
   z_max: 20
   l_char: 4
 pv_array:
-  stream_rows: 1
+  stream_rows: 2
   elevation: 1.5
   stream_spacing: 7.0
   panel_chord: 2.0
   panel_span: 7.0
   panel_thickness: 0.1
-  tracker_angle: 0
+  tracker_angle: -30
   span_spacing: 12.0
-  span_rows: 1
+  span_rows: 3
   span_fixation_pts: 3.5
 solver:
   dt: .1 #0.0025
@@ -47,13 +47,13 @@ fluid:
   bc_y_min: slip # slip noslip free
   bc_z_max: slip # slip noslip free
   bc_z_min: noslip # slip noslip free
-  wind_direction: 250 # slip noslip free
+  wind_direction: 270 # slip noslip free
 structure:
   dt : 0.1
   elasticity_modulus: 1.0e+05
   poissons_ratio: 0.3
   body_force_x: 0
   body_force_y: 0
-  body_force_z: -1 #100
-  bc_list: [left ]
+  body_force_z: -100 #100
+  bc_list: [left,right]
   tube_connection: False

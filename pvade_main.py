@@ -51,7 +51,7 @@ def main(input_file=None):
     structure = Structure(domain, structural_analysis, params)
 
     if fluid_analysis == True:
-        flow = Flow(domain, fluid_analysis)
+        # flow = Flow(domain, fluid_analysis)
         # # # Specify the boundary conditions
         flow.build_boundary_conditions(domain, params)
         # # # Build the fluid forms
@@ -96,7 +96,7 @@ def main(input_file=None):
                     - structure.elasticity.stress_old.x.array
                 )
 
-            structure.solve(params, dataIO)
+            structure.solve(params, dataIO,domain)
 
             # if fluid_analysis == True:
             #     dataIO.fluid_struct(domain, flow, elasticity, params)
