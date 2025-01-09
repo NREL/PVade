@@ -147,13 +147,13 @@ class DomainCreation(TemplateDomainCreation):
 
             top_coord = (
                 params.domain.y_min
-                + params.pv_array.elevation
+                + (params.pv_array.elevation-params.domain.y_min)
                 + params.pv_array.panel_thickness / 2
             )
             print("top", top_coord)
             bottom_coord = (
                 params.domain.y_min
-                + params.pv_array.elevation
+                + (params.pv_array.elevation -params.domain.y_min)
                 - params.pv_array.panel_thickness / 2
             )
             print("bottom", bottom_coord)
