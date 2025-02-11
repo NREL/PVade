@@ -1,15 +1,18 @@
 import pytest
 import subprocess
 import glob
+
 # import sys
 
 import os
+
 rootdir = os.getcwd()
-print('rootdir = ', rootdir)
+print("rootdir = ", rootdir)
 
 # sys. get current absolute path and make that the prefix for pvade_main
 # maybe specify input_mesh_dir from command line using root
 # sys.path.append('../..')
+
 
 def launch_sim(input_file):
     dt = 0.001  # 0.001
@@ -17,8 +20,9 @@ def launch_sim(input_file):
     l_char = 0.01
 
     command = (
-        f"mpirun -n 2 python " 
-        + rootdir + "/pvade_main.py --input_file "
+        f"mpirun -n 2 python "
+        + rootdir
+        + "/pvade_main.py --input_file "
         + input_file
         + " --domain.l_char "
         + str(l_char)
@@ -41,8 +45,10 @@ def launch_sim(input_file):
 
 
 # files_list = glob.glob(rootdir+"/pvade/tests/input/yaml/*.yaml")
-files_list = [rootdir+"/pvade/tests/input/yaml/flag2d.yaml", 
-              rootdir+"/pvade/tests/input/yaml/2d_cyld.yaml"]
+files_list = [
+    rootdir + "/pvade/tests/input/yaml/flag2d.yaml",
+    rootdir + "/pvade/tests/input/yaml/2d_cyld.yaml",
+]
 print(files_list)
 
 
