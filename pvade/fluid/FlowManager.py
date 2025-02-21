@@ -127,7 +127,7 @@ class Flow:
         # if self.rank == 0 and params.general.debug_flag == True:
         #     print('applied pressure boundary conditions') # does pass here
 
-        if params.general.thermal_analysis == True:
+        if self.thermal_analysis == True:
             self.bcT = build_temperature_boundary_conditions(domain, params, self.S)
 
         # if self.rank == 0 and params.general.debug_flag == True:
