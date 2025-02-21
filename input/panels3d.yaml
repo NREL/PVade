@@ -5,7 +5,7 @@ general:
   mesh_only: False
   # input_mesh_dir: output/panels3d/mesh
   structural_analysis: True
-  fluid_analysis: False
+  fluid_analysis: True
 domain:
   x_min: -20
   x_max: 100
