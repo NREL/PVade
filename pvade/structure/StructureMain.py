@@ -22,7 +22,7 @@ from contextlib import ExitStack
 class Structure:
     """This class solves the CFD problem"""
 
-    def __init__(self, domain, structural_analysis, params):
+    def __init__(self, domain, params):
         """Initialize the fluid solver
 
         This method initialize the Flow object, namely, it creates all the
@@ -35,7 +35,7 @@ class Structure:
             domain (:obj:`pvade.geometry.MeshManager.Domain`): A Domain object
 
         """
-        self.structural_analysis = structural_analysis
+        self.structural_analysis = params.general.structural_analysis
         self.name = "structure"
 
         # Store the comm and mpi info for convenience
@@ -59,7 +59,7 @@ class Structure:
         #     raise ValueError(f"Could not import {domain_creation_module}")
 
         # init physics
-        self.elasticity = Elasticity(domain, structural_analysis, params)
+        self.elasticity = Elasticity(domain, self.structural_analysis, params)
 
         # P1 = ufl.VectorElement("Lagrange", domain.structure.msh.ufl_cell(), 2)
         # self.V = dolfinx.fem.FunctionSpace(domain.structure.msh, P1)

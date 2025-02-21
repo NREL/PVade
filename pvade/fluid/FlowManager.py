@@ -22,7 +22,7 @@ from pvade.fluid.boundary_conditions import (
 class Flow:
     """This class solves the CFD problem"""
 
-    def __init__(self, domain, fluid_analysis, thermal_analysis=False):
+    def __init__(self, domain, params):
         """Initialize the fluid solver
 
         This method initialize the Flow object, namely, it creates all the
@@ -35,13 +35,13 @@ class Flow:
             domain (:obj:`pvade.geometry.MeshManager.Domain`): A Domain object
 
         """
-        self.fluid_analysis = fluid_analysis
-        self.thermal_analysis = thermal_analysis
+
+        self.fluid_analysis = params.general.fluid_analysis
+        self.thermal_analysis = params.general.thermal_analysis
+
         self.name = "fluid"
 
-        if fluid_analysis == False:
-            pass
-        else:
+        if self.fluid_analysis:
             # Store the comm and mpi info for convenience
             self.comm = domain.comm
             self.rank = domain.rank
@@ -62,7 +62,7 @@ class Flow:
                 domain.fluid_undeformed.msh, P3
             )
 
-            if thermal_analysis:
+            if self.thermal_analysis:
                 # Temperature (Scalar)
                 self.S = dolfinx.fem.FunctionSpace(domain.fluid.msh, P1)
 
@@ -149,7 +149,6 @@ class Flow:
             params (:obj:`pvade.Parameters.SimParams`): A SimParams object
 
         """
-        thermal_analysis = self.thermal_analysis
 
         # Define fluid properties
         if self.ndim == 2:
@@ -159,7 +158,7 @@ class Flow:
         self.dt_c = dolfinx.fem.Constant(domain.fluid.msh, (params.solver.dt))
         self.rho_c = dolfinx.fem.Constant(domain.fluid.msh, (params.fluid.rho))
         nu = dolfinx.fem.Constant(domain.fluid.msh, (params.fluid.nu))
-        if thermal_analysis:
+        if self.thermal_analysis:
             if self.ndim == 2:
                 self.g = dolfinx.fem.Constant(
                     domain.fluid.msh, PETSc.ScalarType((0, params.fluid.g))
@@ -207,7 +206,7 @@ class Flow:
         self.u_k1 = dolfinx.fem.Function(self.V)
         self.u_k2 = dolfinx.fem.Function(self.V)
 
-        if thermal_analysis:
+        if self.thermal_analysis:
             # print('ndim = ',self.ndim)
             # Define trial and test functions for temperature
             self.theta = ufl.TrialFunction(self.S)
@@ -246,7 +245,7 @@ class Flow:
 
             # assert all(flags), "initialiazation not done correctly"
 
-        if thermal_analysis:
+        if self.thermal_analysis:
             # initialize air temperature everywhere to be the ambient temperature
             self.theta_k1.x.array[:] = PETSc.ScalarType(params.fluid.T_ambient)
             self.theta_k.x.array[:] = PETSc.ScalarType(params.fluid.T_ambient)
@@ -355,7 +354,7 @@ class Flow:
             + (1.0 / self.rho_c) * ufl.inner(ufl.grad(self.p_k1), self.v) * ufl.dx
             - (1.0 / self.rho_c) * ufl.inner(self.dpdx, self.v) * ufl.dx
         )
-        if thermal_analysis:
+        if self.thermal_analysis:
             self.F1 -= (
                 self.beta_c
                 * ufl.inner((self.theta_k1 - self.theta_r) * self.g, self.v)
@@ -382,7 +381,7 @@ class Flow:
             * ufl.dot(ufl.nabla_grad(self.p_k - self.p_k1), self.v)
             * ufl.dx
         )
-        if thermal_analysis:
+        if self.thermal_analysis:
             if self.stabilizing:
                 # Residual: the "strong" form of the governing equation
                 self.r = (
@@ -742,7 +741,7 @@ class Flow:
         self.u_k2.x.array[:] = self.u_k1.x.array
         self.u_k1.x.array[:] = self.u_k.x.array
         self.p_k1.x.array[:] = self.p_k.x.array
-        if params.general.thermal_analysis:
+        if self.thermal_analysis:
             self.theta_k1.x.array[:] = self.theta_k.x.array
         self.mesh_vel_old.x.array[:] = self.mesh_vel.x.array
 
