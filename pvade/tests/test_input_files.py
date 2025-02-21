@@ -14,18 +14,17 @@ print("rootdir = ", rootdir)
 # sys.path.append('../..')
 
 
-def launch_sim(input_file):
+def launch_sim(test_file):
     dt = 0.001  # 0.001
     tf = dt * 10  # ten timesteps
-    l_char = 0.01
 
     command = (
         f"mpirun -n 2 python "
         + rootdir
         + "/pvade_main.py --input_file "
-        + input_file
+        + test_file["path_to_file"]
         + " --domain.l_char "
-        + str(l_char)
+        + str(test_file["l_char"])
         + " --solver.dt "
         + str(dt)
         + " --solver.t_final "
@@ -44,18 +43,27 @@ def launch_sim(input_file):
     #     return 0
 
 
-# files_list = glob.glob(rootdir+"/pvade/tests/input/yaml/*.yaml")
-files_list = [
-    rootdir + "/pvade/tests/input/yaml/flag2d.yaml",
-    rootdir + "/pvade/tests/input/yaml/2d_cyld.yaml",
-]
-print(files_list)
+list_of_test_files = []
+
+list_of_test_files.append(
+    {
+        "path_to_file": rootdir + "/pvade/tests/input/yaml/sim_params.yaml",
+        "l_char": 20.0,
+    }
+)
+
+list_of_test_files.append(
+    {
+        "path_to_file": os.path.join(rootdir, "/pvade/tests/input/yaml/flag2d.yaml"),
+        "l_char": 0.01,
+    }
+)
 
 
-@pytest.mark.parametrize("input_file", files_list)
-def test_launch_with_different_input_files(input_file):
-    print("input_file = ", input_file)
-    result = launch_sim(input_file)
+@pytest.mark.parametrize("test_file", list_of_test_files)
+def test_launch_with_different_input_files(test_file):
+    print("test_file = ", test_file)
+    result = launch_sim(test_file)
     print(result)
 
     # assert result == 1
