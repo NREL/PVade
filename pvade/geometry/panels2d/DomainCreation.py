@@ -125,7 +125,7 @@ class DomainCreation(TemplateDomainCreation):
 
         panel_tag_list = []
         panel_ct = 0
-
+        prev_surf_tag = []
         for panel_id in range(params.pv_array.stream_rows):
             panel_box = self.gmsh_model.occ.addRectangle(
                 -0.5 * params.pv_array.panel_chord,
@@ -137,11 +137,6 @@ class DomainCreation(TemplateDomainCreation):
             panel_tag = (self.ndim, panel_box)
             panel_tag_list.append(panel_tag)
 
-            # Rotate the panel currently centered at (0, 0, 0)
-            self.gmsh_model.occ.rotate(
-                [(2, panel_box)], 0, 0, 0, 0, 0, 1, tracker_angle_rad
-            )
-
             # Translate the panel [panel_loc, 0, elev]
             self.gmsh_model.occ.translate(
                 [(2, panel_box)],
@@ -150,17 +145,70 @@ class DomainCreation(TemplateDomainCreation):
                 0,
             )
 
-            self._add_to_domain_markers(
-                f"left_{panel_id:.0f}", [1 + 4 * (panel_id + 1)], "facet"
+            top_coord = (
+                params.domain.y_min
+                + (params.pv_array.elevation - params.domain.y_min)
+                + params.pv_array.panel_thickness / 2
             )
-            self._add_to_domain_markers(
-                f"bottom_{panel_id:.0f}", [2 + 4 * (panel_id + 1)], "facet"
+            print("top", top_coord)
+            bottom_coord = (
+                params.domain.y_min
+                + (params.pv_array.elevation - params.domain.y_min)
+                - params.pv_array.panel_thickness / 2
             )
-            self._add_to_domain_markers(
-                f"right_{panel_id:.0f}", [3 + 4 * (panel_id + 1)], "facet"
+            print("bottom", bottom_coord)
+            left_coord = -params.pv_array.panel_chord / 2 + panel_id * (
+                params.pv_array.stream_spacing
             )
-            self._add_to_domain_markers(
-                f"top_{panel_id:.0f}", [4 + 4 * (panel_id + 1)], "facet"
+            print("left", left_coord)
+            right_coord = +params.pv_array.panel_chord / 2 + panel_id * (
+                params.pv_array.stream_spacing
+            )
+            print("right", right_coord)
+
+            surf_tag_list_total = self.gmsh_model.occ.getEntities(self.ndim - 1)
+
+            surf_tag_list = [
+                vector for vector in surf_tag_list_total if vector not in prev_surf_tag
+            ]
+
+            prev_surf_tag = surf_tag_list_total
+            for surf_tag in surf_tag_list:
+                surf_id = surf_tag[1]
+                com = self.gmsh_model.occ.getCenterOfMass(self.ndim - 1, surf_id)
+                # print(com)
+                # sturctures tagging
+                if np.isclose(com[1], bottom_coord):
+                    self._add_to_domain_markers(
+                        f"bottom_{panel_id:.0f}", [surf_id], "facet"
+                    )
+                    print("bottom found")
+                    # self._add_to_domain_markers("x_min", [surf_id], "facet")
+
+                elif np.allclose(com[1], top_coord):
+                    self._add_to_domain_markers(
+                        f"top_{panel_id:.0f}", [surf_id], "facet"
+                    )
+                    print("top found")
+                    # self._add_to_domain_markers("x_max", [surf_id], "facet")
+
+                elif np.allclose(com[0], left_coord):
+                    self._add_to_domain_markers(
+                        f"left_{panel_id:.0f}", [surf_id], "facet"
+                    )
+                    print("left found")
+                    # self._add_to_domain_markers("y_min", [surf_id], "facet")
+
+                elif np.allclose(com[0], right_coord):
+                    self._add_to_domain_markers(
+                        f"right_{panel_id:.0f}", [surf_id], "facet"
+                    )
+                    print("right found")
+                    # self._add_to_domain_markers("y_max", [surf_id], "facet")
+
+            # Rotate the panel currently centered at (0, 0, 0)
+            self.gmsh_model.occ.rotate(
+                [(2, panel_box)], 0, 0, 0, 0, 0, 1, tracker_angle_rad
             )
 
         # Remove each panel from the overall domain

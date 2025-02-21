@@ -25,7 +25,10 @@ class DomainCreation(TemplateDomainCreation):
         # x_min, x_max, y_min, y_max, z_min, z_max panel surfaces and domain walls
 
         if not hasattr(self, "domain_markers"):
+            # If this is the first call to _add_to_domain_markers
+            # initialize the dictionary before things can be added to it
             self.domain_markers = {}
+
             # Must start indexing at 1, if starting at 0, things marked "0"
             # are indistinguishable from things which receive no marking (and have default value of 0)
             self.domain_markers["_current_idx"] = 1
@@ -33,14 +36,28 @@ class DomainCreation(TemplateDomainCreation):
         assert isinstance(gmsh_tags, list)
         assert entity_type in ["cell", "facet"]
 
-        marker_dict = {
-            "idx": self.domain_markers["_current_idx"],
-            "gmsh_tags": gmsh_tags,
-            "entity": entity_type,
-        }
+        if marker_name in self.domain_markers:
+            # There is already an entry associated with marker_name,
+            # so append new gmsh_tags to the existing entry.
+            # Ensure that the existing marker_name entry has the same
+            # entity_type as what is carried in this new addition
+            assert self.domain_markers[marker_name]["entity"] == entity_type
 
-        self.domain_markers[marker_name] = marker_dict
-        self.domain_markers["_current_idx"] += 1
+            # Note that since gmsh_tags is a list, both the new and
+            # prexisting, this is a concatenation operation
+            self.domain_markers[marker_name]["gmsh_tags"] += gmsh_tags
+
+        else:
+            # This is the first entry of name marker_name
+            # create a dictionary for this entry and store it
+            marker_dict = {
+                "idx": self.domain_markers["_current_idx"],
+                "gmsh_tags": gmsh_tags,
+                "entity": entity_type,
+            }
+
+            self.domain_markers[marker_name] = marker_dict
+            self.domain_markers["_current_idx"] += 1
 
     def build_FSI(self, params):
         """This function creates the computational domain for a 3d simulation involving N panels.
@@ -137,8 +154,11 @@ class DomainCreation(TemplateDomainCreation):
         panel_tag_list = []
         panel_ct = 0
 
-        for k, yy in enumerate(y_centers):
-            for j, xx in enumerate(x_centers):
+        prev_surf_tag = []
+
+        for panel_id_y, yy in enumerate(y_centers):
+            for panel_id_x, xx in enumerate(x_centers):
+
                 # Create an 0-tracking-degree panel centered at (x, y, z) = (0, 0, 0)
                 panel_id = self.gmsh_model.occ.addBox(
                     -half_chord,
@@ -236,24 +256,113 @@ class DomainCreation(TemplateDomainCreation):
                 # self._add_to_domain_markers(f"z_min_{panel_ct:.0f}", panel_surfs[4:-1], "facet")
                 # self._add_to_domain_markers(f"z_max_{panel_ct:.0f}", [panel_surfs[-1]], "facet")
 
-                self._add_to_domain_markers(
-                    f"front_{panel_ct:.0f}", [panel_surfs[0]], "facet"
+                # Translate the panel by (x_center, y_center, elev)
+                self.gmsh_model.occ.translate(
+                    [panel_tag],
+                    xx,
+                    yy,
+                    params.pv_array.elevation,
                 )
-                self._add_to_domain_markers(
-                    f"back_{panel_ct:.0f}", [panel_surfs[1]], "facet"
+
+                top_coord = (
+                    params.domain.z_min
+                    + (params.pv_array.elevation - params.domain.z_min)
+                    + params.pv_array.panel_thickness / 2
                 )
-                self._add_to_domain_markers(
-                    f"left_{panel_ct:.0f}", [panel_surfs[2]], "facet"
+                print("top", top_coord)
+                bottom_coord = (
+                    params.domain.z_min
+                    + (params.pv_array.elevation - params.domain.z_min)
+                    - params.pv_array.panel_thickness / 2
                 )
-                self._add_to_domain_markers(
-                    f"right_{panel_ct:.0f}", [panel_surfs[3]], "facet"
+                print("bottom", bottom_coord)
+                left_coord = -params.pv_array.panel_chord / 2 + panel_id_x * (
+                    params.pv_array.stream_spacing
                 )
-                self._add_to_domain_markers(
-                    f"bottom_{panel_ct:.0f}", panel_surfs[4:-1], "facet"
+                print("left", left_coord)
+                right_coord = +params.pv_array.panel_chord / 2 + panel_id_x * (
+                    params.pv_array.stream_spacing
                 )
-                self._add_to_domain_markers(
-                    f"top_{panel_ct:.0f}", [panel_surfs[-1]], "facet"
-                )
+                print("right", right_coord)
+
+                front_coord = -params.pv_array.panel_span / 2 + yy
+                print("front", front_coord)
+                back_coord = +params.pv_array.panel_span / 2 + yy
+                print("back", back_coord)
+
+                surf_tag_list_total = self.gmsh_model.occ.getEntities(self.ndim - 1)
+
+                surf_tag_list = [
+                    vector
+                    for vector in surf_tag_list_total
+                    if vector not in prev_surf_tag
+                ]
+
+                prev_surf_tag = surf_tag_list_total
+                for surf_tag in surf_tag_list:
+                    surf_id = surf_tag[1]
+                    com = self.gmsh_model.occ.getCenterOfMass(self.ndim - 1, surf_id)
+                    print(com)
+                    # sturctures tagging
+                    if np.isclose(com[2], bottom_coord):
+                        self._add_to_domain_markers(
+                            f"bottom_{panel_ct:.0f}", [surf_id], "facet"
+                        )
+                        print("bottom found")
+                        # self._add_to_domain_markers("x_min", [surf_id], "facet")
+
+                    elif np.allclose(com[2], top_coord):
+                        self._add_to_domain_markers(
+                            f"top_{panel_ct:.0f}", [surf_id], "facet"
+                        )
+                        print("top found")
+                        # self._add_to_domain_markers("x_max", [surf_id], "facet")
+
+                    elif np.allclose(com[0], left_coord):
+                        self._add_to_domain_markers(
+                            f"left_{panel_ct:.0f}", [surf_id], "facet"
+                        )
+                        print("left found")
+                        # self._add_to_domain_markers("y_min", [surf_id], "facet")
+
+                    elif np.allclose(com[0], right_coord):
+                        self._add_to_domain_markers(
+                            f"right_{panel_ct:.0f}", [surf_id], "facet"
+                        )
+                        print("right found")
+
+                    elif np.allclose(com[1], front_coord):
+                        self._add_to_domain_markers(
+                            f"front_{panel_ct:.0f}", [surf_id], "facet"
+                        )
+                        print("front found")
+                        # self._add_to_domain_markers("y_min", [surf_id], "facet")
+
+                    elif np.allclose(com[1], back_coord):
+                        self._add_to_domain_markers(
+                            f"back_{panel_ct:.0f}", [surf_id], "facet"
+                        )
+                        print("back found")
+                        # self._add_to_domain_markers("y_max", [surf_id], "facet")
+
+                # self._add_to_domain_markers(
+                #     f"front_{panel_ct:.0f}", [panel_surfs[0]], "facet"
+                # )
+                # self._add_to_domain_markers(
+                #     f"back_{panel_ct:.0f}", [panel_surfs[1]], "facet"
+                # )
+                # self._add_to_domain_markers(
+                #     f"left_{panel_ct:.0f}", [panel_surfs[2]], "facet"
+                # )
+                # self._add_to_domain_markers(
+                #     f"right_{panel_ct:.0f}", [panel_surfs[3]], "facet"
+                # )
+                # self._add_to_domain_markers(
+                #     f"bottom_{panel_ct:.0f}", panel_surfs[4:-1], "facet"
+                # )
+                # self._add_to_domain_markers(
+                #     f"top_{panel_ct:.0f}", [panel_surfs[-1]], "facet"
+                # )
 
                 # self._add_to_domain_markers(f"right_{panel_ct:.0f}", [panel_surfs[1]], "facet")#correct
                 # self._add_to_domain_markers(f"left_{panel_ct:.0f}", [panel_surfs[2]], "facet") # should be left
@@ -282,14 +391,6 @@ class DomainCreation(TemplateDomainCreation):
                 #     numpy_pt_array = np.array(numpy_pt_list)
                 # else:
                 #     numpy_pt_array = np.vcat(numpy_pt_array, np.array(numpy_pt_list))
-
-                # Translate the panel by (x_center, y_center, elev)
-                self.gmsh_model.occ.translate(
-                    [panel_tag],
-                    xx,
-                    yy,
-                    params.pv_array.elevation,
-                )
 
                 numpy_pt_panel_array[:, 0] += xx
                 numpy_pt_panel_array[:, 1] += yy
@@ -576,8 +677,14 @@ class DomainCreation(TemplateDomainCreation):
         panel_tag_list = []
         panel_ct = 0
 
+        panel_id_y = -1
+
+        prev_surf_tag = []
         for k, yy in enumerate(y_centers):
+            panel_id_x = -1
+            panel_id_y += 1
             for j, xx in enumerate(x_centers):
+                panel_id_x += 1
                 # Create an 0-tracking-degree panel centered at (x, y, z) = (0, 0, 0)
                 panel_id = self.gmsh_model.occ.addBox(
                     -half_chord,
@@ -662,6 +769,14 @@ class DomainCreation(TemplateDomainCreation):
                     [panel_tag], embedded_lines_tag_list
                 )
 
+                # Translate the panel by (x_center, y_center, elev)
+                self.gmsh_model.occ.translate(
+                    [panel_tag],
+                    xx,
+                    yy,
+                    params.pv_array.elevation,
+                )
+
                 # extract just the first entry, and remove the 3d entry in position 0
                 panel_surfs = panel_frags[0]
                 panel_surfs.pop(0)
@@ -682,26 +797,107 @@ class DomainCreation(TemplateDomainCreation):
                 # self._add_to_domain_markers(f"bottom_{panel_ct:.0f}", panel_surfs[4:-1], "facet")
                 # self._add_to_domain_markers(f"top_{panel_ct:.0f}", [panel_surfs[-1]], "facet")
 
-                self._add_to_domain_markers(
-                    f"front_{panel_ct:.0f}", [panel_surfs[1]], "facet"
-                )  # should be bottom
-                self._add_to_domain_markers(
-                    f"back_{panel_ct:.0f}", [panel_surfs[2]], "facet"
-                )
+                # self._add_to_domain_markers(
+                #     f"front_{panel_ct:.0f}", [panel_surfs[1]], "facet"
+                # )  # should be bottom
+                # self._add_to_domain_markers(
+                #     f"back_{panel_ct:.0f}", [panel_surfs[2]], "facet"
+                # )
 
-                self._add_to_domain_markers(
-                    f"left_{panel_ct:.0f}", [panel_surfs[3]], "facet"
-                )  # should be left
-                self._add_to_domain_markers(
-                    f"right_{panel_ct:.0f}", [panel_surfs[4]], "facet"
-                )  # correct 4
+                # self._add_to_domain_markers(
+                #     f"left_{panel_ct:.0f}", [panel_surfs[3]], "facet"
+                # )  # should be left
+                # self._add_to_domain_markers(
+                #     f"right_{panel_ct:.0f}", [panel_surfs[4]], "facet"
+                # )  # correct 4
 
-                self._add_to_domain_markers(
-                    f"bottom_{panel_ct:.0f}", panel_surfs[5:-1], "facet"
+                # self._add_to_domain_markers(
+                #     f"bottom_{panel_ct:.0f}", panel_surfs[5:-1], "facet"
+                # )
+                # self._add_to_domain_markers(
+                #     f"top_{panel_ct:.0f}", [panel_surfs[-1]], "facet"
+                # )  # should be front
+
+                top_coord = (
+                    params.domain.z_min
+                    + (params.pv_array.elevation - params.domain.z_min)
+                    + params.pv_array.panel_thickness / 2
                 )
-                self._add_to_domain_markers(
-                    f"top_{panel_ct:.0f}", [panel_surfs[-1]], "facet"
-                )  # should be front
+                print("top", top_coord)
+                bottom_coord = (
+                    params.domain.z_min
+                    + (params.pv_array.elevation - params.domain.z_min)
+                    - params.pv_array.panel_thickness / 2
+                )
+                print("bottom", bottom_coord)
+                left_coord = -params.pv_array.panel_chord / 2 + panel_id_x * (
+                    params.pv_array.stream_spacing
+                )
+                print("left", left_coord)
+                right_coord = +params.pv_array.panel_chord / 2 + panel_id_x * (
+                    params.pv_array.stream_spacing
+                )
+                print("right", right_coord)
+
+                front_coord = -params.pv_array.panel_span / 2 + yy
+                print("front", front_coord)
+                back_coord = +params.pv_array.panel_span / 2 + yy
+                print("back", back_coord)
+
+                surf_tag_list_total = self.gmsh_model.occ.getEntities(self.ndim - 1)
+
+                surf_tag_list = [
+                    vector
+                    for vector in surf_tag_list_total
+                    if vector not in prev_surf_tag
+                ]
+
+                prev_surf_tag = surf_tag_list_total
+                for surf_tag in surf_tag_list:
+                    surf_id = surf_tag[1]
+                    com = self.gmsh_model.occ.getCenterOfMass(self.ndim - 1, surf_id)
+                    print(com)
+                    # sturctures tagging
+                    if np.isclose(com[2], bottom_coord):
+                        self._add_to_domain_markers(
+                            f"bottom_{panel_ct:.0f}", [surf_id], "facet"
+                        )
+                        print("bottom found")
+                        # self._add_to_domain_markers("x_min", [surf_id], "facet")
+
+                    elif np.allclose(com[2], top_coord):
+                        self._add_to_domain_markers(
+                            f"top_{panel_ct:.0f}", [surf_id], "facet"
+                        )
+                        print("top found")
+                        # self._add_to_domain_markers("x_max", [surf_id], "facet")
+
+                    elif np.allclose(com[0], left_coord):
+                        self._add_to_domain_markers(
+                            f"left_{panel_ct:.0f}", [surf_id], "facet"
+                        )
+                        print("left found")
+                        # self._add_to_domain_markers("y_min", [surf_id], "facet")
+
+                    elif np.allclose(com[0], right_coord):
+                        self._add_to_domain_markers(
+                            f"right_{panel_ct:.0f}", [surf_id], "facet"
+                        )
+                        print("right found")
+
+                    elif np.allclose(com[1], front_coord):
+                        self._add_to_domain_markers(
+                            f"front_{panel_ct:.0f}", [surf_id], "facet"
+                        )
+                        print("front found")
+                        # self._add_to_domain_markers("y_min", [surf_id], "facet")
+
+                    elif np.allclose(com[1], back_coord):
+                        self._add_to_domain_markers(
+                            f"back_{panel_ct:.0f}", [surf_id], "facet"
+                        )
+                        print("back found")
+                        # self._add_to_domain_markers("y_max", [surf_id], "facet")
 
                 panel_ct += 1
 
@@ -721,14 +917,6 @@ class DomainCreation(TemplateDomainCreation):
                 #     numpy_pt_array = np.array(numpy_pt_list)
                 # else:
                 #     numpy_pt_array = np.vcat(numpy_pt_array, np.array(numpy_pt_list))
-
-                # Translate the panel by (x_center, y_center, elev)
-                self.gmsh_model.occ.translate(
-                    [panel_tag],
-                    xx,
-                    yy,
-                    params.pv_array.elevation,
-                )
 
                 numpy_pt_panel_array[:, 0] += xx
                 numpy_pt_panel_array[:, 1] += yy
