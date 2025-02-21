@@ -62,7 +62,7 @@ class Flow:
                 domain.fluid_undeformed.msh, P3
             )
 
-            if thermal_analysis == True:
+            if thermal_analysis:
                 # Temperature (Scalar)
                 self.S = dolfinx.fem.FunctionSpace(domain.fluid.msh, P1)
 
@@ -124,13 +124,13 @@ class Flow:
         self.bcp = build_pressure_boundary_conditions(domain, params, self.Q)
         # self.bcp = []
 
-        # if self.rank == 0 and params.general.debug_flag == True:
+        # if self.rank == 0 and params.general.debug_flag:
         #     print('applied pressure boundary conditions') # does pass here
 
-        if self.thermal_analysis == True:
+        if self.thermal_analysis:
             self.bcT = build_temperature_boundary_conditions(domain, params, self.S)
 
-        # if self.rank == 0 and params.general.debug_flag == True:
+        # if self.rank == 0 and params.general.debug_flag:
         #     print('applied temperature boundary conditions')
 
     def build_forms(self, domain, params):
@@ -159,7 +159,7 @@ class Flow:
         self.dt_c = dolfinx.fem.Constant(domain.fluid.msh, (params.solver.dt))
         self.rho_c = dolfinx.fem.Constant(domain.fluid.msh, (params.fluid.rho))
         nu = dolfinx.fem.Constant(domain.fluid.msh, (params.fluid.nu))
-        if thermal_analysis == True:
+        if thermal_analysis:
             if self.ndim == 2:
                 self.g = dolfinx.fem.Constant(
                     domain.fluid.msh, PETSc.ScalarType((0, params.fluid.g))
@@ -188,7 +188,7 @@ class Flow:
                 self.stabilizing = False
 
             if self.rank == 0:
-                if params.general.debug_flag == True:
+                if params.general.debug_flag:
                     print("l_char = {:.2E}".format(params.domain.l_char))
                     print("alpha = {:.2E}".format(params.fluid.alpha))
 
@@ -207,7 +207,7 @@ class Flow:
         self.u_k1 = dolfinx.fem.Function(self.V)
         self.u_k2 = dolfinx.fem.Function(self.V)
 
-        if thermal_analysis == True:
+        if thermal_analysis:
             # print('ndim = ',self.ndim)
             # Define trial and test functions for temperature
             self.theta = ufl.TrialFunction(self.S)
@@ -246,13 +246,13 @@ class Flow:
 
             # assert all(flags), "initialiazation not done correctly"
 
-        if thermal_analysis == True:
+        if thermal_analysis:
             # initialize air temperature everywhere to be the ambient temperature
             self.theta_k1.x.array[:] = PETSc.ScalarType(params.fluid.T_ambient)
             self.theta_k.x.array[:] = PETSc.ScalarType(params.fluid.T_ambient)
             self.theta_r.x.array[:] = PETSc.ScalarType(params.fluid.T_ambient)
 
-        if params.general.debug_flag == True:
+        if params.general.debug_flag:
             dolfinx.fem.petsc.set_bc(self.theta_k.vector, self.bcT)
 
         # Define expressions used in variational forms
@@ -335,7 +335,7 @@ class Flow:
         # self.U_ALE = 0.1*self.mesh_vel + 0.9*self.mesh_vel_old
         # self.U_ALE = domain.fluid_mesh_displacement / self.dt_c
 
-        # if params.general.debug_flag == True:
+        # if params.general.debug_flag:
         #     print('shape of theta_k1 = ',np.shape(self.theta_k1.x.array[:]))
         #     print('shape of g = ',np.shape(self.g[:]))
         #     print('shape of V = ',self.V.dofmap.index_map.size_global)
@@ -355,7 +355,7 @@ class Flow:
             + (1.0 / self.rho_c) * ufl.inner(ufl.grad(self.p_k1), self.v) * ufl.dx
             - (1.0 / self.rho_c) * ufl.inner(self.dpdx, self.v) * ufl.dx
         )
-        if thermal_analysis == True:
+        if thermal_analysis:
             self.F1 -= (
                 self.beta_c
                 * ufl.inner((self.theta_k1 - self.theta_r) * self.g, self.v)
@@ -382,8 +382,8 @@ class Flow:
             * ufl.dot(ufl.nabla_grad(self.p_k - self.p_k1), self.v)
             * ufl.dx
         )
-        if thermal_analysis == True:
-            if self.stabilizing == True:
+        if thermal_analysis:
+            if self.stabilizing:
                 # Residual: the "strong" form of the governing equation
                 self.r = (
                     (1.0 / self.dt_c) * (self.theta - self.theta_k1)
@@ -403,7 +403,7 @@ class Flow:
                 * ufl.dx  # todo: subtract mesh vel from this and from residual
             )
 
-            if self.stabilizing == True:
+            if self.stabilizing:
                 # Donea and Huerta 2003 (Eq 2.64)
                 h = ufl.CellDiameter(domain.fluid.msh)
                 u_mag = ufl.sqrt(ufl.dot(self.u_k, self.u_k))  # magnitude of vector
@@ -620,7 +620,7 @@ class Flow:
         self.A1 = dolfinx.fem.petsc.assemble_matrix(self.a1, bcs=self.bcu)
         self.A2 = dolfinx.fem.petsc.assemble_matrix(self.a2, bcs=self.bcp)
         self.A3 = dolfinx.fem.petsc.assemble_matrix(self.a3)
-        if self.thermal_analysis == True:
+        if self.thermal_analysis:
             self.A4 = dolfinx.fem.petsc.assemble_matrix(self.a4, bcs=self.bcT)
         self.A5 = dolfinx.fem.petsc.assemble_matrix(self.a5)
         self.A6 = dolfinx.fem.petsc.assemble_matrix(self.a6)
@@ -628,7 +628,7 @@ class Flow:
         self.A1.assemble()
         self.A2.assemble()
         self.A3.assemble()
-        if self.thermal_analysis == True:
+        if self.thermal_analysis:
             self.A4.assemble()
         self.A5.assemble()
         self.A6.assemble()
@@ -636,7 +636,7 @@ class Flow:
         self.b1 = dolfinx.fem.petsc.assemble_vector(self.L1)
         self.b2 = dolfinx.fem.petsc.assemble_vector(self.L2)
         self.b3 = dolfinx.fem.petsc.assemble_vector(self.L3)
-        if self.thermal_analysis == True:
+        if self.thermal_analysis:
             self.b4 = dolfinx.fem.petsc.assemble_vector(self.L4)
         self.b5 = dolfinx.fem.petsc.assemble_vector(self.L5)
         self.b6 = dolfinx.fem.petsc.assemble_vector(self.L6)
@@ -659,7 +659,7 @@ class Flow:
         self.solver_3.getPC().setType(params.solver.solver3_pc)
         self.solver_3.setFromOptions()
 
-        if self.thermal_analysis == True:
+        if self.thermal_analysis:
             self.solver_4 = PETSc.KSP().create(self.comm)
             self.solver_4.setOperators(self.A4)
             self.solver_4.setType(params.solver.solver4_ksp)
@@ -725,7 +725,7 @@ class Flow:
         # Update the velocity according to the pressure field
         self._solver_step_3(params)
 
-        if self.thermal_analysis == True:
+        if self.thermal_analysis:
             # Calculate the temperature field
             self._solver_step_4(params)
             # self.theta_k.x.scatter_forward()
@@ -742,7 +742,7 @@ class Flow:
         self.u_k2.x.array[:] = self.u_k1.x.array
         self.u_k1.x.array[:] = self.u_k.x.array
         self.p_k1.x.array[:] = self.p_k.x.array
-        if params.general.thermal_analysis == True:
+        if params.general.thermal_analysis:
             self.theta_k1.x.array[:] = self.theta_k.x.array
         self.mesh_vel_old.x.array[:] = self.mesh_vel.x.array
 
