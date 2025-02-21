@@ -4,6 +4,7 @@ general:
   mesh_only: False
   structural_analysis: True
   fluid_analysis: True
+  thermal_analysis: True
 domain:
   x_min: -10
   x_max: 50
