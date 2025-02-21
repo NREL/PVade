@@ -563,14 +563,16 @@ class Elasticity:
         try:
             idx = structure.north_east_corner_dofs[0]
             # idx = self.north_east_corner_dofs[0]
-            nw_corner_accel = self.u.vector.array[3 * idx : 3 * idx + 3].astype(
-                np.float64
-            )
+            nw_corner_accel = self.u.x.array[
+                structure.ndim * idx : structure.ndim * idx + structure.ndim
+            ].astype(np.float64)
             print(nw_corner_accel)
         except:
-            nw_corner_accel = np.zeros(3, dtype=np.float64)
+            nw_corner_accel = np.zeros(structure.ndim, dtype=np.float64)
 
-        nw_corner_accel_global = np.zeros((self.num_procs, 3), dtype=np.float64)
+        nw_corner_accel_global = np.zeros(
+            (self.num_procs, structure.ndim), dtype=np.float64
+        )
 
         self.comm.Gather(nw_corner_accel, nw_corner_accel_global, root=0)
 
