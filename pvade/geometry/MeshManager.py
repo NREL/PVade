@@ -41,6 +41,7 @@ class FSIDomain:
         self._get_domain_markers(params)
 
         self.numpy_pt_total_array = None
+        self.ndim = None
 
     def _get_domain_markers(self, params):
         self.domain_markers = {}
@@ -142,7 +143,7 @@ class FSIDomain:
         # Only rank 0 builds the geometry and meshes the domain
         if self.rank == 0:
             if (
-                (
+                (  # should we add panels2d?
                     params.general.geometry_module == "panels3d"
                     or params.general.geometry_module == "heliostats3d"
                 )
@@ -161,7 +162,6 @@ class FSIDomain:
                 self.geometry.build_structure(params)
             else:
                 self.geometry.build_FSI(params)
-
             # Build the domain markers for each surface and cell
             if hasattr(self.geometry, "domain_markers"):
                 # If the "build" process created domain markers, use those directly...
@@ -183,6 +183,10 @@ class FSIDomain:
 
             self._generate_mesh()
 
+            self.ndim = (
+                self.geometry.ndim
+            )  # gmsh_model.get_dimension() # ?? should this be domain.ndim?
+
         # When finished, rank 0 needs to tell other ranks about how the domain_markers dictionary was created
         # and what values it holds. This is important now since the number of indices "idx" generated in the
         # geometry module differs from what's prescribed in the init of this class.
@@ -190,6 +194,7 @@ class FSIDomain:
         # CREATE THEIR OWN AND JUST HAVE RANK 0 ALWAYS BROADCAST IT.
         self.domain_markers = self.comm.bcast(self.domain_markers, root=0)
         self.numpy_pt_total_array = self.comm.bcast(self.numpy_pt_total_array, root=0)
+        self.ndim = self.comm.bcast(self.ndim, root=0)
 
         # All ranks receive their portion of the mesh from rank 0 (like an MPI scatter)
         self.msh, self.cell_tags, self.facet_tags = dolfinx.io.gmshio.model_to_mesh(
@@ -199,9 +204,8 @@ class FSIDomain:
             partitioner=dolfinx.mesh.create_cell_partitioner(
                 dolfinx.mesh.GhostMode.shared_facet
             ),
+            gdim=self.ndim,
         )
-
-        self.ndim = self.msh.topology.dim
 
         self.msh.topology.create_connectivity(self.ndim, self.ndim - 1)
 
@@ -639,7 +643,7 @@ class FSIDomain:
                 class FSISubDomain:
                     pass
 
-                if not hasattr(self, "ndim"):
+                if self.ndim is None:
                     self.ndim = submesh.topology.dim
                 else:
                     assert self.ndim == submesh.topology.dim
@@ -1149,9 +1153,14 @@ class FSIDomain:
             # print(self.fluid_mesh_displacement_bc.vector.array[self.all_interior_V_dofs])
 
         # Set the boundary condition for the walls of the computational domain
-        zero_vec = dolfinx.fem.Constant(
-            self.fluid.msh, PETSc.ScalarType((0.0, 0.0, 0.0))
-        )
+        if self.ndim == 2:
+            zero_vec = dolfinx.fem.Constant(
+                self.fluid.msh, PETSc.ScalarType((0.0, 0.0))
+            )
+        if self.ndim == 3:
+            zero_vec = dolfinx.fem.Constant(
+                self.fluid.msh, PETSc.ScalarType((0.0, 0.0, 0.0))
+            )
 
         zero_scalar = dolfinx.fem.Constant(self.fluid.msh, PETSc.ScalarType((0.0)))
 
@@ -1236,11 +1245,11 @@ class FSIDomain:
         # keeps the ghost values (needed for the mesh update)
         with self.fluid_mesh_displacement.vector.localForm() as vals_local:
             vals = vals_local.array
-            vals = vals.reshape(-1, 3)
+            vals = vals.reshape(-1, self.ndim)
 
         # Move the mesh by those values: new = original + displacement
         # self.fluid.msh.geometry.x[:, :] = self.fluid.msh.initial_position[:, :] + vals[:, :]
-        self.fluid.msh.geometry.x[:, :] += vals[:, :]
+        self.fluid.msh.geometry.x[:, : self.ndim] += vals[:, :]
 
         # # Obtain the vector of values for the mesh motion in a way that
         # # keeps the ghost values (needed for the mesh update)

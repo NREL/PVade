@@ -15,7 +15,7 @@ domain:
 pv_array:
   stream_rows: 1 # not used
   elevation: 1.5 # not used
-  stream_spacing: [7.0] # not used
+  stream_spacing: 7.0 # not used
   panel_chord: 2.0 # not used
   panel_span: 7.0 # not used
   panel_thickness: 0.1 # not used
@@ -32,6 +32,8 @@ solver:
   save_text_interval: 0.1
   save_xdmf_interval: 0.1
 fluid:
+  velocity_profile_type: parabolic
+  inflow_coeff: 16 # only necessary/used when applying a parabolic vel profile
   u_ref: 0.45
   nu: 0.001 # Establish re = 20 with diam = 0.1 and u_bar = u_ref * (4/9)
   dpdx: 0.0

@@ -27,6 +27,7 @@ def main(input_file=None):
 
     fluid_analysis = params.general.fluid_analysis
     structural_analysis = params.general.structural_analysis
+    thermal_analysis = params.general.thermal_analysis
 
     # Initialize the domain and construct the initial mesh
     domain = FSIDomain(params)
@@ -37,7 +38,7 @@ def main(input_file=None):
         domain.build(params)
         # domain.write_mesh_files(params)
 
-    if params.general.mesh_only == True:
+    if params.general.mesh_only:
         list_timings(params.comm, [TimingType.wall])
         structure, flow = [], []
         return params, structure, flow
@@ -47,22 +48,25 @@ def main(input_file=None):
     # domain.check_mesh_periodicity(params)
     # sys.exit()
 
-    flow = Flow(domain, fluid_analysis)
-    structure = Structure(domain, structural_analysis, params)
+    # if params.general.debug_flag:
+    #     print('before Flow init')
 
-    if fluid_analysis == True:
-        flow = Flow(domain, fluid_analysis)
+    flow = Flow(domain, params)
+    structure = Structure(domain, params)
+
+    if fluid_analysis:
+        flow = Flow(domain, params)
         # # # Specify the boundary conditions
         flow.build_boundary_conditions(domain, params)
         # # # Build the fluid forms
         flow.build_forms(domain, params)
 
-    if structural_analysis == True:
+    if structural_analysis:
         structure.build_boundary_conditions(domain, params)
         # # # Build the fluid forms
         structure.build_forms(domain, params)
 
-    if structural_analysis == True and fluid_analysis == True:
+    if structural_analysis and fluid_analysis:
         # pass
         domain.move_mesh(structure, params)
 
@@ -86,11 +90,11 @@ def main(input_file=None):
         # print("time step is : ", current_time)
         # print("reaminder from modulo ",current_time % params.structure.dt )
         if (
-            structural_analysis == True
+            structural_analysis
             and (k + 1) % solve_structure_interval_n == 0
             and current_time > params.fluid.warm_up_time
         ):  # :# TODO: add condition to work with fluid time step
-            if fluid_analysis == True:
+            if fluid_analysis:
                 structure.elasticity.stress_predicted.x.array[:] = (
                     2.0 * structure.elasticity.stress.x.array
                     - structure.elasticity.stress_old.x.array
@@ -98,27 +102,27 @@ def main(input_file=None):
 
             structure.solve(params, dataIO)
 
-            # if fluid_analysis == True:
+            # if fluid_analysis:
             #     dataIO.fluid_struct(domain, flow, elasticity, params)
             # adjust pressure to avoid dissipation of pressure profile
             # flow.adjust_dpdx_for_constant_flux(params)
-            if fluid_analysis == True:
+            if fluid_analysis:
                 # pass
                 domain.move_mesh(structure, params)
 
-        if fluid_analysis == True and not params.general.debug_mesh_motion_only:
+        if fluid_analysis and not params.general.debug_mesh_motion_only:
             flow.solve(domain, params, current_time)
 
         if (
-            structural_analysis == True
+            structural_analysis
             and (k + 1) % solve_structure_interval_n == 0
             and current_time > params.fluid.warm_up_time
         ):  # :# TODO: add condition to work with fluid time step
-            if fluid_analysis == True:
+            if fluid_analysis:
                 FSI_inter.fluid_struct(domain, flow, structure, params)
 
         if (k + 1) % params.solver.save_xdmf_interval_n == 0:
-            if fluid_analysis == True:
+            if fluid_analysis:
                 if domain.rank == 0 and not params.general.debug_mesh_motion_only:
                     print(
                         f"Time {current_time:.2f} of {params.solver.t_final:.2f} (step {k+1} of {params.solver.t_steps}, {100.0*(k+1)/params.solver.t_steps:.1f}%)"
@@ -131,18 +135,29 @@ def main(input_file=None):
 
                         print(f"| f_x (drag) = {fx:.4f}")
                         print(f"| f_y (lift) = {fy:.4f}")
+                    else:
+                        # still print info, but just for first row
+                        fx = flow.integrated_force_x[0]
+                        fy = flow.integrated_force_y[0]
+
+                        print(f"| f_x (drag) of 1st row = {fx:.4f}")
+                        print(f"| f_y (lift) of 1st row = {fy:.4f}")
+                    if thermal_analysis:
+                        print(f"| T = {flow.theta_max:.4f}")
 
                 dataIO.save_XDMF_files(flow, domain, current_time)
 
             if (
-                structural_analysis == True
+                structural_analysis
                 and (k + 1) % solve_structure_interval_n == 0
                 and current_time > params.fluid.warm_up_time
             ):
 
                 local_def_max = np.amax(
                     np.sum(
-                        structure.elasticity.u.vector.array.reshape(-1, 3) ** 2, axis=1
+                        structure.elasticity.u.vector.array.reshape(-1, domain.ndim)
+                        ** 2,
+                        axis=1,
                     )
                 )
                 global_def_max_list = np.zeros(params.num_procs, dtype=np.float64)

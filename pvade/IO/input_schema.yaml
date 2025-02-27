@@ -42,6 +42,15 @@ properties:
         default: true
         type: "boolean"
         description: "If true, conduct a fluid analysis"
+      thermal_analysis:
+        default: false
+        type: "boolean"
+        description: "If true, conduct a fluid analysis with buoyancy and a temperature analysis"
+      debug_flag:
+        default: false
+        type: "boolean"
+        description: "If true, allows all print statements"
+
 
   domain:
     additionalProperties: false
@@ -131,7 +140,7 @@ properties:
         units: "meter"
       stream_spacing:
         default: 7.0
-        minimum: 1.0
+        minimum: 0.01 #1.0
         maximum: 32.0
         type: "number"
         description: "The separation between panel rows in the streamwise direction."
@@ -187,7 +196,7 @@ properties:
     properties:
       dt:
         default: 0.002
-        minimum: 0.0
+        minimum: 0.00001
         type: "number"
         description: "The timestep size to use in both the fluid and structural solver."
         units: "second"
@@ -205,63 +214,77 @@ properties:
         units: "second"
       save_xdmf_interval:
         default: 0.1
-        minimum: 0.0
+        minimum: 0.00001
         type: "number"
-        description: "The interval to use between saving visualization/XDMF output files."
+        description: "The interval to use between saving visualization/XDMF output files. Must be same as or larger than dt."
         units: "second"
       solver1_ksp:
         default: "cg"
         type: "string"
-        description: "The solver to use for fluid solve 1 of 4"
+        description: "The solver to use for fluid solve 1 of 5"
         enum:
           - "cg"
           - "gmres"
       solver2_ksp:
         default: "cg"
         type: "string"
-        description: "The solver to use for fluid solve 2 of 4"
+        description: "The solver to use for fluid solve 2 of 5"
         enum:
           - "cg"
           - "gmres"
       solver3_ksp:
         default: "cg"
         type: "string"
-        description: "The solver to use for fluid solve 3 of 4"
+        description: "The solver to use for fluid solve 3 of 5"
         enum:
           - "cg"
           - "gmres"
       solver4_ksp:
+        default: "gmres"
+        type: "string"
+        description: "The solver to use for fluid solve 4 of 5"
+        enum:
+          - "cg" # not tested
+          - "gmres"
+          - "preonly" # for debugging
+      solver5_ksp:
         default: "cg"
         type: "string"
-        description: "The solver to use for fluid solve 4 of 4"
+        description: "The solver to use for fluid solve 5 of 5"
         enum:
           - "cg"
           - "gmres"    
       solver1_pc:
         default: "hypre"
         type: "string"
-        description: "The preconditioner to use for fluid solve 1 of 4"
+        description: "The preconditioner to use for fluid solve 1 of 5"
         enum:
           - "jacobi"
           - "hypre"
       solver2_pc:
         default: "hypre"
         type: "string"
-        description: "The preconditioner to use for fluid solve 2 of 4"
+        description: "The preconditioner to use for fluid solve 2 of 5"
         enum:
           - "jacobi"
           - "hypre"
       solver3_pc:
         default: "hypre"
         type: "string"
-        description: "The preconditioner to use for fluid solve 3 of 4"
+        description: "The preconditioner to use for fluid solve 3 of 5"
         enum:
           - "jacobi"
           - "hypre"
       solver4_pc:
+        default: "lu"
+        type: "string"
+        description: "The preconditioner to use for fluid solve 4 of 5"
+        enum:
+          - "lu"
+      solver5_pc:
         default: "hypre"
         type: "string"
-        description: "The preconditioner to use for fluid solve 3 of 4"
+        description: "The preconditioner to use for fluid solve 5 of 5"
         enum:
           - "jacobi"
           - "hypre"    
@@ -286,6 +309,21 @@ properties:
     #     required:
     #       - c_w
     properties:
+      velocity_profile_type:
+        default: "uniform"
+        type: "string"
+        description: "The shape of the inflow velocity profile"
+        enum:
+          - "uniform"
+          - "loglaw"
+          - "parabolic"
+      inflow_coeff:
+        default: 1.0
+        minimum: 0.0
+        maximum: 100.0
+        type: "number"
+        description: "When applying a parabolic inflow velocity profile, this coefficient is C in the equation U = (C/H^2)*u_ref*y(H-y)"
+        units: "none"
       u_ref:
         default: 8.0
         minimum: 0.0
@@ -293,14 +331,30 @@ properties:
         type: "number"
         description: "The velocity of the wind as measured at the panel elevation."
         units: "meter/second"
+      z0:
+        default: 0.05
+        minimum: 0.001
+        maximum: 10.0
+        type: "number"
+        description: "The surface roughness length used in the log law velocity profile."
+        units: "meters"
+      d0:
+        default: 0.5
+        minimum: 0.0
+        maximum: 50.0
+        type: "number"
+        description: "The zero plane displacement height used for the presence of vegetated or urban canopies in the log law velocity profile."
+        units: "meters"
       initialize_with_inflow_bc:
         default: true
         type: "boolean"
         description: "If true, use the inflow boundary condition to interpolate a non-zero initial velocity throughout the domain (even if that does not respect interior boundary conditions), if false, initial velocity is zero."
-      time_varying_inflow_bc:
-        default: false
-        type: "boolean"
-        description: "If true, the inflow boundary condition will be re-evaluated at each time step, if false, the inflow function is treated as constant and will not be re-evaluated after the initial t=0 state."
+      time_varying_inflow_window:
+        default: 0.0
+        minimum: 0.0
+        type: "number"
+        description: "The amount of time over which the inflow condition should 'ramp up' to the full value of u_ref, smoothed using a cosine function. A value of 0 means the flow starts with inflow_vel = u_ref, values > 0 mean the flow starts at rest and smoothly increases until time = time_varying_inflow_window, where inflow_vel = u_ref."
+        units: "second"
       rho:
         default: 1.0
         # minimum: 0.001
@@ -321,7 +375,26 @@ properties:
         minimum: 1.0e-06
         type: "number"
         description: "The kinematic viscosity of the fluid."
-        units: "meter^s/second"
+        units: "meter^s/second" # should this be meter^2/second?
+      g:
+        default: 9.81
+        minimum: 0.0
+        maximum: 100.0
+        type: "number"
+        description: "Gravitational acceleration."
+        units: "meter/second^2"
+      beta:
+        default: 0.00333
+        minimum: 1.0e-06
+        type: "number"
+        description: "The thermal expansion coefficient of the fluid."
+        units: "1/Kelvin"
+      alpha:
+        default: 2.25e-05
+        minimum: 1.0e-06
+        type: "number"
+        description: "The thermal diffusivity of the fluid."
+        units: "meter^2/s"
       dpdx:
         default: 0.0
         minimum: 0.0
@@ -384,6 +457,27 @@ properties:
         default: 0.0
         type: "number"
         desciption: "The amount of time, in seconds, to solve the fluid solution for before un-freezing the structure and beginning to solve the FSI in a coupled manner. Warming up the fluid for e.g., 0.5 seconds helps establish a more appropriate fluid solution around the panels and can improve stability by avoiding a sudden shock associated with a bad initial condition at t=0."
+      T_ambient:
+        default: 300.0
+        minimum: 1.0
+        maximum: 500.0
+        type: "number"
+        description: "The ambient temperature of the fluid."
+        units: "Kelvin"
+      T_bottom:
+        default: 320.0
+        minimum: 1.0
+        maximum: 500.0
+        type: "number"
+        description: "The ground temperature."
+        units: "Kelvin"
+      T0_panel: # might not belong in "fluid" section
+        default: 320.0
+        minimum: 1.0
+        maximum: 500.0
+        type: "number"
+        description: "The initial PV panel temperature."
+        units: "Kelvin"
 
   structure:
     additionalProperties: false

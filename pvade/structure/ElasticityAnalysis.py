@@ -356,16 +356,27 @@ class Elasticity:
         # self.f = ufl.as_vector((0*self.ρ * self.ω**2 * x[0], self.ρ * self.ω**2 * x[1], 0.0))
         # self.T = dolfinx.fem.Constant(domain.structure.msh, PETSc.ScalarType((0, 1.e-3, 0)))
         # self.f = dolfinx.fem.Constant(domain.structure.msh, PETSc.ScalarType((0,100,100)))
-        self.f = dolfinx.fem.Constant(
-            domain.structure.msh,
-            PETSc.ScalarType(
-                (
-                    params.structure.body_force_x,
-                    params.structure.body_force_y,
-                    params.structure.body_force_z,
-                )
-            ),
-        )
+        if domain.ndim == 2:
+            self.f = dolfinx.fem.Constant(
+                domain.structure.msh,
+                PETSc.ScalarType(
+                    (
+                        params.structure.body_force_x,
+                        params.structure.body_force_y,
+                    )
+                ),
+            )
+        elif domain.ndim == 3:
+            self.f = dolfinx.fem.Constant(
+                domain.structure.msh,
+                PETSc.ScalarType(
+                    (
+                        params.structure.body_force_x,
+                        params.structure.body_force_y,
+                        params.structure.body_force_z,
+                    )
+                ),
+            )
         self.ds = ufl.Measure("ds", domain=domain.structure.msh)
         n = ufl.FacetNormal(domain.structure.msh)
 
@@ -552,14 +563,16 @@ class Elasticity:
         try:
             idx = structure.north_east_corner_dofs[0]
             # idx = self.north_east_corner_dofs[0]
-            nw_corner_accel = self.u.vector.array[3 * idx : 3 * idx + 3].astype(
-                np.float64
-            )
+            nw_corner_accel = self.u.x.array[
+                structure.ndim * idx : structure.ndim * idx + structure.ndim
+            ].astype(np.float64)
             print(nw_corner_accel)
         except:
-            nw_corner_accel = np.zeros(3, dtype=np.float64)
+            nw_corner_accel = np.zeros(structure.ndim, dtype=np.float64)
 
-        nw_corner_accel_global = np.zeros((self.num_procs, 3), dtype=np.float64)
+        nw_corner_accel_global = np.zeros(
+            (self.num_procs, structure.ndim), dtype=np.float64
+        )
 
         self.comm.Gather(nw_corner_accel, nw_corner_accel_global, root=0)
 

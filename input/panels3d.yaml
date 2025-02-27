@@ -31,11 +31,11 @@ solver:
   solver1_ksp: cg
   solver2_ksp: cg
   solver3_ksp: cg
-  solver4_ksp: gmres
+  solver5_ksp: gmres
   solver1_pc: jacobi
   solver2_pc: jacobi
   solver3_pc: jacobi
-  solver4_pc: jacobi
+  solver5_pc: jacobi
   save_text_interval: .1 #0.01
   save_xdmf_interval: .1 #0.01
 fluid:
