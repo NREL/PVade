@@ -1,9 +1,9 @@
 general:
   geometry_module: flag2d
-  output_dir: pvade/tests/output/flag2d
+  output_dir: output/flag2d
   mesh_only: false
-  structural_analysis: true
-  fluid_analysis: true
+  structural_analysis: True
+  fluid_analysis: True
   input_mesh_dir: pvade/tests/input/mesh/flag2d
 domain:
   x_min: 0.0
@@ -24,16 +24,18 @@ solver:
   solver1_ksp: gmres
   solver2_ksp: gmres
   solver3_ksp: gmres
-  solver4_ksp: gmres
+  solver5_ksp: gmres
   solver1_pc: hypre
   solver2_pc: hypre
   solver3_pc: hypre
-  solver4_pc: hypre
+  solver5_pc: hypre
   save_text_interval: 0.02
   save_xdmf_interval: 0.02
 fluid:
+  velocity_profile_type: parabolic
+  inflow_coeff: 6.0
   u_ref: 1.0 # 0.2 1.0 2.0
-  time_varying_inflow_bc: true
+  time_varying_inflow_window: 2.0
   rho: 1000.0 # 0.2 1.0 2.0
   nu: 0.001 # Establish re = 20 with diam = 0.1 and u = u_ref
   dpdx: 0.0

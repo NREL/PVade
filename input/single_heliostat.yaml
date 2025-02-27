@@ -30,11 +30,11 @@ solver:
   solver1_ksp: gmres
   solver2_ksp: gmres
   solver3_ksp: gmres
-  solver4_ksp: gmres
+  solver5_ksp: gmres
   solver1_pc: hypre
   solver2_pc: hypre
   solver3_pc: hypre
-  solver4_pc: hypre
+  solver5_pc: hypre
   save_text_interval: .02 #0.01
   save_xdmf_interval: .02 #0.01
 fluid:

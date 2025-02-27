@@ -15,13 +15,14 @@ import warnings
 from pvade.fluid.boundary_conditions import (
     build_velocity_boundary_conditions,
     build_pressure_boundary_conditions,
+    build_temperature_boundary_conditions,
 )
 
 
 class Flow:
     """This class solves the CFD problem"""
 
-    def __init__(self, domain, fluid_analysis):
+    def __init__(self, domain, params):
         """Initialize the fluid solver
 
         This method initialize the Flow object, namely, it creates all the
@@ -34,12 +35,13 @@ class Flow:
             domain (:obj:`pvade.geometry.MeshManager.Domain`): A Domain object
 
         """
-        self.fluid_analysis = fluid_analysis
+
+        self.fluid_analysis = params.general.fluid_analysis
+        self.thermal_analysis = params.general.thermal_analysis
+
         self.name = "fluid"
 
-        if fluid_analysis == False:
-            pass
-        else:
+        if self.fluid_analysis:
             # Store the comm and mpi info for convenience
             self.comm = domain.comm
             self.rank = domain.rank
@@ -60,6 +62,10 @@ class Flow:
                 domain.fluid_undeformed.msh, P3
             )
 
+            if self.thermal_analysis:
+                # Temperature (Scalar)
+                self.S = dolfinx.fem.FunctionSpace(domain.fluid.msh, P1)
+
             P4 = ufl.FiniteElement("DG", domain.fluid.msh.ufl_cell(), 0)
 
             self.DG = dolfinx.fem.FunctionSpace(domain.fluid.msh, P4)
@@ -68,8 +74,10 @@ class Flow:
             self.first_call_to_surface_pressure = True
 
             # Store the dimension of the problem for convenience
-            self.ndim = domain.fluid.msh.topology.dim
+            # self.ndim = domain.fluid.msh.topology.dim
+            self.ndim = domain.ndim
             self.facet_dim = self.ndim - 1
+            # print('ndim = ', self.ndim)
 
             # find hmin in mesh
             num_cells = domain.fluid.msh.topology.index_map(self.ndim).size_local
@@ -116,6 +124,15 @@ class Flow:
         self.bcp = build_pressure_boundary_conditions(domain, params, self.Q)
         # self.bcp = []
 
+        # if self.rank == 0 and params.general.debug_flag:
+        #     print('applied pressure boundary conditions') # does pass here
+
+        if self.thermal_analysis:
+            self.bcT = build_temperature_boundary_conditions(domain, params, self.S)
+
+        # if self.rank == 0 and params.general.debug_flag:
+        #     print('applied temperature boundary conditions')
+
     def build_forms(self, domain, params):
         """Builds all variational statements
 
@@ -132,11 +149,49 @@ class Flow:
             params (:obj:`pvade.Parameters.SimParams`): A SimParams object
 
         """
+
         # Define fluid properties
-        self.dpdx = dolfinx.fem.Constant(domain.fluid.msh, (0.0, 0.0, 0.0))
+        if self.ndim == 2:
+            self.dpdx = dolfinx.fem.Constant(domain.fluid.msh, (0.0, 0.0))
+        elif self.ndim == 3:
+            self.dpdx = dolfinx.fem.Constant(domain.fluid.msh, (0.0, 0.0, 0.0))
         self.dt_c = dolfinx.fem.Constant(domain.fluid.msh, (params.solver.dt))
         self.rho_c = dolfinx.fem.Constant(domain.fluid.msh, (params.fluid.rho))
         nu = dolfinx.fem.Constant(domain.fluid.msh, (params.fluid.nu))
+        if self.thermal_analysis:
+            if self.ndim == 2:
+                self.g = dolfinx.fem.Constant(
+                    domain.fluid.msh, PETSc.ScalarType((0, params.fluid.g))
+                )
+            elif self.ndim == 3:
+                self.g = dolfinx.fem.Constant(
+                    domain.fluid.msh, PETSc.ScalarType((0, 0, params.fluid.g))
+                )
+            self.beta_c = dolfinx.fem.Constant(
+                domain.fluid.msh, PETSc.ScalarType(params.fluid.beta)
+            )  # [1/K] thermal expansion coefficient
+            self.alpha_c = dolfinx.fem.Constant(
+                domain.fluid.msh, PETSc.ScalarType(params.fluid.alpha)
+            )  #  thermal diffusivity
+
+            # Compute approximate Peclet number to assess if SUPG stabilization is needed
+            self.Pe_approx = (
+                params.fluid.u_ref * params.domain.l_char / (2.0 * params.fluid.alpha)
+            )
+
+            if self.Pe_approx > 1.0:
+                self.stabilizing = True
+                if self.rank == 0:
+                    print("Pe > 1, so SUPG stabilization applied")
+            else:
+                self.stabilizing = False
+
+            if self.rank == 0:
+                if params.general.debug_flag:
+                    print("l_char = {:.2E}".format(params.domain.l_char))
+                    print("alpha = {:.2E}".format(params.fluid.alpha))
+
+                print("Pe approx = {:.2E}".format(self.Pe_approx))
 
         # Define trial and test functions for velocity
         self.u = ufl.TrialFunction(self.V)
@@ -151,6 +206,15 @@ class Flow:
         self.u_k1 = dolfinx.fem.Function(self.V)
         self.u_k2 = dolfinx.fem.Function(self.V)
 
+        if self.thermal_analysis:
+            # print('ndim = ',self.ndim)
+            # Define trial and test functions for temperature
+            self.theta = ufl.TrialFunction(self.S)
+            self.s = ufl.TestFunction(self.S)
+            self.theta_k = dolfinx.fem.Function(self.S, name="temperature ")
+            self.theta_k1 = dolfinx.fem.Function(self.S)
+            self.theta_r = dolfinx.fem.Function(self.S)  # reference temperature
+
         self.mesh_vel = dolfinx.fem.Function(self.V, name="mesh_displacement")
         self.mesh_vel_old = dolfinx.fem.Function(self.V)
         self.mesh_vel_bc = dolfinx.fem.Function(self.V, name="mesh_displacement_bc")
@@ -161,6 +225,7 @@ class Flow:
         self.p_k = dolfinx.fem.Function(self.Q, name="pressure")
         self.p_k1 = dolfinx.fem.Function(self.Q)
 
+        # initial conditions
         if params.fluid.initialize_with_inflow_bc:
             # self.inflow_profile = dolfinx.fem.Function(self.V)
             # self.inflow_profile.interpolate(lambda x: np.vstack((x[0], x[1],x[2])))
@@ -179,6 +244,15 @@ class Flow:
             # flags.append((self.u_k2.x.array[:] == self.inflow_profile.x.array).all())
 
             # assert all(flags), "initialiazation not done correctly"
+
+        if self.thermal_analysis:
+            # initialize air temperature everywhere to be the ambient temperature
+            self.theta_k1.x.array[:] = PETSc.ScalarType(params.fluid.T_ambient)
+            self.theta_k.x.array[:] = PETSc.ScalarType(params.fluid.T_ambient)
+            self.theta_r.x.array[:] = PETSc.ScalarType(params.fluid.T_ambient)
+
+        if params.general.debug_flag:
+            dolfinx.fem.petsc.set_bc(self.theta_k.vector, self.bcT)
 
         # Define expressions used in variational forms
         # Crank-Nicolson velocity
@@ -260,6 +334,12 @@ class Flow:
         # self.U_ALE = 0.1*self.mesh_vel + 0.9*self.mesh_vel_old
         # self.U_ALE = domain.fluid_mesh_displacement / self.dt_c
 
+        # if params.general.debug_flag:
+        #     print('shape of theta_k1 = ',np.shape(self.theta_k1.x.array[:]))
+        #     print('shape of g = ',np.shape(self.g[:]))
+        #     print('shape of V = ',self.V.dofmap.index_map.size_global)
+        #     print('shape of S = ',self.S.dofmap.index_map.size_global)
+
         self.F1 = (
             (1.0 / self.dt_c) * ufl.inner(self.u - self.u_k1, self.v) * ufl.dx
             + ufl.inner(
@@ -274,6 +354,12 @@ class Flow:
             + (1.0 / self.rho_c) * ufl.inner(ufl.grad(self.p_k1), self.v) * ufl.dx
             - (1.0 / self.rho_c) * ufl.inner(self.dpdx, self.v) * ufl.dx
         )
+        if self.thermal_analysis:
+            self.F1 -= (
+                self.beta_c
+                * ufl.inner((self.theta_k1 - self.theta_r) * self.g, self.v)
+                * ufl.dx
+            )  # buoyancy term
 
         self.a1 = dolfinx.fem.form(ufl.lhs(self.F1))
         self.L1 = dolfinx.fem.form(ufl.rhs(self.F1))
@@ -295,8 +381,41 @@ class Flow:
             * ufl.dot(ufl.nabla_grad(self.p_k - self.p_k1), self.v)
             * ufl.dx
         )
+        if self.thermal_analysis:
+            if self.stabilizing:
+                # Residual: the "strong" form of the governing equation
+                self.r = (
+                    (1.0 / self.dt_c) * (self.theta - self.theta_k1)
+                    + ufl.dot(self.u_k, ufl.nabla_grad(self.theta))
+                    - self.alpha_c * ufl.div(ufl.grad(self.theta))
+                )
 
-        # Define a function and the dolfinx.fem.form of the stress
+            # Define variational problem for step 4: temperature
+            self.F4 = (
+                (1.0 / self.dt_c)
+                * ufl.inner(self.theta - self.theta_k1, self.s)
+                * ufl.dx  # theta = unknown, T_n = temp from previous timestep
+                + self.alpha_c
+                * ufl.inner(ufl.nabla_grad(self.theta), ufl.nabla_grad(self.s))
+                * ufl.dx
+                + ufl.inner(ufl.dot(self.u_k, ufl.nabla_grad(self.theta)), self.s)
+                * ufl.dx  # todo: subtract mesh vel from this and from residual
+            )
+
+            if self.stabilizing:
+                # Donea and Huerta 2003 (Eq 2.64)
+                h = ufl.CellDiameter(domain.fluid.msh)
+                u_mag = ufl.sqrt(ufl.dot(self.u_k, self.u_k))  # magnitude of vector
+                Pe = u_mag * h / (2.0 * self.alpha_c)  # Peclet number
+                tau = (h / (2.0 * u_mag)) * (1.0 + 1.0 / Pe) ** (-1)
+                stab = tau * ufl.dot(self.u_k, ufl.grad(self.s)) * self.r * ufl.dx
+
+                self.F4 += stab
+
+            self.a4 = dolfinx.fem.form(ufl.lhs(self.F4))
+            self.L4 = dolfinx.fem.form(ufl.rhs(self.F4))
+
+        # Define a function and the dolfinx.fem.form of the stress (step 5)
         self.panel_stress = dolfinx.fem.Function(self.T)
         self.panel_stress_undeformed = dolfinx.fem.Function(self.T_undeformed)
         self.stress = sigma(self.u_k, self.p_k, nu + self.nu_T, self.rho_c)
@@ -309,10 +428,10 @@ class Flow:
 
         # Create a dolfinx.fem.form for projecting stress onto a tensor function space
         # e.g., panel_stress.assign(project(stress, T))
-        self.a4 = dolfinx.fem.form(
+        self.a5 = dolfinx.fem.form(
             ufl.inner(ufl.TrialFunction(self.T), ufl.TestFunction(self.T)) * ufl.dx
         )
-        self.L4 = dolfinx.fem.form(
+        self.L5 = dolfinx.fem.form(
             ufl.inner(self.stress, ufl.TestFunction(self.T)) * ufl.dx
         )
 
@@ -321,10 +440,10 @@ class Flow:
         cfl_form = ufl.sqrt(ufl.inner(self.u_k, self.u_k)) * self.dt_c / cell_diam
 
         self.cfl_vec = dolfinx.fem.Function(self.DG)
-        self.a5 = dolfinx.fem.form(
+        self.a6 = dolfinx.fem.form(
             ufl.inner(ufl.TrialFunction(self.DG), ufl.TestFunction(self.DG)) * ufl.dx
         )
-        self.L5 = dolfinx.fem.form(
+        self.L6 = dolfinx.fem.form(
             ufl.inner(cfl_form, ufl.TestFunction(self.DG)) * ufl.dx
         )
 
@@ -332,11 +451,23 @@ class Flow:
         outlet_cells = dolfinx.mesh.locate_entities(
             domain.fluid.msh, self.ndim, lambda x: x[0] > params.domain.x_max - 1
         )
-        self.flux_plane = dolfinx.fem.Function(self.V)
-        self.flux_plane.interpolate(
-            lambda x: (np.ones(x.shape[1]), np.zeros(x.shape[1]), np.zeros(x.shape[1])),
-            outlet_cells,
-        )
+        self.flux_plane = dolfinx.fem.Function(
+            self.V
+        )  # marker function that masks the u component velocity at the outlet
+        if self.ndim == 2:
+            self.flux_plane.interpolate(
+                lambda x: (np.ones(x.shape[1]), np.zeros(x.shape[1])),
+                outlet_cells,
+            )
+        elif self.ndim == 3:
+            self.flux_plane.interpolate(
+                lambda x: (
+                    np.ones(x.shape[1]),
+                    np.zeros(x.shape[1]),
+                    np.zeros(x.shape[1]),
+                ),
+                outlet_cells,
+            )
 
         # self.flux_plane = Expression('x[0] < cutoff ? 0.0 : 1.0', cutoff=domain.x_range[1]-1.0, degree=1)
         # self.flux_dx = ufl.Measure("dx", domain=domain.fluid.msh)  # not needed ?
@@ -488,20 +619,26 @@ class Flow:
         self.A1 = dolfinx.fem.petsc.assemble_matrix(self.a1, bcs=self.bcu)
         self.A2 = dolfinx.fem.petsc.assemble_matrix(self.a2, bcs=self.bcp)
         self.A3 = dolfinx.fem.petsc.assemble_matrix(self.a3)
-        self.A4 = dolfinx.fem.petsc.assemble_matrix(self.a4)
+        if self.thermal_analysis:
+            self.A4 = dolfinx.fem.petsc.assemble_matrix(self.a4, bcs=self.bcT)
         self.A5 = dolfinx.fem.petsc.assemble_matrix(self.a5)
+        self.A6 = dolfinx.fem.petsc.assemble_matrix(self.a6)
 
         self.A1.assemble()
         self.A2.assemble()
         self.A3.assemble()
-        self.A4.assemble()
+        if self.thermal_analysis:
+            self.A4.assemble()
         self.A5.assemble()
+        self.A6.assemble()
 
         self.b1 = dolfinx.fem.petsc.assemble_vector(self.L1)
         self.b2 = dolfinx.fem.petsc.assemble_vector(self.L2)
         self.b3 = dolfinx.fem.petsc.assemble_vector(self.L3)
-        self.b4 = dolfinx.fem.petsc.assemble_vector(self.L4)
+        if self.thermal_analysis:
+            self.b4 = dolfinx.fem.petsc.assemble_vector(self.L4)
         self.b5 = dolfinx.fem.petsc.assemble_vector(self.L5)
+        self.b6 = dolfinx.fem.petsc.assemble_vector(self.L6)
 
         self.solver_1 = PETSc.KSP().create(self.comm)
         self.solver_1.setOperators(self.A1)
@@ -521,17 +658,24 @@ class Flow:
         self.solver_3.getPC().setType(params.solver.solver3_pc)
         self.solver_3.setFromOptions()
 
-        self.solver_4 = PETSc.KSP().create(self.comm)
-        self.solver_4.setOperators(self.A4)
-        self.solver_4.setType(params.solver.solver4_ksp)
-        self.solver_4.getPC().setType(params.solver.solver4_pc)
-        self.solver_4.setFromOptions()
+        if self.thermal_analysis:
+            self.solver_4 = PETSc.KSP().create(self.comm)
+            self.solver_4.setOperators(self.A4)
+            self.solver_4.setType(params.solver.solver4_ksp)
+            self.solver_4.getPC().setType(params.solver.solver4_pc)
+            self.solver_4.setFromOptions()
 
         self.solver_5 = PETSc.KSP().create(self.comm)
         self.solver_5.setOperators(self.A5)
-        self.solver_5.setType("cg")
-        self.solver_5.getPC().setType("jacobi")
+        self.solver_5.setType(params.solver.solver5_ksp)
+        self.solver_5.getPC().setType(params.solver.solver5_pc)
         self.solver_5.setFromOptions()
+
+        self.solver_6 = PETSc.KSP().create(self.comm)
+        self.solver_6.setOperators(self.A6)
+        self.solver_6.setType("cg")
+        self.solver_6.getPC().setType("jacobi")
+        self.solver_6.setFromOptions()
 
     def solve(self, domain, params, current_time):
         """Solve for a single timestep advancement
@@ -545,8 +689,11 @@ class Flow:
             params (:obj:`pvade.Parameters.SimParams`): A SimParams object
         """
 
-        if params.fluid.time_varying_inflow_bc:
+        ramp_window = params.fluid.time_varying_inflow_window
+
+        if ramp_window > 0.0 and current_time <= ramp_window:
             self.inflow_velocity.current_time = current_time
+
             if self.upper_cells is not None:
                 self.inflow_profile.interpolate(self.inflow_velocity, self.upper_cells)
             else:
@@ -577,7 +724,12 @@ class Flow:
         # Update the velocity according to the pressure field
         self._solver_step_3(params)
 
-        self._solver_step_4(params)
+        if self.thermal_analysis:
+            # Calculate the temperature field
+            self._solver_step_4(params)
+            # self.theta_k.x.scatter_forward()
+
+        self._solver_step_5(params)
         # Compute the CFL number
         self.compute_cfl()
 
@@ -589,6 +741,8 @@ class Flow:
         self.u_k2.x.array[:] = self.u_k1.x.array
         self.u_k1.x.array[:] = self.u_k.x.array
         self.p_k1.x.array[:] = self.p_k.x.array
+        if self.thermal_analysis:
+            self.theta_k1.x.array[:] = self.theta_k.x.array
         self.mesh_vel_old.x.array[:] = self.mesh_vel.x.array
 
         if self.first_call_to_solver:
@@ -704,30 +858,62 @@ class Flow:
         self.u_k.x.scatter_forward()
 
     def _solver_step_4(self, params):
-        """Solve step 3: velocity update
-
-        Here we update the tentative velocity with the effect of the modified,
-        continuity-enforcing pressure field.
+        """Solve step 4: Solves for temperature using the advection-diffusion equation
 
         Args:
             params (:obj:`pvade.Parameters.SimParams`): A SimParams object
         """
+        # Step 0: Re-assemble A1 since using an implicit convective term
         self.A4.zeroEntries()
-        self.A4 = dolfinx.fem.petsc.assemble_matrix(self.A4, self.a4)
+        self.A4 = dolfinx.fem.petsc.assemble_matrix(self.A4, self.a4, bcs=self.bcT)
         self.A4.assemble()
-        self.solver_4.setOperators(self.A4)
 
-        # Step 3: Velocity correction step
+        # Step 1: Tentative velocity step
         with self.b4.localForm() as loc:
             loc.set(0)
 
         self.b4 = dolfinx.fem.petsc.assemble_vector(self.b4, self.L4)
 
+        dolfinx.fem.petsc.apply_lifting(self.b4, [self.a4], [self.bcT])
+
         self.b4.ghostUpdate(
             addv=PETSc.InsertMode.ADD_VALUES, mode=PETSc.ScatterMode.REVERSE
         )
 
-        self.solver_4.solve(self.b4, self.panel_stress.vector)
+        dolfinx.fem.petsc.set_bc(self.b4, self.bcT)
+
+        self.solver_4.solve(self.b4, self.theta_k.vector)
+        self.theta_k.x.scatter_forward()
+
+        # compute max temperature for printing
+        theta_max_local = np.amax(self.theta_k.vector.array)
+
+        self.theta_max = np.zeros(1)
+        self.comm.Allreduce(theta_max_local, self.theta_max, op=MPI.MAX)
+        self.theta_max = self.theta_max[0]
+
+    def _solver_step_5(self, params):
+        """Solve step 5: Projects stress onto a tensor function space
+
+        Args:
+            params (:obj:`pvade.Parameters.SimParams`): A SimParams object
+        """
+        self.A5.zeroEntries()
+        self.A5 = dolfinx.fem.petsc.assemble_matrix(self.A5, self.a5)
+        self.A5.assemble()
+        self.solver_5.setOperators(self.A5)
+
+        # Step 3: Velocity correction step
+        with self.b5.localForm() as loc:
+            loc.set(0)
+
+        self.b5 = dolfinx.fem.petsc.assemble_vector(self.b5, self.L5)
+
+        self.b5.ghostUpdate(
+            addv=PETSc.InsertMode.ADD_VALUES, mode=PETSc.ScatterMode.REVERSE
+        )
+
+        self.solver_5.solve(self.b5, self.panel_stress.vector)
         self.panel_stress.x.scatter_forward()
         self.panel_stress_undeformed.x.array[:] = self.panel_stress.x.array[:]
         self.panel_stress_undeformed.x.scatter_forward()
@@ -744,21 +930,21 @@ class Flow:
             None
         """
 
-        self.A5.zeroEntries()
-        self.A5 = dolfinx.fem.petsc.assemble_matrix(self.A5, self.a5)
-        self.A5.assemble()
-        self.solver_5.setOperators(self.A5)
+        self.A6.zeroEntries()
+        self.A6 = dolfinx.fem.petsc.assemble_matrix(self.A6, self.a6)
+        self.A6.assemble()
+        self.solver_6.setOperators(self.A6)
 
-        with self.b5.localForm() as loc:
+        with self.b6.localForm() as loc:
             loc.set(0)
 
-        self.b5 = dolfinx.fem.petsc.assemble_vector(self.b5, self.L5)
+        self.b6 = dolfinx.fem.petsc.assemble_vector(self.b6, self.L6)
 
-        self.b5.ghostUpdate(
+        self.b6.ghostUpdate(
             addv=PETSc.InsertMode.ADD_VALUES, mode=PETSc.ScatterMode.REVERSE
         )
 
-        self.solver_5.solve(self.b5, self.cfl_vec.vector)
+        self.solver_6.solve(self.b6, self.cfl_vec.vector)
         self.cfl_vec.x.scatter_forward()
 
         cfl_max_local = np.amax(self.cfl_vec.vector.array)
@@ -844,7 +1030,7 @@ class Flow:
                         / (
                             params.fluid.rho
                             * params.fluid.u_ref**2
-                            * 2.0
+                            * params.pv_array.panel_chord
                             * params.pv_array.panel_span
                         )
                     )
@@ -855,7 +1041,7 @@ class Flow:
                         / (
                             params.fluid.rho
                             * params.fluid.u_ref**2
-                            * 2.0
+                            * params.pv_array.panel_chord
                             * params.pv_array.panel_span
                         )
                     )
@@ -866,7 +1052,7 @@ class Flow:
                         / (
                             params.fluid.rho
                             * params.fluid.u_ref**2
-                            * 2.0
+                            * params.pv_array.panel_chord
                             * params.pv_array.panel_span
                         )
                     )

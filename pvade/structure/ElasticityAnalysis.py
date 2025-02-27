@@ -33,16 +33,16 @@ class Elasticity:
             domain (:obj:`pvade.geometry.MeshManager.Domain`): A Domain object
 
         """
-        self.structural_analysis = structural_analysis
-        self.name = "structure"
+        # self.structural_analysis = structural_analysis
+        # self.name = "structure"
 
         # Store the comm and mpi info for convenience
         self.comm = domain.comm
         self.rank = domain.rank
         self.num_procs = domain.num_procs
 
-        # domain.structure.msh = dolfinx.mesh.refine(domain.structure.msh,None)
-        # domain.structure.msh = dolfinx.mesh.refine(domain.structure.msh)
+        # # domain.structure.msh = dolfinx.mesh.refine(domain.structure.msh,None)
+        # # domain.structure.msh = dolfinx.mesh.refine(domain.structure.msh)
 
         P1 = ufl.VectorElement("Lagrange", domain.structure.msh.ufl_cell(), 2)
         self.V = dolfinx.fem.FunctionSpace(domain.structure.msh, P1)
@@ -57,31 +57,6 @@ class Elasticity:
             self.V.dofmap.index_map_bs * self.V.dofmap.index_map.size_global
         )
 
-        # Store the dimension of the problem for convenience
-        self.ndim = domain.structure.msh.topology.dim
-        self.facet_dim = self.ndim - 1
-
-        # find hmin in mesh
-        num_cells = domain.structure.msh.topology.index_map(self.ndim).size_local
-        h = dolfinx.cpp.mesh.h(domain.structure.msh, self.ndim, range(num_cells))
-
-        # This value of hmin is local to the mesh portion owned by the process
-        hmin_local = np.amin(h)
-
-        # collect the minimum hmin from all processes
-        self.hmin = np.zeros(1)
-        self.comm.Allreduce(hmin_local, self.hmin, op=MPI.MIN)
-        self.hmin = self.hmin[0]
-
-        if self.rank == 0:
-            print(f"hmin on structure = {self.hmin}")
-            print(f"Total num dofs on structure = {self.num_V_dofs}")
-
-        # Mass density
-        self.rho = dolfinx.fem.Constant(
-            domain.structure.msh, params.structure.rho
-        )  # Constant(0.)
-
         # Rayleigh damping coefficients
         self.eta_m = dolfinx.fem.Constant(domain.structure.msh, 0.0)  # Constant(0.)
         self.eta_k = dolfinx.fem.Constant(domain.structure.msh, 0.0)  # Constant(0.)
@@ -92,139 +67,87 @@ class Elasticity:
         self.gamma = 0.5 + self.alpha_f - self.alpha_m
         self.beta = (self.gamma + 0.5) ** 2 / 4.0
 
-        # Define structural properties
-        self.E = params.structure.elasticity_modulus  # 1.0e9
-        self.ν = params.structure.poissons_ratio  # 0.3
-        self.μ = self.E / (2.0 * (1.0 + self.ν))
-        self.λ = self.E * self.ν / ((1.0 + self.ν) * (1.0 - 2.0 * self.ν))
-
-        if self.rank == 0:
-            print(
-                f"mu = {self.μ} lambda = {self.λ} E = {self.E} nu = {self.ν} density = {self.rho.value}"
-            )
-
         # time step
         self.dt_st = dolfinx.fem.Constant(domain.structure.msh, (params.structure.dt))
 
-        def _north_east_corner(x):
-            eps = 1.0e-6
+        # # Store the dimension of the problem for convenience
+        # self.ndim = domain.structure.msh.topology.dim
+        # self.facet_dim = self.ndim - 1
 
-            # TODO: allow the probing of (x,y,z) points as something specified in the yaml file
-            if params.general.geometry_module == "flag2d":
-                # TEMP Hack for Turek and Hron Flag
-                x1 = 0.6
-                x2 = 0.2
-                corner = [x1, x2]
+        # # find hmin in mesh
+        # num_cells = domain.structure.msh.topology.index_map(self.ndim).size_local
+        # h = dolfinx.cpp.mesh.h(domain.structure.msh, self.ndim, range(num_cells))
 
-                east_edge = np.logical_and(
-                    corner[0] - eps < x[0], x[0] < corner[0] + eps
-                )
-                north_edge = np.logical_and(
-                    corner[1] - eps < x[1], x[1] < corner[1] + eps
-                )
+        # # This value of hmin is local to the mesh portion owned by the process
+        # hmin_local = np.amin(h)
 
-                north_east_corner = np.logical_and(east_edge, north_edge)
+        # # collect the minimum hmin from all processes
+        # self.hmin = np.zeros(1)
+        # self.comm.Allreduce(hmin_local, self.hmin, op=MPI.MIN)
+        # self.hmin = self.hmin[0]
 
-            else:
-                new_method = True
+        # if self.rank == 0:
+        #     print(f"hmin on structure = {self.hmin}")
+        #     print(f"Total num dofs on structure = {self.num_V_dofs}")
 
-                if not new_method:
-                    tracker_angle_rad = np.radians(params.pv_array.tracker_angle)
-                    x1 = 0.5 * params.pv_array.panel_chord * np.cos(tracker_angle_rad)
-                    x2 = (
-                        0.5
-                        * params.pv_array.panel_thickness
-                        * np.sin(tracker_angle_rad)
-                    )
-                    corner = [x1 - x2, 0.5 * params.pv_array.panel_span]
+        # # Mass density
+        # self.rho = dolfinx.fem.Constant(
+        #     domain.structure.msh, params.structure.rho
+        # )  # Constant(0.)
 
-                    east_edge = np.logical_and(
-                        corner[0] - eps < x[0], x[0] < corner[0] + eps
-                    )
-                    north_edge = np.logical_and(
-                        corner[1] - eps < x[1], x[1] < corner[1] + eps
-                    )
+        # # Rayleigh damping coefficients
+        # self.eta_m = dolfinx.fem.Constant(domain.structure.msh, 0.0)  # Constant(0.)
+        # self.eta_k = dolfinx.fem.Constant(domain.structure.msh, 0.0)  # Constant(0.)
 
-                    north_east_corner = np.logical_and(east_edge, north_edge)
+        # # Generalized-alpha method parameters
+        # self.alpha_m = dolfinx.fem.Constant(domain.structure.msh, 0.2)
+        # self.alpha_f = dolfinx.fem.Constant(domain.structure.msh, 0.4)
+        # self.gamma = 0.5 + self.alpha_f - self.alpha_m
+        # self.beta = (self.gamma + 0.5) ** 2 / 4.0
 
-                else:
-                    tracker_angle_rad = np.radians(params.pv_array.tracker_angle)
+        # # Define structural properties
+        # self.E = params.structure.elasticity_modulus  # 1.0e9
+        # self.ν = params.structure.poissons_ratio  # 0.3
+        # self.μ = self.E / (2.0 * (1.0 + self.ν))
+        # self.λ = self.E * self.ν / ((1.0 + self.ν) * (1.0 - 2.0 * self.ν))
 
-                    Ry = np.array(
-                        [
-                            [np.cos(tracker_angle_rad), 0.0, np.sin(tracker_angle_rad)],
-                            [0.0, 1.0, 0.0],
-                            [
-                                -np.sin(tracker_angle_rad),
-                                0.0,
-                                np.cos(tracker_angle_rad),
-                            ],
-                        ]
-                    )
+        # if self.rank == 0:
+        #     print(
+        #         f"mu = {self.μ} lambda = {self.λ} E = {self.E} nu = {self.ν} density = {self.rho.value}"
+        #     )
 
-                    array_rotation = (params.fluid.wind_direction + 90.0) % 360.0
-                    array_rotation_rad = np.radians(array_rotation)
+        # # time step
+        # self.dt_st = dolfinx.fem.Constant(domain.structure.msh, (params.structure.dt))
 
-                    Rz = np.array(
-                        [
-                            [
-                                np.cos(array_rotation_rad),
-                                -np.sin(array_rotation_rad),
-                                0.0,
-                            ],
-                            [
-                                np.sin(array_rotation_rad),
-                                np.cos(array_rotation_rad),
-                                0.0,
-                            ],
-                            [0.0, 0.0, 1.0],
-                        ]
-                    )
+        # def _north_east_corner(x):
+        #     eps = 1.0e-6
 
-                    reference_position = np.array(
-                        [
-                            0.5 * params.pv_array.panel_chord,
-                            0.5 * params.pv_array.panel_span,
-                            -0.5 * params.pv_array.panel_thickness,
-                        ]
-                    )
+        #     # TODO: allow the probing of (x,y,z) points as something specified in the yaml file
+        #     if params.general.geometry_module == "flag2d":
+        #         # TEMP Hack for Turek and Hron Flag
+        #         x1 = 0.6
+        #         x2 = 0.2
+        #         corner = [x1, x2]
+        #     else:
+        #         tracker_angle_rad = np.radians(params.pv_array.tracker_angle)
+        #         x1 = 0.5 * params.pv_array.panel_chord * np.cos(tracker_angle_rad)
+        #         x2 = 0.5 * params.pv_array.panel_thickness * np.sin(tracker_angle_rad)
+        #         corner = [x1 - x2, 0.5 * params.pv_array.panel_span]
 
-                    rotated_position = np.dot(reference_position, Ry.T)
-                    rotated_position = np.dot(rotated_position, Rz.T)
+        #     east_edge = np.logical_and(corner[0] - eps < x[0], x[0] < corner[0] + eps)
+        #     north_edge = np.logical_and(corner[1] - eps < x[1], x[1] < corner[1] + eps)
 
-                    final_position = rotated_position + np.array(
-                        [0.0, 0.0, params.pv_array.elevation]
-                    )
+        #     north_east_corner = np.logical_and(east_edge, north_edge)
 
-                    if params.rank == 0:
-                        print(
-                            f"Measuring panel deformation at (x, y, z) position {final_position}"
-                        )
+        #     return north_east_corner
 
-                    eps = 1.0e-4
-                    near_x = np.logical_and(
-                        final_position[0] - eps < x[0], x[0] < final_position[0] + eps
-                    )
-                    near_y = np.logical_and(
-                        final_position[1] - eps < x[1], x[1] < final_position[1] + eps
-                    )
-                    near_z = np.logical_and(
-                        final_position[2] - eps < x[2], x[2] < final_position[2] + eps
-                    )
+        # north_east_corner_facets = dolfinx.mesh.locate_entities_boundary(
+        #     domain.structure.msh, 0, _north_east_corner
+        # )
 
-                    north_east_corner = np.logical_and(
-                        near_x, np.logical_and(near_y, near_z)
-                    )
-
-            return north_east_corner
-
-        north_east_corner_facets = dolfinx.mesh.locate_entities_boundary(
-            domain.structure.msh, 0, _north_east_corner
-        )
-
-        self.north_east_corner_dofs = dolfinx.fem.locate_dofs_topological(
-            self.V, 0, north_east_corner_facets
-        )
+        # self.north_east_corner_dofs = dolfinx.fem.locate_dofs_topological(
+        #     self.V, 0, north_east_corner_facets
+        # )
 
     def build_boundary_conditions(self, domain, params):
         """Build the boundary conditions
@@ -286,7 +209,7 @@ class Elasticity:
     def avg(self, x_old, x_new, alpha):
         return alpha * x_old + (1 - alpha) * x_new
 
-    def build_forms(self, domain, params):
+    def build_forms(self, domain, params, structure):
         """Builds all variational statements
 
         This method creates all the functions, expressions, and variational
@@ -354,12 +277,12 @@ class Elasticity:
         #     return ufl.dot(u_, self.f)*self.ds #dss(3)
 
         def sigma(r):
-            return self.λ * ufl.nabla_div(r) * ufl.Identity(
+            return structure.λ * ufl.nabla_div(r) * ufl.Identity(
                 len(r)
-            ) + 2 * self.μ * ufl.sym(ufl.grad(r))
+            ) + 2 * structure.μ * ufl.sym(ufl.grad(r))
 
         def m(u, u_):
-            return self.rho * ufl.inner(u, u_) * ufl.dx
+            return structure.rho * ufl.inner(u, u_) * ufl.dx
 
         def k(u, u_):
             return ufl.inner(sigma(u), ufl.grad(u_)) * ufl.dx
@@ -370,7 +293,7 @@ class Elasticity:
             F = ufl.grad(u) + ufl.Identity(len(u))
             E = 0.5 * (F.T * F - ufl.Identity(len(u)))
             # S = self.λ *ufl.tr(E)*ufl.Identity(len(u))   + 2*self.μ * (E - ufl.tr(E)*ufl.Identity(len(u))  /3.0)
-            S = self.λ * ufl.tr(E) * ufl.Identity(len(u)) + 2 * self.μ * (E)
+            S = structure.λ * ufl.tr(E) * ufl.Identity(len(u)) + 2 * structure.μ * (E)
 
             # return ufl.inner(F * S, ufl.grad(u_)) * ufl.dx
             return ufl.inner(P_(u), ufl.grad(u_)) * ufl.dx
@@ -401,7 +324,7 @@ class Elasticity:
             # return lamda * ufl.tr(E) * I + 2.0 * mu * (E - ufl.tr(E) * I / 3.0)
             # TODO: Why does the above form give a better result and where does it come from?
 
-            S_svk = self.λ * ufl.tr(E) * I + 2.0 * self.μ * E
+            S_svk = structure.λ * ufl.tr(E) * I + 2.0 * structure.μ * E
             return S_svk
 
         # The first Piola–Kirchhoff stress tensor, P = F*S
@@ -418,7 +341,7 @@ class Elasticity:
 
         def σ(v):
             """Return an expression for the stress σ given a displacement field"""
-            return 2.0 * self.μ * ufl.sym(ufl.grad(v)) + self.λ * ufl.tr(
+            return 2.0 * structure.μ * ufl.sym(ufl.grad(v)) + structure.λ * ufl.tr(
                 ufl.sym(ufl.grad(v))
             ) * ufl.Identity(len(v))
 
@@ -433,16 +356,27 @@ class Elasticity:
         # self.f = ufl.as_vector((0*self.ρ * self.ω**2 * x[0], self.ρ * self.ω**2 * x[1], 0.0))
         # self.T = dolfinx.fem.Constant(domain.structure.msh, PETSc.ScalarType((0, 1.e-3, 0)))
         # self.f = dolfinx.fem.Constant(domain.structure.msh, PETSc.ScalarType((0,100,100)))
-        self.f = dolfinx.fem.Constant(
-            domain.structure.msh,
-            PETSc.ScalarType(
-                (
-                    params.structure.body_force_x,
-                    params.structure.body_force_y,
-                    params.structure.body_force_z,
-                )
-            ),
-        )
+        if domain.ndim == 2:
+            self.f = dolfinx.fem.Constant(
+                domain.structure.msh,
+                PETSc.ScalarType(
+                    (
+                        params.structure.body_force_x,
+                        params.structure.body_force_y,
+                    )
+                ),
+            )
+        elif domain.ndim == 3:
+            self.f = dolfinx.fem.Constant(
+                domain.structure.msh,
+                PETSc.ScalarType(
+                    (
+                        params.structure.body_force_x,
+                        params.structure.body_force_y,
+                        params.structure.body_force_z,
+                    )
+                ),
+            )
         self.ds = ufl.Measure("ds", domain=domain.structure.msh)
         n = ufl.FacetNormal(domain.structure.msh)
 
@@ -460,7 +394,7 @@ class Elasticity:
             m(self.avg(self.a_old, a_new, self.alpha_m), self.u_)
             + c(self.avg(self.v_old, v_new, self.alpha_f), self.u_)
             + k(self.avg(self.u_old, self.u, self.alpha_f), self.u_)
-            - self.rho * ufl.inner(self.f, self.u_) * ufl.dx
+            - structure.rho * ufl.inner(self.f, self.u_) * ufl.dx
             - ufl.dot(ufl.dot(self.stress_predicted * J * ufl.inv(F.T), n), self.u_)
             * self.ds
         )  # - Wext(self.u)
@@ -582,7 +516,7 @@ class Elasticity:
 
         return PETSc.NullSpace().create(vectors=ns)
 
-    def solve(self, params, dataIO):
+    def solve(self, params, dataIO, structure):
         # def σ(v):
         #     """Return an expression for the stress σ given a displacement field"""
         #     return 2.0 * self.μ * ufl.sym(ufl.grad(v)) + self.λ * ufl.tr(
@@ -627,15 +561,18 @@ class Elasticity:
         # self.unorm = self.u.x.norm()
 
         try:
-            idx = self.north_east_corner_dofs[0]
-            nw_corner_accel = self.u.vector.array[3 * idx : 3 * idx + 3].astype(
-                np.float64
-            )
+            idx = structure.north_east_corner_dofs[0]
+            # idx = self.north_east_corner_dofs[0]
+            nw_corner_accel = self.u.x.array[
+                structure.ndim * idx : structure.ndim * idx + structure.ndim
+            ].astype(np.float64)
             print(nw_corner_accel)
         except:
-            nw_corner_accel = np.zeros(3, dtype=np.float64)
+            nw_corner_accel = np.zeros(structure.ndim, dtype=np.float64)
 
-        nw_corner_accel_global = np.zeros((self.num_procs, 3), dtype=np.float64)
+        nw_corner_accel_global = np.zeros(
+            (self.num_procs, structure.ndim), dtype=np.float64
+        )
 
         self.comm.Gather(nw_corner_accel, nw_corner_accel_global, root=0)
 
@@ -654,16 +591,16 @@ class Elasticity:
 
                 with open(accel_pos_filename, "w") as fp:
                     fp.write("#x-pos,y-pos,z-pos\n")
-                    if self.ndim == 3:
+                    if structure.ndim == 3:
                         fp.write(f"{np_accel[0]},{np_accel[1]},{np_accel[2]}\n")
-                    elif self.ndim == 2:
+                    elif structure.ndim == 2:
                         fp.write(f"{np_accel[0]},{np_accel[1]}\n")
 
             else:
                 with open(accel_pos_filename, "a") as fp:
-                    if self.ndim == 3:
+                    if structure.ndim == 3:
                         fp.write(f"{np_accel[0]},{np_accel[1]},{np_accel[2]}\n")
-                    elif self.ndim == 2:
+                    elif structure.ndim == 2:
                         fp.write(f"{np_accel[0]},{np_accel[1]}\n")
 
         if self.first_call_to_solver:
