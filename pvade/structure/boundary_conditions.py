@@ -272,9 +272,14 @@ def build_pressure_boundary_conditions(domain, params, functionspace):
 
 def build_structure_boundary_conditions(domain, params, functionspace):
     facet_dim = domain.ndim - 1
-    zero_vec = dolfinx.fem.Constant(
-        domain.structure.msh, PETSc.ScalarType((0.0, 0.0, 0.0))
-    )
+    if domain.ndim == 2:
+        zero_vec = dolfinx.fem.Constant(
+            domain.structure.msh, PETSc.ScalarType((0.0, 0.0))
+        )
+    elif domain.ndim == 3:
+        zero_vec = dolfinx.fem.Constant(
+            domain.structure.msh, PETSc.ScalarType((0.0, 0.0, 0.0))
+        )
     bc = []
 
     total_num_panels = params.pv_array.stream_rows * params.pv_array.span_rows
