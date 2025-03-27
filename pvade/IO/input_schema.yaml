@@ -187,8 +187,10 @@ properties:
         default: 30.0
         minimum: -90.0
         maximum: 90.0
-        type: "number"
-        description: "The orientation of the panels, sign convention follows the right-hand rule about the positive y-axis, that is, a positive angle indicates the upstream edge is further from the ground and negative indicates the downstream edge is further from the ground."
+        type:
+          - "number"
+          - "array"
+        description: "The orientation of the panels, sign convention follows the right-hand rule about the positive y-axis, that is, a positive angle indicates the upstream edge is further from the ground and negative indicates the downstream edge is further from the ground. If argument is an array, length must be equal to total number of panels. If argument is a single value, that tracking angle will be applied to the every panel."
         units: "degree"
   solver:
     additionalProperties: false
