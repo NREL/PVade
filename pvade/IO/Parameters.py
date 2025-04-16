@@ -90,6 +90,12 @@ class SimParams:
 
         self._add_derived_quantities()
 
+        # Write all of the input dictionary, including CLI options and defaults, to a yaml file
+        with open(
+            os.path.join(self.general.output_dir, "input_params.yaml"), "w"
+        ) as fp:
+            yaml.dump(self.input_dict, fp)
+
     def _flatten_schema_dict(self):
         """Flatten the schema dictionary
 
