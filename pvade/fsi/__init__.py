@@ -1,5 +1,4 @@
-"""This is the base package for ``pvade``.
-"""
+"""This is the base package for ``pvade``."""
 
 
 class PVadeError(Exception):

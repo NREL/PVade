@@ -1,5 +1,4 @@
-"""Summary
-"""
+"""Summary"""
 
 import dolfinx
 import ufl
