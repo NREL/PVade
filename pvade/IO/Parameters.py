@@ -251,7 +251,8 @@ class SimParams:
                 if key in require_special_handling:
                     try:
                         value_to_write = float(value)
-                        print(f"| Interpreting {key} as float: {value_to_write}")
+                        if self.rank == 0:
+                            print(f"| Interpreting {key} as float: {value_to_write}")
 
                     except:
                         if "[" in value and "]" in value:
@@ -261,7 +262,8 @@ class SimParams:
                             value_to_write = value_to_write.split(",")
                             value_to_write = [float(v) for v in value_to_write]
 
-                            print(f"| Interpreting {key} as list: {value_to_write}")
+                            if self.rank == 0:
+                                print(f"| Interpreting {key} as list: {value_to_write}")
 
                         else:
                             # Interpretation as float failed, interpretation as list of floats
