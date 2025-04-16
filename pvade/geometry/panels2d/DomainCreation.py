@@ -171,7 +171,6 @@ class DomainCreation(TemplateDomainCreation):
 
             # Get the list of 1D surfaces (edges) that make up this panel
             surf_tags_for_this_panel = self.gmsh_model.getBoundary([panel_tag])
-            print(f"panel_id = {panel_id}, surf_tags = ", surf_tags_for_this_panel)
 
             for surf_tag in surf_tags_for_this_panel:
                 surf_dim = surf_tag[0]
