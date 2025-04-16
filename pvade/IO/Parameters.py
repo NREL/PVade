@@ -90,8 +90,6 @@ class SimParams:
 
         self._add_derived_quantities()
 
-        exit()
-
     def _flatten_schema_dict(self):
         """Flatten the schema dictionary
 
