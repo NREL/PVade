@@ -23,10 +23,9 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Build Conda environment
-        uses: mamba-org/setup-micromamba@v2
+        uses: conda-incubator/setup-miniconda@v3
         with:
           environment-file: environment.yaml
-          generate-run-shell: false
       - name: Run pytest
         shell: bash -l {0}
         run: pytest -sv pvade/tests/
