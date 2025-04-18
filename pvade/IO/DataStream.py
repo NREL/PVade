@@ -55,7 +55,8 @@ def start_print_and_log(rank, logfile_name):
     sys.stdout = PrintAndLog(logfile_name, rank, message_type="INFO")
     sys.stderr = PrintAndLog(logfile_name, rank, message_type="ERROR")
 
-    print("Starting PVade Run")
+    if rank == 0:
+        print("Starting PVade Run")
 
 
 class DataStream:
