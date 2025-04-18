@@ -1,5 +1,4 @@
-"""Summary
-"""
+"""Summary"""
 
 import dolfinx
 import ufl
@@ -131,7 +130,11 @@ class Structure:
                 x2 = 0.2
                 corner = [x1, x2]
             else:
-                tracker_angle_rad = np.radians(params.pv_array.tracker_angle)
+                if isinstance(params.pv_array.tracker_angle, list):
+                    tracker_angle_rad = np.radians(params.pv_array.tracker_angle[0])
+                else:
+                    tracker_angle_rad = np.radians(params.pv_array.tracker_angle)
+
                 x1 = 0.5 * params.pv_array.panel_chord * np.cos(tracker_angle_rad)
                 x2 = 0.5 * params.pv_array.panel_thickness * np.sin(tracker_angle_rad)
                 corner = [x1 - x2, 0.5 * params.pv_array.panel_span]

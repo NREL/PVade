@@ -90,6 +90,12 @@ class SimParams:
 
         self._add_derived_quantities()
 
+        # Write all of the input dictionary, including CLI options and defaults, to a yaml file
+        with open(
+            os.path.join(self.general.output_dir, "input_params.yaml"), "w"
+        ) as fp:
+            yaml.dump(self.input_dict, fp)
+
     def _flatten_schema_dict(self):
         """Flatten the schema dictionary
 
@@ -202,17 +208,25 @@ class SimParams:
             help="The full path to the input file, e.g., 'intputs/my_params.yaml'",
         )
 
+        require_special_handling = []
+
         for key, value in self.flat_schema_dict.items():
             help_message = f"{value['description']} (data type = {value['type']}, Units = {value['units']})"
 
-            if value["type"] == "string":
+            if isinstance(value["type"], list):
+                # treat it as a generic string for now and we will parse it if necessary
                 cli_type = str
-            elif value["type"] == "number":
-                cli_type = float
-            elif value["type"] == "integer":
-                cli_type = int
+                require_special_handling.append(key)
+
             else:
-                cli_type = None
+                if value["type"] == "string":
+                    cli_type = str
+                elif value["type"] == "number":
+                    cli_type = float
+                elif value["type"] == "integer":
+                    cli_type = int
+                else:
+                    cli_type = None
 
             parser.add_argument(
                 f"--{key}", metavar="", type=cli_type, help=help_message
@@ -223,18 +237,45 @@ class SimParams:
         # Find any command line arguments that were used and replace those entries in params
         for key, value in vars(command_line_inputs).items():
             if key not in ignore_list and value is not None:
+
+                value_to_write = value
+
                 path_to_input = key.split(".")
 
                 if isinstance(value, str):
                     if value.lower() == "true":
-                        value = True
+                        value_to_write = True
                     elif value.lower() == "false":
-                        value = False
+                        value_to_write = False
 
-                self._set_nested_dict_value(self.input_dict, path_to_input, value)
+                if key in require_special_handling:
+                    try:
+                        value_to_write = float(value)
+                        if self.rank == 0:
+                            print(f"| Interpreting {key} as float: {value_to_write}")
+
+                    except:
+                        if "[" in value and "]" in value:
+
+                            value_to_write = value.replace("[", "")
+                            value_to_write = value_to_write.replace("]", "")
+                            value_to_write = value_to_write.split(",")
+                            value_to_write = [float(v) for v in value_to_write]
+
+                            if self.rank == 0:
+                                print(f"| Interpreting {key} as list: {value_to_write}")
+
+                        else:
+                            # Interpretation as float failed, interpretation as list of floats
+                            # failed, default to treating it like a string
+                            pass
+
+                self._set_nested_dict_value(
+                    self.input_dict, path_to_input, value_to_write
+                )
 
                 if self.rank == 0:
-                    print(f"| Setting {key} = {value} from command line.")
+                    print(f"| Setting {key} = {value_to_write} from command line.")
 
         for key in unknown:
             if self.rank == 0:
