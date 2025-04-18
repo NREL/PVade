@@ -187,8 +187,16 @@ properties:
         default: 30.0
         minimum: -90.0
         maximum: 90.0
-        type: "number"
-        description: "The orientation of the panels, sign convention follows the right-hand rule about the positive y-axis, that is, a positive angle indicates the upstream edge is further from the ground and negative indicates the downstream edge is further from the ground."
+        type:
+          - "number"
+          - "array"
+        description: "The orientation of the panels, sign convention follows the right-hand rule about the positive y-axis for 3D
+        and the positive z-axis for 2D, that is, in 3D, a positive angle indicates the upstream edge is *further* from the ground
+        whereas in 2D a positive angle indicates the upstream edge is *nearer* to the ground. This unfortunate disagreement between
+        2D and 3D simplifies many of the mathematical rotations and indexing operations within the code, so we prefer not to force a
+        positive angle to imply back-winding in 2D. If argument is a 1D array, length must be equal to total number of panels and will
+        be unrolled such that tracking_angle_0 is applied to the panel at (x_min, y_min), tracking_angle_1 is applied to the panel at
+        (x_min + x_spacing, y_min), etc., i.e., x-major direction. If argument is a single value, that tracking angle will be applied to the every panel."
         units: "degree"
   solver:
     additionalProperties: false
