@@ -127,6 +127,11 @@ class DomainCreation(TemplateDomainCreation):
         prev_surf_tag = []
         for panel_id in range(params.pv_array.stream_rows):
             if isinstance(params.pv_array.tracker_angle, list):
+                if panel_id == 0:
+                    assert (
+                        len(params.pv_array.tracker_angle)
+                        == params.pv_array.stream_rows
+                    ), f"Length of tracker angle list ({len(params.pv_array.tracker_angle)}) not equal to total number of PV tables ({params.pv_array.stream_rows})."
                 tracker_angle_rad = np.radians(params.pv_array.tracker_angle[panel_id])
             else:
                 tracker_angle_rad = np.radians(params.pv_array.tracker_angle)
