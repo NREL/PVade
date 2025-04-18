@@ -157,6 +157,12 @@ class DomainCreation(TemplateDomainCreation):
         for panel_id_y, yy in enumerate(y_centers):
             for panel_id_x, xx in enumerate(x_centers):
                 if isinstance(params.pv_array.tracker_angle, list):
+                    if panel_ct == 0:
+                        assert (
+                            len(params.pv_array.tracker_angle)
+                            == params.pv_array.stream_rows * params.pv_array.span_rows
+                        ), f"Length of tracker angle list ({len(params.pv_array.tracker_angle)}) not equal to total number of PV tables ({params.pv_array.stream_rows * params.pv_array.span_rows})."
+
                     tracker_angle_rad = np.radians(
                         params.pv_array.tracker_angle[panel_ct]
                     )
