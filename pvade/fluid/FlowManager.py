@@ -698,6 +698,7 @@ class Flow:
                 self.inflow_profile.interpolate(self.inflow_velocity, self.upper_cells)
             else:
                 self.inflow_profile.interpolate(self.inflow_velocity)
+        # ?? what happens if we're outside the ramp_window?
 
         if self.first_call_to_solver:
             if self.rank == 0:

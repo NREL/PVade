@@ -317,6 +317,7 @@ properties:
           - "uniform"
           - "loglaw"
           - "parabolic"
+          - "specified_from_file"
       inflow_coeff:
         default: 1.0
         minimum: 0.0
@@ -345,6 +346,12 @@ properties:
         type: "number"
         description: "The zero plane displacement height used for the presence of vegetated or urban canopies in the log law velocity profile."
         units: "meters"
+      h5_filename:
+        default: null
+        type:
+          - "string"
+          - "null"
+        description: "The .h5 filename that specifies the inflow velocity boundary conditions."
       initialize_with_inflow_bc:
         default: true
         type: "boolean"

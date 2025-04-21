@@ -2,6 +2,8 @@ import dolfinx
 from petsc4py import PETSc
 
 import numpy as np
+import h5py
+import scipy.interpolate as interp
 
 import warnings
 
@@ -117,6 +119,26 @@ class InflowVelocity:
         self.params = params
         self.current_time = current_time
 
+        if self.params.fluid.velocity_profile_type == "specified_from_file":
+            with h5py.File(self.params.fluid.h5_filename, "r") as fp:
+                self.time_index = fp["time_index"][:]
+                self.y_coordinates = fp["y_coordinates"][:]
+                self.z_coordinates = fp["z_coordinates"][:]
+                self.u = fp["u"][:]
+                self.v = fp["v"][:]
+                self.w = fp["w"][:]
+
+            # TODO: add checks for if the user specifies a t_final beyond last time_index
+
+            # Create the known axes for our interpolators (t0, z0, y0)
+            x0 = (self.time_index, self.z_coordinates, self.y_coordinates)
+            
+            self.interp_u = interp.RegularGridInterpolator(x0, self.u, bounds_error=False, fill_value=None)
+            self.interp_v = interp.RegularGridInterpolator(x0, self.v, bounds_error=False, fill_value=None)
+            self.interp_w = interp.RegularGridInterpolator(x0, self.w, bounds_error=False, fill_value=None)
+            
+            # self.inflow_dofs = inflow_dofs
+
     def __call__(self, x):
         """Define an inflow expression for use as boundary condition
 
@@ -126,8 +148,11 @@ class InflowVelocity:
         Returns:
             np.ndarray: Value of velocity at each coordinate in input array
         """
-
+        # print('shape of x = ', np.shape(x))
+        
+        # Preallocated velocity vector that we will fill
         inflow_values = np.zeros((self.ndim, x.shape[1]), dtype=PETSc.ScalarType)
+        # print('shape of inflow_values = ', np.shape(inflow_values))
 
         # if self.first_call_to_inflow_velocity:
         #     print(f"creating {self.params.fluid.velocity_profile_type} inflow profile")
@@ -194,6 +219,21 @@ class InflowVelocity:
                     * np.log(((x[1]) - d0) / z0)
                     / (np.log((z_hub - d0) / z0))
                 )
+
+        elif self.params.fluid.velocity_profile_type == "specified_from_file":
+            # assuming always a timeseries for now
+            xi_0_mask = x[0] < 1e-5      
+            ti = self.current_time * np.ones(np.sum(xi_0_mask))
+
+            xi = np.vstack((ti, x[2][xi_0_mask], x[1][xi_0_mask])).T
+            
+            u_vel = self.interp_u(xi) # this grabs u,v,w at current time and at x inlet
+            v_vel = self.interp_v(xi)
+            w_vel = self.interp_w(xi)
+            
+            inflow_values[0, xi_0_mask] = u_vel
+            inflow_values[1, xi_0_mask] = v_vel
+            inflow_values[2, xi_0_mask] = w_vel
 
         # if self.first_call_to_inflow_velocity:
         #     print("inflow_values = ", inflow_values[0])
@@ -264,6 +304,11 @@ def get_inflow_profile_function(domain, params, functionspace, current_time):
             )  # just a bandaid for now
 
         inflow_function.interpolate(inflow_velocity, upper_cells)
+
+    elif params.fluid.velocity_profile_type == "specified_from_file":
+        if domain.rank == 0:
+            print("setting inflow profile from {}".format(params.fluid.h5_filename))
+        inflow_function.interpolate(inflow_velocity)
 
     return inflow_function, inflow_velocity, upper_cells
 
