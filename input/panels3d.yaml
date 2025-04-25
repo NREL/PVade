@@ -39,6 +39,7 @@ solver:
   save_text_interval: .1 #0.01
   save_xdmf_interval: .1 #0.01
 fluid:
+  velocity_profile_type: uniform
   u_ref: 1.0
   nu: 0.01
   turbulence_model:  smagorinsky #null #  

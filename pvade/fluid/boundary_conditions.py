@@ -222,7 +222,7 @@ class InflowVelocity:
 
         elif self.params.fluid.velocity_profile_type == "specified_from_file":
             # assuming always a timeseries for now
-            xi_0_mask = x[0] < 1e-5      
+            xi_0_mask = x[0] < self.params.domain.x_min + 1e-5      
             ti = self.current_time * np.ones(np.sum(xi_0_mask))
 
             xi = np.vstack((ti, x[2][xi_0_mask], x[1][xi_0_mask])).T
