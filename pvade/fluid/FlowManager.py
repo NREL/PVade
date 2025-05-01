@@ -688,7 +688,7 @@ class Flow:
             params (:obj:`pvade.Parameters.SimParams`): A SimParams object
         """
 
-        ramp_window = params.fluid.time_varying_inflow_window
+        ramp_window = params.fluid.time_varying_inflow_window # TODO - need to change this - not a ramp_window for specified_from_file
 
         if ramp_window > 0.0 and current_time <= ramp_window:
             self.inflow_velocity.current_time = current_time
@@ -697,6 +697,8 @@ class Flow:
                 self.inflow_profile.interpolate(self.inflow_velocity, self.upper_cells)
             else:
                 self.inflow_profile.interpolate(self.inflow_velocity)
+            if self.rank == 0:
+                print("applied inflow BC at current time: ", current_time)
         # ?? what happens if we're outside the ramp_window?
 
         if self.first_call_to_solver:
