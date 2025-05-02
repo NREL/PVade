@@ -24,7 +24,7 @@ pv_array:
   tracker_angle: 0.0
   span_fixation_pts: [13.2]
 solver:
-  dt: 0.05 #0.05 #0.01
+  dt: 0.02 #0.05 #0.01
   t_final: 20.0
   solver1_ksp: gmres
   solver2_ksp: gmres
@@ -34,13 +34,13 @@ solver:
   solver2_pc: hypre
   solver3_pc: hypre
   solver5_pc: hypre
-  save_text_interval: 0.05
-  save_xdmf_interval: 0.05
+  save_text_interval: 0.02
+  save_xdmf_interval: 0.02
 fluid:
   velocity_profile_type: specified_from_file
-  h5_filename: input/pct_turb_ny80_nz40_unconstrained_1s_dt01.h5 #linear_inflow.h5
-  time_varying_inflow_window: 1.0
-  u_ref: 16.0
+  h5_filename: input/pct_turb_ny80_nz40_sonic1_1s.h5 #linear_inflow.h5
+  # time_varying_inflow_window: 1.0 - compute this in the code, remove as input
+  # u_ref: 12.0 # TODO - compute this in the code, remove as input
   rho: 1.0
   nu: 1.8e-05
   turbulence_model: smagorinsky
@@ -50,7 +50,7 @@ fluid:
   bc_z_min: noslip
   wind_direction: 270.0
 structure:
-  dt : 0.05 #0.05 #0.01
+  dt : 0.02 #0.05 #0.01
   rho: 124.0
   poissons_ratio: 0.3
   elasticity_modulus: 4.0e+09
