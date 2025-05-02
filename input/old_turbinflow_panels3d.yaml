@@ -1,18 +1,18 @@
 general:
   test: False
   geometry_module: panels3d
-  output_dir: output/panels3d
+  output_dir: output/turbinflow_panels3d
   mesh_only: False
   # input_mesh_dir: output/panels3d/mesh
   structural_analysis: True
   fluid_analysis: True
 domain:
   x_min: -20
-  x_max: 100
-  y_min: -30
-  y_max: 30 # 20+39 39 is panel to panel 
+  x_max: 20 #50 #100
+  y_min: -10 #-30
+  y_max: 10 #30 # 20+39 39 is panel to panel 
   z_min: 0
-  z_max: 20
+  z_max: 10 #20
   l_char: 4
 pv_array:
   stream_rows: 1
@@ -39,8 +39,8 @@ solver:
   save_text_interval: .1 #0.01
   save_xdmf_interval: .1 #0.01
 fluid:
-  velocity_profile_type: uniform
-  u_ref: 1.0
+  velocity_profile_type: specified_from_file
+  h5_filename: input/linear_inflow.h5
   nu: 0.01
   turbulence_model:  smagorinsky #null #  
   periodic: false 
@@ -48,7 +48,7 @@ fluid:
   bc_y_min: slip # slip noslip free
   bc_z_max: slip # slip noslip free
   bc_z_min: noslip # slip noslip free
-  wind_direction: 250 # slip noslip free
+  wind_direction: 270 # slip noslip free
 structure:
   dt : 0.1
   elasticity_modulus: 1.0e+05
