@@ -234,6 +234,8 @@ class Flow:
             self.u_k2.interpolate(self.inflow_profile)
             self.u_k.interpolate(self.inflow_profile)
 
+            if self.rank == 0:
+                print('initialized BC everywhere')
             # print(min(abs(self.u_k.x.array[:] - self.inflow_profile.x.array[:])))
 
             # flags = []
@@ -688,9 +690,13 @@ class Flow:
             params (:obj:`pvade.Parameters.SimParams`): A SimParams object
         """
 
-        ramp_window = params.fluid.time_varying_inflow_window # TODO - need to change this - not a ramp_window for specified_from_file
+        ramp_window = params.fluid.ramp_window
 
-        if ramp_window > 0.0 and current_time <= ramp_window:
+        if (ramp_window > 0.0 and current_time <= ramp_window) or (
+            params.fluid.velocity_profile_type == "specified_from_file" and 
+            current_time <= self.inflow_velocity.inflow_t_final
+            ):
+
             self.inflow_velocity.current_time = current_time
 
             if self.upper_cells is not None:

@@ -137,7 +137,11 @@ class InflowVelocity:
             self.interp_v = interp.RegularGridInterpolator(x0, self.v, bounds_error=False, fill_value=None)
             self.interp_w = interp.RegularGridInterpolator(x0, self.w, bounds_error=False, fill_value=None)
             
+            self.inflow_t_final = self.time_index[-1] # [s] time of last timestep of inflow file
             # self.inflow_dofs = inflow_dofs
+
+            # compute effective u_ref
+
 
     def __call__(self, x):
         """Define an inflow expression for use as boundary condition
@@ -163,7 +167,7 @@ class InflowVelocity:
         #     time_vary_u_ref goes from 0 -> u_ref smoothly over ramp_up_window time
         #     e.g., start velocity at 0, and by t=1.0 seconds, achieve full inflow speed
 
-        ramp_window = self.params.fluid.time_varying_inflow_window
+        ramp_window = self.params.fluid.ramp_window
 
         if ramp_window > 0.0 and self.current_time <= ramp_window:
             time_vary_u_ref = (
@@ -240,6 +244,28 @@ class InflowVelocity:
         #     self.first_call_to_inflow_velocity = False
 
         return inflow_values
+    
+    def compute_mean_inflow_profile(self):
+        """ Compute time-averaged inflow profile from file
+
+        Outputs:
+            u_ref : effective u_ref computed from input inflow file - velocity at panel elevation
+            u_inf : streamwise velocity in freestream (at highest elevation in domain)
+            z0
+        """
+
+        # make it u_ref in any direction - so compute the magnitude
+        umag = (self.u**2 + self.v**2)**0.5
+
+        umag_mean = np.average(np.average(umag, axis=0), axis=-1)
+
+        # extract u_ref at elevation height
+        elevation = 2.1
+        z_idx = np.argmin(abs(z_fp - elevation))
+        u_ref_ext = umag_mean[z_idx]
+
+        if self.rank == 0:
+            print('u_ref_calc = ', u_ref_calc)
 
 
 def get_inflow_profile_function(domain, params, functionspace, current_time):

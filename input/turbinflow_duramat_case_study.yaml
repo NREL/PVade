@@ -39,7 +39,8 @@ solver:
 fluid:
   velocity_profile_type: specified_from_file
   h5_filename: input/pct_turb_ny80_nz40_sonic1_1s.h5 #linear_inflow.h5
-  # time_varying_inflow_window: 1.0 - compute this in the code, remove as input
+  initialize_with_inflow_bc: true
+  # ramp_window: 1.0 - compute this in the code, remove as input
   # u_ref: 12.0 # TODO - compute this in the code, remove as input
   rho: 1.0
   nu: 1.8e-05
