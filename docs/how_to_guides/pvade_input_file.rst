@@ -98,6 +98,7 @@ solver:
 fluid:
   The fluid Category sets the CFD parameters for the fluid simulation
    
+  - velocity_profile_type: General shape of inflow velocity profile
   - u_ref: Reference velocity at the center of the panel  
   - nu: Dynamic viscosity 
   - turbulence_model:  can be set to smagorinsky or null for no turbulence  
@@ -114,7 +115,7 @@ structure:
 
   - dt : set the time step for the CSD simulation 
   - elasticity_modulus: set the Elasticity modulus for the structure 
-  - poissons_ratio: set poisson's ration for the structure
+  - poissons_ratio: set poisson's ratio for the structure
   - body_force_x: set the x component of the body force 
   - body_force_y: set the y component of the body force
   - body_force_z: set the z component of the body force
