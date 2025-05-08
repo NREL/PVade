@@ -706,6 +706,16 @@ class Flow:
             if self.rank == 0:
                 print("applied inflow BC at current time: ", current_time)
 
+        if (
+            params.fluid.velocity_profile_type == "specified_from_file" and 
+            current_time > self.inflow_velocity.inflow_t_final
+            ):
+
+            # kill the simulation (otherwise, the inflow BCs don't change, which isn't realistic)
+            raise ValueError(
+                    f"No inflow data available at current time {current_time} s."
+                )
+
         if self.first_call_to_solver:
             if self.rank == 0:
                 print("Starting Fluid Solution")

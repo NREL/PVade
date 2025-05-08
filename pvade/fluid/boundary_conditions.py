@@ -138,6 +138,7 @@ class InflowVelocity:
             self.interp_w = interp.RegularGridInterpolator(x0, self.w, bounds_error=False, fill_value=None)
             
             self.inflow_t_final = self.time_index[-1] # [s] time of last timestep of inflow file
+
             # self.inflow_dofs = inflow_dofs
 
             # compute effective u_ref
@@ -337,6 +338,14 @@ def get_inflow_profile_function(domain, params, functionspace, current_time):
             print("setting inflow profile from {}".format(params.fluid.h5_filename))
             print('eff u_ref = {} m/s'.format(inflow_velocity.u_ref))
         inflow_function.interpolate(inflow_velocity)
+
+        if params.solver.t_final > inflow_velocity.inflow_t_final:
+            if domain.rank == 0:
+                print("WARNING: t_final ({:.2f} s) exceeds the final time in input inflow velocity file ({:.2f} s). " \
+                "Simulation will fail at that point.".format(
+                    params.solver.t_final, inflow_velocity.inflow_t_final
+                ))
+            
 
     return inflow_function, inflow_velocity, upper_cells
 
