@@ -141,6 +141,8 @@ class InflowVelocity:
             # self.inflow_dofs = inflow_dofs
 
             # compute effective u_ref
+            self.compute_mean_inflow_profile(params)
+            params.fluid.u_ref = self.u_ref # ?? is this bad practice?
 
 
     def __call__(self, x):
@@ -245,7 +247,7 @@ class InflowVelocity:
 
         return inflow_values
     
-    def compute_mean_inflow_profile(self):
+    def compute_mean_inflow_profile(self, params):
         """ Compute time-averaged inflow profile from file
 
         Outputs:
@@ -254,18 +256,17 @@ class InflowVelocity:
             z0
         """
 
-        # make it u_ref in any direction - so compute the magnitude
-        umag = (self.u**2 + self.v**2)**0.5
+        # TODO - add handling for 2D case
 
-        umag_mean = np.average(np.average(umag, axis=0), axis=-1)
+        # compute the magnitude to account for other wind directions
+        umag = (self.u**2 + self.v**2)**0.5
+        umag_mean = np.average(np.average(umag, axis=0), axis=-1) # vertical profile (averaged in time and y)
 
         # extract u_ref at elevation height
-        elevation = 2.1
-        z_idx = np.argmin(abs(z_fp - elevation))
-        u_ref_ext = umag_mean[z_idx]
+        z_idx = np.argmin(abs(self.z_coordinates - params.pv_array.elevation))
+        u_ref_calc = umag_mean[z_idx]
 
-        if self.rank == 0:
-            print('u_ref_calc = ', u_ref_calc)
+        self.u_ref = u_ref_calc
 
 
 def get_inflow_profile_function(domain, params, functionspace, current_time):
@@ -334,6 +335,7 @@ def get_inflow_profile_function(domain, params, functionspace, current_time):
     elif params.fluid.velocity_profile_type == "specified_from_file":
         if domain.rank == 0:
             print("setting inflow profile from {}".format(params.fluid.h5_filename))
+            print('eff u_ref = {} m/s'.format(inflow_velocity.u_ref))
         inflow_function.interpolate(inflow_velocity)
 
     return inflow_function, inflow_velocity, upper_cells

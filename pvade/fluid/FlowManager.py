@@ -705,7 +705,6 @@ class Flow:
                 self.inflow_profile.interpolate(self.inflow_velocity)
             if self.rank == 0:
                 print("applied inflow BC at current time: ", current_time)
-        # ?? what happens if we're outside the ramp_window?
 
         if self.first_call_to_solver:
             if self.rank == 0:
