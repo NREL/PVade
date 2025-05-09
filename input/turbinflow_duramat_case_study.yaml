@@ -6,7 +6,7 @@ general:
   fluid_analysis: true
 domain:
   x_min: -20.0
-  x_max: 30.0 #100.0
+  x_max: 60.0 #30.0 #100.0
   y_min: -10.0 #-30.0
   y_max: 10.0 #30.0
   z_min: 0.0
@@ -25,7 +25,7 @@ pv_array:
   span_fixation_pts: [13.2]
 solver:
   dt: 0.02 #0.05 #0.01
-  t_final: 20.0
+  t_final: 1.0 #20.0
   solver1_ksp: gmres
   solver2_ksp: gmres
   solver3_ksp: gmres
@@ -38,7 +38,7 @@ solver:
   save_xdmf_interval: 0.02
 fluid:
   velocity_profile_type: specified_from_file
-  h5_filename: input/pct_turb_ny80_nz40_sonic1_1s.h5 #linear_inflow.h5
+  h5_filename: input/pct_turb_ny80_nz40_unconstrained_1s_dt01_uref20.h5 # input/pct_turb_ny80_nz40_sonic1_1s.h5 #linear_inflow.h5
   initialize_with_inflow_bc: true
   # ramp_window: 1.0 - compute this in the code, remove as input
   # u_ref: 12.0 # TODO - compute this in the code, remove as input

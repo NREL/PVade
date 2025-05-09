@@ -235,7 +235,7 @@ class Flow:
             self.u_k.interpolate(self.inflow_profile)
 
             if self.rank == 0:
-                print('initialized BC everywhere')
+                print('initialized BC at the inlet')
             # print(min(abs(self.u_k.x.array[:] - self.inflow_profile.x.array[:])))
 
             # flags = []

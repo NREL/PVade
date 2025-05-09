@@ -128,9 +128,14 @@ class InflowVelocity:
                 self.v = fp["v"][:]
                 self.w = fp["w"][:]
 
-            # TODO: add checks for if the user specifies a t_final beyond last time_index
+            # Create the interpolators for the time-averaged values
+            x0_bar = (self.z_coordinates, self.y_coordinates)
 
-            # Create the known axes for our interpolators (t0, z0, y0)
+            self.interp_u_bar = interp.RegularGridInterpolator(x0_bar, np.mean(self.u, axis=0), bounds_error=False, fill_value=None)
+            self.interp_v_bar = interp.RegularGridInterpolator(x0_bar, np.mean(self.v, axis=0), bounds_error=False, fill_value=None)
+            self.interp_w_bar = interp.RegularGridInterpolator(x0_bar, np.mean(self.w, axis=0), bounds_error=False, fill_value=None)
+
+            # Create the known axes for our interpolators (t0, z0, y0) for instantaneous values
             x0 = (self.time_index, self.z_coordinates, self.y_coordinates)
             
             self.interp_u = interp.RegularGridInterpolator(x0, self.u, bounds_error=False, fill_value=None)
@@ -139,10 +144,8 @@ class InflowVelocity:
             
             self.inflow_t_final = self.time_index[-1] # [s] time of last timestep of inflow file
 
-            # self.inflow_dofs = inflow_dofs
-
             # compute effective u_ref
-            self.compute_mean_inflow_profile(params)
+            self.compute_eff_u_ref(params)
             params.fluid.u_ref = self.u_ref # ?? is this bad practice?
 
 
@@ -228,16 +231,35 @@ class InflowVelocity:
                 )
 
         elif self.params.fluid.velocity_profile_type == "specified_from_file":
+
+            # only needed at time zero
+            if self.current_time == 0.0:
+                # These are the points over the entirety of the domain
+                xi_bulk = np.vstack((x[2], x[1])).T
+
+                u_vel_bar = self.interp_u_bar(xi_bulk) # this grabs u,v,w at current position
+                v_vel_bar = self.interp_v_bar(xi_bulk)
+                w_vel_bar = self.interp_w_bar(xi_bulk)
+
+                # Assign the mean inflow values (maybe just make a separate interpolator with no time and all points like above?)
+                # Make this assignment everywhere *knowing* the masked point values will be overwritten
+                inflow_values[0, :] = u_vel_bar
+                inflow_values[1, :] = v_vel_bar
+                inflow_values[2, :] = w_vel_bar
+
             # assuming always a timeseries for now
             xi_0_mask = x[0] < self.params.domain.x_min + 1e-5      
             ti = self.current_time * np.ones(np.sum(xi_0_mask))
 
+            # These are the points that define the inflow plane only
             xi = np.vstack((ti, x[2][xi_0_mask], x[1][xi_0_mask])).T
             
             u_vel = self.interp_u(xi) # this grabs u,v,w at current time and at x inlet
             v_vel = self.interp_v(xi)
             w_vel = self.interp_w(xi)
             
+            # Assign the turbulent values (from the interpolator+file) to the masked inflow plane
+            # this will overwrite the previously-assigned averaged values
             inflow_values[0, xi_0_mask] = u_vel
             inflow_values[1, xi_0_mask] = v_vel
             inflow_values[2, xi_0_mask] = w_vel
@@ -248,7 +270,7 @@ class InflowVelocity:
 
         return inflow_values
     
-    def compute_mean_inflow_profile(self, params):
+    def compute_eff_u_ref(self, params):
         """ Compute time-averaged inflow profile from file
 
         Outputs:
@@ -268,7 +290,6 @@ class InflowVelocity:
         u_ref_calc = umag_mean[z_idx]
 
         self.u_ref = u_ref_calc
-
 
 def get_inflow_profile_function(domain, params, functionspace, current_time):
     ndim = domain.ndim
@@ -335,7 +356,7 @@ def get_inflow_profile_function(domain, params, functionspace, current_time):
 
     elif params.fluid.velocity_profile_type == "specified_from_file":
         if domain.rank == 0:
-            print("setting inflow profile from {}".format(params.fluid.h5_filename))
+            print("setting inflow velocity from {}".format(params.fluid.h5_filename))
             print('eff u_ref = {} m/s'.format(inflow_velocity.u_ref))
         inflow_function.interpolate(inflow_velocity)
 
@@ -345,8 +366,7 @@ def get_inflow_profile_function(domain, params, functionspace, current_time):
                 "Simulation will fail at that point.".format(
                     params.solver.t_final, inflow_velocity.inflow_t_final
                 ))
-            
-
+    
     return inflow_function, inflow_velocity, upper_cells
 
 
