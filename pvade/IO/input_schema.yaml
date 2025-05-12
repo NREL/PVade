@@ -363,7 +363,7 @@ properties:
       initialize_with_inflow_bc:
         default: true
         type: "boolean"
-        description: "If true, use the inflow boundary condition to interpolate a non-zero initial velocity throughout the domain (even if that does not respect interior boundary conditions), if false, initial velocity is zero."
+        description: "If true, use the inflow boundary condition to interpolate a non-zero initial velocity throughout the domain (even if that does not respect interior boundary conditions), if false, initial velocity is zero. If `velocity_profile_type` is `specified_from_file`, the velocity at each point is a time-averaged value of that gripoint's velocity data from the .h5 file."
       ramp_window:
         default: 0.0
         minimum: 0.0

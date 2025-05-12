@@ -356,8 +356,9 @@ def get_inflow_profile_function(domain, params, functionspace, current_time):
 
     elif params.fluid.velocity_profile_type == "specified_from_file":
         if domain.rank == 0:
-            print("setting inflow velocity from {}".format(params.fluid.h5_filename))
-            print('eff u_ref = {} m/s'.format(inflow_velocity.u_ref))
+            print("Setting inflow velocity from {}".format(params.fluid.h5_filename))
+            if params.general.debug_flag:
+                print('eff u_ref = {} m/s'.format(inflow_velocity.u_ref))
         inflow_function.interpolate(inflow_velocity)
 
         if params.solver.t_final > inflow_velocity.inflow_t_final:

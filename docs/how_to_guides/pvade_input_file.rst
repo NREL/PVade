@@ -99,6 +99,7 @@ fluid:
   The fluid Category sets the CFD parameters for the fluid simulation
    
   - velocity_profile_type: General shape of inflow velocity profile
+  - initialize_with_inflow_bc: Boolean flag to set the velocity everywhere in the domain to match the inflow BC velocity.
   - u_ref: Reference velocity at the center of the panel  
   - nu: Dynamic viscosity 
   - turbulence_model:  can be set to smagorinsky or null for no turbulence  

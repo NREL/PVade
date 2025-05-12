@@ -235,7 +235,7 @@ class Flow:
             self.u_k.interpolate(self.inflow_profile)
 
             if self.rank == 0:
-                print('initialized BC at the inlet')
+                print('Initialized BC at the inlet')
             # print(min(abs(self.u_k.x.array[:] - self.inflow_profile.x.array[:])))
 
             # flags = []
@@ -703,7 +703,7 @@ class Flow:
                 self.inflow_profile.interpolate(self.inflow_velocity, self.upper_cells)
             else:
                 self.inflow_profile.interpolate(self.inflow_velocity)
-            if self.rank == 0:
+            if self.rank == 0 and params.general.debug_flag:
                 print("applied inflow BC at current time: ", current_time)
 
         if (
