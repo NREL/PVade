@@ -2,7 +2,7 @@ PV Panels 3D with Turbulent Inflow
 ===========
 This example demonstrates the use of PVade to simulate dynamic PV loading amidst a turbulent inflow velocity field. 
 
-
+Currently, this feature only works in 3D simulations.
 
 Geometry Definition
 -------------------
