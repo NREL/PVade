@@ -7,6 +7,7 @@ dependencies:
   - alive-progress
   - black
   - fenics-dolfinx=0.6
+  - h5py
   - jsonschema
   - jupyter
   - matplotlib
