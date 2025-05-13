@@ -124,42 +124,25 @@ class InflowVelocity:
             u_hub = self.u_ref
         else:
             u_hub = self.params.fluid.u_ref
-        
+
         z_hub = self.params.pv_array.elevation
 
         if self.params.general.example == "cylinder3d":
-            inflow_values[0] = (
-                16.0
-                * u_hub
-                * x[1]
-                * x[2]
-                * inflow_dy
-                * inflow_dz
-                / H**4
-            )
+            inflow_values[0] = 16.0 * u_hub * x[1] * x[2] * inflow_dy * inflow_dz / H**4
         elif self.params.general.example == "cylinder2d":
             inflow_values[0] = (
-                4
-                * (u_hub)
-                * np.sin(np.pi / 8)
-                * x[1]
-                * (0.41 - x[1])
-                / (0.41**2)
+                4 * (u_hub) * np.sin(np.pi / 8) * x[1] * (0.41 - x[1]) / (0.41**2)
             )
         elif (
             self.params.general.example == "panels3d"
             or self.params.general.example == "heliostats3d"
         ):
             inflow_values[0] = (
-                (u_hub)
-                * np.log(((x[2]) - d0) / z0)
-                / (np.log((z_hub - d0) / z0))
+                (u_hub) * np.log(((x[2]) - d0) / z0) / (np.log((z_hub - d0) / z0))
             )
         elif self.params.general.example == "panels2d":
             inflow_values[0] = (
-                (u_hub)
-                * np.log(((x[1]) - d0) / z0)
-                / (np.log((z_hub - d0) / z0))
+                (u_hub) * np.log(((x[1]) - d0) / z0) / (np.log((z_hub - d0) / z0))
             )
 
         return inflow_values

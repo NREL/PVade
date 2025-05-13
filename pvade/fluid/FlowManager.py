@@ -178,9 +178,7 @@ class Flow:
                 u_ref = self.inflow_velocity.u_ref
             else:
                 u_ref = params.fluid.u_ref
-            self.Pe_approx = (
-                u_ref * params.domain.l_char / (2.0 * params.fluid.alpha)
-            )
+            self.Pe_approx = u_ref * params.domain.l_char / (2.0 * params.fluid.alpha)
 
             if self.Pe_approx > 1.0:
                 self.stabilizing = True
@@ -239,7 +237,7 @@ class Flow:
             self.u_k.interpolate(self.inflow_profile)
 
             if self.rank == 0:
-                print('Initialized BC at the inlet')
+                print("Initialized BC at the inlet")
             # print(min(abs(self.u_k.x.array[:] - self.inflow_profile.x.array[:])))
 
             # flags = []
@@ -697,9 +695,9 @@ class Flow:
         ramp_window = params.fluid.ramp_window
 
         if (ramp_window > 0.0 and current_time <= ramp_window) or (
-            params.fluid.velocity_profile_type == "specified_from_file" and 
-            current_time <= self.inflow_velocity.inflow_t_final
-            ):
+            params.fluid.velocity_profile_type == "specified_from_file"
+            and current_time <= self.inflow_velocity.inflow_t_final
+        ):
 
             self.inflow_velocity.current_time = current_time
 
@@ -711,14 +709,14 @@ class Flow:
                 print("applied inflow BC at current time: ", current_time)
 
         if (
-            params.fluid.velocity_profile_type == "specified_from_file" and 
-            current_time > self.inflow_velocity.inflow_t_final
-            ):
+            params.fluid.velocity_profile_type == "specified_from_file"
+            and current_time > self.inflow_velocity.inflow_t_final
+        ):
 
             # kill the simulation (otherwise, the inflow BCs don't change, which isn't realistic)
             raise ValueError(
-                    f"No inflow data available at current time {current_time} s."
-                )
+                f"No inflow data available at current time {current_time} s."
+            )
 
         if self.first_call_to_solver:
             if self.rank == 0:
@@ -1039,12 +1037,13 @@ class Flow:
             if params.fluid.velocity_profile_type == "specified_from_file":
                 u_ref = self.inflow_velocity.u_ref
                 if params.general.debug_flag == True:
-                    print("using calc u_ref ({} m/s) instead of input/default u_ref ({} m/s)".format(
-                        self.inflow_velocity.u_ref, params.fluid.u_ref
-                    ))
+                    print(
+                        "using calc u_ref ({} m/s) instead of input/default u_ref ({} m/s)".format(
+                            self.inflow_velocity.u_ref, params.fluid.u_ref
+                        )
+                    )
             else:
                 u_ref = params.fluid.u_ref
-                
 
             with open(self.lift_and_drag_filename, "a") as fp:
                 fp.write(f"{current_time:.9e}")

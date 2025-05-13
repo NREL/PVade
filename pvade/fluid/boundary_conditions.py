@@ -131,22 +131,35 @@ class InflowVelocity:
             # Create the interpolators for the time-averaged values
             x0_bar = (self.z_coordinates, self.y_coordinates)
 
-            self.interp_u_bar = interp.RegularGridInterpolator(x0_bar, np.mean(self.u, axis=0), bounds_error=False, fill_value=None)
-            self.interp_v_bar = interp.RegularGridInterpolator(x0_bar, np.mean(self.v, axis=0), bounds_error=False, fill_value=None)
-            self.interp_w_bar = interp.RegularGridInterpolator(x0_bar, np.mean(self.w, axis=0), bounds_error=False, fill_value=None)
+            self.interp_u_bar = interp.RegularGridInterpolator(
+                x0_bar, np.mean(self.u, axis=0), bounds_error=False, fill_value=None
+            )
+            self.interp_v_bar = interp.RegularGridInterpolator(
+                x0_bar, np.mean(self.v, axis=0), bounds_error=False, fill_value=None
+            )
+            self.interp_w_bar = interp.RegularGridInterpolator(
+                x0_bar, np.mean(self.w, axis=0), bounds_error=False, fill_value=None
+            )
 
             # Create the known axes for our interpolators (t0, z0, y0) for instantaneous values
             x0 = (self.time_index, self.z_coordinates, self.y_coordinates)
-            
-            self.interp_u = interp.RegularGridInterpolator(x0, self.u, bounds_error=False, fill_value=None)
-            self.interp_v = interp.RegularGridInterpolator(x0, self.v, bounds_error=False, fill_value=None)
-            self.interp_w = interp.RegularGridInterpolator(x0, self.w, bounds_error=False, fill_value=None)
-            
-            self.inflow_t_final = self.time_index[-1] # [s] time of last timestep of inflow file
+
+            self.interp_u = interp.RegularGridInterpolator(
+                x0, self.u, bounds_error=False, fill_value=None
+            )
+            self.interp_v = interp.RegularGridInterpolator(
+                x0, self.v, bounds_error=False, fill_value=None
+            )
+            self.interp_w = interp.RegularGridInterpolator(
+                x0, self.w, bounds_error=False, fill_value=None
+            )
+
+            self.inflow_t_final = self.time_index[
+                -1
+            ]  # [s] time of last timestep of inflow file
 
             # calculate u_ref from input .h5 file and apply
             self.calculate_u_ref(params)
-
 
     def __call__(self, x):
         """Define an inflow expression for use as boundary condition
@@ -157,7 +170,7 @@ class InflowVelocity:
         Returns:
             np.ndarray: Value of velocity at each coordinate in input array
         """
-        
+
         # Preallocated velocity vector that we will fill
         inflow_values = np.zeros((self.ndim, x.shape[1]), dtype=PETSc.ScalarType)
 
@@ -234,7 +247,9 @@ class InflowVelocity:
                 # These are the points over the entirety of the domain
                 xi_bulk = np.vstack((x[2], x[1])).T
 
-                u_vel_bar = self.interp_u_bar(xi_bulk) # this grabs u,v,w at current position
+                u_vel_bar = self.interp_u_bar(
+                    xi_bulk
+                )  # this grabs u,v,w at current position
                 v_vel_bar = self.interp_v_bar(xi_bulk)
                 w_vel_bar = self.interp_w_bar(xi_bulk)
 
@@ -245,16 +260,16 @@ class InflowVelocity:
                 inflow_values[2, :] = w_vel_bar
 
             # assuming always a timeseries for now
-            xi_0_mask = x[0] < self.params.domain.x_min + 1e-5      
+            xi_0_mask = x[0] < self.params.domain.x_min + 1e-5
             ti = self.current_time * np.ones(np.sum(xi_0_mask))
 
             # These are the points that define the inflow plane only
             xi = np.vstack((ti, x[2][xi_0_mask], x[1][xi_0_mask])).T
-            
-            u_vel = self.interp_u(xi) # this grabs u,v,w at current time and at x inlet
+
+            u_vel = self.interp_u(xi)  # this grabs u,v,w at current time and at x inlet
             v_vel = self.interp_v(xi)
             w_vel = self.interp_w(xi)
-            
+
             # Assign the turbulent values (from the interpolator+file) to the masked inflow plane
             # this will overwrite the previously-assigned averaged values
             inflow_values[0, xi_0_mask] = u_vel
@@ -266,9 +281,9 @@ class InflowVelocity:
         #     self.first_call_to_inflow_velocity = False
 
         return inflow_values
-    
+
     def calculate_u_ref(self, params):
-        """ Compute time-averaged inflow profile from file
+        """Compute time-averaged inflow profile from file
 
         Outputs:
             u_ref : effective u_ref computed from input inflow file - velocity at panel elevation
@@ -279,14 +294,17 @@ class InflowVelocity:
         # TODO - add handling for 2D case
 
         # compute the magnitude to account for other wind directions
-        umag = (self.u**2 + self.v**2)**0.5
-        umag_mean = np.average(np.average(umag, axis=0), axis=-1) # vertical profile (averaged in time and y)
+        umag = (self.u**2 + self.v**2) ** 0.5
+        umag_mean = np.average(
+            np.average(umag, axis=0), axis=-1
+        )  # vertical profile (averaged in time and y)
 
         # extract u_ref at elevation height
         z_idx = np.argmin(abs(self.z_coordinates - params.pv_array.elevation))
         u_ref_calc = umag_mean[z_idx]
 
         self.u_ref = u_ref_calc
+
 
 def get_inflow_profile_function(domain, params, functionspace, current_time):
     ndim = domain.ndim
@@ -355,16 +373,18 @@ def get_inflow_profile_function(domain, params, functionspace, current_time):
         if domain.rank == 0:
             print("Setting inflow velocity from {}".format(params.fluid.h5_filename))
             if params.general.debug_flag:
-                print('eff u_ref = {} m/s'.format(inflow_velocity.u_ref))
+                print("eff u_ref = {} m/s".format(inflow_velocity.u_ref))
         inflow_function.interpolate(inflow_velocity)
 
         if params.solver.t_final > inflow_velocity.inflow_t_final:
             if domain.rank == 0:
-                print("WARNING: t_final ({:.2f} s) exceeds the final time in input inflow velocity file ({:.2f} s). " \
-                "Simulation will fail at that point.".format(
-                    params.solver.t_final, inflow_velocity.inflow_t_final
-                ))
-    
+                print(
+                    "WARNING: t_final ({:.2f} s) exceeds the final time in input inflow velocity file ({:.2f} s). "
+                    "Simulation will fail at that point.".format(
+                        params.solver.t_final, inflow_velocity.inflow_t_final
+                    )
+                )
+
     return inflow_function, inflow_velocity, upper_cells
 
 

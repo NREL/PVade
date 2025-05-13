@@ -47,10 +47,11 @@ For this example, the following values are used, as shown in the input file (`in
       ==================================== =====
 
 
-The turbulent inflow velocity field is generated externally using `pyconturb`[1]_. This example uses unconstrained turbulence generated using the notebook here: `examples/synthetic_turbulent_inflow/generate_turbulent_inflow_h5_file.ipynb`
+The turbulent inflow velocity field is generated externally using `pyconturb`[1]_. This example uses unconstrained turbulence generated using the notebook here: `examples/synthetic_turbulent_inflow/generate_turbulent_inflow_h5_file.ipynb`.
 
-The generated turbulent velocity field is written to an .h5 file () so that it can be read in by `pvade`.
+The generated turbulent velocity field is written to an .h5 file (e.g. `input/pct_turb_ny80_nz80_unconstrained_1.0s_dt0.01_uref20.h5`) so that it can be read in by `pvade`. This file contains velocity data of shape (nt, ny, nz) where nt = number of timesteps, ny = number of gridpoints in the spanwise direction, and nz = number of gridpoints in the vertical direction. At each timestep, `pvade` selects the y-z slice of turbulent inflow for that timestep and applies it as the boundary condition at the inlet.
 
+Currently, this functionality only works for 3D simulations.
 
 This example is executed in parallel using::
 
