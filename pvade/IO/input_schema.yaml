@@ -334,11 +334,11 @@ properties:
         description: "When applying a parabolic inflow velocity profile, this coefficient is C in the equation U = (C/H^2)*u_ref*y(H-y)"
         units: "none"
       u_ref:
-        default: None #8.0
+        default: 8.0
         minimum: 0.0
         maximum: 100.0
         type: "number"
-        description: "The velocity of the wind as measured at the panel elevation."
+        description: "The velocity of the wind as measured at the panel elevation. If `velocity_profile_type` == `specified_from_file`, this input u_ref value is not used and instead calculated in the simulation."
         units: "meter/second"
       z0:
         default: 0.05

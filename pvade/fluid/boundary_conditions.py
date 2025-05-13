@@ -144,9 +144,8 @@ class InflowVelocity:
             
             self.inflow_t_final = self.time_index[-1] # [s] time of last timestep of inflow file
 
-            # compute effective u_ref
-            self.compute_eff_u_ref(params)
-            params.fluid.u_ref = self.u_ref # ?? is this bad practice?
+            # calculate u_ref from input .h5 file and apply
+            self.calculate_u_ref(params)
 
 
     def __call__(self, x):
@@ -158,11 +157,9 @@ class InflowVelocity:
         Returns:
             np.ndarray: Value of velocity at each coordinate in input array
         """
-        # print('shape of x = ', np.shape(x))
         
         # Preallocated velocity vector that we will fill
         inflow_values = np.zeros((self.ndim, x.shape[1]), dtype=PETSc.ScalarType)
-        # print('shape of inflow_values = ', np.shape(inflow_values))
 
         # if self.first_call_to_inflow_velocity:
         #     print(f"creating {self.params.fluid.velocity_profile_type} inflow profile")
@@ -241,7 +238,7 @@ class InflowVelocity:
                 v_vel_bar = self.interp_v_bar(xi_bulk)
                 w_vel_bar = self.interp_w_bar(xi_bulk)
 
-                # Assign the mean inflow values (maybe just make a separate interpolator with no time and all points like above?)
+                # Assign the mean inflow values
                 # Make this assignment everywhere *knowing* the masked point values will be overwritten
                 inflow_values[0, :] = u_vel_bar
                 inflow_values[1, :] = v_vel_bar
@@ -270,7 +267,7 @@ class InflowVelocity:
 
         return inflow_values
     
-    def compute_eff_u_ref(self, params):
+    def calculate_u_ref(self, params):
         """ Compute time-averaged inflow profile from file
 
         Outputs:

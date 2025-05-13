@@ -120,13 +120,17 @@ class InflowVelocity:
         inflow_dy = H - x[1]
         inflow_dz = H - x[2]
 
-        u_hub = self.params.fluid.u_ref
+        if self.params.fluid.velocity_profile_type == "specified_from_file":
+            u_hub = self.u_ref
+        else:
+            u_hub = self.params.fluid.u_ref
+        
         z_hub = self.params.pv_array.elevation
 
         if self.params.general.example == "cylinder3d":
             inflow_values[0] = (
                 16.0
-                * self.params.fluid.u_ref
+                * u_hub
                 * x[1]
                 * x[2]
                 * inflow_dy
@@ -136,7 +140,7 @@ class InflowVelocity:
         elif self.params.general.example == "cylinder2d":
             inflow_values[0] = (
                 4
-                * (self.params.fluid.u_ref)
+                * (u_hub)
                 * np.sin(np.pi / 8)
                 * x[1]
                 * (0.41 - x[1])
@@ -147,13 +151,13 @@ class InflowVelocity:
             or self.params.general.example == "heliostats3d"
         ):
             inflow_values[0] = (
-                (self.params.fluid.u_ref)
+                (u_hub)
                 * np.log(((x[2]) - d0) / z0)
                 / (np.log((z_hub - d0) / z0))
             )
         elif self.params.general.example == "panels2d":
             inflow_values[0] = (
-                (self.params.fluid.u_ref)
+                (u_hub)
                 * np.log(((x[1]) - d0) / z0)
                 / (np.log((z_hub - d0) / z0))
             )

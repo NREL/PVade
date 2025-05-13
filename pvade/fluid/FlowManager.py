@@ -174,8 +174,12 @@ class Flow:
             )  #  thermal diffusivity
 
             # Compute approximate Peclet number to assess if SUPG stabilization is needed
+            if params.fluid.velocity_profile_type == "specified_from_file":
+                u_ref = self.inflow_velocity.u_ref
+            else:
+                u_ref = params.fluid.u_ref
             self.Pe_approx = (
-                params.fluid.u_ref * params.domain.l_char / (2.0 * params.fluid.alpha)
+                u_ref * params.domain.l_char / (2.0 * params.fluid.alpha)
             )
 
             if self.Pe_approx > 1.0:
@@ -1032,6 +1036,16 @@ class Flow:
 
                     fp.write("\n")
 
+            if params.fluid.velocity_profile_type == "specified_from_file":
+                u_ref = self.inflow_velocity.u_ref
+                if params.general.debug_flag == True:
+                    print("using calc u_ref ({} m/s) instead of input/default u_ref ({} m/s)".format(
+                        self.inflow_velocity.u_ref, params.fluid.u_ref
+                    ))
+            else:
+                u_ref = params.fluid.u_ref
+                
+
             with open(self.lift_and_drag_filename, "a") as fp:
                 fp.write(f"{current_time:.9e}")
 
@@ -1046,7 +1060,7 @@ class Flow:
                         * fx
                         / (
                             params.fluid.rho
-                            * params.fluid.u_ref**2
+                            * u_ref**2
                             * params.pv_array.panel_chord
                             * params.pv_array.panel_span
                         )
@@ -1057,7 +1071,7 @@ class Flow:
                         * fy
                         / (
                             params.fluid.rho
-                            * params.fluid.u_ref**2
+                            * u_ref**2
                             * params.pv_array.panel_chord
                             * params.pv_array.panel_span
                         )
@@ -1068,7 +1082,7 @@ class Flow:
                         * fz
                         / (
                             params.fluid.rho
-                            * params.fluid.u_ref**2
+                            * u_ref**2
                             * params.pv_array.panel_chord
                             * params.pv_array.panel_span
                         )
