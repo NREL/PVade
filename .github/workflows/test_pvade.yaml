@@ -21,7 +21,7 @@ jobs:
         os: [ubuntu-latest, macos-latest]
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Build Conda environment
         uses: conda-incubator/setup-miniconda@v3
         with:
@@ -35,5 +35,5 @@ jobs:
     name: Black formatting
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: psf/black@stable
