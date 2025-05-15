@@ -8,7 +8,7 @@ def get_input_file():
         "--input_file",
         metavar="",
         type=str,
-        help="The full path to the input file, e.g., 'intputs/my_params.yaml'",
+        help="The full path to the input file, e.g., 'inputs/my_params.yaml'",
     )
 
     command_line_inputs, unknown = parser.parse_known_args()
