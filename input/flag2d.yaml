@@ -34,7 +34,7 @@ fluid:
   velocity_profile_type: parabolic
   inflow_coeff: 6 # only necessary/used when applying a parabolic vel profile
   u_ref: 1.0 # 0.2 1.0 2.0
-  time_varying_inflow_window: 2.0
+  ramp_window: 2.0
   rho: 1000.0 # 0.2 1.0 2.0
   nu: 0.001 # Establish re = 20 with diam = 0.1 and u = u_ref
   dpdx: 0.0
