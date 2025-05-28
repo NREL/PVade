@@ -31,7 +31,7 @@ jobs:
           activate-environment: pvade
       - name: Run pytest
         shell: bash -l {0}
-        run: pytest -sv pvade/tests/
+        run: PYTHONPATH=. pytest -sv pvade/tests/
 
   # Job 2 of 2 - enforce Black formatting
   formatting:
