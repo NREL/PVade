@@ -90,9 +90,9 @@ class DataStream:
                 tt = 0.0
                 xdmf_file.write_mesh(domain.structure.msh)
                 xdmf_file.write_function(structure.elasticity.u, 0.0)
+                xdmf_file.write_function(structure.elasticity.v, 0.0)
+                xdmf_file.write_function(structure.elasticity.a, 0.0)
                 xdmf_file.write_function(structure.elasticity.stress, 0.0)
-                xdmf_file.write_function(structure.elasticity.v_old, 0.0)
-                xdmf_file.write_function(structure.elasticity.sigma_vm_h, 0.0)
                 xdmf_file.write_function(structure.elasticity.internal_stress, 0.0)
 
         if self.comm.rank == 0 and self.comm.size > 1 and params.general.test:
@@ -180,9 +180,9 @@ class DataStream:
                 self.comm, self.results_filename_structure, "a"
             ) as xdmf_file:
                 xdmf_file.write_function(fsi_object.elasticity.u, tt)
+                xdmf_file.write_function(fsi_object.elasticity.v, tt)
+                xdmf_file.write_function(fsi_object.elasticity.a, tt)
                 xdmf_file.write_function(fsi_object.elasticity.stress, tt)
-                xdmf_file.write_function(fsi_object.elasticity.v_old, tt)
-                xdmf_file.write_function(fsi_object.elasticity.sigma_vm_h, tt)
                 xdmf_file.write_function(fsi_object.elasticity.internal_stress, tt)
 
         else:
