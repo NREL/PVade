@@ -163,17 +163,17 @@ class Elasticity:
         # self.sigma_vm_h = dolfinx.fem.Function(self.W, name="Stress")
 
         # discplacement
-        self.u = dolfinx.fem.Function(self.V, name="Deformation")
-        self.u_old = dolfinx.fem.Function(self.V, name="Deformation_old")
-        self.u_delta = dolfinx.fem.Function(self.V, name="Deformation_change")
+        self.u = dolfinx.fem.Function(self.V, name="deformation")
+        self.u_old = dolfinx.fem.Function(self.V, name="deformation_old")
+        self.u_delta = dolfinx.fem.Function(self.V, name="deformation_change")
 
         # velocity
-        self.v = dolfinx.fem.Function(self.V, name="Velocity")
-        self.v_old = dolfinx.fem.Function(self.V, name="Velocity_old")
+        self.v = dolfinx.fem.Function(self.V)
+        self.v_old = dolfinx.fem.Function(self.V, name="velocity")
 
         # acceleration
-        self.a = dolfinx.fem.Function(self.V, name="acceleration")
-        self.a_old = dolfinx.fem.Function(self.V, name="acceleration_old")
+        self.a = dolfinx.fem.Function(self.V)
+        self.a_old = dolfinx.fem.Function(self.V, name="acceleration")
 
         # dss = ufl.ds(subdomain_data=boundary_subdomains)
 
