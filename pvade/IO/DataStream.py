@@ -1,22 +1,11 @@
-# from dolfinx import *
-import numpy as np
-import time
-import os
-import shutil
-from dolfinx.io import XDMFFile, VTKFile
-from mpi4py import MPI
-from pathlib import Path
-import pytest
 import dolfinx
-from petsc4py import PETSc
-import json
+import ufl
+
+import numpy as np
 
 # from dolfinx.fem import create_nonmatching_meshes_interpolation_data
 
-# hello
 
-
-# test actions
 class DataStream:
     """Input/Output and file writing class
 
@@ -61,7 +50,9 @@ class DataStream:
                 f"{params.general.output_dir_sol}/solution_fluid.xdmf"
             )
 
-            with XDMFFile(self.comm, self.results_filename_fluid, "w") as xdmf_file:
+            with dolfinx.io.XDMFFile(
+                self.comm, self.results_filename_fluid, "w"
+            ) as xdmf_file:
                 tt = 0.0
                 xdmf_file.write_mesh(domain.fluid.msh)
                 xdmf_file.write_function(flow.u_k, 0.0)
@@ -78,13 +69,31 @@ class DataStream:
                 f"{params.general.output_dir_sol}/solution_structure.xdmf"
             )
 
-            with XDMFFile(self.comm, self.results_filename_structure, "w") as xdmf_file:
+            # Since this is the first call, build solvers that project forms on an as-saved basis
+            # Set up the linear problem used for the projection, cg solver and jacobi pc
+            petsc_options = {"ksp_type": "cg", "pc_type": "jacobi"}
+            self.prob_k_nominal = dolfinx.fem.petsc.LinearProblem(
+                ufl.lhs(structure.elasticity.k_nominal_proj),
+                ufl.rhs(structure.elasticity.k_nominal_proj),
+                bcs=[],
+                petsc_options=petsc_options,
+            )
+
+            # Solve for the stress tensor
+            sol_k_nominal = self.prob_k_nominal.solve()
+            structure.elasticity.internal_stress.x.array[:] = sol_k_nominal.x.array[:]
+            structure.elasticity.internal_stress.x.scatter_forward()
+
+            with dolfinx.io.XDMFFile(
+                self.comm, self.results_filename_structure, "w"
+            ) as xdmf_file:
                 tt = 0.0
                 xdmf_file.write_mesh(domain.structure.msh)
                 xdmf_file.write_function(structure.elasticity.u, 0.0)
                 xdmf_file.write_function(structure.elasticity.stress, 0.0)
                 xdmf_file.write_function(structure.elasticity.v_old, 0.0)
                 xdmf_file.write_function(structure.elasticity.sigma_vm_h, 0.0)
+                xdmf_file.write_function(structure.elasticity.internal_stress, 0.0)
 
         if self.comm.rank == 0 and self.comm.size > 1 and params.general.test:
             self.log_filename_structure = f"{params.general.output_dir_sol}/log_str.txt"
@@ -151,7 +160,9 @@ class DataStream:
         """
 
         if fsi_object.name == "fluid":
-            with XDMFFile(self.comm, self.results_filename_fluid, "a") as xdmf_file:
+            with dolfinx.io.XDMFFile(
+                self.comm, self.results_filename_fluid, "a"
+            ) as xdmf_file:
                 xdmf_file.write_function(fsi_object.u_k, tt)
                 xdmf_file.write_function(fsi_object.p_k, tt)
                 xdmf_file.write_function(fsi_object.panel_stress, tt)
@@ -160,11 +171,19 @@ class DataStream:
                     xdmf_file.write_function(fsi_object.theta_k, tt)
 
         elif fsi_object.name == "structure":
-            with XDMFFile(self.comm, self.results_filename_structure, "a") as xdmf_file:
+            # Solve for the stress tensor
+            sol_k_nominal = self.prob_k_nominal.solve()
+            fsi_object.elasticity.internal_stress.x.array[:] = sol_k_nominal.x.array[:]
+            fsi_object.elasticity.internal_stress.x.scatter_forward()
+
+            with dolfinx.io.XDMFFile(
+                self.comm, self.results_filename_structure, "a"
+            ) as xdmf_file:
                 xdmf_file.write_function(fsi_object.elasticity.u, tt)
                 xdmf_file.write_function(fsi_object.elasticity.stress, tt)
                 xdmf_file.write_function(fsi_object.elasticity.v_old, tt)
                 xdmf_file.write_function(fsi_object.elasticity.sigma_vm_h, tt)
+                xdmf_file.write_function(fsi_object.elasticity.internal_stress, tt)
 
         else:
             raise ValueError(
