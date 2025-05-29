@@ -40,9 +40,6 @@ class Elasticity:
         self.rank = domain.rank
         self.num_procs = domain.num_procs
 
-        # # domain.structure.msh = dolfinx.mesh.refine(domain.structure.msh,None)
-        # # domain.structure.msh = dolfinx.mesh.refine(domain.structure.msh)
-
         P1 = ufl.VectorElement("Lagrange", domain.structure.msh.ufl_cell(), 2)
         self.V = dolfinx.fem.FunctionSpace(domain.structure.msh, P1)
 
@@ -68,85 +65,6 @@ class Elasticity:
 
         # time step
         self.dt_st = dolfinx.fem.Constant(domain.structure.msh, (params.structure.dt))
-
-        # # Store the dimension of the problem for convenience
-        # self.ndim = domain.structure.msh.topology.dim
-        # self.facet_dim = self.ndim - 1
-
-        # # find hmin in mesh
-        # num_cells = domain.structure.msh.topology.index_map(self.ndim).size_local
-        # h = dolfinx.cpp.mesh.h(domain.structure.msh, self.ndim, range(num_cells))
-
-        # # This value of hmin is local to the mesh portion owned by the process
-        # hmin_local = np.amin(h)
-
-        # # collect the minimum hmin from all processes
-        # self.hmin = np.zeros(1)
-        # self.comm.Allreduce(hmin_local, self.hmin, op=MPI.MIN)
-        # self.hmin = self.hmin[0]
-
-        # if self.rank == 0:
-        #     print(f"hmin on structure = {self.hmin}")
-        #     print(f"Total num dofs on structure = {self.num_V_dofs}")
-
-        # # Mass density
-        # self.rho = dolfinx.fem.Constant(
-        #     domain.structure.msh, params.structure.rho
-        # )  # Constant(0.)
-
-        # # Rayleigh damping coefficients
-        # self.eta_m = dolfinx.fem.Constant(domain.structure.msh, 0.0)  # Constant(0.)
-        # self.eta_k = dolfinx.fem.Constant(domain.structure.msh, 0.0)  # Constant(0.)
-
-        # # Generalized-alpha method parameters
-        # self.alpha_m = dolfinx.fem.Constant(domain.structure.msh, 0.2)
-        # self.alpha_f = dolfinx.fem.Constant(domain.structure.msh, 0.4)
-        # self.gamma = 0.5 + self.alpha_f - self.alpha_m
-        # self.beta = (self.gamma + 0.5) ** 2 / 4.0
-
-        # # Define structural properties
-        # self.E = params.structure.elasticity_modulus  # 1.0e9
-        # self.ν = params.structure.poissons_ratio  # 0.3
-        # self.μ = self.E / (2.0 * (1.0 + self.ν))
-        # self.λ = self.E * self.ν / ((1.0 + self.ν) * (1.0 - 2.0 * self.ν))
-
-        # if self.rank == 0:
-        #     print(
-        #         f"mu = {self.μ} lambda = {self.λ} E = {self.E} nu = {self.ν} density = {self.rho.value}"
-        #     )
-
-        # # time step
-        # self.dt_st = dolfinx.fem.Constant(domain.structure.msh, (params.structure.dt))
-
-        # def _north_east_corner(x):
-        #     eps = 1.0e-6
-
-        #     # TODO: allow the probing of (x,y,z) points as something specified in the yaml file
-        #     if params.general.geometry_module == "flag2d":
-        #         # TEMP Hack for Turek and Hron Flag
-        #         x1 = 0.6
-        #         x2 = 0.2
-        #         corner = [x1, x2]
-        #     else:
-        #         tracker_angle_rad = np.radians(params.pv_array.tracker_angle)
-        #         x1 = 0.5 * params.pv_array.panel_chord * np.cos(tracker_angle_rad)
-        #         x2 = 0.5 * params.pv_array.panel_thickness * np.sin(tracker_angle_rad)
-        #         corner = [x1 - x2, 0.5 * params.pv_array.panel_span]
-
-        #     east_edge = np.logical_and(corner[0] - eps < x[0], x[0] < corner[0] + eps)
-        #     north_edge = np.logical_and(corner[1] - eps < x[1], x[1] < corner[1] + eps)
-
-        #     north_east_corner = np.logical_and(east_edge, north_edge)
-
-        #     return north_east_corner
-
-        # north_east_corner_facets = dolfinx.mesh.locate_entities_boundary(
-        #     domain.structure.msh, 0, _north_east_corner
-        # )
-
-        # self.north_east_corner_dofs = dolfinx.fem.locate_dofs_topological(
-        #     self.V, 0, north_east_corner_facets
-        # )
 
     def build_boundary_conditions(self, domain, params):
         """Build the boundary conditions
@@ -232,6 +150,10 @@ class Elasticity:
         P3 = ufl.TensorElement("Lagrange", domain.structure.msh.ufl_cell(), 2)
         self.T = dolfinx.fem.FunctionSpace(domain.structure.msh, P3)
 
+        self.trial_tensor = ufl.TrialFunction(self.T)
+        self.test_tensor = ufl.TestFunction(self.T)
+        self.internal_stress = dolfinx.fem.Function(self.T, name="stress_structure")
+
         self.stress = dolfinx.fem.Function(self.T, name="stress_fluid")
         self.stress_old = dolfinx.fem.Function(self.T, name="stress_fluid_old")
         self.stress_predicted = dolfinx.fem.Function(
@@ -255,47 +177,41 @@ class Elasticity:
 
         # dss = ufl.ds(subdomain_data=boundary_subdomains)
 
-        # # Stress tensor
         # def sigma(r):
-        #     return dolfinx.fem.form(2.0*self.μ*ufl.sym(ufl.grad(r)) + self.λ *ufl.tr(ufl.sym(ufl.grad(r)))*ufl.Identity(len(r)))
+        #     return dolfinx.fem.form(2.0*self.lame_mu*ufl.sym(ufl.grad(r)) + self.lame_lambda *ufl.tr(ufl.sym(ufl.grad(r)))*ufl.Identity(len(r)))
 
         # # Mass form
         # def m(u, u_):
         #     return dolfinx.fem.form(self.rho*ufl.inner(u, u_)*ufl.dx)
 
         # # Elastic stiffness form
-        # def k(u, u_):
+        # def k_nominal(u, u_):
         #     return dolfinx.fem.form(ufl.inner(sigma(u), ufl.sym(ufl.grad(u_)))*ufl.dx)
 
         # # Rayleigh damping form
         # def c(u, u_):
-        #     return dolfinx.fem.form(self.eta_m*m(u, u_) + self.eta_k*k(u, u_))
+        #     return dolfinx.fem.form(self.eta_m*m(u, u_) + self.eta_k*k_nominal(u, u_))
 
         # # Work of external forces
         # def Wext(u_):
         #     return ufl.dot(u_, self.f)*self.ds #dss(3)
 
-        def sigma(r):
-            return structure.λ * ufl.nabla_div(r) * ufl.Identity(
-                len(r)
-            ) + 2 * structure.μ * ufl.sym(ufl.grad(r))
+        # def sigma(r):
+        #     return structure.lame_lambda * ufl.nabla_div(r) * ufl.Identity(
+        #         len(r)
+        #     ) + 2 * structure.lame_mu * ufl.sym(ufl.grad(r))
 
         def m(u, u_):
-            return structure.rho * ufl.inner(u, u_) * ufl.dx
+            return structure.rho * ufl.inner(u, u_)
 
-        def k(u, u_):
-            return ufl.inner(sigma(u), ufl.grad(u_)) * ufl.dx
+        def c(u, u_):
+            return self.eta_m * m(u, u_) + self.eta_k * k_nominal(u, u_)
 
-        def k(u, u_):
-            # return ufl.inner(sigma(u),ufl.grad(u_))*ufl.dx
-            # updated lagrangian form
-            F = ufl.grad(u) + ufl.Identity(len(u))
-            E = 0.5 * (F.T * F - ufl.Identity(len(u)))
-            # S = self.λ *ufl.tr(E)*ufl.Identity(len(u))   + 2*self.μ * (E - ufl.tr(E)*ufl.Identity(len(u))  /3.0)
-            S = structure.λ * ufl.tr(E) * ufl.Identity(len(u)) + 2 * structure.μ * (E)
+        # def k_cauchy(u, u_):
+        #     return ufl.inner(sigma(u), ufl.grad(u_))
 
-            # return ufl.inner(F * S, ufl.grad(u_)) * ufl.dx
-            return ufl.inner(P_(u), ufl.grad(u_)) * ufl.dx
+        def k_nominal(u, u_):
+            return ufl.inner(P_(u), ufl.grad(u_))
 
         # The deformation gradient, F = I + dy/dX
         def F_(u):
@@ -323,7 +239,7 @@ class Elasticity:
             # return lamda * ufl.tr(E) * I + 2.0 * mu * (E - ufl.tr(E) * I / 3.0)
             # TODO: Why does the above form give a better result and where does it come from?
 
-            S_svk = structure.λ * ufl.tr(E) * I + 2.0 * structure.μ * E
+            S_svk = structure.lame_lambda * ufl.tr(E) * I + 2.0 * structure.lame_mu * E
             return S_svk
 
         # The first Piola–Kirchhoff stress tensor, P = F*S
@@ -333,16 +249,13 @@ class Elasticity:
             # return ufl.inv(F) * S
             return F * S
 
-        def c(u, u_):
-            return self.eta_m * m(u, u_) + self.eta_k * k(u, u_)
-
         # self.uh_exp = dolfinx.fem.Function(self.V,  name="Deformation")
 
-        def σ(v):
-            """Return an expression for the stress σ given a displacement field"""
-            return 2.0 * structure.μ * ufl.sym(ufl.grad(v)) + structure.λ * ufl.tr(
-                ufl.sym(ufl.grad(v))
-            ) * ufl.Identity(len(v))
+        # def σ(v):
+        #     """Return an expression for the stress σ given a displacement field"""
+        #     return 2.0 * structure.lame_mu * ufl.sym(ufl.grad(v)) + structure.lame_lambda * ufl.tr(
+        #         ufl.sym(ufl.grad(v))
+        #     ) * ufl.Identity(len(v))
 
         # source term ($f = \rho \omega^2 [x_0, \, x_1]$)
         # self.ω, self.ρ = 300.0, 10.0
@@ -390,9 +303,9 @@ class Elasticity:
         F = ufl.grad(self.u) + ufl.Identity(len(self.u))
         J = ufl.det(F)
         self.res = (
-            m(self.avg(self.a_old, a_new, self.alpha_m), self.u_)
-            + c(self.avg(self.v_old, v_new, self.alpha_f), self.u_)
-            + k(self.avg(self.u_old, self.u, self.alpha_f), self.u_)
+            m(self.avg(self.a_old, a_new, self.alpha_m), self.u_) * ufl.dx
+            + c(self.avg(self.v_old, v_new, self.alpha_f), self.u_) * ufl.dx
+            + k_nominal(self.avg(self.u_old, self.u, self.alpha_f), self.u_) * ufl.dx
             - structure.rho * ufl.inner(self.f, self.u_) * ufl.dx
             - ufl.dot(ufl.dot(self.stress_predicted * J * ufl.inv(F.T), n), self.u_)
             * self.ds
@@ -400,6 +313,16 @@ class Elasticity:
 
         # self.a = dolfinx.fem.form(ufl.lhs(res))
         # self.L = dolfinx.fem.form(ufl.rhs(res))
+
+        # Save a form to project the first Piola–Kirchhoff, P_, stress tensor in the structure
+        # u * v * dx = P_ * v * dx, where u and v are trial and test functions on tensor function space
+        F_k_nominal_proj = ufl.inner(self.trial_tensor, self.test_tensor) * ufl.dx
+        F_k_nominal_proj -= (
+            ufl.inner(P_(self.avg(self.u_old, self.u, self.alpha_f)), self.test_tensor)
+            * ufl.dx
+        )
+
+        self.k_nominal_proj = F_k_nominal_proj
 
         # self.a = dolfinx.fem.form(ufl.inner(σ(self.u), ufl.grad(self.v)) * ufl.dx)
         # self.L = dolfinx.fem.form(
@@ -518,7 +441,7 @@ class Elasticity:
     def solve(self, params, dataIO, structure):
         # def σ(v):
         #     """Return an expression for the stress σ given a displacement field"""
-        #     return 2.0 * self.μ * ufl.sym(ufl.grad(v)) + self.λ * ufl.tr(
+        #     return 2.0 * self.lame_mu * ufl.sym(ufl.grad(v)) + self.lame_lambda * ufl.tr(
         #         ufl.sym(ufl.grad(v))
         #     ) * ufl.Identity(len(v))
 
