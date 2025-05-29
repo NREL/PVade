@@ -160,7 +160,7 @@ class Elasticity:
             self.T, name="stress_fluid_predicted"
         )
 
-        self.sigma_vm_h = dolfinx.fem.Function(self.W, name="Stress")
+        # self.sigma_vm_h = dolfinx.fem.Function(self.W, name="Stress")
 
         # discplacement
         self.u = dolfinx.fem.Function(self.V, name="Deformation")
