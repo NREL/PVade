@@ -93,13 +93,17 @@ class ModalAnalysis:
 
         # Define structural properties
         self.E = params.structure.elasticity_modulus  # 1.0e9
-        self.ν = params.structure.poissons_ratio  # 0.3
-        self.μ = self.E / (2.0 * (1.0 + self.ν))
-        self.λ = self.E * self.ν / ((1.0 + self.ν) * (1.0 - 2.0 * self.ν))
+        self.poissons_ratio = params.structure.poissons_ratio  # 0.3
+        self.lame_mu = self.E / (2.0 * (1.0 + self.poissons_ratio))
+        self.lame_lambda = (
+            self.E
+            * self.poissons_ratio
+            / ((1.0 + self.poissons_ratio) * (1.0 - 2.0 * self.poissons_ratio))
+        )
 
         if self.rank == 0:
             print(
-                f"mu = {self.μ} lambda = {self.λ} E = {self.E} nu = {self.ν} density = {self.rho.value}"
+                f"mu = {self.lame_mu} lambda = {self.lame_lambda} E = {self.E} nu = {self.poissons_ratio} density = {self.rho.value}"
             )
 
         # time step
@@ -334,42 +338,44 @@ class ModalAnalysis:
 
         # # Stress tensor
         # def sigma(r):
-        #     return dolfinx.fem.form(2.0*self.μ*ufl.sym(ufl.grad(r)) + self.λ *ufl.tr(ufl.sym(ufl.grad(r)))*ufl.Identity(len(r)))
+        #     return dolfinx.fem.form(2.0*self.lame_mu*ufl.sym(ufl.grad(r)) + self.lame_lambda *ufl.tr(ufl.sym(ufl.grad(r)))*ufl.Identity(len(r)))
 
         # # Mass form
         # def m(u, u_):
         #     return dolfinx.fem.form(self.rho*ufl.inner(u, u_)*ufl.dx)
 
         # # Elastic stiffness form
-        # def k(u, u_):
+        # def k_nominal(u, u_):
         #     return dolfinx.fem.form(ufl.inner(sigma(u), ufl.sym(ufl.grad(u_)))*ufl.dx)
 
         # # Rayleigh damping form
         # def c(u, u_):
-        #     return dolfinx.fem.form(self.eta_m*m(u, u_) + self.eta_k*k(u, u_))
+        #     return dolfinx.fem.form(self.eta_m*m(u, u_) + self.eta_k*k_nominal(u, u_))
 
         # # Work of external forces
         # def Wext(u_):
         #     return ufl.dot(u_, self.f)*self.ds #dss(3)
 
         def sigma(r):
-            return self.λ * ufl.nabla_div(r) * ufl.Identity(
+            return self.lame_lambda * ufl.nabla_div(r) * ufl.Identity(
                 len(r)
-            ) + 2 * self.μ * ufl.sym(ufl.grad(r))
+            ) + 2 * self.lame_mu * ufl.sym(ufl.grad(r))
 
         def m(u, u_):
             return self.rho * ufl.inner(u, u_) * ufl.dx
 
-        def k(u, u_):
+        def k_cauchy(u, u_):
             return ufl.inner(sigma(u), ufl.grad(u_)) * ufl.dx
 
-        def k(u, u_):
+        def k_nominal(u, u_):
             # return ufl.inner(sigma(u),ufl.grad(u_))*ufl.dx
             # updated lagrangian form
             F = ufl.grad(u) + ufl.Identity(len(u))
             E = 0.5 * (F.T * F - ufl.Identity(len(u)))
-            # S = self.λ *ufl.tr(E)*ufl.Identity(len(u))   + 2*self.μ * (E - ufl.tr(E)*ufl.Identity(len(u))  /3.0)
-            S = self.λ * ufl.tr(E) * ufl.Identity(len(u)) + 2 * self.μ * (E)
+            # S = self.lame_lambda *ufl.tr(E)*ufl.Identity(len(u))   + 2*self.lame_mu * (E - ufl.tr(E)*ufl.Identity(len(u))  /3.0)
+            S = self.lame_lambda * ufl.tr(E) * ufl.Identity(
+                len(u)
+            ) + 2 * self.lame_mu * (E)
 
             # return ufl.inner(F * S, ufl.grad(u_)) * ufl.dx
             return ufl.inner(P_(u), ufl.grad(u_)) * ufl.dx
@@ -400,7 +406,7 @@ class ModalAnalysis:
             # return lamda * ufl.tr(E) * I + 2.0 * mu * (E - ufl.tr(E) * I / 3.0)
             # TODO: Why does the above form give a better result and where does it come from?
 
-            S_svk = self.λ * ufl.tr(E) * I + 2.0 * self.μ * E
+            S_svk = self.lame_lambda * ufl.tr(E) * I + 2.0 * self.lame_mu * E
             return S_svk
 
         # The first Piola–Kirchhoff stress tensor, P = F*S
@@ -411,15 +417,15 @@ class ModalAnalysis:
             return F * S
 
         def c(u, u_):
-            return self.eta_m * m(u, u_) + self.eta_k * k(u, u_)
+            return self.eta_m * m(u, u_) + self.eta_k * k_nominal(u, u_)
 
         # self.uh_exp = dolfinx.fem.Function(self.V,  name="Deformation")
 
-        def σ(v):
-            """Return an expression for the stress σ given a displacement field"""
-            return 2.0 * self.μ * ufl.sym(ufl.grad(v)) + self.λ * ufl.tr(
-                ufl.sym(ufl.grad(v))
-            ) * ufl.Identity(len(v))
+        # def σ(v):
+        #     """Return an expression for the stress σ given a displacement field"""
+        #     return 2.0 * self.lame_mu * ufl.sym(ufl.grad(v)) + self.lame_lambda * ufl.tr(
+        #         ufl.sym(ufl.grad(v))
+        #     ) * ufl.Identity(len(v))
 
         # source term ($f = \rho \omega^2 [x_0, \, x_1]$)
         # self.ω, self.ρ = 300.0, 10.0
@@ -458,7 +464,7 @@ class ModalAnalysis:
         self.res = (
             m(self.avg(self.a_old, a_new, self.alpha_m), self.u_)
             + c(self.avg(self.v_old, v_new, self.alpha_f), self.u_)
-            + k(self.avg(self.u_old, self.u, self.alpha_f), self.u_)
+            + k_nominal(self.avg(self.u_old, self.u, self.alpha_f), self.u_)
             - self.rho * ufl.inner(self.f, self.u_) * ufl.dx
             - ufl.dot(ufl.dot(self.stress_predicted * J * ufl.inv(F.T), n), self.u_)
             * self.ds
@@ -584,7 +590,7 @@ class ModalAnalysis:
     def solve(self, params, dataIO):
         # def σ(v):
         #     """Return an expression for the stress σ given a displacement field"""
-        #     return 2.0 * self.μ * ufl.sym(ufl.grad(v)) + self.λ * ufl.tr(
+        #     return 2.0 * self.lame_mu * ufl.sym(ufl.grad(v)) + self.lame_lambda * ufl.tr(
         #         ufl.sym(ufl.grad(v))
         #     ) * ufl.Identity(len(v))
 
