@@ -163,6 +163,7 @@ class FSIDomain:
             ):
                 self.geometry.build_structure(params)
             else:
+                # TODO: add special treatment for panels2d when structural_analysis == False
                 self.geometry.build_FSI(params)
             # Build the domain markers for each surface and cell
             if hasattr(self.geometry, "domain_markers"):

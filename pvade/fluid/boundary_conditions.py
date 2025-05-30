@@ -309,7 +309,7 @@ def build_velocity_boundary_conditions(domain, params, functionspace, current_ti
     )
 
     if domain.rank == 0:
-        print("inflow_function = ", inflow_function.x.array[:])
+        print("inflow_function = ", inflow_function.x.array[:10])
 
     dofs = get_facet_dofs_by_gmsh_tag(domain, functionspace, "x_min")
     bcu.append(dolfinx.fem.dirichletbc(inflow_function, dofs))
@@ -431,7 +431,7 @@ def build_temperature_boundary_conditions(domain, params, functionspace):
 
         # only applying Tbottom to cells from x=0 to x=0.75*x_max to avoid jet at the outlet sfc due to pressure BCa at exit
         heated_cells = dolfinx.mesh.locate_entities(
-            domain.fluid.msh, ndim, lambda x: x[0] < (0.375 * params.domain.x_max)
+            domain.fluid.msh, ndim, lambda x: x[0] < (0.75 * params.domain.x_max)
         )
         T_bottom_function = dolfinx.fem.Function(functionspace)
 

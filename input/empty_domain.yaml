@@ -4,7 +4,7 @@ general:
   mesh_only: false
   structural_analysis: false
   fluid_analysis: true
-  thermal_analysis: false
+  thermal_analysis: true
 domain:
   x_min: -20.0
   x_max: 100.0
@@ -41,16 +41,20 @@ solver:
   save_xdmf_interval: 0.02
 fluid:
   time_varying_inflow_window: 0.0
-  velocity_profile_type: uniform
-  u_ref: 16.0
+  velocity_profile_type: loglaw
+  u_ref: 8.0
   rho: 1.0
   nu: 1.8e-05
+  beta: 0.00333
+  alpha: 0.00225 #2.25e-05 # high Pe # 0.00225 # low Pe (no stability needed) # 
   turbulence_model: smagorinsky
   bc_y_max: slip
   bc_y_min: slip
   bc_z_max: slip
   bc_z_min: noslip
   wind_direction: 270.0
+  T_ambient: 300.0
+  T_bottom: 320.0
 # structure:
 #   dt : 0.01
 #   rho: 124.0
