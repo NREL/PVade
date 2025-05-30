@@ -1,10 +1,67 @@
 import dolfinx
 import ufl
+import sys
 
 import numpy as np
 
-# from dolfinx.fem import create_nonmatching_meshes_interpolation_data
+from datetime import datetime
 
+# from dolfinx.fem import create_nonmatching_meshes_interpolation_data
+# import logging
+
+
+def start_print_and_log(rank, logfile_name):
+
+    class PrintAndLog:
+        """
+        A class to capture normal print statements in a log file
+        along with displaying them to the terminal as usual.
+        """
+
+        def __init__(self, logfile_name, rank, message_type):
+            self.logfile_name = logfile_name
+            self.rank = rank
+            self.message_type = message_type
+
+            if message_type == "INFO":
+                self.terminal = sys.__stdout__
+            elif message_type == "ERROR":
+                self.terminal = sys.__stdout__
+            else:
+                raise ValueError(f"Type {message_type} not recognized")
+
+        def write(self, message):
+            # Write to both the command line and save to the logfile
+            cleaned_message = message.rstrip()
+
+            # Can include a test like `len(message) > 0 and self.rank == 0`
+            # to limit this to only printing from rank 0, but for parallel
+            # debugging, it is often helpful to see messages from all ranks
+            # so we omit this check for now.
+            if len(cleaned_message) > 0:
+
+                cleaned_message += "\n"
+
+                self.terminal.write(f"{cleaned_message}")
+                timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+                with open(self.logfile_name, "a") as fp:
+                    fp.write(f"{timestamp} [{self.message_type}] {cleaned_message}")
+
+        def flush(self):
+            # Dummy method
+            pass
+
+    with open(logfile_name, "w") as fp:
+        # Start with an empty file
+        pass
+
+    # Redirect stdout and stderr
+    sys.stdout = PrintAndLog(logfile_name, rank, message_type="INFO")
+    sys.stderr = PrintAndLog(logfile_name, rank, message_type="ERROR")
+
+    if rank == 0:
+        print("Starting PVade Run")
 
 class DataStream:
     """Input/Output and file writing class
@@ -38,11 +95,6 @@ class DataStream:
         self.num_procs = params.num_procs
         self.ndim = domain.fluid.msh.topology.dim
         self.thermal_analysis = params.general.thermal_analysis
-
-        self.log_filename = f"{params.general.output_dir_sol}/log.txt"
-        if self.rank == 0:
-            with open(self.log_filename, "w") as fp:
-                fp.write("Run Started.\n")
 
         # If doing a fluid simulation, start a fluid solution file
         if params.general.fluid_analysis:
@@ -189,13 +241,6 @@ class DataStream:
             raise ValueError(
                 f"Got found fsi object name = {fsi_object.name}, not recognized."
             )
-
-    def print_and_log(self, string_to_print):
-        if self.rank == 0:
-            print(string_to_print)
-
-            with open(self.log_filename, "a") as fp:
-                fp.write(f"{string_to_print}\n")
 
     # def fluid_struct(self, domain, flow, elasticity, params):
     #     # print("tst")
