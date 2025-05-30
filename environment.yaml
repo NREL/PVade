@@ -1,7 +1,7 @@
 name: pvade-test
 channels:
   - conda-forge  
-  - defaults
+  - nodefaults
 dependencies:
   # Dependencies should be kept as loosely pinned to version numbers as possible
   - python >=3.10,<3.11

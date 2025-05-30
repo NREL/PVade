@@ -1,5 +1,5 @@
 from pvade.fluid.FlowManager import Flow
-from pvade.IO.DataStream import DataStream
+from pvade.IO.DataStream import DataStream, start_print_and_log
 from pvade.fsi.FSI import FSI
 from pvade.IO.Parameters import SimParams
 from pvade.IO.Utilities import get_input_file, write_metrics
@@ -24,6 +24,9 @@ def main(input_file=None):
 
     # Load the parameters object specified by the input file
     params = SimParams(input_file)
+
+    logfile_name = os.path.join(params.general.output_dir, "logfile.log")
+    start_print_and_log(params.rank, logfile_name)
 
     fluid_analysis = params.general.fluid_analysis
     structural_analysis = params.general.structural_analysis
