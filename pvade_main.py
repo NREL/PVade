@@ -135,7 +135,7 @@ def main(input_file=None):
 
                         print(f"| f_x (drag) = {fx:.4f}")
                         print(f"| f_y (lift) = {fy:.4f}")
-                    else:
+                    elif params.pv_array.num_panels > 1: #excludes case when num_panels == 0
                         # still print info, but just for first row
                         fx = flow.integrated_force_x[0]
                         fy = flow.integrated_force_y[0]

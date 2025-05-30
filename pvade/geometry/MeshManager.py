@@ -63,6 +63,8 @@ class FSIDomain:
         # Cell Markers
         self.domain_markers["fluid"] = {"idx": 8, "entity": "cell", "gmsh_tags": []}
         self.domain_markers["structure"] = {"idx": 9, "entity": "cell", "gmsh_tags": []}
+        print('*** structure added to domain_markers')
+        # print('self.structure = ', self.structure)
 
         # Structure Facet Markers
         if (
@@ -329,6 +331,7 @@ class FSIDomain:
             submesh_list.append("fluid")
         if params.general.structural_analysis == True:
             submesh_list.append("structure")
+        print('*** submesh_list = ', submesh_list)
 
         for sub_domain_name in submesh_list:
             if self.rank == 0:

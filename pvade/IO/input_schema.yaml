@@ -20,6 +20,12 @@ properties:
         default: "panels3d"
         type: "string"
         description: "The name of the directory in pvade/geometry/ that contains a DomainCreation.py file for generating the CAD description, prescribing mesh refinement, etc."
+        enum:
+          - "panels2d"
+          - "panels3d"
+          - "heliostats3d"
+          - "flag2d"
+          - "cylinder3d"
       input_mesh_dir:
         default: null
         type:
@@ -119,14 +125,14 @@ properties:
     properties:
       stream_rows:
         default: 3
-        minimum: 1
+        minimum: 0
         maximum: 10
         type: "integer"
         description: "The number of panel rows in the streamwise direction."
         units: "unitless"
       span_rows:
         default: 1
-        minimum: 1
+        minimum: 0
         maximum: 10
         type: "integer"
         description: "The number of panel rows in the spanwise direction."

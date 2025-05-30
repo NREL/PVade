@@ -1,0 +1,65 @@
+general:
+  geometry_module: panels2d
+  output_dir: output/empty2d
+  mesh_only: false
+  structural_analysis: false
+  fluid_analysis: true
+  thermal_analysis: false
+domain:
+  x_min: -20.0
+  x_max: 100.0
+  y_min: 0.0
+  y_max: 20.0
+  # y_min: -30.0
+  # y_max: 30.0
+  # z_min: 0.0
+  # z_max: 20.0
+  l_char: 1.25
+pv_array:
+  stream_rows: 0
+  span_rows: 0
+  stream_spacing: 10.0
+  span_spacing: 30.0
+  panel_chord: 4.1
+  panel_span: 24.25
+  panel_thickness: 0.1
+  elevation: 2.1
+  tracker_angle: 0.0
+  span_fixation_pts: [13.2]
+solver:
+  dt: 0.01
+  t_final: 20.0
+  solver1_ksp: gmres
+  solver2_ksp: gmres
+  solver3_ksp: gmres
+  solver5_ksp: gmres
+  solver1_pc: hypre
+  solver2_pc: hypre
+  solver3_pc: hypre
+  solver5_pc: hypre
+  save_text_interval: 0.02
+  save_xdmf_interval: 0.02
+fluid:
+  time_varying_inflow_window: 0.0
+  velocity_profile_type: uniform
+  u_ref: 16.0
+  rho: 1.0
+  nu: 1.8e-05
+  turbulence_model: smagorinsky
+  bc_y_max: slip
+  bc_y_min: slip
+  bc_z_max: slip
+  bc_z_min: noslip
+  wind_direction: 270.0
+# structure:
+#   dt : 0.01
+#   rho: 124.0
+#   poissons_ratio: 0.3
+#   elasticity_modulus: 4.0e+09
+#   body_force_x: 0.0
+#   body_force_y: 0.0
+#   body_force_z: 0.0
+#   bc_list: []
+#   motor_connection: true
+#   tube_connection: true
+#   beta_relaxation: 0.5
