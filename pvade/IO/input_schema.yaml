@@ -353,6 +353,13 @@ properties:
         type: "number"
         description: "The zero plane displacement height used for the presence of vegetated or urban canopies in the log law velocity profile."
         units: "meters"
+      psi:
+        default: 0.0
+        minimum: -10.0
+        maximum: 5.0
+        type: "number"
+        description: "Atmospheric stability correction function: negative for unstable (convective, daytime) conditions, positive for stable (night-time) conditions, zero for neutral conditions."
+        units: "none"
       initialize_with_inflow_bc:
         default: true
         type: "boolean"
