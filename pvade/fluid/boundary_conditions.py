@@ -176,23 +176,24 @@ class InflowVelocity:
         elif self.params.fluid.velocity_profile_type == "loglaw":
             z0 = self.params.fluid.z0
             d0 = self.params.fluid.d0
+            psi = self.params.fluid.psi
             z_hub = self.params.pv_array.elevation
 
             # handle panels3d
             if self.ndim == 3:
                 inflow_values[0] = (
                     (time_vary_u_ref)
-                    * np.log(((x[2]) - d0) / z0)
-                    / (np.log((z_hub - d0) / z0))
+                    * (np.log(((x[2]) - d0) / z0) - psi)
+                    / (np.log((z_hub - d0) / z0) - psi)
                 )
 
             # handle panels2d
             elif self.ndim == 2:
                 # print("this is 2d")
                 inflow_values[0] = (
-                    (time_vary_u_ref)  # shouldn't this be u_star?
-                    * np.log(((x[1]) - d0) / z0)
-                    / (np.log((z_hub - d0) / z0))
+                    (time_vary_u_ref)
+                    * (np.log(((x[1]) - d0) / z0) - psi)
+                    / (np.log((z_hub - d0) / z0) - psi)
                 )
 
         # if self.first_call_to_inflow_velocity:
