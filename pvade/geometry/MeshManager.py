@@ -41,6 +41,7 @@ class FSIDomain:
         self._get_domain_markers(params)
 
         self.numpy_pt_total_array = None
+        self.ndim = None
 
     def _get_domain_markers(self, params):
         self.domain_markers = {}
@@ -67,6 +68,7 @@ class FSIDomain:
         if (
             params.general.geometry_module == "panels2d"
             or params.general.geometry_module == "panels3d"
+            or params.general.geometry_module == "heliostats3d"
         ):
             for panel_id in range(
                 params.pv_array.stream_rows * params.pv_array.span_rows
@@ -141,20 +143,25 @@ class FSIDomain:
         # Only rank 0 builds the geometry and meshes the domain
         if self.rank == 0:
             if (
-                params.general.geometry_module == "panels3d"
+                (  # should we add panels2d?
+                    params.general.geometry_module == "panels3d"
+                    or params.general.geometry_module == "heliostats3d"
+                )
                 and params.general.fluid_analysis == True
                 and params.general.structural_analysis == True
             ):
                 self.geometry.build_FSI(params)
             elif (
-                params.general.geometry_module == "panels3d"
+                (
+                    params.general.geometry_module == "panels3d"
+                    or params.general.geometry_module == "heliostats3d"
+                )
                 and params.general.fluid_analysis == False
                 and params.general.structural_analysis == True
             ):
                 self.geometry.build_structure(params)
             else:
                 self.geometry.build_FSI(params)
-
             # Build the domain markers for each surface and cell
             if hasattr(self.geometry, "domain_markers"):
                 # If the "build" process created domain markers, use those directly...
@@ -176,6 +183,10 @@ class FSIDomain:
 
             self._generate_mesh()
 
+            self.ndim = (
+                self.geometry.ndim
+            )  # gmsh_model.get_dimension() # ?? should this be domain.ndim?
+
         # When finished, rank 0 needs to tell other ranks about how the domain_markers dictionary was created
         # and what values it holds. This is important now since the number of indices "idx" generated in the
         # geometry module differs from what's prescribed in the init of this class.
@@ -183,6 +194,7 @@ class FSIDomain:
         # CREATE THEIR OWN AND JUST HAVE RANK 0 ALWAYS BROADCAST IT.
         self.domain_markers = self.comm.bcast(self.domain_markers, root=0)
         self.numpy_pt_total_array = self.comm.bcast(self.numpy_pt_total_array, root=0)
+        self.ndim = self.comm.bcast(self.ndim, root=0)
 
         # All ranks receive their portion of the mesh from rank 0 (like an MPI scatter)
         self.msh, self.cell_tags, self.facet_tags = dolfinx.io.gmshio.model_to_mesh(
@@ -192,9 +204,8 @@ class FSIDomain:
             partitioner=dolfinx.mesh.create_cell_partitioner(
                 dolfinx.mesh.GhostMode.shared_facet
             ),
+            gdim=self.ndim,
         )
-
-        self.ndim = self.msh.topology.dim
 
         self.msh.topology.create_connectivity(self.ndim, self.ndim - 1)
 
@@ -205,7 +216,9 @@ class FSIDomain:
 
         if (
             params.general.geometry_module == "panels3d"
+            or params.general.geometry_module == "heliostats3d"
             or params.general.geometry_module == "flag2d"
+            or params.general.geometry_module == "panels2d"
         ):
             self._create_submeshes_from_parent(params)
             self._transfer_mesh_tags_to_submeshes(params)
@@ -630,7 +643,7 @@ class FSIDomain:
                 class FSISubDomain:
                     pass
 
-                if not hasattr(self, "ndim"):
+                if self.ndim is None:
                     self.ndim = submesh.topology.dim
                 else:
                     assert self.ndim == submesh.topology.dim
@@ -874,7 +887,6 @@ class FSIDomain:
             xdmf_file.write_function(self.distance, 0.0)
 
     def _force_interface_node_matching(self):
-
         # Get the coordinates of each point from the mesh objects
         fluid_pts = self.fluid.msh.geometry.x
         fluid_boundary_pts = fluid_pts[self.all_interior_V_dofs, :]
@@ -905,7 +917,6 @@ class FSIDomain:
 
         @jit(nopython=True)
         def find_closest_structure_idx(fluid_pts, structure_pts):
-
             idx_vec = np.zeros(np.shape(fluid_pts)[0], dtype=np.int64)
 
             for k, pt in enumerate(fluid_pts):
@@ -1017,7 +1028,7 @@ class FSIDomain:
 
     #     return vec
 
-    def move_mesh(self, elasticity, params):
+    def move_mesh(self, structure, params):
         if self.first_move_mesh:
             # Save the un-moved coordinates for future reference
             # self.fluid.msh.initial_position = self.fluid.msh.geometry.x[:, :]
@@ -1120,7 +1131,9 @@ class FSIDomain:
         use_built_in_interpolate = True
 
         if use_built_in_interpolate:
-            self.fluid_mesh_displacement_bc_undeformed.interpolate(elasticity.u_delta)
+            self.fluid_mesh_displacement_bc_undeformed.interpolate(
+                structure.elasticity.u_delta
+            )
             self.fluid_mesh_displacement_bc_undeformed.x.scatter_forward()
             self.fluid_mesh_displacement_bc.x.array[:] = (
                 self.fluid_mesh_displacement_bc_undeformed.x.array[:]
@@ -1128,7 +1141,9 @@ class FSIDomain:
             self.fluid_mesh_displacement_bc.x.scatter_forward()
 
         else:
-            fluid_mesh_displacement_bc_vec = self.custom_interpolate(elasticity)
+            fluid_mesh_displacement_bc_vec = self.custom_interpolate(
+                structure.elasticity
+            )
             nn_bc_vec = np.shape(self.fluid_mesh_displacement_bc.vector.array[:])[0]
             self.fluid_mesh_displacement_bc.vector.array[:] = (
                 fluid_mesh_displacement_bc_vec[:nn_bc_vec]
@@ -1138,9 +1153,14 @@ class FSIDomain:
             # print(self.fluid_mesh_displacement_bc.vector.array[self.all_interior_V_dofs])
 
         # Set the boundary condition for the walls of the computational domain
-        zero_vec = dolfinx.fem.Constant(
-            self.fluid.msh, PETSc.ScalarType((0.0, 0.0, 0.0))
-        )
+        if self.ndim == 2:
+            zero_vec = dolfinx.fem.Constant(
+                self.fluid.msh, PETSc.ScalarType((0.0, 0.0))
+            )
+        if self.ndim == 3:
+            zero_vec = dolfinx.fem.Constant(
+                self.fluid.msh, PETSc.ScalarType((0.0, 0.0, 0.0))
+            )
 
         zero_scalar = dolfinx.fem.Constant(self.fluid.msh, PETSc.ScalarType((0.0)))
 
@@ -1225,11 +1245,11 @@ class FSIDomain:
         # keeps the ghost values (needed for the mesh update)
         with self.fluid_mesh_displacement.vector.localForm() as vals_local:
             vals = vals_local.array
-            vals = vals.reshape(-1, 3)
+            vals = vals.reshape(-1, self.ndim)
 
         # Move the mesh by those values: new = original + displacement
         # self.fluid.msh.geometry.x[:, :] = self.fluid.msh.initial_position[:, :] + vals[:, :]
-        self.fluid.msh.geometry.x[:, :] += vals[:, :]
+        self.fluid.msh.geometry.x[:, : self.ndim] += vals[:, :]
 
         # # Obtain the vector of values for the mesh motion in a way that
         # # keeps the ghost values (needed for the mesh update)

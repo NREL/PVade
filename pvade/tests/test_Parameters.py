@@ -1,7 +1,7 @@
 import pytest
 import os
 
-from pvade.Parameters import SimParams
+from pvade.IO.Parameters import SimParams
 
 filename = "pvade/tests/input/yaml/test_inputs.yaml"
 

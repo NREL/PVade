@@ -142,7 +142,10 @@ class InflowVelocity:
                 * (0.41 - x[1])
                 / (0.41**2)
             )
-        elif self.params.general.example == "panels3d":
+        elif (
+            self.params.general.example == "panels3d"
+            or self.params.general.example == "heliostats3d"
+        ):
             inflow_values[0] = (
                 (self.params.fluid.u_ref)
                 * np.log(((x[2]) - d0) / z0)
@@ -269,9 +272,14 @@ def build_pressure_boundary_conditions(domain, params, functionspace):
 
 def build_structure_boundary_conditions(domain, params, functionspace):
     facet_dim = domain.ndim - 1
-    zero_vec = dolfinx.fem.Constant(
-        domain.structure.msh, PETSc.ScalarType((0.0, 0.0, 0.0))
-    )
+    if domain.ndim == 2:
+        zero_vec = dolfinx.fem.Constant(
+            domain.structure.msh, PETSc.ScalarType((0.0, 0.0))
+        )
+    elif domain.ndim == 3:
+        zero_vec = dolfinx.fem.Constant(
+            domain.structure.msh, PETSc.ScalarType((0.0, 0.0, 0.0))
+        )
     bc = []
 
     total_num_panels = params.pv_array.stream_rows * params.pv_array.span_rows
@@ -361,7 +369,6 @@ def build_structure_boundary_conditions(domain, params, functionspace):
     tube_nodes_idx = np.arange(0, num_nodes, nodes_per_panel, dtype=np.int64)
 
     if params.structure.tube_connection == True:
-
         # If making torque tube connections, pass only those pinning lines to the BC identification function
         tube_nodes = domain.numpy_pt_total_array[tube_nodes_idx, :]
 
@@ -375,7 +382,6 @@ def build_structure_boundary_conditions(domain, params, functionspace):
         bc.append(dolfinx.fem.dirichletbc(zero_vec, dofs_disp, functionspace))
 
     if params.structure.motor_connection == True:
-
         # If making motor mount connections, pass only those pinning lines to the BC identification function
         # this is done by making a copy of the numpy_pt_total_array with the torque tube lines *deleted*
         # not done in place, so numpy_pt_total_array remains unaltered.

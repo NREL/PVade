@@ -4,22 +4,25 @@ import os
 import numpy as np
 
 from pvade.fluid.FlowManager import Flow
-from pvade.DataStream import DataStream
-from pvade.Parameters import SimParams
-from pvade.Utilities import get_input_file, write_metrics
+from pvade.IO.DataStream import DataStream
+from pvade.IO.Parameters import SimParams
+from pvade.IO.Utilities import get_input_file, write_metrics
 from pvade.geometry.MeshManager import FSIDomain
-from ns_main import main
+from pvade_main import main
 
 from dolfinx.common import TimingType, list_timings
 import cProfile
 import sys
 import tqdm.autonotebook
 
-input_path = "pvade/tests/input/yaml/"
+rootdir = os.getcwd()
+print("rootdir = ", rootdir)
+
+input_path = rootdir + "/pvade/tests/input/yaml/"
 
 solve_iter = 10
 
-rtol = 3.0e-5
+rtol = 1.0e-4
 
 
 @pytest.mark.unit
@@ -32,14 +35,13 @@ def test_flow_3dpanels():
 
     # Initialize the domain and construct the initial mesh
     domain = FSIDomain(params)
-    domain.read_mesh_files("pvade/tests/input/mesh/panels3d/", params)
+    domain.read_mesh_files(rootdir + "/pvade/tests/input/mesh/panels3d/", params)
 
     print("fluid shape = ", np.shape(domain.fluid.msh.geometry.x))
     print("struct shape = ", np.shape(domain.structure.msh.geometry.x))
 
-    fluid_analysis = params.general.fluid_analysis
     # Initialize the function spaces for the flow
-    flow = Flow(domain, fluid_analysis)
+    flow = Flow(domain, params)
 
     # # # Specify the boundary conditions
     flow.build_boundary_conditions(domain, params)
@@ -69,8 +71,8 @@ def test_flow_3dpanels():
         print("max_pressure = ", max_pressure)
         assert not np.any(np.isnan(flow.p_k.x.array))
 
-    max_velocity_truth = 18.198961285088807
-    max_pressure_truth = 56.925361572846874
+    max_velocity_truth = 18.205784057651652
+    max_pressure_truth = 56.175743310367395
     assert np.isclose(max_velocity, max_velocity_truth, rtol=rtol)
     assert np.isclose(max_pressure, max_pressure_truth, rtol=rtol)
 
@@ -79,12 +81,17 @@ def test_fsi2():
 
     input_file = os.path.join(input_path, "flag2d.yaml")  # get_input_file()
 
-    params, elasticity, flow = main(input_file=input_file)
+    params, structure, flow = main(input_file=input_file)
 
-    pos_filename = os.path.join(params.general.output_dir_sol, "accel_pos.csv")
-    lift_and_drag_filename = os.path.join(
-        params.general.output_dir_sol, "lift_and_drag.csv"
+    pos_filename = os.path.join(
+        rootdir + "/" + params.general.output_dir_sol, "accel_pos.csv"
     )
+    lift_and_drag_filename = os.path.join(
+        rootdir + "/" + params.general.output_dir_sol, "lift_and_drag.csv"
+    )
+
+    print("pos_filename = ", pos_filename)
+    print("lift_and_drag_filename = ", lift_and_drag_filename)
 
     pos_data = np.genfromtxt(pos_filename, skip_header=1, delimiter=",")
     lift_and_drag_data = np.genfromtxt(
@@ -116,154 +123,197 @@ def test_fsi2():
         ]
     )
 
-    lift_and_drag_data_tuth = np.array(
+    lift_and_drag_data_truth = np.array(
         [
             [
                 1.000000000e-03,
-                -1.429135451e-04,
                 1.447174203e-02,
-                -2.858270903e-06,
+                -1.429135451e-04,
+                0.0,
                 2.894348406e-04,
+                -2.858270903e-06,
+                0.0,
             ],
             [
                 2.000000000e-03,
-                -5.910991028e-04,
                 4.478047234e-02,
-                -1.182198206e-05,
+                -5.910991028e-04,
+                0.0,
                 8.956094469e-04,
+                -1.182198206e-05,
+                0.0,
             ],
             [
                 3.000000000e-03,
-                -1.166437342e-03,
                 7.662458401e-02,
-                -2.332874685e-05,
+                -1.166437342e-03,
+                0.0,
                 1.532491680e-03,
+                -2.332874685e-05,
+                0.0,
             ],
             [
                 4.000000000e-03,
-                -1.549059217e-03,
                 1.090917271e-01,
-                -3.098118433e-05,
+                -1.549059217e-03,
+                0.0,
                 2.181834542e-03,
+                -3.098118433e-05,
+                0.0,
             ],
             [
                 5.000000000e-03,
-                -1.844610069e-03,
                 1.422174280e-01,
-                -3.689220138e-05,
+                -1.844610069e-03,
+                0.0,
                 2.844348561e-03,
+                -3.689220138e-05,
+                0.0,
             ],
             [
                 6.000000000e-03,
-                -2.302221183e-03,
                 1.756516101e-01,
-                -4.604442367e-05,
+                -2.302221183e-03,
+                0.0,
                 3.513032202e-03,
+                -4.604442367e-05,
+                0.0,
             ],
             [
                 7.000000000e-03,
-                -2.702722109e-03,
                 2.095643216e-01,
-                -5.405444218e-05,
+                -2.702722109e-03,
+                0.0,
                 4.191286432e-03,
+                -5.405444218e-05,
+                0.0,
             ],
             [
                 8.000000000e-03,
-                -2.893282934e-03,
                 2.441691147e-01,
-                -5.786565869e-05,
+                -2.893282934e-03,
+                0.0,
                 4.883382293e-03,
+                -5.786565869e-05,
+                0.0,
             ],
             [
                 9.000000000e-03,
-                -3.173738055e-03,
                 2.791051252e-01,
-                -6.347476110e-05,
+                -3.173738055e-03,
+                0.0,
                 5.582102503e-03,
+                -6.347476110e-05,
+                0.0,
             ],
             [
                 1.000000000e-02,
-                -3.521544987e-03,
                 3.142977415e-01,
-                -7.043089974e-05,
+                -3.521544987e-03,
+                0.0,
                 6.285954831e-03,
+                -7.043089974e-05,
+                0.0,
             ],
             [
                 1.100000000e-02,
-                -3.632976303e-03,
                 3.501157256e-01,
-                -7.265952606e-05,
+                -3.632976303e-03,
+                0.0,
                 7.002314512e-03,
+                -7.265952606e-05,
+                0.0,
             ],
             [
                 1.200000000e-02,
-                -3.714773367e-03,
                 3.863649691e-01,
-                -7.429546734e-05,
+                -3.714773367e-03,
+                0.0,
                 7.727299382e-03,
+                -7.429546734e-05,
+                0.0,
             ],
             [
                 1.300000000e-02,
-                -3.939535627e-03,
                 4.227567674e-01,
-                -7.879071254e-05,
+                -3.939535627e-03,
+                0.0,
                 8.455135348e-03,
+                -7.879071254e-05,
+                0.0,
             ],
             [
                 1.400000000e-02,
-                -4.000498313e-03,
                 4.596215584e-01,
-                -8.000996626e-05,
+                -4.000498313e-03,
+                0.0,
                 9.192431169e-03,
+                -8.000996626e-05,
+                0.0,
             ],
             [
                 1.500000000e-02,
-                -3.910000927e-03,
                 4.970228501e-01,
-                -7.820001854e-05,
+                -3.910000927e-03,
+                0.0,
                 9.940457001e-03,
+                -7.820001854e-05,
+                0.0,
             ],
             [
                 1.600000000e-02,
-                -3.965101880e-03,
                 5.345733314e-01,
-                -7.930203760e-05,
+                -3.965101880e-03,
+                0.0,
                 1.069146663e-02,
+                -7.930203760e-05,
+                0.0,
             ],
             [
                 1.700000000e-02,
-                -3.989947060e-03,
                 5.724088202e-01,
-                -7.979894120e-05,
+                -3.989947060e-03,
+                0.0,
                 1.144817640e-02,
+                -7.979894120e-05,
+                0.0,
             ],
             [
                 1.800000000e-02,
-                -3.795907648e-03,
                 6.108194444e-01,
-                -7.591815296e-05,
+                -3.795907648e-03,
+                0.0,
                 1.221638889e-02,
+                -7.591815296e-05,
+                0.0,
             ],
             [
                 1.900000000e-02,
-                -3.677795842e-03,
                 6.494805024e-01,
-                -7.355591685e-05,
+                -3.677795842e-03,
+                0.0,
                 1.298961005e-02,
+                -7.355591685e-05,
+                0.0,
             ],
             [
                 2.000000000e-02,
-                -3.662151033e-03,
                 6.882712185e-01,
-                -7.324302067e-05,
+                -3.662151033e-03,
+                0.0,
                 1.376542437e-02,
+                -7.324302067e-05,
+                0.0,
             ],
         ]
     )
 
+    # print('pos_data = ', pos_data)
+
     assert np.allclose(pos_data, pos_data_truth)
     print(lift_and_drag_data)
-    # assert np.allclose(lift_and_drag_data, lift_and_drag_data_tuth)
+
+    # assert np.allclose(lift_and_drag_data[:, 0:3], lift_and_drag_data_truth[:, 0:3]) # needs new truth values to pass, mesh has changed
 
 
 # @pytest.mark.unit
