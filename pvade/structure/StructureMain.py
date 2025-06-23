@@ -42,36 +42,8 @@ class Structure:
         self.rank = domain.rank
         self.num_procs = domain.num_procs
 
-        # domain.structure.msh = dolfinx.mesh.refine(domain.structure.msh,None)
-        # domain.structure.msh = dolfinx.mesh.refine(domain.structure.msh)
-
-        # physics = 'ElasticityAnalysis'
-
-        # domain_creation_module = (
-        #     # f"pvade.geometry.{params.general.geometry_module}.DomainCreation"
-        #     f"pvade.structure.{physics}.Elasticity"
-        # )
-        # try:
-        #     # This is equivalent to "import pvade.geometry.{params.general.geometry_module}.DomainCreation as dcm"
-        #     dcm = import_module(domain_creation_module)
-        # except:
-        #     raise ValueError(f"Could not import {domain_creation_module}")
-
         # init physics
         self.elasticity = Elasticity(domain, self.structural_analysis, params)
-
-        # P1 = ufl.VectorElement("Lagrange", domain.structure.msh.ufl_cell(), 2)
-        # self.V = dolfinx.fem.FunctionSpace(domain.structure.msh, P1)
-
-        # self.W = dolfinx.fem.FunctionSpace(
-        #     domain.structure.msh, ("Discontinuous Lagrange", 0)
-        # )
-
-        # self.first_call_to_solver = True
-
-        # self.num_V_dofs = (
-        #     self.V.dofmap.index_map_bs * self.V.dofmap.index_map.size_global
-        # )
 
         # Store the dimension of the problem for convenience
         self.ndim = domain.structure.msh.topology.dim
@@ -99,25 +71,19 @@ class Structure:
             domain.structure.msh, params.structure.rho
         )  # Constant(0.)
 
-        # # Rayleigh damping coefficients
-        # self.eta_m = dolfinx.fem.Constant(domain.structure.msh, 0.0)  # Constant(0.)
-        # self.eta_k = dolfinx.fem.Constant(domain.structure.msh, 0.0)  # Constant(0.)
-
-        # # Generalized-alpha method parameters
-        # self.alpha_m = dolfinx.fem.Constant(domain.structure.msh, 0.2)
-        # self.alpha_f = dolfinx.fem.Constant(domain.structure.msh, 0.4)
-        # self.gamma = 0.5 + self.alpha_f - self.alpha_m
-        # self.beta = (self.gamma + 0.5) ** 2 / 4.0
-
         # Define structural properties
         self.E = params.structure.elasticity_modulus  # 1.0e9
-        self.ν = params.structure.poissons_ratio  # 0.3
-        self.μ = self.E / (2.0 * (1.0 + self.ν))
-        self.λ = self.E * self.ν / ((1.0 + self.ν) * (1.0 - 2.0 * self.ν))
+        self.poissons_ratio = params.structure.poissons_ratio  # 0.3
+        self.lame_mu = self.E / (2.0 * (1.0 + self.poissons_ratio))
+        self.lame_lambda = (
+            self.E
+            * self.poissons_ratio
+            / ((1.0 + self.poissons_ratio) * (1.0 - 2.0 * self.poissons_ratio))
+        )
 
         if self.rank == 0:
             print(
-                f"mu = {self.μ} lambda = {self.λ} E = {self.E} nu = {self.ν} density = {self.rho.value}"
+                f"mu = {self.lame_mu} lambda = {self.lame_lambda} E = {self.E} nu = {self.poissons_ratio} density = {self.rho.value}"
             )
 
         def _north_east_corner(x):
@@ -232,177 +198,6 @@ class Structure:
         """
         self.elasticity.build_forms(domain, params, self)
 
-        # # Define trial and test functions for deformation
-        # # self.du = ufl.TrialFunction(self.V)
-        # self.u_ = ufl.TestFunction(self.V)
-
-        # P3 = ufl.TensorElement("Lagrange", domain.structure.msh.ufl_cell(), 2)
-        # self.T = dolfinx.fem.FunctionSpace(domain.structure.msh, P3)
-
-        # self.stress = dolfinx.fem.Function(self.T, name="stress_fluid")
-        # self.stress_old = dolfinx.fem.Function(self.T, name="stress_fluid_old")
-        # self.stress_predicted = dolfinx.fem.Function(
-        #     self.T, name="stress_fluid_predicted"
-        # )
-
-        # self.sigma_vm_h = dolfinx.fem.Function(self.W, name="Stress")
-
-        # # discplacement
-        # self.u = dolfinx.fem.Function(self.V, name="Deformation")
-        # self.u_old = dolfinx.fem.Function(self.V, name="Deformation_old")
-        # self.u_delta = dolfinx.fem.Function(self.V, name="Deformation_change")
-
-        # # velocity
-        # self.v = dolfinx.fem.Function(self.V, name="Velocity")
-        # self.v_old = dolfinx.fem.Function(self.V, name="Velocity_old")
-
-        # # acceleration
-        # self.a = dolfinx.fem.Function(self.V, name="acceleration")
-        # self.a_old = dolfinx.fem.Function(self.V, name="acceleration_old")
-
-        # # dss = ufl.ds(subdomain_data=boundary_subdomains)
-
-        # # # Stress tensor
-        # # def sigma(r):
-        # #     return dolfinx.fem.form(2.0*self.μ*ufl.sym(ufl.grad(r)) + self.λ *ufl.tr(ufl.sym(ufl.grad(r)))*ufl.Identity(len(r)))
-
-        # # # Mass form
-        # # def m(u, u_):
-        # #     return dolfinx.fem.form(self.rho*ufl.inner(u, u_)*ufl.dx)
-
-        # # # Elastic stiffness form
-        # # def k(u, u_):
-        # #     return dolfinx.fem.form(ufl.inner(sigma(u), ufl.sym(ufl.grad(u_)))*ufl.dx)
-
-        # # # Rayleigh damping form
-        # # def c(u, u_):
-        # #     return dolfinx.fem.form(self.eta_m*m(u, u_) + self.eta_k*k(u, u_))
-
-        # # # Work of external forces
-        # # def Wext(u_):
-        # #     return ufl.dot(u_, self.f)*self.ds #dss(3)
-
-        # def sigma(r):
-        #     return self.λ * ufl.nabla_div(r) * ufl.Identity(
-        #         len(r)
-        #     ) + 2 * self.μ * ufl.sym(ufl.grad(r))
-
-        # def m(u, u_):
-        #     return self.rho * ufl.inner(u, u_) * ufl.dx
-
-        # def k(u, u_):
-        #     return ufl.inner(sigma(u), ufl.grad(u_)) * ufl.dx
-
-        # def k(u, u_):
-        #     # return ufl.inner(sigma(u),ufl.grad(u_))*ufl.dx
-        #     # updated lagrangian form
-        #     F = ufl.grad(u) + ufl.Identity(len(u))
-        #     E = 0.5 * (F.T * F - ufl.Identity(len(u)))
-        #     # S = self.λ *ufl.tr(E)*ufl.Identity(len(u))   + 2*self.μ * (E - ufl.tr(E)*ufl.Identity(len(u))  /3.0)
-        #     S = self.λ * ufl.tr(E) * ufl.Identity(len(u)) + 2 * self.μ * (E)
-
-        #     # return ufl.inner(F * S, ufl.grad(u_)) * ufl.dx
-        #     return ufl.inner(P_(u), ufl.grad(u_)) * ufl.dx
-
-        # # The deformation gradient, F = I + dy/dX
-        # def F_(u):
-        #     I = ufl.Identity(len(u))
-        #     return I + ufl.grad(u)
-
-        # # The Cauchy-Green deformation tensor, C = F.T * F
-        # def C_(u):
-        #     F = F_(u)
-        #     return F.T * F
-
-        # # Green–Lagrange strain tensor, E = 0.5*(C - I)
-        # def E_(u):
-        #     I = ufl.Identity(len(u))
-        #     C = C_(u)
-
-        #     return 0.5 * (C - I)
-        #     # return 0.5 * (ufl.grad(u) + ufl.grad(u).T)
-
-        # # The second Piola–Kirchhoff stress, S
-        # def S_(u):
-        #     E = E_(u)
-        #     I = ufl.Identity(len(u))
-
-        #     # return lamda * ufl.tr(E) * I + 2.0 * mu * (E - ufl.tr(E) * I / 3.0)
-        #     # TODO: Why does the above form give a better result and where does it come from?
-
-        #     S_svk = self.λ * ufl.tr(E) * I + 2.0 * self.μ * E
-        #     return S_svk
-
-        # # The first Piola–Kirchhoff stress tensor, P = F*S
-        # def P_(u):
-        #     F = F_(u)
-        #     S = S_(u)
-        #     # return ufl.inv(F) * S
-        #     return F * S
-
-        # def c(u, u_):
-        #     return self.eta_m * m(u, u_) + self.eta_k * k(u, u_)
-
-        # # self.uh_exp = dolfinx.fem.Function(self.V,  name="Deformation")
-
-        # def σ(v):
-        #     """Return an expression for the stress σ given a displacement field"""
-        #     return 2.0 * self.μ * ufl.sym(ufl.grad(v)) + self.λ * ufl.tr(
-        #         ufl.sym(ufl.grad(v))
-        #     ) * ufl.Identity(len(v))
-
-        # # source term ($f = \rho \omega^2 [x_0, \, x_1]$)
-        # # self.ω, self.ρ = 300.0, 10.0
-        # # x = ufl.SpatialCoordinate(domain.structure.msh)
-        # # self.f = ufl.as_vector((0*self.ρ * self.ω**2 * x[0], self.ρ * self.ω**2 * x[1], 0.0))
-        # # self.f_structure = dolfinx.fem.Constant(
-        # #     domain.structure.msh,
-        # #     (PETSc.ScalarType(0), PETSc.ScalarType(0), PETSc.ScalarType(0)),
-        # # )
-        # # self.f = ufl.as_vector((0*self.ρ * self.ω**2 * x[0], self.ρ * self.ω**2 * x[1], 0.0))
-        # # self.T = dolfinx.fem.Constant(domain.structure.msh, PETSc.ScalarType((0, 1.e-3, 0)))
-        # # self.f = dolfinx.fem.Constant(domain.structure.msh, PETSc.ScalarType((0,100,100)))
-        # self.f = dolfinx.fem.Constant(
-        #     domain.structure.msh,
-        #     PETSc.ScalarType(
-        #         (
-        #             params.structure.body_force_x,
-        #             params.structure.body_force_y,
-        #             params.structure.body_force_z,
-        #         )
-        #     ),
-        # )
-        # self.ds = ufl.Measure("ds", domain=domain.structure.msh)
-        # n = ufl.FacetNormal(domain.structure.msh)
-
-        # # Residual
-        # a_new = self.update_a(
-        #     self.u, self.u_old, self.v_old, self.a_old, self.dt_st, self.beta, ufl=True
-        # )
-        # v_new = self.update_v(
-        #     a_new, self.u_old, self.v_old, self.a_old, self.dt_st, self.gamma, ufl=True
-        # )
-
-        # F = ufl.grad(self.u) + ufl.Identity(len(self.u))
-        # J = ufl.det(F)
-        # self.res = (
-        #     m(self.avg(self.a_old, a_new, self.alpha_m), self.u_)
-        #     + c(self.avg(self.v_old, v_new, self.alpha_f), self.u_)
-        #     + k(self.avg(self.u_old, self.u, self.alpha_f), self.u_)
-        #     - self.rho * ufl.inner(self.f, self.u_) * ufl.dx
-        #     - ufl.dot(ufl.dot(self.stress_predicted * J * ufl.inv(F.T), n), self.u_)
-        #     * self.ds
-        # )  # - Wext(self.u)
-
-        # # self.a = dolfinx.fem.form(ufl.lhs(res))
-        # # self.L = dolfinx.fem.form(ufl.rhs(res))
-
-        # # self.a = dolfinx.fem.form(ufl.inner(σ(self.u), ufl.grad(self.v)) * ufl.dx)
-        # # self.L = dolfinx.fem.form(
-        # #     ufl.dot(self.f, self.v) * ufl.dx
-        # #     + ufl.dot(ufl.dot(self.stress, n), self.v) * self.ds
-        # # )
-
     def _assemble_system(self, params):
         """Pre-assemble all LHS matrices and RHS vectors
 
@@ -514,88 +309,3 @@ class Structure:
     def solve(self, params, dataIO):
 
         self.elasticity.solve(params, dataIO, self)
-        # # def σ(v):
-        # #     """Return an expression for the stress σ given a displacement field"""
-        # #     return 2.0 * self.μ * ufl.sym(ufl.grad(v)) + self.λ * ufl.tr(
-        # #         ufl.sym(ufl.grad(v))
-        # #     ) * ufl.Identity(len(v))
-
-        # if self.first_call_to_solver:
-        #     if self.rank == 0:
-        #         print("Starting Strutural Solution")
-
-        #     self._assemble_system(params)
-
-        # num_its, converged = self.solver.solve(self.u)  # solve the current time step
-        # assert converged
-        # self.u.x.scatter_forward()
-
-        # # Calculate the change in the displacement (new - old) this is what moves the mesh
-        # self.u_delta.vector.array[:] = (
-        #     self.u.vector.array[:] - self.u_old.vector.array[:]
-        # )
-        # self.u_delta.x.scatter_forward()
-
-        # # Update old fields with new quantities
-        # self.update_fields(
-        #     self.u,
-        #     self.u_old,
-        #     self.v_old,
-        #     self.a_old,
-        #     self.dt_st,
-        #     self.beta,
-        #     self.gamma,
-        # )
-
-        # # sigma_dev = σ(self.u) - (1 / 3) * ufl.tr(σ(self.u)) * ufl.Identity(len(self.u))
-        # # sigma_vm = ufl.sqrt((3 / 2) * ufl.inner(sigma_dev, sigma_dev))
-
-        # # sigma_vm_expr = dolfinx.fem.Expression(
-        # #     sigma_vm, self.W.element.interpolation_points()
-        # # )
-        # # self.sigma_vm_h.interpolate(sigma_vm_expr)
-
-        # # self.unorm = self.u.x.norm()
-
-        # try:
-        #     idx = self.north_east_corner_dofs[0]
-        #     nw_corner_accel = self.u.vector.array[3 * idx : 3 * idx + 3].astype(
-        #         np.float64
-        #     )
-        #     print(nw_corner_accel)
-        # except:
-        #     nw_corner_accel = np.zeros(3, dtype=np.float64)
-
-        # nw_corner_accel_global = np.zeros((self.num_procs, 3), dtype=np.float64)
-
-        # self.comm.Gather(nw_corner_accel, nw_corner_accel_global, root=0)
-
-        # # print(f"Acceleration at North West corner = {nw_corner_accel}")
-
-        # if self.rank == 0:
-        #     norm2 = np.sum(nw_corner_accel_global**2, axis=1)
-        #     max_norm2_idx = np.argmax(norm2)
-        #     np_accel = nw_corner_accel_global[max_norm2_idx, :]
-
-        #     accel_pos_filename = os.path.join(
-        #         params.general.output_dir_sol, "accel_pos.csv"
-        #     )
-
-        #     if self.first_call_to_solver:
-
-        #         with open(accel_pos_filename, "w") as fp:
-        #             fp.write("#x-pos,y-pos,z-pos\n")
-        #             if self.ndim == 3:
-        #                 fp.write(f"{np_accel[0]},{np_accel[1]},{np_accel[2]}\n")
-        #             elif self.ndim == 2:
-        #                 fp.write(f"{np_accel[0]},{np_accel[1]}\n")
-
-        #     else:
-        #         with open(accel_pos_filename, "a") as fp:
-        #             if self.ndim == 3:
-        #                 fp.write(f"{np_accel[0]},{np_accel[1]},{np_accel[2]}\n")
-        #             elif self.ndim == 2:
-        #                 fp.write(f"{np_accel[0]},{np_accel[1]}\n")
-
-        # if self.first_call_to_solver:
-        #     self.first_call_to_solver = False
