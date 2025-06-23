@@ -620,7 +620,12 @@ class FSIDomain:
             mesh_name = f"{sub_domain_name}_mesh.xdmf"
             mesh_filename = os.path.join(read_mesh_dir, mesh_name)
 
-            if params.general.fluid_analysis == True and sub_domain_name == "fluid" or params.general.structural_analysis == True and sub_domain_name == "structure":
+            if (
+                params.general.fluid_analysis == True
+                and sub_domain_name == "fluid"
+                or params.general.structural_analysis == True
+                and sub_domain_name == "structure"
+            ):
                 try:
                     if self.rank == 0:
                         print(f"Reading {sub_domain_name} mesh.")
