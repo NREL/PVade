@@ -16,6 +16,7 @@ from pvade.structure.StructureMain import Structure
 import os
 from mpi4py import MPI
 
+
 def main(input_file=None):
     # Get the path to the input file from the command line
     if input_file is None:
@@ -29,11 +30,10 @@ def main(input_file=None):
     logfile_name = os.path.join(params.general.output_dir, "logfile.log")
     start_print_and_log(params.rank, logfile_name)
 
-
     fluid_analysis = params.general.fluid_analysis
     structural_analysis = params.general.structural_analysis
     thermal_analysis = params.general.thermal_analysis
-    
+
     # Initialize the domain and construct the initial mesh
     domain = FSIDomain(params)
     if params.general.input_mesh_dir is not None:
@@ -46,7 +46,6 @@ def main(input_file=None):
         list_timings(params.comm, [TimingType.wall])
         structure, flow = [], []
         return params, structure, flow
-    
 
     if fluid_analysis:
         flow = Flow(domain, params)
@@ -149,7 +148,9 @@ def main(input_file=None):
                     local_def_max = np.amax(np.sum(u_reshaped**2, axis=1))
                 else:
                     local_def_max = -np.inf  # So it doesn't interfere in max
-                print(f"Rank {domain.comm.rank}: u_vec.size = {u_local.size}, local_def_max = {local_def_max}")
+                print(
+                    f"Rank {domain.comm.rank}: u_vec.size = {u_local.size}, local_def_max = {local_def_max}"
+                )
 
                 # local_def_max = np.amax(
                 #     np.sum(
@@ -178,8 +179,7 @@ def main(input_file=None):
                 if params.comm.rank == 0:
                     print("Per-rank def max values:", global_def_max_list)
                     print("Global def max:", np.max(global_def_max_list))
-                
-                
+
                 if domain.rank == 0:
                     # print("Structural time is : ", current_time)
                     # print("deformation norm =", {elasticity.unorm})
