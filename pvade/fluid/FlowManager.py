@@ -734,7 +734,9 @@ class Flow:
 
         self.compute_lift_and_drag(params, current_time)
 
-        self.compute_pressure_drop_between_points(domain, params)
+        # Compute the pressure drop between the inlet and outlet
+        if params.pv_array.stream_rows > 0:
+            self.compute_pressure_drop_between_points(domain, params)
 
         # Update new -> old variables
         self.u_k2.x.array[:] = self.u_k1.x.array

@@ -81,13 +81,22 @@ class Structure:
         num_cells = domain.structure.msh.topology.index_map(self.ndim).size_local
         h = dolfinx.cpp.mesh.h(domain.structure.msh, self.ndim, range(num_cells))
 
-        # This value of hmin is local to the mesh portion owned by the process
-        hmin_local = np.amin(h)
+        # # This value of hmin is local to the mesh portion owned by the process
+        # hmin_local = np.amin(h)
+        
+        if len(h) > 0:
+            hmin_local = np.amin(h)
+        else:
+            hmin_local = np.inf
 
-        # collect the minimum hmin from all processes
+        print(hmin_local)
         self.hmin = np.zeros(1)
-        self.comm.Allreduce(hmin_local, self.hmin, op=MPI.MIN)
-        self.hmin = self.hmin[0]
+        hmin = self.comm.allreduce(hmin_local, op=MPI.MIN)
+        
+        # # collect the minimum hmin from all processes
+        # self.hmin = np.zeros(1)
+        # self.comm.Allreduce(hmin_local, self.hmin, op=MPI.MIN)
+        # self.hmin = self.hmin[0]
 
         self.num_V_dofs = self.elasticity.num_V_dofs
         if self.rank == 0:

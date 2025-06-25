@@ -21,7 +21,7 @@ class DomainCreation(TemplateDomainCreation):
         """
         super().__init__(params)
 
-    def build(self, params):
+    def build_FSI(self, params):
         """This function creates the computational domain for a flow around a 2D cylinder.
 
         Returns:
@@ -45,3 +45,5 @@ class DomainCreation(TemplateDomainCreation):
         self.gmsh_model.occ.cut([(2, rectangle)], [(2, obstacle)])
 
         self.gmsh_model.occ.synchronize()
+        
+        self.numpy_pt_total_array = np.zeros((3, 6)) 
