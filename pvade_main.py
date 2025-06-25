@@ -152,17 +152,6 @@ def main(input_file=None):
                     f"Rank {domain.comm.rank}: u_vec.size = {u_local.size}, local_def_max = {local_def_max}"
                 )
 
-                # local_def_max = np.amax(
-                #     np.sum(
-                #         structure.elasticity.u.vector.array.reshape(-1, domain.ndim)
-                #         ** 2,
-                #         axis=1,
-                #     )
-                # )
-                # global_def_max_list = np.zeros(params.num_procs, dtype=np.float64)
-                # # global_def_max_list = vec.comm.allreduce(local_def_max, op=MPI.MAX)
-                # params.comm.Gather(local_def_max, global_def_max_list, root=0)
-
                 # Wrap scalar in NumPy array (required for Gather)
                 sendbuf = np.array([local_def_max], dtype=np.float64)
 

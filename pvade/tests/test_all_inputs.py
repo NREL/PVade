@@ -13,7 +13,7 @@ def test_pvade_run(input_file, mesh_only, nprocs):
         "python",
         "pvade_main.py",
         "--input",
-        str(input_file),
+        str(input_file.resolve()),
         "--solver.dt",
         "0.001",
         "--solver.t_final",
@@ -23,8 +23,9 @@ def test_pvade_run(input_file, mesh_only, nprocs):
     ]
 
     print(
-        f"\n=== Running: {input_file.name} | mesh_only = {mesh_only} | nprocs = {nprocs} ===\n"
+        f"\n=== Running: {input_file.name} | mesh_only={mesh_only} | nprocs={nprocs} ==="
     )
+    print("Command:", " ".join(cmd))
 
     proc = subprocess.Popen(
         cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True
@@ -34,6 +35,8 @@ def test_pvade_run(input_file, mesh_only, nprocs):
         print(line, end="")
 
     proc.wait()
-    assert (
-        proc.returncode == 0
-    ), f"{input_file.name} (mesh_only={mesh_only}, nprocs={nprocs}) failed"
+
+    assert proc.returncode == 0, (
+        f"\nFAILED: {input_file.name} | mesh_only={mesh_only} | nprocs={nprocs}\n"
+        f"Exit code: {proc.returncode}"
+    )

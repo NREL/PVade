@@ -6,17 +6,21 @@ def pytest_addoption(parser):
         "--input-file",
         action="store",
         default=None,
-        help="Run test only for this specific input YAML file",
+        help="Run test only for a specific input YAML file",
     )
 
 
 def pytest_generate_tests(metafunc):
+    if "input_file" not in metafunc.fixturenames:
+        return
+
     input_file_arg = metafunc.config.getoption("input_file")
 
-    if "input_file" in metafunc.fixturenames:
-        if input_file_arg:
-            metafunc.parametrize("input_file", [Path(input_file_arg)])
-        else:
-            input_dir = Path("input")
-            all_files = list(input_dir.glob("*.yaml"))
-            metafunc.parametrize("input_file", all_files)
+    if input_file_arg:
+        metafunc.parametrize("input_file", [Path(input_file_arg)])
+    else:
+        input_dir = Path.cwd() / "input"
+        all_files = sorted(input_dir.glob("*.yaml"))
+        if not all_files:
+            raise RuntimeError(f"No input files found in {input_dir}")
+        metafunc.parametrize("input_file", all_files)

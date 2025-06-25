@@ -11,7 +11,7 @@ domain:
   y_max: 20 # 20+39 39 is panel to panel 
   z_min: 0
   z_max: 40
-  l_char: 1.25 # 1.0
+  l_char: 4 #1.25 # 1.0
 pv_array:
   stream_rows: 1
   elevation: 5.5

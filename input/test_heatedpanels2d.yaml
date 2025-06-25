@@ -14,6 +14,7 @@ domain:
   l_char: 0.006 #83 #0.9
 pv_array:
   stream_rows: 3
+  span_rows: 1
   elevation: 0.15
   stream_spacing: 0.2 #
   panel_chord: 0.1 # 2.0
