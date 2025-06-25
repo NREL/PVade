@@ -63,7 +63,7 @@ class Structure:
 
         print(hmin_local)
         self.hmin = np.zeros(1)
-        hmin = self.comm.allreduce(hmin_local, op=MPI.MIN)
+        self.hmin = self.comm.allreduce(hmin_local, op=MPI.MIN)
 
         # # collect the minimum hmin from all processes
         # self.hmin = np.zeros(1)
