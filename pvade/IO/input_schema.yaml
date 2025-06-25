@@ -441,7 +441,7 @@ properties:
       z0:
         default: 0.05
         minimum: 0.001
-        maximum: 10.0
+        maximum: 0.1
         type: "number"
         description: "The surface roughness length used in the log law velocity profile."
         units: "meters"
@@ -455,7 +455,7 @@ properties:
       psi:
         default: 0.0
         minimum: -10.0
-        maximum: 5.0
+        maximum: 0.7
         type: "number"
         description: "Atmospheric stability correction function for log law: negative for unstable (convective, daytime) conditions, positive for stable (night-time) conditions, zero for neutral conditions."
         units: "none"
