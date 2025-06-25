@@ -1,10 +1,14 @@
 from pathlib import Path
 
+
 def pytest_addoption(parser):
     parser.addoption(
-        "--input-file", action="store", default=None,
-        help="Run test only for this specific input YAML file"
+        "--input-file",
+        action="store",
+        default=None,
+        help="Run test only for this specific input YAML file",
     )
+
 
 def pytest_generate_tests(metafunc):
     input_file_arg = metafunc.config.getoption("input_file")
@@ -16,4 +20,3 @@ def pytest_generate_tests(metafunc):
             input_dir = Path("input")
             all_files = list(input_dir.glob("*.yaml"))
             metafunc.parametrize("input_file", all_files)
-

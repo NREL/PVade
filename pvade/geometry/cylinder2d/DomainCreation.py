@@ -45,5 +45,5 @@ class DomainCreation(TemplateDomainCreation):
         self.gmsh_model.occ.cut([(2, rectangle)], [(2, obstacle)])
 
         self.gmsh_model.occ.synchronize()
-        
-        self.numpy_pt_total_array = np.zeros((3, 6)) 
+
+        self.numpy_pt_total_array = np.zeros((3, 6))

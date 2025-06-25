@@ -83,7 +83,7 @@ class Structure:
 
         # # This value of hmin is local to the mesh portion owned by the process
         # hmin_local = np.amin(h)
-        
+
         if len(h) > 0:
             hmin_local = np.amin(h)
         else:
@@ -92,7 +92,7 @@ class Structure:
         print(hmin_local)
         self.hmin = np.zeros(1)
         hmin = self.comm.allreduce(hmin_local, op=MPI.MIN)
-        
+
         # # collect the minimum hmin from all processes
         # self.hmin = np.zeros(1)
         # self.comm.Allreduce(hmin_local, self.hmin, op=MPI.MIN)

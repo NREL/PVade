@@ -74,7 +74,7 @@ class DataStream:
 
     """
 
-    def __init__(self, domain, flow, structure=None , params=None):
+    def __init__(self, domain, flow, structure=None, params=None):
         """Initialize the DataStream object
 
         This initializes an object that manages the I/O for all of PVade.

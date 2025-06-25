@@ -222,12 +222,10 @@ class FSIDomain:
         # ):
         #     self._create_submeshes_from_parent(params)
         #     self._transfer_mesh_tags_to_submeshes(params)
-        
-        self._create_submeshes_from_parent(params)
-        self._transfer_mesh_tags_to_submeshes(params)    
-        self._save_submeshes_for_reload_hack(params)
 
-       
+        self._create_submeshes_from_parent(params)
+        self._transfer_mesh_tags_to_submeshes(params)
+        self._save_submeshes_for_reload_hack(params)
 
         if params.general.fluid_analysis == True:
             # Create all forms that will eventually be used for mesh rotation/movement
@@ -256,7 +254,6 @@ class FSIDomain:
     def _save_submeshes_for_reload_hack(self, params):
         self.write_mesh_files(params)
         self.read_mesh_files(params.general.output_dir_mesh, params)
-
 
     def _create_submeshes_from_parent(self, params):
         """Create submeshes from a parent mesh by cell tags.
@@ -535,7 +532,7 @@ class FSIDomain:
 
                 if self.rank == 0:
                     print(f"Finished writing {sub_domain_name} mesh.")
-        
+
         # Finally, dump a yaml file of the domain_markers
         # necessary for setting BCs in case this mesh directory is read for a new run
         yaml_name = "domain_markers.yaml"
