@@ -80,7 +80,7 @@ class Flow:
 
             # find hmin in mesh
             num_cells = domain.fluid.msh.topology.index_map(self.ndim).size_local
-            
+
             h = dolfinx.cpp.mesh.h(domain.fluid.msh, self.ndim, range(num_cells))
 
             # # This value of hmin is local to the mesh portion owned by the process
@@ -94,9 +94,9 @@ class Flow:
             print(hmin_local)
             self.hmin = np.zeros(1)
             self.hmin = self.comm.allreduce(hmin_local, op=MPI.MIN)
-            
-            #------------------------------------------------------------------------------
-            
+
+            # ------------------------------------------------------------------------------
+
             # h = dolfinx.cpp.mesh.h(domain.fluid.msh, self.ndim, range(num_cells))
 
             # # This value of hmin is local to the mesh portion owned by the process
@@ -972,7 +972,6 @@ class Flow:
         # self.comm.Allreduce(cfl_max_local, self.cfl_max, op=MPI.MAX)
         # self.cfl_max = self.cfl_max[0]
 
-
         # Compute local max only if array has values
         if self.cfl_vec.vector.array.size > 0:
             cfl_max_local = np.amax(self.cfl_vec.vector.array)
@@ -981,13 +980,11 @@ class Flow:
 
         # Prepare buffer and reduce across all ranks
         self.cfl_max = np.zeros(1, dtype=np.float64)
-        self.comm.Allreduce(np.array(cfl_max_local, dtype=np.float64), self.cfl_max, op=MPI.MAX)
+        self.comm.Allreduce(
+            np.array(cfl_max_local, dtype=np.float64), self.cfl_max, op=MPI.MAX
+        )
         self.cfl_max = self.cfl_max[0]
 
-        
-        
-        
-        
     def compute_lift_and_drag(self, params, current_time):
 
         self.integrated_force_x = []
