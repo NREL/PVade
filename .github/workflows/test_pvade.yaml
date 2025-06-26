@@ -34,7 +34,7 @@ jobs:
         run: PYTHONPATH=. pytest -sv pvade/tests/
       - name: test all inputs
         shell: bash -l {0}
-        run: pytest -sv test_all_inputs.py 
+        run: pytest -sv --rootdir=./ test_all_inputs.py 
 
   # Job 2 of 2 - enforce Black formatting
   formatting:
