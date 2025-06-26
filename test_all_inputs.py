@@ -22,6 +22,10 @@ def test_pvade_run(input_file, mesh_only, nprocs):
         str(mesh_only).lower(),
     ]
 
+    # Add special argument for duramat_case_study.yaml
+    if input_file.name == "duramat_case_study.yaml":
+        cmd += ["--domain.l_char", "4"]
+
     print(
         f"\n=== Running: {input_file.name} | mesh_only={mesh_only} | nprocs={nprocs} ==="
     )

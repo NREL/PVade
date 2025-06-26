@@ -412,10 +412,6 @@ properties:
     #     required:
     #       - c_w
     properties:
-      time_varying_inflow_bc:
-        default: false
-        type: "boolean"
-        description: "If true, the inflow boundary condition will be ramped up over time, if false, the inflow boundary condition will be applied immediately."
       velocity_profile_type:
         default: "uniform"
         type: "string"
