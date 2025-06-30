@@ -4,7 +4,7 @@ general:
   output_dir: output/panels3d
   mesh_only: False
   # input_mesh_dir: output/panels3d/mesh
-  structural_analysis: False
+  structural_analysis: True
   fluid_analysis: True
 domain:
   x_min: -20
