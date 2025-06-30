@@ -119,14 +119,14 @@ properties:
     properties:
       stream_rows:
         default: 0
-        minimum: 1
+        minimum: 0
         maximum: 10
         type: "integer"
         description: "The number of panel rows in the streamwise direction."
         units: "unitless"
       span_rows:
         default: 0
-        minimum: 1
+        minimum: 0
         maximum: 10
         type: "integer"
         description: "The number of panel rows in the spanwise direction."

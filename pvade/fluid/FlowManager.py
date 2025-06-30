@@ -115,7 +115,6 @@ class Flow:
             )
 
             if self.rank == 0:
-                print(f"hmin on fluid  = {self.hmin}")
                 print(f"Total num dofs on fluid= {self.num_Q_dofs + self.num_V_dofs}")
 
     def build_boundary_conditions(self, domain, params):
