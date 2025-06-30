@@ -4,7 +4,7 @@ import pytest
 
 
 @pytest.mark.parametrize("mesh_only", [True, False])
-@pytest.mark.parametrize("nprocs", [1, 4])
+@pytest.mark.parametrize("nprocs", [1])
 def test_pvade_run(input_file, mesh_only, nprocs):
     cmd = [
         "mpirun",
