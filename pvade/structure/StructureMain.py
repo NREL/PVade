@@ -80,9 +80,16 @@ class Structure:
         # find hmin in mesh
         num_cells = domain.structure.msh.topology.index_map(self.ndim).size_local
         h = dolfinx.cpp.mesh.h(domain.structure.msh, self.ndim, range(num_cells))
+        # print('h = ', h)
+        # print('len(h) = ', len(h))
 
         # This value of hmin is local to the mesh portion owned by the process
         hmin_local = np.amin(h)
+        # if len(h) > 0:
+        #     hmin_local = [np.amin(h)]
+        # else:
+        #     hmin_local = [5.0] # what value should this be?
+        # print('hmin_local = ', hmin_local)
 
         # collect the minimum hmin from all processes
         self.hmin = np.zeros(1)
