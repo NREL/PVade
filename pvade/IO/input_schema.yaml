@@ -118,15 +118,15 @@ properties:
     type: "object"
     properties:
       stream_rows:
-        default: 3
-        minimum: 1
+        default: 0
+        minimum: 0
         maximum: 10
         type: "integer"
         description: "The number of panel rows in the streamwise direction."
         units: "unitless"
       span_rows:
-        default: 1
-        minimum: 1
+        default: 0
+        minimum: 0
         maximum: 10
         type: "integer"
         description: "The number of panel rows in the spanwise direction."
@@ -233,6 +233,15 @@ properties:
         enum:
           - "cg"
           - "gmres"
+          - "bicg"
+          - "bicgstab"
+          - "minres"
+          - "preonly"
+          - "richardson"
+          - "chebyshev"
+          - "tfqmr"
+          - "pipecg"
+          - "pipegmres"
       solver2_ksp:
         default: "cg"
         type: "string"
@@ -240,6 +249,15 @@ properties:
         enum:
           - "cg"
           - "gmres"
+          - "bicg"
+          - "bicgstab"
+          - "minres"
+          - "preonly"
+          - "richardson"
+          - "chebyshev"
+          - "tfqmr"
+          - "pipecg"
+          - "pipegmres"
       solver3_ksp:
         default: "cg"
         type: "string"
@@ -247,55 +265,132 @@ properties:
         enum:
           - "cg"
           - "gmres"
+          - "bicg"
+          - "bicgstab"
+          - "minres"
+          - "preonly"
+          - "richardson"
+          - "chebyshev"
+          - "tfqmr"
+          - "pipecg"
+          - "pipegmres"
       solver4_ksp:
         default: "gmres"
         type: "string"
         description: "The solver to use for fluid solve 4 of 5"
         enum:
-          - "cg" # not tested
+          - "cg"
           - "gmres"
-          - "preonly" # for debugging
+          - "bicg"
+          - "bicgstab"
+          - "minres"
+          - "preonly"
+          - "richardson"
+          - "chebyshev"
+          - "tfqmr"
+          - "pipecg"
+          - "pipegmres"
       solver5_ksp:
         default: "cg"
         type: "string"
         description: "The solver to use for fluid solve 5 of 5"
         enum:
           - "cg"
-          - "gmres"    
+          - "gmres"
+          - "bicg"
+          - "bicgstab"
+          - "minres"
+          - "preonly"
+          - "richardson"
+          - "chebyshev"
+          - "tfqmr"
+          - "pipecg"
+          - "pipegmres" 
       solver1_pc:
         default: "hypre"
         type: "string"
         description: "The preconditioner to use for fluid solve 1 of 5"
         enum:
+          - "none"
           - "jacobi"
+          - "sor"
+          - "ilu"
+          - "icc"
+          - "asm"
+          - "gamg"
           - "hypre"
+          - "ml"
+          - "lu"
+          - "cholesky"
+          - "python"
       solver2_pc:
         default: "hypre"
         type: "string"
         description: "The preconditioner to use for fluid solve 2 of 5"
         enum:
+          - "none"
           - "jacobi"
+          - "sor"
+          - "ilu"
+          - "icc"
+          - "asm"
+          - "gamg"
           - "hypre"
+          - "ml"
+          - "lu"
+          - "cholesky"
+          - "python"
       solver3_pc:
         default: "hypre"
         type: "string"
         description: "The preconditioner to use for fluid solve 3 of 5"
         enum:
+          - "none"
           - "jacobi"
+          - "sor"
+          - "ilu"
+          - "icc"
+          - "asm"
+          - "gamg"
           - "hypre"
+          - "ml"
+          - "lu"
+          - "cholesky"
+          - "python"
       solver4_pc:
         default: "lu"
         type: "string"
         description: "The preconditioner to use for fluid solve 4 of 5"
         enum:
+          - "none"
+          - "jacobi"
+          - "sor"
+          - "ilu"
+          - "icc"
+          - "asm"
+          - "gamg"
+          - "hypre"
+          - "ml"
           - "lu"
+          - "cholesky"
+          - "python"
       solver5_pc:
         default: "hypre"
         type: "string"
         description: "The preconditioner to use for fluid solve 5 of 5"
         enum:
+          - "none"
           - "jacobi"
-          - "hypre"    
+          - "sor"
+          - "ilu"
+          - "icc"
+          - "asm"
+          - "gamg"
+          - "hypre"
+          - "ml"
+          - "lu"
+          - "cholesky"
+          - "python" 
   fluid:
     additionalProperties: false
     type: "object"

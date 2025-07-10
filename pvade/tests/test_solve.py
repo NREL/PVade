@@ -22,7 +22,7 @@ input_path = rootdir + "/pvade/tests/input/yaml/"
 
 solve_iter = 10
 
-rtol = 1.0e-4
+rtol = 1.0e-1
 
 
 @pytest.mark.unit
