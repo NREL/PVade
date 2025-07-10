@@ -429,8 +429,8 @@ def build_velocity_boundary_conditions(domain, params, functionspace, current_ti
         domain, params, functionspace, current_time
     )
 
-    if domain.rank == 0:
-        print("inflow_function = ", inflow_function.x.array[:])
+    # if domain.rank == 0:
+    #     print("inflow_function = ", inflow_function.x.array[:])
 
     dofs = get_facet_dofs_by_gmsh_tag(domain, functionspace, "x_min")
     bcu.append(dolfinx.fem.dirichletbc(inflow_function, dofs))

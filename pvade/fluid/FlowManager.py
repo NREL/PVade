@@ -80,15 +80,32 @@ class Flow:
 
             # find hmin in mesh
             num_cells = domain.fluid.msh.topology.index_map(self.ndim).size_local
+
             h = dolfinx.cpp.mesh.h(domain.fluid.msh, self.ndim, range(num_cells))
 
-            # This value of hmin is local to the mesh portion owned by the process
-            hmin_local = np.amin(h)
+            # # This value of hmin is local to the mesh portion owned by the process
+            # hmin_local = np.amin(h)
 
-            # collect the minimum hmin from all processes
+            if len(h) > 0:
+                hmin_local = np.amin(h)
+            else:
+                hmin_local = np.inf
+
+            print(hmin_local)
             self.hmin = np.zeros(1)
-            self.comm.Allreduce(hmin_local, self.hmin, op=MPI.MIN)
-            self.hmin = self.hmin[0]
+            self.hmin = self.comm.allreduce(hmin_local, op=MPI.MIN)
+
+            # ------------------------------------------------------------------------------
+
+            # h = dolfinx.cpp.mesh.h(domain.fluid.msh, self.ndim, range(num_cells))
+
+            # # This value of hmin is local to the mesh portion owned by the process
+            # hmin_local = np.amin(h)
+
+            # # collect the minimum hmin from all processes
+            # self.hmin = np.zeros(1)
+            # self.comm.Allreduce(hmin_local, self.hmin, op=MPI.MIN)
+            # self.hmin = self.hmin[0]
 
             self.num_Q_dofs = (
                 self.Q.dofmap.index_map_bs * self.Q.dofmap.index_map.size_global
@@ -98,7 +115,6 @@ class Flow:
             )
 
             if self.rank == 0:
-                print(f"hmin on fluid  = {self.hmin}")
                 print(f"Total num dofs on fluid= {self.num_Q_dofs + self.num_V_dofs}")
 
     def build_boundary_conditions(self, domain, params):
@@ -754,7 +770,9 @@ class Flow:
 
         self.compute_lift_and_drag(params, current_time)
 
-        self.compute_pressure_drop_between_points(domain, params)
+        # Compute the pressure drop between the inlet and outlet
+        if params.pv_array.stream_rows > 0:
+            self.compute_pressure_drop_between_points(domain, params)
 
         # Update new -> old variables
         self.u_k2.x.array[:] = self.u_k1.x.array
@@ -966,11 +984,24 @@ class Flow:
         self.solver_6.solve(self.b6, self.cfl_vec.vector)
         self.cfl_vec.x.scatter_forward()
 
-        cfl_max_local = np.amax(self.cfl_vec.vector.array)
+        # cfl_max_local = np.amax(self.cfl_vec.vector.array)
 
-        # collect the minimum hmin from all processes
-        self.cfl_max = np.zeros(1)
-        self.comm.Allreduce(cfl_max_local, self.cfl_max, op=MPI.MAX)
+        # # collect the minimum hmin from all processes
+        # self.cfl_max = np.zeros(1)
+        # self.comm.Allreduce(cfl_max_local, self.cfl_max, op=MPI.MAX)
+        # self.cfl_max = self.cfl_max[0]
+
+        # Compute local max only if array has values
+        if self.cfl_vec.vector.array.size > 0:
+            cfl_max_local = np.amax(self.cfl_vec.vector.array)
+        else:
+            cfl_max_local = -np.inf  # So it won't affect global max
+
+        # Prepare buffer and reduce across all ranks
+        self.cfl_max = np.zeros(1, dtype=np.float64)
+        self.comm.Allreduce(
+            np.array(cfl_max_local, dtype=np.float64), self.cfl_max, op=MPI.MAX
+        )
         self.cfl_max = self.cfl_max[0]
 
     def compute_lift_and_drag(self, params, current_time):
