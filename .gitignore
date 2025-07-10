@@ -8,4 +8,5 @@
 *.h5
 
 docs/_build/
-results/
+results/input/
+input/

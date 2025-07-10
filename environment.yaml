@@ -1,7 +1,7 @@
 name: pvade
 channels:
   - conda-forge  
-  - defaults
+  - nodefaults
 dependencies:
   # Dependencies should be kept as loosely pinned to version numbers as possible
   - alive-progress

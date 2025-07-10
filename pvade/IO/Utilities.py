@@ -8,7 +8,7 @@ def get_input_file():
         "--input_file",
         metavar="",
         type=str,
-        help="The full path to the input file, e.g., 'intputs/my_params.yaml'",
+        help="The full path to the input file, e.g., 'inputs/my_params.yaml'",
     )
 
     command_line_inputs, unknown = parser.parse_known_args()
@@ -23,7 +23,7 @@ def get_input_file():
     return input_file_path
 
 
-def write_metrics(flow, elasticity, prof_filename="profiling.txt"):
+def write_metrics(flow, prof_filename="profiling.txt"):
     with open(prof_filename, "r") as output_file:
         if flow.fluid_analysis == True:
             # solver_line = [line for line in output_file if "(solve)" in line]
