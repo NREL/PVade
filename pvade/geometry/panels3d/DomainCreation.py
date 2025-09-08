@@ -337,9 +337,11 @@ class DomainCreation(TemplateDomainCreation):
                             else:
                                 this_panel_transformed_com[key] = [com]
                         else:
-                            self._add_to_domain_markers(
-                                f"trash_{panel_ct:.0f}", [surf_id], "facet"
-                            )
+                            key = f"trash_{panel_ct:.0f}"
+                            if key in this_panel_transformed_com:
+                                this_panel_transformed_com[key].append(com)
+                            else:
+                                this_panel_transformed_com[key] = [com]
 
                 for key, val in this_panel_transformed_com.items():
                     for row_num, com in enumerate(val):
@@ -432,27 +434,6 @@ class DomainCreation(TemplateDomainCreation):
                 else:
                     self.numpy_pt_total_array = np.copy(numpy_pt_panel_array)
 
-                # # Check that this panel still exists in the confines of the domain
-                # bbox = self.gmsh_model.occ.get_bounding_box(panel_tag_list)
-
-                # if bbox[0] < params.domain.x_min:
-                #     raise ValueError(
-                #         f"Panel with location (x, y) = ({xx}, {yy}) extends past x_min wall."
-                #     )
-                # if bbox[1] < params.domain.y_min:
-                #     raise ValueError(
-                #         f"Panel with location (x, y) = ({xx}, {yy}) extends past y_min wall."
-                #     )
-                # if bbox[3] > params.domain.x_max:
-                #     raise ValueError(
-                #         f"Panel with location (x, y) = ({xx}, {yy}) extends past x_max wall."
-                #     )
-                # if bbox[4] > params.domain.y_max:
-                #     raise ValueError(
-                #         f"Panel with location (x, y) = ({xx}, {yy}) extends past y_max wall."
-                #     )
-            # self.gmsh_model.occ.synchronize()
-
         # Fragment all panels from the overall domain
         self.gmsh_model.occ.fragment(domain_tag_list, panel_tag_list)
 
@@ -469,45 +450,62 @@ class DomainCreation(TemplateDomainCreation):
             surf_id = surf_tag[1]
             com = self.gmsh_model.occ.getCenterOfMass(self.ndim - 1, surf_id)
 
-            tagged_this_surface = False
+            located_this_surface = False
 
             # sturctures tagging
             if np.isclose(com[0], params.domain.x_min):
                 self._add_to_domain_markers("x_min", [surf_id], "facet")
-                tagged_this_surface = True
 
             elif np.allclose(com[0], params.domain.x_max):
                 self._add_to_domain_markers("x_max", [surf_id], "facet")
-                tagged_this_surface = True
 
             elif np.allclose(com[1], params.domain.y_min):
                 self._add_to_domain_markers("y_min", [surf_id], "facet")
-                tagged_this_surface = True
 
             elif np.allclose(com[1], params.domain.y_max):
                 self._add_to_domain_markers("y_max", [surf_id], "facet")
-                tagged_this_surface = True
 
             elif np.allclose(com[2], params.domain.z_min):
                 self._add_to_domain_markers("z_min", [surf_id], "facet")
-                tagged_this_surface = True
 
             elif np.allclose(com[2], params.domain.z_max):
                 self._add_to_domain_markers("z_max", [surf_id], "facet")
-                tagged_this_surface = True
 
             else:
                 for key, val in transformed_com.items():
                     for target_com in val:
                         # print(target_com)
                         if np.allclose(np.array(com), target_com):
-                            self._add_to_domain_markers(key, [surf_id], "facet")
-                            tagged_this_surface = True
+                            located_this_surface = True
+                            if "trash" not in key:
+                                self._add_to_domain_markers(key, [surf_id], "facet")
 
-            # if not tagged_this_surface:
-            #     print(f"Warning: Surface {surf_tag} has not been added to domain markers")
+                if not located_this_surface:
+                    print(
+                        f"Warning: Surface {surf_tag} has not been added to domain markers"
+                    )
 
-        # print(self.domain_markers)
+                # Since this is not one of the exterior walls, we should check if it extends
+                # past the boundaries x_min, x_max, ...
+                this_surf_bbox = self.gmsh_model.occ.get_bounding_box(
+                    self.ndim - 1, surf_id
+                )
+
+                # Test that the rotated point still exists in the box domain
+                if this_surf_bbox[0] < params.domain.x_min:
+                    raise ValueError(f"A panel extends past the x_min wall.")
+                if this_surf_bbox[0] > params.domain.x_max:
+                    raise ValueError(f"A panel extends past the x_max wall.")
+                if this_surf_bbox[1] < params.domain.y_min:
+                    raise ValueError(f"A panel extends past the y_min wall.")
+                if this_surf_bbox[1] > params.domain.y_max:
+                    raise ValueError(f"A panel extends past the y_max wall.")
+                if this_surf_bbox[2] < 0.0:
+                    raise ValueError(
+                        f"A panel extends past the z_min wall (ground level = 0.0)."
+                    )
+                if this_surf_bbox[2] > params.domain.z_max:
+                    raise ValueError(f"A panel extends past the z_max wall.")
 
         # Volumes are the entities with dimension equal to the mesh dimension
         vol_tag_list = self.gmsh_model.occ.getEntities(self.ndim)
