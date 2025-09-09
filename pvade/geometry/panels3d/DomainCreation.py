@@ -158,6 +158,14 @@ class DomainCreation(TemplateDomainCreation):
 
         transformed_com = {}
 
+        if (
+            params.pv_array.torque_tube_separation > 0.0
+            and params.pv_array.torque_tube_radius > 0.0
+        ):
+            modeling_torque_tube = True
+        else:
+            modeling_torque_tube = False
+
         for panel_id_y, yy in enumerate(y_centers):
             for panel_id_x, xx in enumerate(x_centers):
                 if isinstance(params.pv_array.tracker_angle, list):
@@ -182,30 +190,45 @@ class DomainCreation(TemplateDomainCreation):
                         module_distances[module_id + 1] - module_distances[module_id]
                     )
 
-                    # Create an 0-tracking-degree panel centered at (x, y, z) = (0, 0, 0)
-                    this_module = self.gmsh_model.occ.addBox(
-                        -half_chord,
-                        module_distances[module_id],
-                        params.pv_array.torque_tube_separation,
-                        params.pv_array.panel_chord,
-                        module_span,
-                        params.pv_array.panel_thickness,
-                    )
+                    if modeling_torque_tube:
+                        # Create an 0-tracking-degree panel centered at (x, y, z) = (0, 0, 0)
+                        this_module = self.gmsh_model.occ.addBox(
+                            -half_chord,
+                            module_distances[module_id],
+                            params.pv_array.torque_tube_separation,
+                            params.pv_array.panel_chord,
+                            module_span,
+                            params.pv_array.panel_thickness,
+                        )
 
-                    this_standoff = self.gmsh_model.occ.addBox(
-                        -params.pv_array.torque_tube_radius,
-                        module_distances[module_id],
-                        0.0,
-                        2.0 * params.pv_array.torque_tube_radius,
-                        module_span,
-                        params.pv_array.torque_tube_separation,
-                    )
+                        this_standoff = self.gmsh_model.occ.addBox(
+                            -params.pv_array.torque_tube_radius,
+                            module_distances[module_id],
+                            0.0,
+                            2.0 * params.pv_array.torque_tube_radius,
+                            module_span,
+                            params.pv_array.torque_tube_separation,
+                        )
 
-                    panel_tag_list.append((self.ndim, this_module))
-                    panel_tag_list.append((self.ndim, this_standoff))
+                        panel_tag_list.append((self.ndim, this_module))
+                        panel_tag_list.append((self.ndim, this_standoff))
 
-                    this_panel_tag_list.append((self.ndim, this_module))
-                    this_panel_tag_list.append((self.ndim, this_standoff))
+                        this_panel_tag_list.append((self.ndim, this_module))
+                        this_panel_tag_list.append((self.ndim, this_standoff))
+
+                    else:
+                        this_module = self.gmsh_model.occ.addBox(
+                            -half_chord,
+                            module_distances[module_id],
+                            0.0,
+                            params.pv_array.panel_chord,
+                            module_span,
+                            params.pv_array.panel_thickness,
+                        )
+
+                        panel_tag_list.append((self.ndim, this_module))
+
+                        this_panel_tag_list.append((self.ndim, this_module))
 
                 numpy_pt_list = []
                 embedded_lines_tag_list = []
@@ -248,16 +271,65 @@ class DomainCreation(TemplateDomainCreation):
 
                     for fp in fixation_pts_list:
                         # FIXME: don't add the fixation points into the numpy tagging for now
-                        numpy_pt_list.append(
-                            [
-                                -params.pv_array.torque_tube_radius,
-                                -half_span + fp,
-                                0.0,
-                                params.pv_array.torque_tube_radius,
-                                -half_span + fp,
-                                0.0,
-                            ]
-                        )
+                        if modeling_torque_tube:
+                            numpy_pt_list.append(
+                                [
+                                    -params.pv_array.torque_tube_radius,
+                                    -half_span + fp,
+                                    0.0,
+                                    params.pv_array.torque_tube_radius,
+                                    -half_span + fp,
+                                    0.0,
+                                ]
+                            )
+
+                        else:
+                            numpy_pt_list.append(
+                                [
+                                    -half_chord,
+                                    -half_span + fp,
+                                    0.0,
+                                    half_chord,
+                                    -half_span + fp,
+                                    0.0,
+                                ]
+                            )
+
+                        # If the separation line already exists at a module division,
+                        # there's no need to redraw it, but otherwise, add the gmsh points
+                        # to the model for embedding
+                        if not np.any(np.isclose(-half_span + fp, module_distances)):
+                            print(
+                                f"Embedding a line for a no-deformation boundary condition."
+                            )
+
+                            if modeling_torque_tube:
+                                pt_1 = self.gmsh_model.occ.addPoint(
+                                    -params.pv_array.torque_tube_radius,
+                                    -half_span + fp,
+                                    0.0,
+                                )
+                                pt_2 = self.gmsh_model.occ.addPoint(
+                                    params.pv_array.torque_tube_radius,
+                                    -half_span + fp,
+                                    0.0,
+                                )
+
+                            else:
+                                pt_1 = self.gmsh_model.occ.addPoint(
+                                    -half_chord, -half_span + fp, 0.0
+                                )
+                                pt_2 = self.gmsh_model.occ.addPoint(
+                                    half_chord, -half_span + fp, 0.0
+                                )
+
+                            fixation_line_id = self.gmsh_model.occ.addLine(pt_1, pt_2)
+                            fixation_line_tag = (1, fixation_line_id)
+                            embedded_lines_tag_list.append(fixation_line_tag)
+                        else:
+                            print(
+                                f"Applying no-deformation boundary condition at {fp}."
+                            )
 
                 # Fragment the lines into the surfaces (equivalent to embedding these lines)
                 self.gmsh_model.occ.fragment(
@@ -277,71 +349,61 @@ class DomainCreation(TemplateDomainCreation):
                         surf_id = surf_tag[1]
                         com = self.gmsh_model.occ.getCenterOfMass(surf_dim, surf_id)
 
-                        # sturctures tagging
-                        if np.isclose(com[0], -half_chord) or np.isclose(
-                            com[0], -params.pv_array.torque_tube_radius
-                        ):
-                            key = f"left_{panel_ct:.0f}"
-                            if key in this_panel_transformed_com:
-                                this_panel_transformed_com[key].append(com)
-                            else:
-                                this_panel_transformed_com[key] = [com]
+                        target_key = None
 
-                        elif np.isclose(com[0], half_chord) or np.isclose(
-                            com[0], params.pv_array.torque_tube_radius
+                        # sturctures tagging
+                        if (
+                            np.isclose(com[0], -half_chord)
+                            or np.isclose(com[0], -params.pv_array.torque_tube_radius)
+                            and modeling_torque_tube
                         ):
-                            key = f"right_{panel_ct:.0f}"
-                            if key in this_panel_transformed_com:
-                                this_panel_transformed_com[key].append(com)
-                            else:
-                                this_panel_transformed_com[key] = [com]
+                            target_key = f"left_{panel_ct:.0f}"
+
+                        elif (
+                            np.isclose(com[0], half_chord)
+                            or np.isclose(com[0], params.pv_array.torque_tube_radius)
+                            and modeling_torque_tube
+                        ):
+                            target_key = f"right_{panel_ct:.0f}"
 
                         elif np.isclose(com[1], -half_span):
-                            key = f"front_{panel_ct:.0f}"
-                            if key in this_panel_transformed_com:
-                                this_panel_transformed_com[key].append(com)
-                            else:
-                                this_panel_transformed_com[key] = [com]
+                            target_key = f"front_{panel_ct:.0f}"
 
                         elif np.isclose(com[1], half_span):
-                            key = f"back_{panel_ct:.0f}"
-                            if key in this_panel_transformed_com:
-                                this_panel_transformed_com[key].append(com)
-                            else:
-                                this_panel_transformed_com[key] = [com]
+                            target_key = f"back_{panel_ct:.0f}"
 
-                        elif np.isclose(
-                            com[2], params.pv_array.torque_tube_separation
-                        ) and not np.isclose(com[0], 0.0):
-                            key = f"bottom_{panel_ct:.0f}"
-                            if key in this_panel_transformed_com:
-                                this_panel_transformed_com[key].append(com)
-                            else:
-                                this_panel_transformed_com[key] = [com]
-
-                        elif np.isclose(com[2], 0.0):
-                            key = f"torque_tube_{panel_ct:.0f}"
-                            if key in this_panel_transformed_com:
-                                this_panel_transformed_com[key].append(com)
-                            else:
-                                this_panel_transformed_com[key] = [com]
-
-                        elif np.isclose(
-                            com[2],
-                            params.pv_array.torque_tube_separation
-                            + params.pv_array.panel_thickness,
+                        elif (
+                            np.isclose(com[2], params.pv_array.torque_tube_separation)
+                            and not np.isclose(com[0], 0.0)
+                            and modeling_torque_tube
+                            or np.isclose(com[2], 0.0)
+                            and not modeling_torque_tube
                         ):
-                            key = f"top_{panel_ct:.0f}"
-                            if key in this_panel_transformed_com:
-                                this_panel_transformed_com[key].append(com)
-                            else:
-                                this_panel_transformed_com[key] = [com]
+                            target_key = f"bottom_{panel_ct:.0f}"
+
+                        elif np.isclose(com[2], 0.0) and modeling_torque_tube:
+                            target_key = f"torque_tube_{panel_ct:.0f}"
+
+                        elif (
+                            np.isclose(
+                                com[2],
+                                params.pv_array.torque_tube_separation
+                                + params.pv_array.panel_thickness,
+                            )
+                            and modeling_torque_tube
+                            or np.isclose(com[2], params.pv_array.panel_thickness)
+                            and not modeling_torque_tube
+                        ):
+                            target_key = f"top_{panel_ct:.0f}"
+
                         else:
-                            key = f"trash_{panel_ct:.0f}"
-                            if key in this_panel_transformed_com:
-                                this_panel_transformed_com[key].append(com)
+                            target_key = f"trash_{panel_ct:.0f}"
+
+                        if target_key is not None:
+                            if target_key in this_panel_transformed_com:
+                                this_panel_transformed_com[target_key].append(com)
                             else:
-                                this_panel_transformed_com[key] = [com]
+                                this_panel_transformed_com[target_key] = [com]
 
                 for key, val in this_panel_transformed_com.items():
                     for row_num, com in enumerate(val):
