@@ -9,15 +9,15 @@ domain:
   x_max: 1.0
   y_min: -1.0
   y_max: 1.0
-  z_min: -1.0
-  z_max: 1.0
+  z_min: 0.0
+  z_max: 2.0
   l_char: 0.05
 pv_array:
   stream_rows: 1
   span_rows: 1
   stream_spacing: 1.0
   span_spacing: 1.0
-  elevation: 0.0
+  elevation: 0.5 # 0.0
   panel_chord: 1.2
   panel_span: 1.1
   panel_thickness: 1.0
