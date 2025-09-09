@@ -485,25 +485,27 @@ class Elasticity:
         try:
             idx = structure.north_east_corner_dofs[0]
             # idx = self.north_east_corner_dofs[0]
-            nw_corner_accel = self.u.x.array[
+            north_east_corner_acccel = self.u.x.array[
                 structure.ndim * idx : structure.ndim * idx + structure.ndim
             ].astype(np.float64)
-            print(nw_corner_accel)
+            print(north_east_corner_acccel)
         except:
-            nw_corner_accel = np.zeros(structure.ndim, dtype=np.float64)
+            north_east_corner_acccel = np.zeros(structure.ndim, dtype=np.float64)
 
-        nw_corner_accel_global = np.zeros(
+        north_east_corner_accel_global = np.zeros(
             (self.num_procs, structure.ndim), dtype=np.float64
         )
 
-        self.comm.Gather(nw_corner_accel, nw_corner_accel_global, root=0)
+        self.comm.Gather(
+            north_east_corner_acccel, north_east_corner_accel_global, root=0
+        )
 
-        # print(f"Acceleration at North West corner = {nw_corner_accel}")
+        # print(f"Acceleration at North West corner = {north_east_corner_acccel}")
 
         if self.rank == 0:
-            norm2 = np.sum(nw_corner_accel_global**2, axis=1)
+            norm2 = np.sum(north_east_corner_accel_global**2, axis=1)
             max_norm2_idx = np.argmax(norm2)
-            np_accel = nw_corner_accel_global[max_norm2_idx, :]
+            np_accel = north_east_corner_accel_global[max_norm2_idx, :]
 
             accel_pos_filename = os.path.join(
                 params.general.output_dir_sol, "accel_pos.csv"
