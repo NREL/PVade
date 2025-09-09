@@ -148,10 +148,10 @@ def test_meshing_3dpanels_rotations(wind_direction, num_stream_rows, num_span_ro
             # Create the 4 corners of this table corresponding to the *top* surface (+0.5*thickness)
             top_surface_corners = np.array(
                 [
-                    [-0.5 * chord, -0.5 * span, 0.5 * thickness],
-                    [0.5 * chord, -0.5 * span, 0.5 * thickness],
-                    [0.5 * chord, 0.5 * span, 0.5 * thickness],
-                    [-0.5 * chord, 0.5 * span, 0.5 * thickness],
+                    [-0.5 * chord, -0.5 * span, thickness],
+                    [0.5 * chord, -0.5 * span, thickness],
+                    [0.5 * chord, 0.5 * span, thickness],
+                    [-0.5 * chord, 0.5 * span, thickness],
                 ]
             )
 
