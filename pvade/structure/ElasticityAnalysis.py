@@ -500,8 +500,6 @@ class Elasticity:
             north_east_corner_acccel, north_east_corner_accel_global, root=0
         )
 
-        # print(f"Acceleration at North West corner = {north_east_corner_acccel}")
-
         if self.rank == 0:
             norm2 = np.sum(north_east_corner_accel_global**2, axis=1)
             max_norm2_idx = np.argmax(norm2)
