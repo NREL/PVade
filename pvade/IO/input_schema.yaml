@@ -199,13 +199,13 @@ properties:
         (x_min + x_spacing, y_min), etc., i.e., x-major direction. If argument is a single value, that tracking angle will be applied to the every panel."
         units: "degree"
       torque_tube_separation:
-        default: 0.4
+        default: 0.0
         minimum: 0.0
         maximum: 1.0
         type: "number"
         description: "The distance between the bottom of the panel structure and the centerline of the torque tube, in meters."
       torque_tube_radius:
-        default: 0.1
+        default: 0.0
         minimum: 0.0
         maximum: 1.0
         type: "number"
