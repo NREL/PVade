@@ -133,12 +133,12 @@ class Structure:
 
             return north_east_corner
 
-        north_east_corner_facets = dolfinx.mesh.locate_entities_boundary(
+        north_east_corner_vertices = dolfinx.mesh.locate_entities_boundary(
             domain.structure.msh, 0, _north_east_corner
         )
 
         self.north_east_corner_dofs = dolfinx.fem.locate_dofs_topological(
-            self.elasticity.V, 0, north_east_corner_facets
+            self.elasticity.V, 0, north_east_corner_vertices
         )
 
     def build_boundary_conditions(self, domain, params):
