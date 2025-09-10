@@ -11,6 +11,7 @@ def test_pvade_run(input_file, mesh_only, nprocs):
         "-n",
         str(nprocs),
         "python",
+        "-u",
         "pvade_main.py",
         "--input",
         str(input_file.resolve()),
@@ -34,8 +35,13 @@ def test_pvade_run(input_file, mesh_only, nprocs):
     proc = subprocess.Popen(
         cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True
     )
-
+    
+    print("OUTPUT LOG")
     for line in proc.stdout:
+        print(line, end="")
+
+    print("ERROR LOG")
+    for line in proc.stderr:
         print(line, end="")
 
     proc.wait()
