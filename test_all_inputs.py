@@ -43,9 +43,10 @@ def test_pvade_run(input_file, mesh_only, nprocs):
     for line in proc.stdout:
         print(line, end="")
 
-    print("ERROR LOG")
-    for line in proc.stderr:
-        print(line, end="")
+    if proc.stderr is not None:
+        print("ERROR LOG")
+        for line in proc.stderr:
+            print(line, end="")
 
     proc.wait()
 
