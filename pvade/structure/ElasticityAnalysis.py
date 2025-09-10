@@ -484,26 +484,52 @@ class Elasticity:
 
         try:
             idx = structure.north_east_corner_dofs[0]
-            # idx = self.north_east_corner_dofs[0]
-            north_east_corner_acccel = self.u.x.array[
+            north_east_corner_deformation = self.u.x.array[
                 structure.ndim * idx : structure.ndim * idx + structure.ndim
             ].astype(np.float64)
-            print(north_east_corner_acccel)
-        except:
-            north_east_corner_acccel = np.zeros(structure.ndim, dtype=np.float64)
+            print(f"Deformation: {north_east_corner_deformation}")
 
-        north_east_corner_accel_global = np.zeros(
+        except:
+            north_east_corner_deformation = np.zeros(structure.ndim, dtype=np.float64)
+
+        try:
+            idx = structure.north_east_corner_dofs[0]
+            north_east_corner_acceleration = self.a_old.x.array[
+                structure.ndim * idx : structure.ndim * idx + structure.ndim
+            ].astype(np.float64)
+            print(f"Acceleration: {north_east_corner_acceleration}")
+
+        except:
+            north_east_corner_acceleration = np.zeros(structure.ndim, dtype=np.float64)
+
+        # Initialize a buffer to collect everything into
+        north_east_corner_deformation_global = np.zeros(
             (self.num_procs, structure.ndim), dtype=np.float64
         )
 
+        north_east_corner_acceleration_global = np.zeros(
+            (self.num_procs, structure.ndim), dtype=np.float64
+        )
+
+        # Gather all points (many of which are zeros) to rank 0
         self.comm.Gather(
-            north_east_corner_acccel, north_east_corner_accel_global, root=0
+            north_east_corner_deformation, north_east_corner_deformation_global, root=0
+        )
+
+        self.comm.Gather(
+            north_east_corner_acceleration,
+            north_east_corner_acceleration_global,
+            root=0,
         )
 
         if self.rank == 0:
-            norm2 = np.sum(north_east_corner_accel_global**2, axis=1)
+            norm2 = np.sum(north_east_corner_deformation_global**2, axis=1)
             max_norm2_idx = np.argmax(norm2)
-            np_accel = north_east_corner_accel_global[max_norm2_idx, :]
+            np_deformation = north_east_corner_deformation_global[max_norm2_idx, :]
+
+            norm2 = np.sum(north_east_corner_acceleration_global**2, axis=1)
+            max_norm2_idx = np.argmax(norm2)
+            np_acceleration = north_east_corner_acceleration_global[max_norm2_idx, :]
 
             accel_pos_filename = os.path.join(
                 params.general.output_dir_sol, "accel_pos.csv"
@@ -512,18 +538,35 @@ class Elasticity:
             if self.first_call_to_solver:
 
                 with open(accel_pos_filename, "w") as fp:
-                    fp.write("#x-pos,y-pos,z-pos\n")
                     if structure.ndim == 3:
-                        fp.write(f"{np_accel[0]},{np_accel[1]},{np_accel[2]}\n")
+                        fp.write(
+                            "#x-deformation,y-deformation,z-deformation,x-acceleration,y-acceleration,z-acceleration\n"
+                        )
+                        fp.write(
+                            f"{np_deformation[0]},{np_deformation[1]},{np_deformation[2]},"
+                        )
+                        fp.write(
+                            f"{np_acceleration[0]},{np_acceleration[1]},{np_acceleration[2]}\n"
+                        )
                     elif structure.ndim == 2:
-                        fp.write(f"{np_accel[0]},{np_accel[1]}\n")
+                        fp.write(
+                            "#x-deformation,y-deformation,x-acceleration,y-acceleration\n"
+                        )
+                        fp.write(f"{np_deformation[0]},{np_deformation[1]},")
+                        fp.write(f"{np_acceleration[0]},{np_acceleration[1]}\n")
 
             else:
                 with open(accel_pos_filename, "a") as fp:
                     if structure.ndim == 3:
-                        fp.write(f"{np_accel[0]},{np_accel[1]},{np_accel[2]}\n")
+                        fp.write(
+                            f"{np_deformation[0]},{np_deformation[1]},{np_deformation[2]},"
+                        )
+                        fp.write(
+                            f"{np_acceleration[0]},{np_acceleration[1]},{np_acceleration[2]}\n"
+                        )
                     elif structure.ndim == 2:
-                        fp.write(f"{np_accel[0]},{np_accel[1]}\n")
+                        fp.write(f"{np_deformation[0]},{np_deformation[1]},")
+                        fp.write(f"{np_acceleration[0]},{np_acceleration[1]}\n")
 
         if self.first_call_to_solver:
             self.first_call_to_solver = False
