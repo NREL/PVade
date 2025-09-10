@@ -136,7 +136,7 @@ properties:
         minimum: 0.0
         maximum: 10.0
         type: "number"
-        description: "The vertical distance between the center of the panel and the ground."
+        description: "The vertical distance between the center of the torque tube and the ground."
         units: "meter"
       stream_spacing:
         default: 7.0
@@ -198,6 +198,23 @@ properties:
         be unrolled such that tracking_angle_0 is applied to the panel at (x_min, y_min), tracking_angle_1 is applied to the panel at
         (x_min + x_spacing, y_min), etc., i.e., x-major direction. If argument is a single value, that tracking angle will be applied to the every panel."
         units: "degree"
+      torque_tube_separation:
+        default: 0.0
+        minimum: 0.0
+        maximum: 1.0
+        type: "number"
+        description: "The distance between the bottom of the panel structure and the centerline of the torque tube, in meters."
+      torque_tube_radius:
+        default: 0.0
+        minimum: 0.0
+        maximum: 1.0
+        type: "number"
+        description: "The radius of the torque tube, in meters."
+      modules_per_span:
+        default: 1
+        minimum: 1
+        type: "integer"
+        description: "The number of modules/panels per every panel_span distance. This can be thought of as the number of modules/panels per each table, counted in the spanwise direction only (i.e., 2-in-portait systems should report only the number in the spanwise direction, vs 2x that value)."
   solver:
     additionalProperties: false
     type: "object"

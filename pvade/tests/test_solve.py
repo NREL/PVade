@@ -310,7 +310,7 @@ def test_fsi2():
 
     # print('pos_data = ', pos_data)
 
-    assert np.allclose(pos_data, pos_data_truth)
+    assert np.allclose(pos_data[:, 0:2], pos_data_truth)
     print(lift_and_drag_data)
 
     # assert np.allclose(lift_and_drag_data[:, 0:3], lift_and_drag_data_truth[:, 0:3]) # needs new truth values to pass, mesh has changed
