@@ -80,15 +80,32 @@ class Flow:
 
             # find hmin in mesh
             num_cells = domain.fluid.msh.topology.index_map(self.ndim).size_local
+
             h = dolfinx.cpp.mesh.h(domain.fluid.msh, self.ndim, range(num_cells))
 
-            # This value of hmin is local to the mesh portion owned by the process
-            hmin_local = np.amin(h)
+            # # This value of hmin is local to the mesh portion owned by the process
+            # hmin_local = np.amin(h)
 
-            # collect the minimum hmin from all processes
+            if len(h) > 0:
+                hmin_local = np.amin(h)
+            else:
+                hmin_local = np.inf
+
+            print(hmin_local)
             self.hmin = np.zeros(1)
-            self.comm.Allreduce(hmin_local, self.hmin, op=MPI.MIN)
-            self.hmin = self.hmin[0]
+            self.hmin = self.comm.allreduce(hmin_local, op=MPI.MIN)
+
+            # ------------------------------------------------------------------------------
+
+            # h = dolfinx.cpp.mesh.h(domain.fluid.msh, self.ndim, range(num_cells))
+
+            # # This value of hmin is local to the mesh portion owned by the process
+            # hmin_local = np.amin(h)
+
+            # # collect the minimum hmin from all processes
+            # self.hmin = np.zeros(1)
+            # self.comm.Allreduce(hmin_local, self.hmin, op=MPI.MIN)
+            # self.hmin = self.hmin[0]
 
             self.num_Q_dofs = (
                 self.Q.dofmap.index_map_bs * self.Q.dofmap.index_map.size_global
@@ -98,7 +115,6 @@ class Flow:
             )
 
             if self.rank == 0:
-                print(f"hmin on fluid  = {self.hmin}")
                 print(f"Total num dofs on fluid= {self.num_Q_dofs + self.num_V_dofs}")
 
     def build_boundary_conditions(self, domain, params):
@@ -174,9 +190,11 @@ class Flow:
             )  #  thermal diffusivity
 
             # Compute approximate Peclet number to assess if SUPG stabilization is needed
-            self.Pe_approx = (
-                params.fluid.u_ref * params.domain.l_char / (2.0 * params.fluid.alpha)
-            )
+            if params.fluid.velocity_profile_type == "specified_from_file":
+                u_ref = self.inflow_velocity.u_ref
+            else:
+                u_ref = params.fluid.u_ref
+            self.Pe_approx = u_ref * params.domain.l_char / (2.0 * params.fluid.alpha)
 
             if self.Pe_approx > 1.0:
                 self.stabilizing = True
@@ -235,6 +253,8 @@ class Flow:
             self.u_k2.interpolate(self.inflow_profile)
             self.u_k.interpolate(self.inflow_profile)
 
+            if self.rank == 0:
+                print("Initialized BC at the inlet")
             # print(min(abs(self.u_k.x.array[:] - self.inflow_profile.x.array[:])))
 
             # flags = []
@@ -895,15 +915,31 @@ class Flow:
             params (:obj:`pvade.Parameters.SimParams`): A SimParams object
         """
 
-        ramp_window = params.fluid.time_varying_inflow_window
+        ramp_window = params.fluid.ramp_window
 
-        if ramp_window > 0.0 and current_time <= ramp_window:
+        if (ramp_window > 0.0 and current_time <= ramp_window) or (
+            params.fluid.velocity_profile_type == "specified_from_file"
+            and current_time <= self.inflow_velocity.inflow_t_final
+        ):
+
             self.inflow_velocity.current_time = current_time
 
             if self.upper_cells is not None:
                 self.inflow_profile.interpolate(self.inflow_velocity, self.upper_cells)
             else:
                 self.inflow_profile.interpolate(self.inflow_velocity)
+            if self.rank == 0 and params.general.debug_flag:
+                print("applied inflow BC at current time: ", current_time)
+
+        if (
+            params.fluid.velocity_profile_type == "specified_from_file"
+            and current_time > self.inflow_velocity.inflow_t_final
+        ):
+
+            # kill the simulation (otherwise, the inflow BCs don't change, which isn't realistic)
+            raise ValueError(
+                f"No inflow data available at current time {current_time} s."
+            )
 
         if self.first_call_to_solver:
             if self.rank == 0:
@@ -941,7 +977,9 @@ class Flow:
 
         self.compute_lift_and_drag(params, current_time)
 
-        self.compute_pressure_drop_between_points(domain, params)
+        # Compute the pressure drop between the inlet and outlet
+        if params.pv_array.stream_rows > 0:
+            self.compute_pressure_drop_between_points(domain, params)
 
         # Update new -> old variables
         self.u_k2.x.array[:] = self.u_k1.x.array
@@ -1154,11 +1192,24 @@ class Flow:
         self.solver_6.solve(self.b6, self.cfl_vec.vector)
         self.cfl_vec.x.scatter_forward()
 
-        cfl_max_local = np.amax(self.cfl_vec.vector.array)
+        # cfl_max_local = np.amax(self.cfl_vec.vector.array)
 
-        # collect the minimum hmin from all processes
-        self.cfl_max = np.zeros(1)
-        self.comm.Allreduce(cfl_max_local, self.cfl_max, op=MPI.MAX)
+        # # collect the minimum hmin from all processes
+        # self.cfl_max = np.zeros(1)
+        # self.comm.Allreduce(cfl_max_local, self.cfl_max, op=MPI.MAX)
+        # self.cfl_max = self.cfl_max[0]
+
+        # Compute local max only if array has values
+        if self.cfl_vec.vector.array.size > 0:
+            cfl_max_local = np.amax(self.cfl_vec.vector.array)
+        else:
+            cfl_max_local = -np.inf  # So it won't affect global max
+
+        # Prepare buffer and reduce across all ranks
+        self.cfl_max = np.zeros(1, dtype=np.float64)
+        self.comm.Allreduce(
+            np.array(cfl_max_local, dtype=np.float64), self.cfl_max, op=MPI.MAX
+        )
         self.cfl_max = self.cfl_max[0]
 
     def compute_lift_and_drag(self, params, current_time):
@@ -1222,6 +1273,17 @@ class Flow:
 
                     fp.write("\n")
 
+            if params.fluid.velocity_profile_type == "specified_from_file":
+                u_ref = self.inflow_velocity.u_ref
+                if params.general.debug_flag == True:
+                    print(
+                        "using calc u_ref ({} m/s) instead of input/default u_ref ({} m/s)".format(
+                            self.inflow_velocity.u_ref, params.fluid.u_ref
+                        )
+                    )
+            else:
+                u_ref = params.fluid.u_ref
+
             with open(self.lift_and_drag_filename, "a") as fp:
                 fp.write(f"{current_time:.9e}")
 
@@ -1236,7 +1298,7 @@ class Flow:
                         * fx
                         / (
                             params.fluid.rho
-                            * params.fluid.u_ref**2
+                            * u_ref**2
                             * params.pv_array.panel_chord
                             * params.pv_array.panel_span
                         )
@@ -1247,7 +1309,7 @@ class Flow:
                         * fy
                         / (
                             params.fluid.rho
-                            * params.fluid.u_ref**2
+                            * u_ref**2
                             * params.pv_array.panel_chord
                             * params.pv_array.panel_span
                         )
@@ -1258,7 +1320,7 @@ class Flow:
                         * fz
                         / (
                             params.fluid.rho
-                            * params.fluid.u_ref**2
+                            * u_ref**2
                             * params.pv_array.panel_chord
                             * params.pv_array.panel_span
                         )

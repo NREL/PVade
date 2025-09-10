@@ -14,6 +14,7 @@ import numpy as np
 
 from pvade.structure.StructureMain import Structure
 import os
+from mpi4py import MPI
 
 
 def main(input_file=None):
@@ -25,6 +26,7 @@ def main(input_file=None):
     # Load the parameters object specified by the input file
     params = SimParams(input_file)
 
+    # Save the parameters object to a logfile
     logfile_name = os.path.join(params.general.output_dir, "logfile.log")
     start_print_and_log(params.rank, logfile_name)
 
@@ -34,28 +36,16 @@ def main(input_file=None):
 
     # Initialize the domain and construct the initial mesh
     domain = FSIDomain(params)
-
     if params.general.input_mesh_dir is not None:
         domain.read_mesh_files(params.general.input_mesh_dir, params)
     else:
         domain.build(params)
-        # domain.write_mesh_files(params)
 
+    # If we only want to create the mesh, we can stop here
     if params.general.mesh_only:
         list_timings(params.comm, [TimingType.wall])
         structure, flow = [], []
         return params, structure, flow
-
-    # Check to ensure mesh node matching for periodic simulations
-    # if domain.periodic_simulation:
-    # domain.check_mesh_periodicity(params)
-    # sys.exit()
-
-    # if params.general.debug_flag:
-    #     print('before Flow init')
-
-    flow = Flow(domain, params)
-    structure = Structure(domain, params)
 
     if fluid_analysis:
         flow = Flow(domain, params)
@@ -63,35 +53,28 @@ def main(input_file=None):
         flow.build_boundary_conditions(domain, params)
         # # # Build the fluid forms
         flow.build_forms(domain, params)
+    else:
+        flow = None
 
     if structural_analysis:
+        structure = Structure(domain, params)
         structure.build_boundary_conditions(domain, params)
         # # # Build the fluid forms
         structure.build_forms(domain, params)
+    else:
+        structure = None
 
     if structural_analysis and fluid_analysis:
-        # pass
         domain.move_mesh(structure, params)
 
     dataIO = DataStream(domain, flow, structure, params)
     FSI_inter = FSI(domain, flow, structure, params)
-    # if domain.rank == 0:
-    #     progress = tqdm.autonotebook.tqdm(
-    #         desc="Solving PDE", total=params.solver.t_steps
-    #     )
 
     solve_structure_interval_n = int(params.structure.dt / params.solver.dt)
 
     for k in range(params.solver.t_steps):
         current_time = (k + 1) * params.solver.dt
 
-        # if domain.rank == 0:
-        #     progress.update(1)
-        #     print()
-        # Solve the fluid problem at each timestep
-
-        # print("time step is : ", current_time)
-        # print("reaminder from modulo ",current_time % params.structure.dt )
         if (
             structural_analysis
             and (k + 1) % solve_structure_interval_n == 0
@@ -139,12 +122,13 @@ def main(input_file=None):
                         print(f"| f_x (drag) = {fx:.4f}")
                         print(f"| f_y (lift) = {fy:.4f}")
                     else:
-                        # still print info, but just for first row
-                        fx = flow.integrated_force_x[0]
-                        fy = flow.integrated_force_y[0]
+                        if structure is not None:
+                            # still print info, but just for first row
+                            fx = flow.integrated_force_x[0]
+                            fy = flow.integrated_force_y[0]
 
-                        print(f"| f_x (drag) of 1st row = {fx:.4f}")
-                        print(f"| f_y (lift) of 1st row = {fy:.4f}")
+                            print(f"| f_x (drag) of 1st row = {fx:.4f}")
+                            print(f"| f_y (lift) of 1st row = {fy:.4f}")
                     if thermal_analysis:
                         print(f"| T = {flow.theta_max:.4f}")
 
@@ -156,15 +140,34 @@ def main(input_file=None):
                 and current_time > params.fluid.warm_up_time
             ):
 
-                local_def_max = np.amax(
-                    np.sum(
-                        structure.elasticity.u.vector.array.reshape(-1, domain.ndim)
-                        ** 2,
-                        axis=1,
-                    )
+                vec = structure.elasticity.u.vector
+                u_local = vec.array  # This gives a NumPy array on local rank
+
+                if u_local.size > 0:
+                    u_reshaped = u_local.reshape(-1, domain.ndim)
+                    local_def_max = np.amax(np.sum(u_reshaped**2, axis=1))
+                else:
+                    local_def_max = -np.inf  # So it doesn't interfere in max
+                print(
+                    f"Rank {domain.comm.rank}: u_vec.size = {u_local.size}, local_def_max = {local_def_max}"
                 )
-                global_def_max_list = np.zeros(params.num_procs, dtype=np.float64)
-                params.comm.Gather(local_def_max, global_def_max_list, root=0)
+
+                # Wrap scalar in NumPy array (required for Gather)
+                sendbuf = np.array([local_def_max], dtype=np.float64)
+
+                # Preallocate only on root
+                if params.comm.rank == 0:
+                    global_def_max_list = np.empty(params.num_procs, dtype=np.float64)
+                else:
+                    global_def_max_list = None
+
+                # Perform the gather
+                params.comm.Gather(sendbuf, global_def_max_list, root=0)
+
+                # Handle on root
+                if params.comm.rank == 0:
+                    print("Per-rank def max values:", global_def_max_list)
+                    print("Global def max:", np.max(global_def_max_list))
 
                 if domain.rank == 0:
                     # print("Structural time is : ", current_time)
@@ -198,4 +201,4 @@ if __name__ == "__main__":
             sys.stdout = sys.__stdout__
 
         if not params.general.mesh_only:
-            write_metrics(flow, structure.elasticity, prof_filename=prof_txt_filename)
+            write_metrics(flow, prof_filename=prof_txt_filename)

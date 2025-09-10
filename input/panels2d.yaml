@@ -9,9 +9,10 @@ domain:
   x_max: 50
   y_min: 0
   y_max: 20
-  l_char: 0.9
+  l_char: 0.5
 pv_array:
   stream_rows: 1
+  span_rows: 1
   elevation: 1.5
   stream_spacing: 7.0
   panel_chord: 2.0
