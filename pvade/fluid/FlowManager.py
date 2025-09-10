@@ -230,6 +230,7 @@ class Flow:
             self.s = ufl.TestFunction(self.S)
             self.theta_k = dolfinx.fem.Function(self.S, name="temperature ")
             self.theta_k1 = dolfinx.fem.Function(self.S)
+            self.theta_k2 = dolfinx.fem.Function(self.S)
             self.theta_r = dolfinx.fem.Function(self.S)  # reference temperature
 
         self.mesh_vel = dolfinx.fem.Function(self.V, name="mesh_displacement")
@@ -267,6 +268,7 @@ class Flow:
         if self.thermal_analysis:
             # initialize air temperature everywhere to be the ambient temperature
             self.theta_k1.x.array[:] = PETSc.ScalarType(params.fluid.T_ambient)
+            self.theta_k2.x.array[:] = PETSc.ScalarType(params.fluid.T_ambient)
             self.theta_k.x.array[:] = PETSc.ScalarType(params.fluid.T_ambient)
             self.theta_r.x.array[:] = PETSc.ScalarType(params.fluid.T_ambient)
 
@@ -401,14 +403,6 @@ class Flow:
             * ufl.dx
         )
         if self.thermal_analysis:
-            if self.stabilizing:
-                # Residual: the "strong" form of the governing equation
-                self.r = (
-                    (1.0 / self.dt_c) * (self.theta - self.theta_k1)
-                    + ufl.dot(self.u_k, ufl.nabla_grad(self.theta))
-                    - self.alpha_c * ufl.div(ufl.grad(self.theta))
-                )
-
             # Define variational problem for step 4: temperature
             self.F4 = (
                 (1.0 / self.dt_c)
@@ -422,12 +416,224 @@ class Flow:
             )
 
             if self.stabilizing:
-                # Donea and Huerta 2003 (Eq 2.64)
-                h = ufl.CellDiameter(domain.fluid.msh)
-                u_mag = ufl.sqrt(ufl.dot(self.u_k, self.u_k))  # magnitude of vector
-                Pe = u_mag * h / (2.0 * self.alpha_c)  # Peclet number
-                tau = (h / (2.0 * u_mag)) * (1.0 + 1.0 / Pe) ** (-1)
-                stab = tau * ufl.dot(self.u_k, ufl.grad(self.s)) * self.r * ufl.dx
+                # Residual: the "strong" form of the governing equation
+                self.r = (
+                    (1.0 / self.dt_c) * (self.theta - self.theta_k1)
+                    + ufl.dot(self.u_k, ufl.nabla_grad(self.theta))
+                    - self.alpha_c * ufl.div(ufl.grad(self.theta))
+                )
+
+                def ufl_mag(input_var, min_val=1e-6):
+
+                    # sqrt(x_1^2 + x_2^2 + ...)
+                    input_var_mag = ufl.sqrt(ufl.dot(input_var, input_var))
+
+                    # clip to a minimum value if specified
+                    if min_val > 0.0:
+                        input_var_mag = ufl.max_value(input_var_mag, min_val)
+
+                    return input_var_mag
+
+                STABILIZING_METHOD = 2
+
+                if STABILIZING_METHOD == 1:
+                    # Donea and Huerta "Finite Element Methods for Flow Problems" 2003 (starting on Eq 2.64)
+                    h = ufl.CellDiameter(domain.fluid.msh)
+
+                    u_mag = ufl_mag(self.u_k)
+
+                    Pe = u_mag * h / (2.0 * self.alpha_c)  # Peclet number
+
+                    # h/(2a) * (coth(Pe) - 1/Pe)
+                    tau_1 = h / (2.0 * u_mag) * (1.0 / ufl.tanh(Pe) - 1.0 / Pe)
+
+                    # h/(2a) * (1 + 1/Pe) ^ (-1)
+                    tau_2 = (
+                        h / (2.0 * u_mag) * (1.0 + 1.0 / Pe) ** (-1)
+                    )  # from codina's algebraic analysis
+
+                    # h/(2a) * (1 + 9/Pe^2) ^ (-1/2)
+                    tau_3 = (
+                        h / (2.0 * u_mag) * (1.0 + 9.0 / Pe**2) ** (-0.5)
+                    )  # shakib et al. fourth order accurate
+
+                    stab = ufl.dot(tau_1 * self.u_k, ufl.grad(self.s)) * self.r * ufl.dx
+
+                elif STABILIZING_METHOD == 2:
+                    # "Finite element stabilization parameters computed from element matrices and vectors"
+                    # Tayfun E. Tezduyar, Yasuo Osawa, 1999, starting Eq 55
+
+                    h = ufl.CellDiameter(domain.fluid.msh)
+
+                    u_mag = ufl_mag(self.u_k)
+
+                    tau_s1 = h / (2.0 * u_mag)
+                    tau_s2 = self.dt_c / 2.0
+                    tau_s3 = h**2 / (4.0 * self.alpha_c)
+
+                    tau = (
+                        1.0 / tau_s1**2 + 1.0 / tau_s2**2 + 1.0 / tau_s3**2
+                    ) ** (-0.5)
+
+                    fac = ufl.sqrt(1.0 / self.dt_c)
+                    # fac = 1.0
+
+                    stab = (
+                        ufl.dot(fac * tau * self.u_k, ufl.grad(self.s))
+                        * self.r
+                        * ufl.dx
+                    )
+
+                elif STABILIZING_METHOD == 3:
+                    # "Finite element stabilization parameters computed from element matrices and vectors"
+                    # Tayfun E. Tezduyar, Yasuo Osawa, 1999, starting Eq 55
+                    # Plus the method of Mizukami-Hughes with the calculation of u_k_hat
+
+                    h = ufl.CellDiameter(domain.fluid.msh)
+
+                    u_mag = ufl_mag(self.u_k)
+
+                    tau_s1 = h / (2.0 * u_mag)
+                    tau_s2 = self.dt_c / 2.0
+                    tau_s3 = h**2 / (4.0 * self.alpha_c)
+
+                    tau = (
+                        1.0 / tau_s1**2 + 1.0 / tau_s2**2 + 1.0 / tau_s3**2
+                    ) ** (-0.5)
+
+                    fac = ufl.sqrt(1.0 / self.dt_c)
+                    fac = 1.0
+
+                    stab = (
+                        ufl.dot(fac * tau * self.u_k, ufl.grad(self.s))
+                        * self.r
+                        * ufl.dx
+                    )
+
+                    # Form u_k_hat, the projection of the fluid velocity onto the direction of temperature gradient
+                    grad_T = ufl.grad(self.theta_k1)
+                    grad_T_mag = ufl_mag(grad_T)
+                    grad_T_unit_vec = grad_T / grad_T_mag
+
+                    u_k_hat = ufl.dot(self.u_k, grad_T_unit_vec) * grad_T_unit_vec
+                    u_k_hat_mag = ufl_mag(u_k_hat)
+
+                    tau_s1_alt = h / (2.0 * u_k_hat_mag)
+
+                    tau_hat = (
+                        1.0 / tau_s1_alt**2 + 1.0 / tau_s2**2 + 1.0 / tau_s3**2
+                    ) ** (-0.5)
+
+                    tau_hat = tau  # too diffusive
+                    # tau_hat = ufl.max_value(0.0, tau_hat - tau)
+
+                    stab += (
+                        ufl.dot(tau_hat * u_k_hat, ufl.grad(self.s) * self.r) * ufl.dx
+                    )
+
+                elif STABILIZING_METHOD == 4:
+                    # "Finite element stabilization parameters computed from element matrices and vectors"
+                    # Tayfun E. Tezduyar, Yasuo Osawa, 1999, starting Eq 55
+
+                    # m_mat = 1.0/self.dt_c * ufl.inner(self.theta - self.theta_k1, self.s)
+                    c_mat = ufl.dot(self.u_k, ufl.grad(self.theta_k1)) * self.s
+                    # k_mat = self.alpha_c * ufl.inner(ufl.grad(self.theta), ufl.grad(self.s))
+                    k_tilde_mat = ufl.dot(self.u_k, ufl.grad(self.theta_k1)) * ufl.dot(
+                        self.u_k, ufl.grad(self.s)
+                    )
+                    c_tilde_mat = (
+                        1.0
+                        / self.dt_c
+                        * ufl.dot(
+                            self.u_k, ufl.grad(self.s) * (self.theta_k1 - self.theta_k2)
+                        )
+                    )
+
+                    Re_element = (
+                        ufl_mag(self.u_k) ** 2
+                        / self.alpha_c
+                        * ufl_mag(c_mat)
+                        / ufl_mag(k_tilde_mat)
+                    )
+
+                    tau_s1 = ufl_mag(c_mat) / ufl_mag(k_tilde_mat)
+                    tau_s2 = self.dt_c / 2.0 * ufl_mag(c_mat) / ufl_mag(c_tilde_mat)
+                    tau_s3 = tau_s1 * Re_element
+
+                    # NVM, the above isn't working, try u_hgn
+                    # h_ugn = ufl.CellDiameter(domain.fluid.msh)
+                    h_ugn = (
+                        2.0
+                        * ufl_mag(self.u_k)
+                        * ufl.max_value(
+                            1e-6, ufl.dot(self.u_k, ufl.grad(self.theta_k1))
+                        )
+                        ** (-1)
+                    )
+
+                    tau_s1 = h_ugn / (2.0 * ufl_mag(self.u_k))
+                    tau_s2 = self.dt_c / 2.0
+                    tau_s3 = h_ugn**2 / (4.0 * self.alpha_c)
+
+                    tau = (
+                        1.0 / tau_s1**2 + 1.0 / tau_s2**2 + 1.0 / tau_s3**2
+                    ) ** (-0.5)
+
+                    fac = 1.0  # /ufl.sqrt(1.0/self.dt_c)
+
+                    stab = (
+                        ufl.dot(fac * tau * self.u_k, ufl.grad(self.s))
+                        * self.r
+                        * ufl.dx
+                    )
+
+                elif STABILIZING_METHOD == 5:
+                    # "Finite element stabilization parameters computed from element matrices and vectors"
+                    # Tayfun E. Tezduyar, Yasuo Osawa, 1999, starting Eq 55
+                    # plus Do Carmo and Galeao definitions of \hat{a}
+
+                    h = ufl.CellDiameter(domain.fluid.msh)
+
+                    u_mag = ufl_mag(self.u_k)
+
+                    tau_s1 = h / (2.0 * u_mag)
+                    tau_s2 = self.dt_c / 2.0
+                    tau_s3 = h**2 / (4.0 * self.alpha_c)
+
+                    tau = (
+                        1.0 / tau_s1**2 + 1.0 / tau_s2**2 + 1.0 / tau_s3**2
+                    ) ** (-0.5)
+
+                    fac = ufl.sqrt(1.0 / self.dt_c)
+                    fac = 1.0
+
+                    stab = (
+                        ufl.dot(fac * tau * self.u_k, ufl.grad(self.s))
+                        * self.r
+                        * ufl.dx
+                    )
+
+                    # Form u_k_hat, the projection of the fluid velocity onto the direction of temperature gradient
+                    grad_T = ufl.grad(self.theta_k1)
+                    grad_T_mag = ufl_mag(grad_T)
+                    grad_T_unit_vec = grad_T / grad_T_mag
+
+                    u_k_hat = self.r * grad_T_unit_vec
+                    u_k_hat_mag = ufl_mag(u_k_hat)
+
+                    tau_s1_alt = h / (2.0 * u_k_hat_mag)
+
+                    tau_hat = (
+                        1.0 / tau_s1_alt**2 + 1.0 / tau_s2**2 + 1.0 / tau_s3**2
+                    ) ** (-0.5)
+
+                    tau_hat = tau  # too diffusive?
+                    # tau_hat = ufl.max_value(0.0, tau_hat - tau) # original galeao and do Carmo proposal, sigma = max(0, tau(zh) - tau(b))
+                    # tau_hat = tau * ufl.max_value(0.0, u_mag/u_k_hat_mag - 1.0) # improved/simplified, sigma = tau(b) * max(0, |b|/|z| - 1)
+
+                    stab += (
+                        ufl.dot(tau_hat * u_k_hat, ufl.grad(self.s) * self.r) * ufl.dx
+                    )
 
                 self.F4 += stab
 
@@ -680,8 +886,9 @@ class Flow:
         if self.thermal_analysis:
             self.solver_4 = PETSc.KSP().create(self.comm)
             self.solver_4.setOperators(self.A4)
-            self.solver_4.setType(params.solver.solver4_ksp)
-            self.solver_4.getPC().setType(params.solver.solver4_pc)
+            self.solver_4.setType("bcgs")
+            self.solver_4.getPC().setType("hypre")
+            self.solver_4.getPC().setHYPREType("boomeramg")
             self.solver_4.setFromOptions()
 
         self.solver_5 = PETSc.KSP().create(self.comm)
@@ -779,6 +986,7 @@ class Flow:
         self.u_k1.x.array[:] = self.u_k.x.array
         self.p_k1.x.array[:] = self.p_k.x.array
         if self.thermal_analysis:
+            self.theta_k2.x.array[:] = self.theta_k1.x.array
             self.theta_k1.x.array[:] = self.theta_k.x.array
         self.mesh_vel_old.x.array[:] = self.mesh_vel.x.array
 
