@@ -437,6 +437,7 @@ properties:
           - "uniform"
           - "loglaw"
           - "parabolic"
+          - "specified_from_file"
       inflow_coeff:
         default: 1.0
         minimum: 0.0
@@ -449,7 +450,7 @@ properties:
         minimum: 0.0
         maximum: 100.0
         type: "number"
-        description: "The velocity of the wind as measured at the panel elevation."
+        description: "The velocity of the wind as measured at the panel elevation. If `velocity_profile_type` == `specified_from_file`, this input u_ref value is not used and instead calculated in the simulation."
         units: "meter/second"
       z0:
         default: 0.05
@@ -465,6 +466,12 @@ properties:
         type: "number"
         description: "The zero plane displacement height used for the presence of vegetated or urban canopies in the log law velocity profile."
         units: "meters"
+      h5_filename:
+        default: null
+        type:
+          - "string"
+          - "null"
+        description: "The .h5 filename that specifies the inflow velocity boundary conditions."
       psi:
         default: 0.0
         minimum: -10.0
@@ -475,12 +482,12 @@ properties:
       initialize_with_inflow_bc:
         default: true
         type: "boolean"
-        description: "If true, use the inflow boundary condition to interpolate a non-zero initial velocity throughout the domain (even if that does not respect interior boundary conditions), if false, initial velocity is zero."
-      time_varying_inflow_window:
+        description: "If true, use the inflow boundary condition to interpolate a non-zero initial velocity throughout the domain (even if that does not respect interior boundary conditions), if false, initial velocity is zero. If `velocity_profile_type` is `specified_from_file`, the velocity at each point is a time-averaged value of that gripoint's velocity data from the .h5 file."
+      ramp_window:
         default: 0.0
         minimum: 0.0
         type: "number"
-        description: "The amount of time over which the inflow condition should 'ramp up' to the full value of u_ref, smoothed using a cosine function. A value of 0 means the flow starts with inflow_vel = u_ref, values > 0 mean the flow starts at rest and smoothly increases until time = time_varying_inflow_window, where inflow_vel = u_ref."
+        description: "The amount of time over which the inflow condition should 'ramp up' to the full value of u_ref, smoothed using a cosine function. A value of 0 means the flow starts with inflow_vel = u_ref, values > 0 mean the flow starts at rest and smoothly increases until time = ramp_window, where inflow_vel = u_ref."
         units: "second"
       rho:
         default: 1.0

@@ -37,7 +37,7 @@ fluid:
   u_ref: 4.0 # 0.2 1.0 2.0
   z0: 0.005 #m
   d0: 0.05 #m
-  time_varying_inflow_window: 0.0
+  ramp_window: 0.0
   initialize_with_inflow_bc: true
   rho: 1000.0 # 0.2 1.0 2.0
   nu: 0.001 # Establish re = 20 with diam = 0.1 and u = u_ref

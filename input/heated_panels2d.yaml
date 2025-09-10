@@ -36,7 +36,7 @@ solver:
   save_xdmf_interval: 0.01
 fluid:
   velocity_profile_type: uniform # loglaw
-  time_varying_inflow_window: 0.0
+  ramp_window: 0.0
   initialize_with_inflow_bc: true
   u_ref: 1.0
   nu: 0.001 #15.89e-5 #0.001
