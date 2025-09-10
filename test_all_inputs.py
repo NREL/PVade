@@ -11,6 +11,7 @@ def test_pvade_run(input_file, mesh_only, nprocs):
         "-n",
         str(nprocs),
         "python",
+        "-u",
         "pvade_main.py",
         "--input",
         str(input_file.resolve()),
@@ -23,7 +24,10 @@ def test_pvade_run(input_file, mesh_only, nprocs):
     ]
 
     # Add special argument for duramat_case_study.yaml
-    if input_file.name == "duramat_case_study.yaml":
+    if input_file.name in [
+        "duramat_case_study.yaml",
+        "turbinflow_duramat_case_study.yaml",
+    ]:
         cmd += ["--domain.l_char", "4"]
 
     print(
@@ -35,8 +39,14 @@ def test_pvade_run(input_file, mesh_only, nprocs):
         cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True
     )
 
+    print("OUTPUT LOG")
     for line in proc.stdout:
         print(line, end="")
+
+    if proc.stderr is not None:
+        print("ERROR LOG")
+        for line in proc.stderr:
+            print(line, end="")
 
     proc.wait()
 
