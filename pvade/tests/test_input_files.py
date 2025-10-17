@@ -19,7 +19,7 @@ def launch_sim(test_file):
     tf = dt * 10  # ten timesteps
 
     command = (
-        f"mpirun -n 2 python "
+        f"mpirun -n 8 python "
         + rootdir
         + "/pvade_main.py --input_file "
         + test_file["path_to_file"]

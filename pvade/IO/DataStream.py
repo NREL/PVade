@@ -1,22 +1,69 @@
-# from dolfinx import *
-import numpy as np
-import time
-import os
-import shutil
-from dolfinx.io import XDMFFile, VTKFile
-from mpi4py import MPI
-from pathlib import Path
-import pytest
 import dolfinx
-from petsc4py import PETSc
-import json
+import ufl
+import sys
+
+import numpy as np
+
+from datetime import datetime
 
 # from dolfinx.fem import create_nonmatching_meshes_interpolation_data
+# import logging
 
-# hello
+
+def start_print_and_log(rank, logfile_name):
+
+    class PrintAndLog:
+        """
+        A class to capture normal print statements in a log file
+        along with displaying them to the terminal as usual.
+        """
+
+        def __init__(self, logfile_name, rank, message_type):
+            self.logfile_name = logfile_name
+            self.rank = rank
+            self.message_type = message_type
+
+            if message_type == "INFO":
+                self.terminal = sys.__stdout__
+            elif message_type == "ERROR":
+                self.terminal = sys.__stdout__
+            else:
+                raise ValueError(f"Type {message_type} not recognized")
+
+        def write(self, message):
+            # Write to both the command line and save to the logfile
+            cleaned_message = message.rstrip()
+
+            # Can include a test like `len(message) > 0 and self.rank == 0`
+            # to limit this to only printing from rank 0, but for parallel
+            # debugging, it is often helpful to see messages from all ranks
+            # so we omit this check for now.
+            if len(cleaned_message) > 0:
+
+                cleaned_message += "\n"
+
+                self.terminal.write(f"{cleaned_message}")
+                timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+                with open(self.logfile_name, "a") as fp:
+                    fp.write(f"{timestamp} [{self.message_type}] {cleaned_message}")
+
+        def flush(self):
+            # Dummy method
+            pass
+
+    with open(logfile_name, "w") as fp:
+        # Start with an empty file
+        pass
+
+    # Redirect stdout and stderr
+    sys.stdout = PrintAndLog(logfile_name, rank, message_type="INFO")
+    sys.stderr = PrintAndLog(logfile_name, rank, message_type="ERROR")
+
+    if rank == 0:
+        print("Starting PVade Run")
 
 
-# test actions
 class DataStream:
     """Input/Output and file writing class
 
@@ -32,7 +79,7 @@ class DataStream:
 
     """
 
-    def __init__(self, domain, flow, structure, params):
+    def __init__(self, domain, flow, structure=None, params=None):
         """Initialize the DataStream object
 
         This initializes an object that manages the I/O for all of PVade.
@@ -50,18 +97,15 @@ class DataStream:
         self.ndim = domain.fluid.msh.topology.dim
         self.thermal_analysis = params.general.thermal_analysis
 
-        self.log_filename = f"{params.general.output_dir_sol}/log.txt"
-        if self.rank == 0:
-            with open(self.log_filename, "w") as fp:
-                fp.write("Run Started.\n")
-
         # If doing a fluid simulation, start a fluid solution file
         if params.general.fluid_analysis:
             self.results_filename_fluid = (
                 f"{params.general.output_dir_sol}/solution_fluid.xdmf"
             )
 
-            with XDMFFile(self.comm, self.results_filename_fluid, "w") as xdmf_file:
+            with dolfinx.io.XDMFFile(
+                self.comm, self.results_filename_fluid, "w"
+            ) as xdmf_file:
                 tt = 0.0
                 xdmf_file.write_mesh(domain.fluid.msh)
                 xdmf_file.write_function(flow.u_k, 0.0)
@@ -78,13 +122,31 @@ class DataStream:
                 f"{params.general.output_dir_sol}/solution_structure.xdmf"
             )
 
-            with XDMFFile(self.comm, self.results_filename_structure, "w") as xdmf_file:
+            # Since this is the first call, build solvers that project forms on an as-saved basis
+            # Set up the linear problem used for the projection, cg solver and jacobi pc
+            petsc_options = {"ksp_type": "cg", "pc_type": "jacobi"}
+            self.prob_k_nominal = dolfinx.fem.petsc.LinearProblem(
+                ufl.lhs(structure.elasticity.k_nominal_proj),
+                ufl.rhs(structure.elasticity.k_nominal_proj),
+                bcs=[],
+                petsc_options=petsc_options,
+            )
+
+            # Solve for the stress tensor
+            sol_k_nominal = self.prob_k_nominal.solve()
+            structure.elasticity.internal_stress.x.array[:] = sol_k_nominal.x.array[:]
+            structure.elasticity.internal_stress.x.scatter_forward()
+
+            with dolfinx.io.XDMFFile(
+                self.comm, self.results_filename_structure, "w"
+            ) as xdmf_file:
                 tt = 0.0
                 xdmf_file.write_mesh(domain.structure.msh)
                 xdmf_file.write_function(structure.elasticity.u, 0.0)
-                xdmf_file.write_function(structure.elasticity.stress, 0.0)
                 xdmf_file.write_function(structure.elasticity.v_old, 0.0)
-                xdmf_file.write_function(structure.elasticity.sigma_vm_h, 0.0)
+                xdmf_file.write_function(structure.elasticity.a_old, 0.0)
+                xdmf_file.write_function(structure.elasticity.stress, 0.0)
+                xdmf_file.write_function(structure.elasticity.internal_stress, 0.0)
 
         if self.comm.rank == 0 and self.comm.size > 1 and params.general.test:
             self.log_filename_structure = f"{params.general.output_dir_sol}/log_str.txt"
@@ -151,7 +213,9 @@ class DataStream:
         """
 
         if fsi_object.name == "fluid":
-            with XDMFFile(self.comm, self.results_filename_fluid, "a") as xdmf_file:
+            with dolfinx.io.XDMFFile(
+                self.comm, self.results_filename_fluid, "a"
+            ) as xdmf_file:
                 xdmf_file.write_function(fsi_object.u_k, tt)
                 xdmf_file.write_function(fsi_object.p_k, tt)
                 xdmf_file.write_function(fsi_object.panel_stress, tt)
@@ -160,23 +224,24 @@ class DataStream:
                     xdmf_file.write_function(fsi_object.theta_k, tt)
 
         elif fsi_object.name == "structure":
-            with XDMFFile(self.comm, self.results_filename_structure, "a") as xdmf_file:
+            # Solve for the stress tensor
+            sol_k_nominal = self.prob_k_nominal.solve()
+            fsi_object.elasticity.internal_stress.x.array[:] = sol_k_nominal.x.array[:]
+            fsi_object.elasticity.internal_stress.x.scatter_forward()
+
+            with dolfinx.io.XDMFFile(
+                self.comm, self.results_filename_structure, "a"
+            ) as xdmf_file:
                 xdmf_file.write_function(fsi_object.elasticity.u, tt)
-                xdmf_file.write_function(fsi_object.elasticity.stress, tt)
                 xdmf_file.write_function(fsi_object.elasticity.v_old, tt)
-                xdmf_file.write_function(fsi_object.elasticity.sigma_vm_h, tt)
+                xdmf_file.write_function(fsi_object.elasticity.a_old, tt)
+                xdmf_file.write_function(fsi_object.elasticity.stress, tt)
+                xdmf_file.write_function(fsi_object.elasticity.internal_stress, tt)
 
         else:
             raise ValueError(
                 f"Got found fsi object name = {fsi_object.name}, not recognized."
             )
-
-    def print_and_log(self, string_to_print):
-        if self.rank == 0:
-            print(string_to_print)
-
-            with open(self.log_filename, "a") as fp:
-                fp.write(f"{string_to_print}\n")
 
     # def fluid_struct(self, domain, flow, elasticity, params):
     #     # print("tst")
