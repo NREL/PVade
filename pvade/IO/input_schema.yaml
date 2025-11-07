@@ -204,7 +204,13 @@ properties:
         maximum: 1.0
         type: "number"
         description: "The distance between the bottom of the panel structure and the centerline of the torque tube, in meters."
-      torque_tube_radius:
+      torque_tube_outer_radius:
+        default: 0.0
+        minimum: 0.0
+        maximum: 1.0
+        type: "number"
+        description: "The radius of the torque tube, in meters."
+      torque_tube_inner_radius:
         default: 0.0
         minimum: 0.0
         maximum: 1.0
@@ -215,6 +221,12 @@ properties:
         minimum: 1
         type: "integer"
         description: "The number of modules/panels per every panel_span distance. This can be thought of as the number of modules/panels per each table, counted in the spanwise direction only (i.e., 2-in-portait systems should report only the number in the spanwise direction, vs 2x that value)."
+      block_chord_div_by_panel_chord:
+        default: 0.1
+        minimum: 0.01
+        type: "number"
+        description: "block length or width divided by panel chord"
+      
   solver:
     additionalProperties: false
     type: "object"
@@ -664,6 +676,20 @@ properties:
         maximum: 0.9
         type: "number"
         description: "poissons ratio of the panel structure."
+        units: "None"
+      elasticity_modulus_tube:
+        default: 200.0e+9
+        minimum: 1.0e+2
+        maximum: 500.0e+9
+        type: "number"
+        description: "The effective Young's modulus of the torque tube."
+        units: "Pascal"  
+      poissons_ratio_tube: 
+        default: 0.3
+        minimum: 0.1
+        maximum: 0.9
+        type: "number"
+        description: "poissons ratio of the torque tube."
         units: "None"
       body_force_x: 
         default:  100

@@ -87,6 +87,143 @@ class Elasticity:
 
         self.bc = build_structure_boundary_conditions(domain, params, self.V)
 
+    def calculate_K_for_Robin_BC(self, domain, flow, params):
+
+        # shear modulus of tube
+        Gt = params.structure.elasticity_modulus_tube / (2 * (1 + params.structure.poissons_ratio_tube))
+
+        Ipt = np.pi/2*(params.pv_array.torque_tube_outer_radius**4 - params.pv_array.torque_tube_inner_radius**4)
+
+        Gp = params.structure.elasticity_modulus / (2 * (1 + params.structure.poissons_ratio))
+
+        Ipp = 1/3.0*params.pv_array.panel_thickness * params.pv_array.panel_chord**3
+
+        # total number of pv rows
+        total_num_panels = params.pv_array.stream_rows * params.pv_array.span_rows
+
+        num_panel_right_fixed = params.pv_array.modules_per_span // 2
+        num_panel_left_fixed = params.pv_array.modules_per_span - num_panel_right_fixed
+
+        # for right fixed part:
+
+        for panel_id in range(total_num_panels):
+            total_torque_right_fixed = 0
+            total_torque_left_fixed = 0
+            
+            for i in range(num_panel_left_fixed, params.pv_array.modules_per_span):
+                name = f"total_torque_panel_{panel_id:.0f}_{i:.0f}"
+                total_torque_right_fixed += getattr(flow, name)
+            
+            for i in range(num_panel_left_fixed):
+                name = f"total_torque_panel_{panel_id:.0f}_{i:.0f}"
+                total_torque_left_fixed += getattr(flow, name)
+
+            theo_matrix_right_fixed = np.zeros((num_panel_right_fixed+1, num_panel_right_fixed+1))
+            theo_vector_right_fixed = np.zeros(num_panel_right_fixed+1)
+
+            theo_matrix_right_fixed[0, :] = 1.0
+            theo_vector_right_fixed[0] = total_torque_right_fixed
+            theo_matrix_right_fixed[1:, :-1] = params.pv_array.panel_span/params.pv_array.modules_per_span/Gt/Ipt
+            
+            # as the double integral of torque along the span from front to back, left fixed part to right fixed part, it need to be flipped
+            T_double_integral_right_fixed = []
+            T_right_fixed = []
+            for i in range(params.pv_array.modules_per_span):
+                name = f"double_integral_total_torque_panel_{panel_id:.0f}_{params.pv_array.modules_per_span-1-i:.0f}"
+                T_double_integral_right_fixed.append(getattr(flow, name))
+                name = f"total_torque_panel_{panel_id:.0f}_{params.pv_array.modules_per_span-1-i:.0f}"
+                T_right_fixed.append(getattr(flow, name))
+            for i in range(num_panel_right_fixed):
+                for j in range(i+1):
+                    theo_vector_right_fixed[i+1] += T_double_integral_right_fixed[-1-j]/(Gp*Ipp)
+                    theo_vector_right_fixed[i+1] -= (i+1-j)*T_right_fixed[-1-j]/(Gp*Ipp)*params.pv_array.panel_span/params.pv_array.modules_per_span
+                for j in range(i):
+                    theo_matrix_right_fixed[i+1, :-1-j-1] += params.pv_array.panel_span/params.pv_array.modules_per_span/(Gt*Ipt)
+
+
+            for i in range(num_panel_right_fixed):
+                for j in range(i+1):
+                        theo_matrix_right_fixed[i+1, num_panel_right_fixed-j:] -= params.pv_array.panel_span/params.pv_array.modules_per_span/Gp/Ipp
+
+            R_reaction_torque = np.dot(np.linalg.inv(theo_matrix_right_fixed), theo_vector_right_fixed)
+            
+            tube_rotate_matrix = np.ones((num_panel_right_fixed, num_panel_right_fixed))*params.pv_array.panel_span/params.pv_array.modules_per_span*(1.0/Gt/Ipt)
+
+            for i in range(num_panel_right_fixed):
+                for j in range(i):
+                    tube_rotate_matrix[i, :num_panel_right_fixed-1-j] += params.pv_array.panel_span/params.pv_array.modules_per_span*(1.0/Gt/Ipt)
+            
+            # check the standalone code, why it need to be flipped.
+            phi = np.flip(np.dot(tube_rotate_matrix, R_reaction_torque[:-1]))
+
+            # rotation of connector
+            x_panel = np.arange(num_panel_right_fixed)*(params.pv_array.panel_span/params.pv_array.modules_per_span) # location of panels
+
+            block_length = params.pv_array.block_chord_div_by_panel_chord * params.pv_array.panel_chord
+            block_width = params.pv_array.block_chord_div_by_panel_chord*params.pv_array.panel_span/params.pv_array.modules_per_span/2
+
+            # To Do: check the angle, is this correct?
+            array_rotation = (params.fluid.wind_direction + 90.0) % 360.0
+            array_rotation_rad = np.radians(array_rotation)
+
+            for i in range(num_panel_right_fixed):
+
+                phi_i = phi[i]
+
+                K_i = 12*(R_reaction_torque[i])/((block_length)**3)/np.cos(array_rotation_rad+phi_i)/(np.sin(array_rotation_rad+phi_i)-np.sin(array_rotation_rad))/block_width
+
+                name_K = f"spring_stiffness_{panel_id:.0f}_{params.pv_array.modules_per_span+1-i:.0f}"
+                
+                setattr(self, name_K, K_i)
+
+            # for left fixed part:
+            theo_matrix_left_fixed = np.zeros((num_panel_left_fixed+1, num_panel_left_fixed+1))
+            theo_vector_left_fixed = np.zeros(num_panel_left_fixed+1)
+            theo_matrix_left_fixed[0, :] = 1.0
+            theo_vector_left_fixed[0] = total_torque_left_fixed
+
+            T_double_integral_left_fixed = []
+            T_left_fixed = []
+
+            for i in range(num_panel_left_fixed):
+                name = f"double_integral_total_torque_panel_{panel_id:.0f}_{num_panel_left_fixed-1-i:.0f}"
+                T_double_integral_left_fixed.append(getattr(flow, name))
+                name = f"total_torque_panel_{panel_id:.0f}_{num_panel_left_fixed-1-i:.0f}"
+                T_left_fixed.append(getattr(flow, name))
+
+            for i in range(num_panel_left_fixed):
+                for j in range(i+1):
+                    theo_matrix_left_fixed[i+1, j] = (i+1-j)*params.pv_array.panel_span/params.pv_array.modules_per_span/(Gp*Ipp)
+                    theo_vector_left_fixed[i+1] += T_double_integral_left_fixed[j]/(Gp*Ipp)
+                for j in range(i):
+                    theo_vector_left_fixed[i+1] += (i-j)*T_left_fixed[j]/(Gp*Ipp)*params.pv_array.panel_span/params.pv_array.modules_per_span
+
+            for i in range(num_panel_left_fixed):    
+                theo_matrix_left_fixed[i+1:, i+1:] -= params.pv_array.panel_span/params.pv_array.modules_per_span/Gt/Ipt
+
+            R_reaction_torque = np.dot(np.linalg.inv(theo_matrix_left_fixed), theo_vector_left_fixed)  # this is the torque applied to tube
+
+
+            tube_rotate_matrix = np.zeros((num_panel_left_fixed, num_panel_left_fixed))
+            for i in range(num_panel_left_fixed):    
+                tube_rotate_matrix[i:, i:] += params.pv_array.panel_span/params.pv_array.modules_per_span/Gt/Ipt
+
+            phi = np.dot(tube_rotate_matrix, R_reaction_torque[1:])
+
+            # rotation of connector
+            x_panel = np.arange(num_panel_left_fixed)*(params.pv_array.panel_span/params.pv_array.modules_per_span)+params.pv_array.panel_span/params.pv_array.modules_per_span # location of panles
+
+
+            for i in range(num_panel_left_fixed):
+
+                phi_i = phi[i]
+
+                K_i = 12*(R_reaction_torque[i+1])/((block_length)**3)/np.cos(array_rotation_rad+phi_i)/(np.sin(array_rotation_rad+phi_i)-np.sin(array_rotation_rad))/block_width
+
+                name_K = f"spring_stiffness_{panel_id:.0f}_{num_panel_left_fixed-1-i:.0f}"
+                
+                setattr(self, name_K, K_i)
+
     def update_a(self, u, u_old, v_old, a_old, dt, beta, ufl=True):
         # Update formula for acceleration
         # a = 1/(2*beta)*((u - u0 - v0*dt)/(0.5*dt*dt) - (1-2*beta)*a0)
@@ -126,7 +263,7 @@ class Elasticity:
     def avg(self, x_old, x_new, alpha):
         return alpha * x_old + (1 - alpha) * x_new
 
-    def build_forms(self, domain, params, structure):
+    def build_forms(self, domain, params, structure, flow):
         """Builds all variational statements
 
         This method creates all the functions, expressions, and variational
@@ -212,6 +349,9 @@ class Elasticity:
 
         def k_nominal(u, u_):
             return ufl.inner(P_(u), ufl.grad(u_))
+        
+        def k_nominal_connector(u, u_):
+            return ufl.inner(P_connector(u), ufl.grad(u_))
 
         # The deformation gradient, F = I + dy/dX
         def F_(u):
@@ -241,11 +381,28 @@ class Elasticity:
 
             S_svk = structure.lame_lambda * ufl.tr(E) * I + 2.0 * structure.lame_mu * E
             return S_svk
+        
+        # The second Piola–Kirchhoff stress, S
+        def S_connector(u):
+            E = E_(u)
+            I = ufl.Identity(len(u))
+
+            # return lamda * ufl.tr(E) * I + 2.0 * mu * (E - ufl.tr(E) * I / 3.0)
+            # TODO: Why does the above form give a better result and where does it come from?
+
+            S_svk = structure.lame_lambda_connector * ufl.tr(E) * I + 2.0 * structure.lame_mu_connector * E
+            return S_svk
 
         # The first Piola–Kirchhoff stress tensor, P = F*S
         def P_(u):
             F = F_(u)
             S = S_(u)
+            # return ufl.inv(F) * S
+            return F * S
+        
+        def P_connector(u):
+            F = F_(u)
+            S = S_connector(u)
             # return ufl.inv(F) * S
             return F * S
 
@@ -302,14 +459,31 @@ class Elasticity:
 
         F = ufl.grad(self.u) + ufl.Identity(len(self.u))
         J = ufl.det(F)
+
+        self.z_unit_vector = dolfinx.fem.Constant(domain.structure.msh, [0.0,0.0,1.0])  # surface traction, N/m^2
+        
+        self.calculate_K_for_Robin_BC(domain, flow, params)
+
+        # To Do: how to differentiate the connector part and the panel part, dx_connector and dx_panel
         self.res = (
             m(self.avg(self.a_old, a_new, self.alpha_m), self.u_) * ufl.dx
             + c(self.avg(self.v_old, v_new, self.alpha_f), self.u_) * ufl.dx
-            + k_nominal(self.avg(self.u_old, self.u, self.alpha_f), self.u_) * ufl.dx
-            - structure.rho * ufl.inner(self.f, self.u_) * ufl.dx
+            + k_nominal(self.avg(self.u_old, self.u, self.alpha_f), self.u_) * ufl.dx_panel
+            + k_nominal_connector(self.avg(self.u_old, self.u, self.alpha_f), self.u_) * ufl.dx_connector
+            - structure.rho * ufl.inner(self.f, self.u_) * ufl.dx_panel
+            - structure.rho_connector * ufl.inner(self.f, self.u_) * ufl.dx_connector
             - ufl.dot(ufl.dot(self.stress_predicted * J * ufl.inv(F.T), n), self.u_)
             * self.ds
         )  # - Wext(self.u)
+
+        # Robin boundary condition terms
+        for panel_id in range(params.pv_array.stream_rows * params.pv_array.span_rows):
+            for i in range(params.pv_array.modules_per_span):
+                name_K = f"spring_stiffness_{panel_id:.0f}_{i:.0f}"
+                K_springs = dolfinx.fem.Constant(domain.structure.msh, float(getattr(self, name_K)))
+                self.res += ufl.dot(K_springs * self.u_, self.z_unit_vector)*ds_bottom.panel_connector_markers[panel_id][i]
+        for i in range(params.pv_array.modules_per_span):
+            self.res -= ufl.dot(K_springs * self.u_, self.z_unit_vector)*ds_bottom....
 
         # self.a = dolfinx.fem.form(ufl.lhs(res))
         # self.L = dolfinx.fem.form(ufl.rhs(res))

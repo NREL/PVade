@@ -24,7 +24,8 @@ pv_array:
   tracker_angle: 0.0
   span_fixation_pts: [13.2]
   torque_tube_separation: 0.2 # gap between panel and tube center
-  torque_tube_radius: 0.1 # radius of the torque tube
+  torque_tube_outer_radius: 0.1 # radius of the torque tube
+  torque_tube_inner_radius: 0.09 # radius of the torque tube
   modules_per_span: 10
   block_chord_div_by_panel_chord: 0.02
   
@@ -64,3 +65,6 @@ structure:
   motor_connection: true
   tube_connection: true
   beta_relaxation: 0.5
+  elasticity_modulus_tube: 2.0e+11
+  poissons_ratio_tube: 0.3
+  density_tube: 7800.0

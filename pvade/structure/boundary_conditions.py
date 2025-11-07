@@ -344,20 +344,12 @@ def build_structure_boundary_conditions(domain, params, functionspace):
 
         return fn_handle
 
-    # Start pinning along the lines expressed byt numpy_pt_total_array
-    # First, determine the total number of rows (number of lines to pin)
-    num_nodes = np.shape(domain.numpy_pt_total_array)[0]
-
-    # Determine how many pinning lines exist per each panel (e.g., 24 lines distributed on 8 panels means 3 lines per panel)
-    nodes_per_panel = int(num_nodes / total_num_panels)
-
-    # The torque tube entry (oriented spanwise along the middle, divides panel into upstream and downstream rectangular halves)
-    # is always the first entry, e.g., [0, ..., ..., 3, ..., ..., 6, ..., ...], [0, 3, 6] are the torque tubes
-    tube_nodes_idx = np.arange(0, num_nodes, nodes_per_panel, dtype=np.int64)
+    # # Start pinning along the lines expressed byt numpy_pt_total_array
+    # The center line of connectors bottom surface is fixed to remove rigid body motion
 
     if params.structure.tube_connection == True:
         # If making torque tube connections, pass only those pinning lines to the BC identification function
-        tube_nodes = domain.numpy_pt_total_array[tube_nodes_idx, :]
+        tube_nodes = domain.numpy_pt_total_array[:, :]
 
         facet_uppoint = dolfinx.mesh.locate_entities(
             domain.structure.msh, 1, connection_point_up_helper(tube_nodes)
@@ -369,18 +361,18 @@ def build_structure_boundary_conditions(domain, params, functionspace):
         bc.append(dolfinx.fem.dirichletbc(zero_vec, dofs_disp, functionspace))
 
     if params.structure.motor_connection == True:
-        # If making motor mount connections, pass only those pinning lines to the BC identification function
-        # this is done by making a copy of the numpy_pt_total_array with the torque tube lines *deleted*
-        # not done in place, so numpy_pt_total_array remains unaltered.
-        motor_nodes = np.delete(domain.numpy_pt_total_array, tube_nodes_idx, axis=0)
+        # The bottom surface of the center connector is fixed to represent the motor mount
+        motor_location = params.pv_array.modules_per_span // 2
+        for panel_id in range(total_num_panels):
 
-        facet_uppoint = dolfinx.mesh.locate_entities(
-            domain.structure.msh, 1, connection_point_up_helper(motor_nodes)
+            mount_facet = domain.structure.facet_tags.find(
+                domain.domain_markers[f"block_bottom_{panel_id:.0f}_{motor_location:.0f}"]["idx"]
         )
-        dofs_disp = dolfinx.fem.locate_dofs_topological(
-            functionspace, 1, [facet_uppoint]
-        )
+        
+            dofs_disp = dolfinx.fem.locate_dofs_topological(
+                functionspace, 2, [mount_facet]
+            )
 
-        bc.append(dolfinx.fem.dirichletbc(zero_vec, dofs_disp, functionspace))
+            bc.append(dolfinx.fem.dirichletbc(zero_vec, dofs_disp, functionspace))
 
     return bc

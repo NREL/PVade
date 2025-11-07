@@ -309,7 +309,7 @@ class FSIDomain:
         num_facets = f_map.size_local + f_map.num_ghosts
         all_values = np.zeros(num_facets, dtype=np.int32)
 
-        # Assign non-zero facet tags using the facet tag indices
+        # Assign non-zero facet tags using the facet tag indices, save the facet marker to all_values
         all_values[self.facet_tags.indices] = self.facet_tags.values
 
         cell_to_facet = self.msh.topology.connectivity(self.ndim, facet_dim)

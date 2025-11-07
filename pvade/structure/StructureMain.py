@@ -80,6 +80,10 @@ class Structure:
             domain.structure.msh, params.structure.rho
         )  # Constant(0.)
 
+        self.rho_connector = dolfinx.fem.Constant(
+            domain.structure.msh, params.structure.rho_tube
+        )
+
         # Define structural properties
         self.E = params.structure.elasticity_modulus  # 1.0e9
         self.poissons_ratio = params.structure.poissons_ratio  # 0.3
@@ -88,6 +92,16 @@ class Structure:
             self.E
             * self.poissons_ratio
             / ((1.0 + self.poissons_ratio) * (1.0 - 2.0 * self.poissons_ratio))
+        )
+        
+        # we are assuming the connectors has same mechanical properties as the tubes
+        self.E_connector = params.structure.elasticity_modulus_tube  # 1.0e9
+        self.poissons_ratio_connector = params.structure.poissons_ratio_tube  # 0.3
+        self.lame_mu_connector = self.E_connector / (2.0 * (1.0 + self.poissons_ratio_connector))
+        self.lame_lambda_connector = (
+            self.E_connector
+            * self.poissons_ratio_connector
+            / ((1.0 + self.poissons_ratio_connector) * (1.0 - 2.0 * self.poissons_ratio_connector))
         )
 
         if self.rank == 0:
@@ -201,7 +215,7 @@ class Structure:
     def avg(self, x_old, x_new, alpha):
         return alpha * x_old + (1 - alpha) * x_new
 
-    def build_forms(self, domain, params):
+    def build_forms(self, domain, params, flow):
         """Builds all variational statements
 
         This method creates all the functions, expressions, and variational
@@ -217,7 +231,7 @@ class Structure:
             params (:obj:`pvade.Parameters.SimParams`): A SimParams object
 
         """
-        self.elasticity.build_forms(domain, params, self)
+        self.elasticity.build_forms(domain, params, self, flow)
 
     def _assemble_system(self, params):
         """Pre-assemble all LHS matrices and RHS vectors
