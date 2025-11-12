@@ -691,6 +691,13 @@ properties:
         type: "number"
         description: "poissons ratio of the torque tube."
         units: "None"
+      density_tube:
+        default: 1.0
+        # minimum: 0.001
+        # maximum: 1000.0
+        type: "number"
+        description: "The density of the structure."
+        units: "kg/meter^3"
       body_force_x: 
         default:  100
         type: "number"

@@ -464,14 +464,18 @@ class Elasticity:
         
         self.calculate_K_for_Robin_BC(domain, flow, params)
 
+        dx_structure = ufl.Measure(
+            "dx", domain=domain.structure.msh, subdomain_data=domain.structure.cell_tags
+        )
+
         # To Do: how to differentiate the connector part and the panel part, dx_connector and dx_panel
         self.res = (
             m(self.avg(self.a_old, a_new, self.alpha_m), self.u_) * ufl.dx
             + c(self.avg(self.v_old, v_new, self.alpha_f), self.u_) * ufl.dx
-            + k_nominal(self.avg(self.u_old, self.u, self.alpha_f), self.u_) * ufl.dx_panel
-            + k_nominal_connector(self.avg(self.u_old, self.u, self.alpha_f), self.u_) * ufl.dx_connector
-            - structure.rho * ufl.inner(self.f, self.u_) * ufl.dx_panel
-            - structure.rho_connector * ufl.inner(self.f, self.u_) * ufl.dx_connector
+            + k_nominal(self.avg(self.u_old, self.u, self.alpha_f), self.u_) * dx_structure(domain.domain_markers["modules"]["idx"])
+            + k_nominal_connector(self.avg(self.u_old, self.u, self.alpha_f), self.u_) * dx_structure(domain.domain_markers["connectors"]["idx"])
+            - structure.rho * ufl.inner(self.f, self.u_) * dx_structure(domain.domain_markers["modules"]["idx"])
+            - structure.rho_connector * ufl.inner(self.f, self.u_) * dx_structure(domain.domain_markers["connectors"]["idx"])
             - ufl.dot(ufl.dot(self.stress_predicted * J * ufl.inv(F.T), n), self.u_)
             * self.ds
         )  # - Wext(self.u)
@@ -481,10 +485,8 @@ class Elasticity:
             for i in range(params.pv_array.modules_per_span):
                 name_K = f"spring_stiffness_{panel_id:.0f}_{i:.0f}"
                 K_springs = dolfinx.fem.Constant(domain.structure.msh, float(getattr(self, name_K)))
-                self.res += ufl.dot(K_springs * self.u_, self.z_unit_vector)*ds_bottom.panel_connector_markers[panel_id][i]
-        for i in range(params.pv_array.modules_per_span):
-            self.res -= ufl.dot(K_springs * self.u_, self.z_unit_vector)*ds_bottom....
-
+                self.res -= ufl.dot(K_springs * self.u_, self.z_unit_vector)*self.ds(domain.domain_markers[f"block_bottom_{panel_id:.0f}_{i:.0f}"])
+       
         # self.a = dolfinx.fem.form(ufl.lhs(res))
         # self.L = dolfinx.fem.form(ufl.rhs(res))
 

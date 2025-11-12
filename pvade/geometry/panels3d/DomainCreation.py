@@ -166,13 +166,14 @@ class DomainCreation(TemplateDomainCreation):
 
         if (
             params.pv_array.torque_tube_separation > 0.0
-            and params.pv_array.torque_tube_radius > 0.0
+            and params.pv_array.torque_tube_outer_radius > 0.0
         ):
             modeling_torque_tube = True
         else:
             modeling_torque_tube = False
 
-
+        vol_tags_modules = []
+        vol_tags_connectors = []
         # start to add panel
         for panel_id_y, yy in enumerate(y_centers):
             for panel_id_x, xx in enumerate(x_centers):
@@ -381,6 +382,20 @@ class DomainCreation(TemplateDomainCreation):
                     surf_tags_for_this_panel = self.gmsh_model.getBoundary(
                         [panel_tag], oriented=False
                     )
+
+                    vol_com = self.gmsh_model.occ.getCenterOfMass(self.ndim, panel_tag[1])
+                    if np.isclose(vol_com[2], params.pv_array.torque_tube_separation + params.pv_array.panel_thickness / 2.0):
+                        target_key = f"modules"
+                    elif np.isclose(vol_com[2], params.pv_array.torque_tube_separation / 2.0):
+                        target_key = f"connectors"
+                    
+                    
+                        
+                    if target_key is not None:
+                        if target_key in this_panel_transformed_com:
+                            this_panel_transformed_com[target_key].append(vol_com)
+                        else:
+                            this_panel_transformed_com[target_key] = [vol_com]
 
                     for surf_tag in surf_tags_for_this_panel:
                         surf_dim = surf_tag[0]
@@ -739,6 +754,24 @@ class DomainCreation(TemplateDomainCreation):
                     )
                 if this_surf_bbox[2] > params.domain.z_max:
                     raise ValueError(f"A panel extends past the z_max wall.")
+        
+
+        # Loop over all the finalized volumes after fragmentation and tag everything
+        all_vol_tag_list = self.gmsh_model.occ.getEntities(self.ndim)
+
+        for vol_tag in all_vol_tag_list:
+            vol_id = vol_tag[1]
+            com = self.gmsh_model.occ.getCenterOfMass(self.ndim, vol_id)
+
+            located_this_volume = False
+
+            for key, val in transformed_com.items():
+                    for target_com in val:
+                        # print(target_com)
+                        if np.allclose(np.array(com), target_com):
+                            located_this_volume = True
+                            if "trash" not in key:
+                                self._add_to_domain_markers(key, [vol_id], "cell")
 
         # Volumes are the entities with dimension equal to the mesh dimension
         vol_tag_list = self.gmsh_model.occ.getEntities(self.ndim)
@@ -763,8 +796,10 @@ class DomainCreation(TemplateDomainCreation):
 
         structure_panel_only_list = []
         structure_connector_only_list = []
-        
-        self._add_to_domain_markers("structure", structure_vol_list, "cell")
+# 
+        # # self._add_to_domain_markers("structure", structure_vol_list, "cell")
+        # for individual_vol_id in structure_vol_list:
+        #     self._add_to_domain_markers(f"structure_{individual_vol_id:03.0f}", [individual_vol_id], "cell")
         self._add_to_domain_markers("fluid", fluid_vol_list, "cell")
 
         # Record all the data collected to domain_markers as physics groups with physical names

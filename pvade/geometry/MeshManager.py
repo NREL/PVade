@@ -207,12 +207,19 @@ class FSIDomain:
             gdim=self.ndim,
         )
 
+
+
         self.msh.topology.create_connectivity(self.ndim, self.ndim - 1)
 
         # Specify names for the mesh elements
         self.msh.name = "mesh_total"
         self.cell_tags.name = "cell_tags"
         self.facet_tags.name = "facet_tags"
+
+        with dolfinx.io.XDMFFile(self.comm, f"parent_mesh_only.xdmf", "w") as fp:
+            fp.write_mesh(self.msh)
+            fp.write_meshtags(self.cell_tags)
+            fp.write_meshtags(self.facet_tags)
 
         # if (
         #     params.general.geometry_module == "panels3d"
@@ -276,10 +283,17 @@ class FSIDomain:
                 print(f"Creating {sub_domain_name} submesh")
 
             # Get the idx associated with either "fluid" or "structure"
-            marker_id = self.domain_markers[sub_domain_name]["idx"]
-
-            # Find all cells where cell tag = marker_id
-            submesh_cells = self.cell_tags.find(marker_id)
+            if sub_domain_name == "structure" and "structure" not in self.domain_markers:
+                marker_id = self.domain_markers["modules"]["idx"] 
+                # Find all cells where cell tag = marker_id
+                submesh_cells_modules = self.cell_tags.find(marker_id)
+                marker_id = self.domain_markers["connectors"]["idx"]
+                submesh_cells = np.hstack((self.cell_tags.find(marker_id), submesh_cells_modules))
+                
+            else:
+                marker_id = self.domain_markers[sub_domain_name]["idx"]
+                # Find all cells where cell tag = marker_id
+                submesh_cells = self.cell_tags.find(marker_id)
 
             # Use those found cells to construct a new mesh
             submesh, entity_map, vertex_map, geom_map = dolfinx.mesh.create_submesh(
@@ -345,14 +359,32 @@ class FSIDomain:
                 for child, parent in zip(child_facets, parent_facets):
                     sub_values[child] = all_values[parent]
 
+            # sub_cell_map = sub_domain.msh.topology.index_map(self.ndim)
+            f_map_cell = self.msh.topology.index_map(self.ndim)
+
+            # Get the total number of cells in the parent mesh
+            num_cells = f_map_cell.size_local + f_map_cell.num_ghosts
+            all_cell_values = np.zeros(num_cells, dtype=np.int32)
+            all_cell_values[self.cell_tags.indices] = self.cell_tags.values
+
+
             sub_cell_map = sub_domain.msh.topology.index_map(self.ndim)
             sub_num_cells = sub_cell_map.size_local + sub_cell_map.num_ghosts
+
+            sub_cell_values = np.empty(sub_num_cells, dtype=np.int32)
+
+
+            for k, entity in enumerate(sub_domain.entity_map):
+                sub_cell_values[k] = all_cell_values[entity]
+
+ 
+            # sub_num_cells = sub_cell_map.size_local + sub_cell_map.num_ghosts
 
             sub_domain.cell_tags = dolfinx.mesh.meshtags(
                 sub_domain.msh,
                 sub_domain.msh.topology.dim,
                 np.arange(sub_num_cells, dtype=np.int32),
-                np.ones(sub_num_cells, dtype=np.int32),
+                sub_cell_values,
             )
             sub_domain.cell_tags.name = "cell_tags"
 

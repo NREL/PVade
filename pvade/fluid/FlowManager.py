@@ -856,6 +856,9 @@ class Flow:
 
         self.compute_lift_and_drag(params, current_time)
 
+        self.compute_panel_torques(domain, params)
+        self.compute_double_integral_panel_torques(domain, params)
+
         # Compute the pressure drop between the inlet and outlet
         if params.pv_array.stream_rows > 0:
             self.compute_pressure_drop_between_points(domain, params)
