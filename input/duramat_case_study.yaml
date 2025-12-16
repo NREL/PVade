@@ -27,6 +27,7 @@ pv_array:
   torque_tube_outer_radius: 0.1 # radius of the torque tube
   torque_tube_inner_radius: 0.09 # radius of the torque tube
   modules_per_span: 10
+  fixed_location: 5   # fixed location of the panel along the span (from 0 (fixed at left) to modules_per_span (fixed at right))
   block_chord_div_by_panel_chord: 0.02
   
 solver:

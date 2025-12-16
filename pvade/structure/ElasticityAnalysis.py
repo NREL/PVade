@@ -101,128 +101,269 @@ class Elasticity:
         # total number of pv rows
         total_num_panels = params.pv_array.stream_rows * params.pv_array.span_rows
 
-        num_panel_right_fixed = params.pv_array.modules_per_span // 2
-        num_panel_left_fixed = params.pv_array.modules_per_span - num_panel_right_fixed
-
-        # for right fixed part:
-
         for panel_id in range(total_num_panels):
-            total_torque_right_fixed = 0
-            total_torque_left_fixed = 0
+            # construct the matrix, size: modules_per_span+1 by modules_per_span+1
+            theo_matrix = np.zeros((params.pv_array.modules_per_span+1, params.pv_array.modules_per_span+1))
+            theo_vector = np.zeros(params.pv_array.modules_per_span+1)
+
+            connector_locations = np.linspace(
+                0, params.pv_array.panel_span, params.pv_array.modules_per_span + 1
+            )
+
+            total_torque_on_this_panel_name = f"total_torque_panel_{panel_id:.0f}"
+            total_torque_on_this_panel = getattr(flow, total_torque_on_this_panel_name)
+
+            theo_matrix[params.pv_array.modules_per_span, :] = 1/Gp/Ipp
+            theo_vector[params.pv_array.modules_per_span] = -total_torque_on_this_panel/Gp/Ipp
+
+            # contribution from panel:
+
+                # contribution from C0 to matrix:
+
+            theo_matrix[:params.pv_array.modules_per_span, :params.pv_array.fixed_location] += connector_locations[params.pv_array.fixed_location]/(Gp*Ipp)
+            theo_matrix[:params.pv_array.modules_per_span, 1:params.pv_array.fixed_location] -= connector_locations[1:params.pv_array.fixed_location]/(Gp*Ipp)
+
+                # contribution from C0 to vector:
+            T_double_integral_at_fixed_location_name = f"double_integral_total_torque_panel_{panel_id:.0f}_{params.pv_array.fixed_location:.0f}"
+            T_double_integral_at_fixed_location = getattr(flow, T_double_integral_at_fixed_location_name)
+            theo_vector[:params.pv_array.modules_per_span] += -T_double_integral_at_fixed_location/Gp/Ipp
             
-            for i in range(num_panel_left_fixed, params.pv_array.modules_per_span):
-                name = f"total_torque_panel_{panel_id:.0f}_{i:.0f}"
-                total_torque_right_fixed += getattr(flow, name)
+                # contribution of panels to matrix
+            theo_matrix[0, 0] += -connector_locations[0]/(Gp*Ipp)
+            theo_matrix[1, 0] += -connector_locations[1]/(Gp*Ipp)
+
+            for i in range(2, params.pv_array.fixed_location):
+                theo_matrix[i, :i] += -connector_locations[i]/(Gp*Ipp)
+                theo_matrix[i, 1:i] += connector_locations[1:i]/(Gp*Ipp)
+
+            for i in range(params.pv_array.fixed_location, params.pv_array.modules_per_span):
+                theo_matrix[i, :i+1] += -connector_locations[i+1]/(Gp*Ipp)
+                theo_matrix[i, 1:i+1] += connector_locations[1:i+1]/(Gp*Ipp)
+
+                # contribution of panels to vector
+            T_double_integral_array = []
+            for i in range(params.pv_array.modules_per_span+1):
+                name = f"double_integral_total_torque_panel_{panel_id:.0f}_{i:.0f}"
+                T_double_integral_array.append(getattr(flow, name))
+            T_double_integral_array = np.array(T_double_integral_array)
+            theo_vector[:params.pv_array.modules_per_span] += np.delete(T_double_integral_array, params.pv_array.fixed_location)/Gp/Ipp
+
+            # contribution from tube:
+
+                # contribution from C0 to matrix:
+
+            theo_matrix[:params.pv_array.modules_per_span, params.pv_array.fixed_location:params.pv_array.modules_per_span+1] += -connector_locations[params.pv_array.fixed_location]/(Gt*Ipt)
+            theo_matrix[:params.pv_array.modules_per_span, 1:params.pv_array.fixed_location] += -connector_locations[1:params.pv_array.fixed_location]/(Gt*Ipt)
+
+                # contribution from C0 to vector:
+            theo_vector[:params.pv_array.modules_per_span] += total_torque_on_this_panel*connector_locations[params.pv_array.fixed_location]/Gt/Ipt
+
+                # contribution of tube to matrix
+            theo_matrix[0, 1:params.pv_array.modules_per_span+1] += connector_locations[0]/(Gt*Ipt)
+            theo_matrix[1, 1:params.pv_array.modules_per_span+1] += connector_locations[1]/(Gt*Ipt)
+
+            for i in range(2, params.pv_array.fixed_location):
+                theo_matrix[i, i:params.pv_array.modules_per_span+1] += connector_locations[i]/(Gt*Ipt)
+                theo_matrix[i, 1:i] += connector_locations[1:i]/(Gt*Ipt)
+
+            for i in range(params.pv_array.fixed_location, params.pv_array.modules_per_span):
+                theo_matrix[i, i+1:params.pv_array.modules_per_span+1] += connector_locations[i+1]/(Gt*Ipt)
+                theo_matrix[i, 1:i+1] += connector_locations[1:i+1]/(Gt*Ipt)
+
+                # contribution of tube to vector
+            theo_vector[:params.pv_array.fixed_location] += -total_torque_on_this_panel/Gt/Ipt*connector_locations[:params.pv_array.fixed_location]
+            theo_vector[params.pv_array.fixed_location:params.pv_array.modules_per_span] += -total_torque_on_this_panel/Gt/Ipt*connector_locations[params.pv_array.fixed_location]
+
+            R_reaction_torque = np.dot(np.linalg.inv(theo_matrix), theo_vector)  # this is the torque applied to tube
             
-            for i in range(num_panel_left_fixed):
-                name = f"total_torque_panel_{panel_id:.0f}_{i:.0f}"
-                total_torque_left_fixed += getattr(flow, name)
+            # rotation of tube at each connector location
+            tube_rotate_matrix = np.zeros((params.pv_array.modules_per_span, params.pv_array.modules_per_span+1))
+            tube_rotate_vector = np.zeros(params.pv_array.modules_per_span)
 
-            theo_matrix_right_fixed = np.zeros((num_panel_right_fixed+1, num_panel_right_fixed+1))
-            theo_vector_right_fixed = np.zeros(num_panel_right_fixed+1)
+            # contribution from panel:
 
-            theo_matrix_right_fixed[0, :] = 1.0
-            theo_vector_right_fixed[0] = total_torque_right_fixed
-            theo_matrix_right_fixed[1:, :-1] = params.pv_array.panel_span/params.pv_array.modules_per_span/Gt/Ipt
+                # contribution from C0 to matrix:
+
+            tube_rotate_matrix[:params.pv_array.modules_per_span, :params.pv_array.fixed_location] += connector_locations[params.pv_array.fixed_location]/(Gp*Ipp)
+            tube_rotate_matrix[:params.pv_array.modules_per_span, 1:params.pv_array.fixed_location] -= connector_locations[1:params.pv_array.fixed_location]/(Gp*Ipp)
+
+                # contribution from C0 to vector:
+            tube_rotate_vector[:params.pv_array.modules_per_span] += T_double_integral_array[params.pv_array.fixed_location]/Gp/Ipp
+
+
+                # contribution of panels to matrix
+            tube_rotate_matrix[0, 0] += -connector_locations[0]/(Gp*Ipp)
+            tube_rotate_matrix[1, 0] += -connector_locations[1]/(Gp*Ipp)
+
+            for i in range(2, params.pv_array.fixed_location):
+                tube_rotate_matrix[i, :i] += -connector_locations[i]/(Gp*Ipp)
+                tube_rotate_matrix[i, 1:i] += connector_locations[1:i]/(Gp*Ipp)
+
+            for i in range(params.pv_array.fixed_location, params.pv_array.modules_per_span):
+                tube_rotate_matrix[i, :i+1] += -connector_locations[i+1]/(Gp*Ipp)
+                tube_rotate_matrix[i, 1:i+1] += connector_locations[1:i+1]/(Gp*Ipp)
+
+                # contribution of panels to vector
+            tube_rotate_vector[:params.pv_array.modules_per_span] += -np.delete(T_double_integral_array, params.pv_array.fixed_location)/Gp/Ipp
+
+
+            phi = np.dot(tube_rotate_matrix, R_reaction_torque) + tube_rotate_vector
+
+            if isinstance(params.pv_array.tracker_angle, list):
+                    if panel_id == 0:
+                        assert (
+                            len(params.pv_array.tracker_angle)
+                            == params.pv_array.stream_rows * params.pv_array.span_rows
+                        ), f"Length of tracker angle list ({len(params.pv_array.tracker_angle)}) not equal to total number of PV tables ({params.pv_array.stream_rows * params.pv_array.span_rows})."
+
+                    tracker_angle_rad = np.radians(
+                        params.pv_array.tracker_angle[panel_id]
+                    )
+            else:
+                tracker_angle_rad = np.radians(params.pv_array.tracker_angle)
+
+
+            K = np.abs(12*(np.delete(R_reaction_torque, params.pv_array.fixed_location))/((params.pv_array.block_chord_div_by_panel_chord * params.pv_array.panel_chord)**3)/np.cos(tracker_angle_rad+phi)/(np.sin(tracker_angle_rad+phi)-np.sin(tracker_angle_rad))/(params.pv_array.block_chord_div_by_panel_chord * params.pv_array.panel_chord/2))
+
+            # assume K is 0 at the fixed connector
+            K = np.flip(np.insert(K, params.pv_array.fixed_location, 0))
+
+            # K[0] is the stiffness at the most back connector (highest y)
+            # K[10] is the stiffness at the most front connector (lowest y)
+            # for block_bot_surface, it is numbered from lowest y to highest y, so flip K
             
-            # as the double integral of torque along the span from front to back, left fixed part to right fixed part, it need to be flipped
-            T_double_integral_right_fixed = []
-            T_right_fixed = []
-            for i in range(params.pv_array.modules_per_span):
-                name = f"double_integral_total_torque_panel_{panel_id:.0f}_{params.pv_array.modules_per_span-1-i:.0f}"
-                T_double_integral_right_fixed.append(getattr(flow, name))
-                name = f"total_torque_panel_{panel_id:.0f}_{params.pv_array.modules_per_span-1-i:.0f}"
-                T_right_fixed.append(getattr(flow, name))
-            for i in range(num_panel_right_fixed):
-                for j in range(i+1):
-                    theo_vector_right_fixed[i+1] += T_double_integral_right_fixed[-1-j]/(Gp*Ipp)
-                    theo_vector_right_fixed[i+1] -= (i+1-j)*T_right_fixed[-1-j]/(Gp*Ipp)*params.pv_array.panel_span/params.pv_array.modules_per_span
-                for j in range(i):
-                    theo_matrix_right_fixed[i+1, :-1-j-1] += params.pv_array.panel_span/params.pv_array.modules_per_span/(Gt*Ipt)
+            # if there are 10 modules per array, there are 11 connectors, K has shape of 10, the K at the fixed connector is not included.
+            for i in range(params.pv_array.modules_per_span+1):
 
+                name_K = f"spring_stiffness_{panel_id:.0f}_{i:.0f}"
+                setattr(self, name_K, K[i])
+               
 
-            for i in range(num_panel_right_fixed):
-                for j in range(i+1):
-                        theo_matrix_right_fixed[i+1, num_panel_right_fixed-j:] -= params.pv_array.panel_span/params.pv_array.modules_per_span/Gp/Ipp
-
-            R_reaction_torque = np.dot(np.linalg.inv(theo_matrix_right_fixed), theo_vector_right_fixed)
-            
-            tube_rotate_matrix = np.ones((num_panel_right_fixed, num_panel_right_fixed))*params.pv_array.panel_span/params.pv_array.modules_per_span*(1.0/Gt/Ipt)
-
-            for i in range(num_panel_right_fixed):
-                for j in range(i):
-                    tube_rotate_matrix[i, :num_panel_right_fixed-1-j] += params.pv_array.panel_span/params.pv_array.modules_per_span*(1.0/Gt/Ipt)
-            
-            # check the standalone code, why it need to be flipped.
-            phi = np.flip(np.dot(tube_rotate_matrix, R_reaction_torque[:-1]))
-
-            # rotation of connector
-            x_panel = np.arange(num_panel_right_fixed)*(params.pv_array.panel_span/params.pv_array.modules_per_span) # location of panels
-
-            block_length = params.pv_array.block_chord_div_by_panel_chord * params.pv_array.panel_chord
-            block_width = params.pv_array.block_chord_div_by_panel_chord*params.pv_array.panel_span/params.pv_array.modules_per_span/2
-
-            # To Do: check the angle, is this correct?
-            array_rotation = (params.fluid.wind_direction + 90.0) % 360.0
-            array_rotation_rad = np.radians(array_rotation)
-
-            for i in range(num_panel_right_fixed):
-
-                phi_i = phi[i]
-
-                K_i = 12*(R_reaction_torque[i])/((block_length)**3)/np.cos(array_rotation_rad+phi_i)/(np.sin(array_rotation_rad+phi_i)-np.sin(array_rotation_rad))/block_width
-
-                name_K = f"spring_stiffness_{panel_id:.0f}_{params.pv_array.modules_per_span+1-i:.0f}"
                 
-                setattr(self, name_K, K_i)
-
-            # for left fixed part:
-            theo_matrix_left_fixed = np.zeros((num_panel_left_fixed+1, num_panel_left_fixed+1))
-            theo_vector_left_fixed = np.zeros(num_panel_left_fixed+1)
-            theo_matrix_left_fixed[0, :] = 1.0
-            theo_vector_left_fixed[0] = total_torque_left_fixed
-
-            T_double_integral_left_fixed = []
-            T_left_fixed = []
-
-            for i in range(num_panel_left_fixed):
-                name = f"double_integral_total_torque_panel_{panel_id:.0f}_{num_panel_left_fixed-1-i:.0f}"
-                T_double_integral_left_fixed.append(getattr(flow, name))
-                name = f"total_torque_panel_{panel_id:.0f}_{num_panel_left_fixed-1-i:.0f}"
-                T_left_fixed.append(getattr(flow, name))
-
-            for i in range(num_panel_left_fixed):
-                for j in range(i+1):
-                    theo_matrix_left_fixed[i+1, j] = (i+1-j)*params.pv_array.panel_span/params.pv_array.modules_per_span/(Gp*Ipp)
-                    theo_vector_left_fixed[i+1] += T_double_integral_left_fixed[j]/(Gp*Ipp)
-                for j in range(i):
-                    theo_vector_left_fixed[i+1] += (i-j)*T_left_fixed[j]/(Gp*Ipp)*params.pv_array.panel_span/params.pv_array.modules_per_span
-
-            for i in range(num_panel_left_fixed):    
-                theo_matrix_left_fixed[i+1:, i+1:] -= params.pv_array.panel_span/params.pv_array.modules_per_span/Gt/Ipt
-
-            R_reaction_torque = np.dot(np.linalg.inv(theo_matrix_left_fixed), theo_vector_left_fixed)  # this is the torque applied to tube
 
 
-            tube_rotate_matrix = np.zeros((num_panel_left_fixed, num_panel_left_fixed))
-            for i in range(num_panel_left_fixed):    
-                tube_rotate_matrix[i:, i:] += params.pv_array.panel_span/params.pv_array.modules_per_span/Gt/Ipt
 
-            phi = np.dot(tube_rotate_matrix, R_reaction_torque[1:])
+        # num_panel_right_fixed = params.pv_array.modules_per_span // 2
+        # num_panel_left_fixed = params.pv_array.modules_per_span - num_panel_right_fixed
 
-            # rotation of connector
-            x_panel = np.arange(num_panel_left_fixed)*(params.pv_array.panel_span/params.pv_array.modules_per_span)+params.pv_array.panel_span/params.pv_array.modules_per_span # location of panles
+        # # for right fixed part:
+
+        # for panel_id in range(total_num_panels):
+        #     total_torque_right_fixed = 0
+        #     total_torque_left_fixed = 0
+            
+        #     for i in range(num_panel_left_fixed, params.pv_array.modules_per_span):
+        #         name = f"total_torque_panel_{panel_id:.0f}_{i:.0f}"
+        #         total_torque_right_fixed += getattr(flow, name)
+            
+        #     for i in range(num_panel_left_fixed):
+        #         name = f"total_torque_panel_{panel_id:.0f}_{i:.0f}"
+        #         total_torque_left_fixed += getattr(flow, name)
+
+        #     theo_matrix_right_fixed = np.zeros((num_panel_right_fixed+1, num_panel_right_fixed+1))
+        #     theo_vector_right_fixed = np.zeros(num_panel_right_fixed+1)
+
+        #     theo_matrix_right_fixed[0, :] = 1.0
+        #     theo_vector_right_fixed[0] = total_torque_right_fixed
+        #     theo_matrix_right_fixed[1:, :-1] = params.pv_array.panel_span/params.pv_array.modules_per_span/Gt/Ipt
+            
+        #     # as the double integral of torque along the span from front to back, left fixed part to right fixed part, it need to be flipped
+        #     T_double_integral_right_fixed = []
+        #     T_right_fixed = []
+        #     for i in range(params.pv_array.modules_per_span):
+        #         name = f"double_integral_total_torque_panel_{panel_id:.0f}_{params.pv_array.modules_per_span-1-i:.0f}"
+        #         T_double_integral_right_fixed.append(getattr(flow, name))
+        #         name = f"total_torque_panel_{panel_id:.0f}_{params.pv_array.modules_per_span-1-i:.0f}"
+        #         T_right_fixed.append(getattr(flow, name))
+        #     for i in range(num_panel_right_fixed):
+        #         for j in range(i+1):
+        #             theo_vector_right_fixed[i+1] += T_double_integral_right_fixed[-1-j]/(Gp*Ipp)
+        #             theo_vector_right_fixed[i+1] -= (i+1-j)*T_right_fixed[-1-j]/(Gp*Ipp)*params.pv_array.panel_span/params.pv_array.modules_per_span
+        #         for j in range(i):
+        #             theo_matrix_right_fixed[i+1, :-1-j-1] += params.pv_array.panel_span/params.pv_array.modules_per_span/(Gt*Ipt)
 
 
-            for i in range(num_panel_left_fixed):
+        #     for i in range(num_panel_right_fixed):
+        #         for j in range(i+1):
+        #                 theo_matrix_right_fixed[i+1, num_panel_right_fixed-j:] -= params.pv_array.panel_span/params.pv_array.modules_per_span/Gp/Ipp
 
-                phi_i = phi[i]
+        #     R_reaction_torque = np.dot(np.linalg.inv(theo_matrix_right_fixed), theo_vector_right_fixed)
+            
+        #     tube_rotate_matrix = np.ones((num_panel_right_fixed, num_panel_right_fixed))*params.pv_array.panel_span/params.pv_array.modules_per_span*(1.0/Gt/Ipt)
 
-                K_i = 12*(R_reaction_torque[i+1])/((block_length)**3)/np.cos(array_rotation_rad+phi_i)/(np.sin(array_rotation_rad+phi_i)-np.sin(array_rotation_rad))/block_width
+        #     for i in range(num_panel_right_fixed):
+        #         for j in range(i):
+        #             tube_rotate_matrix[i, :num_panel_right_fixed-1-j] += params.pv_array.panel_span/params.pv_array.modules_per_span*(1.0/Gt/Ipt)
+            
+        #     # check the standalone code, why it need to be flipped.
+        #     phi = np.flip(np.dot(tube_rotate_matrix, R_reaction_torque[:-1]))
 
-                name_K = f"spring_stiffness_{panel_id:.0f}_{num_panel_left_fixed-1-i:.0f}"
+        #     # rotation of connector
+        #     x_panel = np.arange(num_panel_right_fixed)*(params.pv_array.panel_span/params.pv_array.modules_per_span) # location of panels
+
+        #     block_length = params.pv_array.block_chord_div_by_panel_chord * params.pv_array.panel_chord
+        #     block_width = params.pv_array.block_chord_div_by_panel_chord*params.pv_array.panel_span/params.pv_array.modules_per_span/2
+
+        #     # To Do: check the angle, is this correct?
+        #     array_rotation = (params.fluid.wind_direction + 90.0) % 360.0
+        #     array_rotation_rad = np.radians(array_rotation)
+
+        #     for i in range(num_panel_right_fixed):
+
+        #         phi_i = phi[i]
+
+        #         K_i = 12*(R_reaction_torque[i])/((block_length)**3)/np.cos(array_rotation_rad+phi_i)/(np.sin(array_rotation_rad+phi_i)-np.sin(array_rotation_rad))/block_width
+
+        #         name_K = f"spring_stiffness_{panel_id:.0f}_{params.pv_array.modules_per_span+1-i:.0f}"
+        #         setattr(self, name_K, K_i)
+
+        #     # for left fixed part:
+        #     theo_matrix_left_fixed = np.zeros((num_panel_left_fixed+1, num_panel_left_fixed+1))
+        #     theo_vector_left_fixed = np.zeros(num_panel_left_fixed+1)
+        #     theo_matrix_left_fixed[0, :] = 1.0
+        #     theo_vector_left_fixed[0] = total_torque_left_fixed
+
+        #     T_double_integral_left_fixed = []
+        #     T_left_fixed = []
+
+        #     for i in range(num_panel_left_fixed):
+        #         name = f"double_integral_total_torque_panel_{panel_id:.0f}_{num_panel_left_fixed-1-i:.0f}"
+        #         T_double_integral_left_fixed.append(getattr(flow, name))
+        #         name = f"total_torque_panel_{panel_id:.0f}_{num_panel_left_fixed-1-i:.0f}"
+        #         T_left_fixed.append(getattr(flow, name))
+
+        #     for i in range(num_panel_left_fixed):
+        #         for j in range(i+1):
+        #             theo_matrix_left_fixed[i+1, j] = (i+1-j)*params.pv_array.panel_span/params.pv_array.modules_per_span/(Gp*Ipp)
+        #             theo_vector_left_fixed[i+1] += T_double_integral_left_fixed[j]/(Gp*Ipp)
+        #         for j in range(i):
+        #             theo_vector_left_fixed[i+1] += (i-j)*T_left_fixed[j]/(Gp*Ipp)*params.pv_array.panel_span/params.pv_array.modules_per_span
+
+        #     for i in range(num_panel_left_fixed):    
+        #         theo_matrix_left_fixed[i+1:, i+1:] -= params.pv_array.panel_span/params.pv_array.modules_per_span/Gt/Ipt
+
+        #     R_reaction_torque = np.dot(np.linalg.inv(theo_matrix_left_fixed), theo_vector_left_fixed)  # this is the torque applied to tube
+
+
+        #     tube_rotate_matrix = np.zeros((num_panel_left_fixed, num_panel_left_fixed))
+        #     for i in range(num_panel_left_fixed):    
+        #         tube_rotate_matrix[i:, i:] += params.pv_array.panel_span/params.pv_array.modules_per_span/Gt/Ipt
+
+        #     phi = np.dot(tube_rotate_matrix, R_reaction_torque[1:])
+
+        #     # rotation of connector
+        #     x_panel = np.arange(num_panel_left_fixed)*(params.pv_array.panel_span/params.pv_array.modules_per_span)+params.pv_array.panel_span/params.pv_array.modules_per_span # location of panles
+
+
+        #     for i in range(num_panel_left_fixed):
+
+        #         phi_i = phi[i]
+
+        #         K_i = 12*(R_reaction_torque[i+1])/((block_length)**3)/np.cos(array_rotation_rad+phi_i)/(np.sin(array_rotation_rad+phi_i)-np.sin(array_rotation_rad))/block_width
+
+        #         name_K = f"spring_stiffness_{panel_id:.0f}_{num_panel_left_fixed-1-i:.0f}"
                 
-                setattr(self, name_K, K_i)
+        #         setattr(self, name_K, K_i)
 
     def update_a(self, u, u_old, v_old, a_old, dt, beta, ufl=True):
         # Update formula for acceleration
@@ -482,7 +623,7 @@ class Elasticity:
 
         # Robin boundary condition terms
         for panel_id in range(params.pv_array.stream_rows * params.pv_array.span_rows):
-            for i in range(params.pv_array.modules_per_span):
+            for i in range(params.pv_array.modules_per_span+1):
                 name_K = f"spring_stiffness_{panel_id:.0f}_{i:.0f}"
                 K_springs = dolfinx.fem.Constant(domain.structure.msh, float(getattr(self, name_K)))
                 self.res -= ufl.dot(K_springs * self.u_, self.z_unit_vector)*self.ds(domain.domain_markers[f"block_bottom_{panel_id:.0f}_{i:.0f}"])

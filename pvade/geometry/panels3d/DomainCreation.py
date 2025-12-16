@@ -498,9 +498,10 @@ class DomainCreation(TemplateDomainCreation):
                         if (
                             np.isclose(com[2], params.pv_array.torque_tube_separation) and modeling_torque_tube and np.isclose(com[1], module_distances[params.pv_array.modules_per_span] - params.pv_array.block_chord_div_by_panel_chord * half_chord/2.0)
                         ):
-                            target_key = f"interior_surface_{panel_ct:.0f}"
+                            target_key = f"interior_surface_{panel_ct:.0f}" # block/panel interface
                             surface_located_or_not = True
 
+                        # if not the most left/right panel boundary, it is panel/panel interface
                         if not surface_located_or_not:
                             for module_id in range(params.pv_array.modules_per_span):
 
@@ -756,7 +757,7 @@ class DomainCreation(TemplateDomainCreation):
                     raise ValueError(f"A panel extends past the z_max wall.")
         
 
-        # Loop over all the finalized volumes after fragmentation and tag everything
+        # mark the panel and connector volumes
         all_vol_tag_list = self.gmsh_model.occ.getEntities(self.ndim)
 
         for vol_tag in all_vol_tag_list:
@@ -773,6 +774,7 @@ class DomainCreation(TemplateDomainCreation):
                             if "trash" not in key:
                                 self._add_to_domain_markers(key, [vol_id], "cell")
 
+        # Mark the fluid volume
         # Volumes are the entities with dimension equal to the mesh dimension
         vol_tag_list = self.gmsh_model.occ.getEntities(self.ndim)
         structure_vol_list = []

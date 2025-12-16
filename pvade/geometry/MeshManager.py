@@ -283,6 +283,8 @@ class FSIDomain:
                 print(f"Creating {sub_domain_name} submesh")
 
             # Get the idx associated with either "fluid" or "structure"
+
+            # if structure includes modules and connectors
             if sub_domain_name == "structure" and "structure" not in self.domain_markers:
                 marker_id = self.domain_markers["modules"]["idx"] 
                 # Find all cells where cell tag = marker_id

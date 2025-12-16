@@ -221,6 +221,10 @@ properties:
         minimum: 1
         type: "integer"
         description: "The number of modules/panels per every panel_span distance. This can be thought of as the number of modules/panels per each table, counted in the spanwise direction only (i.e., 2-in-portait systems should report only the number in the spanwise direction, vs 2x that value)."
+      fixed_location:
+        default: 5
+        type: "integer"
+        description: "If an integer between 0 and modules_per_span, indicates the fixed location
       block_chord_div_by_panel_chord:
         default: 0.1
         minimum: 0.01

@@ -272,7 +272,7 @@ def build_structure_boundary_conditions(domain, params, functionspace):
     total_num_panels = params.pv_array.stream_rows * params.pv_array.span_rows
 
     for num_panel in range(total_num_panels):
-        for location in params.structure.bc_list:
+        for location in params.structure.bc_list: # it is empty
             location_panel = f"{location}_{num_panel}"
             # f"front_{num_panel}" , f"back_{num_panel}":
             # for location in  [f"left_{num_panel}"]:# , f"right_{num_panel}":
@@ -362,11 +362,11 @@ def build_structure_boundary_conditions(domain, params, functionspace):
 
     if params.structure.motor_connection == True:
         # The bottom surface of the center connector is fixed to represent the motor mount
-        motor_location = params.pv_array.modules_per_span // 2
+        motor_location = params.pv_array.fixed_location  # fixed location along the span, if fixed_location=5, it means the left boundary of the 6th connector is fixed
         for panel_id in range(total_num_panels):
 
             mount_facet = domain.structure.facet_tags.find(
-                domain.domain_markers[f"block_bottom_{panel_id:.0f}_{motor_location:.0f}"]["idx"]
+                domain.domain_markers[f"block_left_{panel_id:.0f}_{motor_location:.0f}"]["idx"]
         )
         
             dofs_disp = dolfinx.fem.locate_dofs_topological(
