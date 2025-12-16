@@ -110,6 +110,10 @@ class Elasticity:
                 0, params.pv_array.panel_span, params.pv_array.modules_per_span + 1
             )
 
+            # ?? double integral is not available until the second time step. Should make it be zero for the 
+            # first time step then it will be updated once the first step is finished? but the assemble is out of 
+            # the time loop. Should we solve fluid then structure?
+            
             total_torque_on_this_panel_name = f"total_torque_panel_{panel_id:.0f}"
             total_torque_on_this_panel = getattr(flow, total_torque_on_this_panel_name)
 

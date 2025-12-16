@@ -68,4 +68,4 @@ structure:
   beta_relaxation: 0.5
   elasticity_modulus_tube: 2.0e+11
   poissons_ratio_tube: 0.3
-  density_tube: 7800.0
+  rho_tube: 7800.0

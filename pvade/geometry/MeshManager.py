@@ -747,7 +747,7 @@ class FSIDomain:
 
         print(f"Rank {self.rank} owns {num_nodes_owned_by_proc} nodes\n{coords}")
 
-    def test_submesh_transfer(self, params):
+    def test_submesh_transfer(self, params, domain, elasticity):
         P2 = ufl.VectorElement("Lagrange", self.msh.ufl_cell(), 2)
         # P2 = ufl.FiniteElement("Lagrange", self.fluid.msh.ufl_cell(), 1)
 

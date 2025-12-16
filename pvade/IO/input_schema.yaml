@@ -224,7 +224,7 @@ properties:
       fixed_location:
         default: 5
         type: "integer"
-        description: "If an integer between 0 and modules_per_span, indicates the fixed location
+        description: "If an integer between 0 and modules_per_span, indicates the fixed location"
       block_chord_div_by_panel_chord:
         default: 0.1
         minimum: 0.01
@@ -695,7 +695,7 @@ properties:
         type: "number"
         description: "poissons ratio of the torque tube."
         units: "None"
-      density_tube:
+      rho_tube:
         default: 1.0
         # minimum: 0.001
         # maximum: 1000.0

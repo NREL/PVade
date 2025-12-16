@@ -653,6 +653,8 @@ class Flow:
 
             setattr(self, attr_name, total_torque_on_panel_array)
 
+            print('check total torque definiition', self.total_torque_panel_0)
+
             coords_top = whole_top_submesh_function_space.tabulate_dof_coordinates()
             coords_bot = whole_bot_submesh_function_space.tabulate_dof_coordinates()
 
