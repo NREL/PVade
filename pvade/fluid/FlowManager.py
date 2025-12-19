@@ -165,6 +165,17 @@ class Flow:
 
         """
 
+        # initialize total torque on each panel to zero
+        for panel_id in range(
+            int(params.pv_array.stream_rows * params.pv_array.span_rows)
+        ): 
+            attr_name = f"total_torque_panel_{panel_id:.0f}"
+            setattr(self, attr_name, dolfinx.fem.Constant(domain.fluid.msh, 0.0))
+
+            for module_id in range(params.pv_array.modules_per_span+1):
+                attr_d_name = f"double_integral_total_torque_panel_{panel_id:.0f}_{module_id:.0f}"
+                setattr(self, attr_d_name, dolfinx.fem.Constant(domain.fluid.msh, 0.0))
+
         # Define fluid properties
         if self.ndim == 2:
             self.dpdx = dolfinx.fem.Constant(domain.fluid.msh, (0.0, 0.0))
@@ -624,7 +635,8 @@ class Flow:
         
         for panel_id in range(
             int(params.pv_array.stream_rows * params.pv_array.span_rows)
-        ):
+        ): 
+
             whole_top_surface_facet_index = [] # facet index of the whole panel top surface in a row
             whole_bot_surface_facet_index = [] # facet index of the whole panel bottom surface in a row
 
@@ -651,7 +663,9 @@ class Flow:
             
             attr_name = f"total_torque_panel_{panel_id:.0f}"
 
-            setattr(self, attr_name, total_torque_on_panel_array)
+            total_torque_constant = getattr(self, attr_name)
+
+            total_torque_constant.value = total_torque_on_panel_array
 
             print('check total torque definiition', self.total_torque_panel_0)
 
@@ -724,8 +738,12 @@ class Flow:
 
             torque_double_integral = 0.0
 
+
             attr_name = f"double_integral_total_torque_panel_{panel_id:.0f}_0"
-            setattr(self, attr_name, torque_double_integral)
+            # setattr(self, attr_name, torque_double_integral)
+
+            double_integral_total_torque_panel_constant = getattr(self, attr_name)
+            double_integral_total_torque_panel_constant.value = torque_double_integral
 
             single_integral_function_top_fluid = dolfinx.fem.Function(self.Q)
             single_integral_function_top_fluid.interpolate(single_integral_function_top)
@@ -734,11 +752,13 @@ class Flow:
 
             for connector_id in range(params.pv_array.modules_per_span):
                 torque_double_integral += dolfinx.fem.assemble_scalar(dolfinx.fem.form(single_integral_function_top_fluid * ds_fluid(
-                    domain.domain_markers[f"panel_top_{panel_id:.0f}_{params.panel_array.modules_per_span-1-connector_id:.0f}"]["idx"])))/self.pvarry.panel_chord
+                    domain.domain_markers[f"panel_top_{panel_id:.0f}_{params.pv_array.modules_per_span-1-connector_id:.0f}"]["idx"])))/self.pvarry.panel_chord
                 torque_double_integral += dolfinx.fem.assemble_scalar(dolfinx.fem.form(single_integral_function_bot_fluid * ds_fluid(
-                    domain.domain_markers[f"panel_bot_{panel_id:.0f}_{params.panel_array.modules_per_span-1-connector_id:.0f}"]["idx"])))/self.pvarry.panel_chord
+                    domain.domain_markers[f"panel_bot_{panel_id:.0f}_{params.pv_array.modules_per_span-1-connector_id:.0f}"]["idx"])))/self.pvarry.panel_chord
                 attr_name = f"double_integral_total_torque_panel_{panel_id:.0f}_{connector_id+1:.0f}"
-                setattr(self, attr_name, torque_double_integral)
+                
+                double_integral_total_torque_panel_constant = getattr(self, attr_name)
+                double_integral_total_torque_panel_constant.value = torque_double_integral
 
                 # double_integral_total_torque_panel_0_0 is the double integral of first panel array at the most back connector (maximum y), 
                 # double_integral_total_torque_panel_0_10 is the double integral of first panel array at the most front connector (smallest y)

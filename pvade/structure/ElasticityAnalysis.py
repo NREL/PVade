@@ -115,7 +115,7 @@ class Elasticity:
             # the time loop. Should we solve fluid then structure?
             
             total_torque_on_this_panel_name = f"total_torque_panel_{panel_id:.0f}"
-            total_torque_on_this_panel = getattr(flow, total_torque_on_this_panel_name)
+            total_torque_on_this_panel = getattr(flow, total_torque_on_this_panel_name).value
 
             theo_matrix[params.pv_array.modules_per_span, :] = 1/Gp/Ipp
             theo_vector[params.pv_array.modules_per_span] = -total_torque_on_this_panel/Gp/Ipp
@@ -129,7 +129,7 @@ class Elasticity:
 
                 # contribution from C0 to vector:
             T_double_integral_at_fixed_location_name = f"double_integral_total_torque_panel_{panel_id:.0f}_{params.pv_array.fixed_location:.0f}"
-            T_double_integral_at_fixed_location = getattr(flow, T_double_integral_at_fixed_location_name)
+            T_double_integral_at_fixed_location = getattr(flow, T_double_integral_at_fixed_location_name).value
             theo_vector[:params.pv_array.modules_per_span] += -T_double_integral_at_fixed_location/Gp/Ipp
             
                 # contribution of panels to matrix
@@ -148,7 +148,7 @@ class Elasticity:
             T_double_integral_array = []
             for i in range(params.pv_array.modules_per_span+1):
                 name = f"double_integral_total_torque_panel_{panel_id:.0f}_{i:.0f}"
-                T_double_integral_array.append(getattr(flow, name))
+                T_double_integral_array.append(getattr(flow, name).value)
             T_double_integral_array = np.array(T_double_integral_array)
             theo_vector[:params.pv_array.modules_per_span] += np.delete(T_double_integral_array, params.pv_array.fixed_location)/Gp/Ipp
 
@@ -613,6 +613,24 @@ class Elasticity:
             "dx", domain=domain.structure.msh, subdomain_data=domain.structure.cell_tags
         )
 
+        # print(domain.domain_markers["modules"])
+        # print(np.unique(domain.structure.cell_tags.values))
+
+        print(domain.domain_markers["modules"]["idx"])
+
+        print(dolfinx.fem.assemble_scalar(dolfinx.fem.form(dolfinx.fem.Constant(domain.structure.msh, 1.0) * dx_structure(167))))
+        print(dolfinx.fem.assemble_scalar(dolfinx.fem.form(dolfinx.fem.Constant(domain.structure.msh, 1.0) * dx_structure(168))))
+        
+        print(id(domain.structure.msh))
+        print(id(self.V.mesh))
+        print(id(domain.structure.cell_tags.mesh))
+
+        print(np.unique(domain.structure.cell_tags.values))
+        print(domain.domain_markers["modules"]["idx"])
+        print(domain.domain_markers["connectors"]["idx"])
+        
+        exit()
+
         # To Do: how to differentiate the connector part and the panel part, dx_connector and dx_panel
         self.res = (
             m(self.avg(self.a_old, a_new, self.alpha_m), self.u_) * ufl.dx
@@ -630,7 +648,7 @@ class Elasticity:
             for i in range(params.pv_array.modules_per_span+1):
                 name_K = f"spring_stiffness_{panel_id:.0f}_{i:.0f}"
                 K_springs = dolfinx.fem.Constant(domain.structure.msh, float(getattr(self, name_K)))
-                self.res -= ufl.dot(K_springs * self.u_, self.z_unit_vector)*self.ds(domain.domain_markers[f"block_bottom_{panel_id:.0f}_{i:.0f}"])
+                self.res -= ufl.dot(K_springs * self.u_, self.z_unit_vector)*self.ds(domain.domain_markers[f"block_bottom_{panel_id:.0f}_{i:.0f}"]["idx"])
        
         # self.a = dolfinx.fem.form(ufl.lhs(res))
         # self.L = dolfinx.fem.form(ufl.rhs(res))
