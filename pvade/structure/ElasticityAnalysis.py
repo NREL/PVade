@@ -613,28 +613,11 @@ class Elasticity:
             "dx", domain=domain.structure.msh, subdomain_data=domain.structure.cell_tags
         )
 
-        # print(domain.domain_markers["modules"])
-        # print(np.unique(domain.structure.cell_tags.values))
-
-        print(domain.domain_markers["modules"]["idx"])
-
-        print(dolfinx.fem.assemble_scalar(dolfinx.fem.form(dolfinx.fem.Constant(domain.structure.msh, 1.0) * dx_structure(167))))
-        print(dolfinx.fem.assemble_scalar(dolfinx.fem.form(dolfinx.fem.Constant(domain.structure.msh, 1.0) * dx_structure(168))))
         
-        print(id(domain.structure.msh))
-        print(id(self.V.mesh))
-        print(id(domain.structure.cell_tags.mesh))
-
-        print(np.unique(domain.structure.cell_tags.values))
-        print(domain.domain_markers["modules"]["idx"])
-        print(domain.domain_markers["connectors"]["idx"])
-        
-        exit()
-
         # To Do: how to differentiate the connector part and the panel part, dx_connector and dx_panel
         self.res = (
-            m(self.avg(self.a_old, a_new, self.alpha_m), self.u_) * ufl.dx
-            + c(self.avg(self.v_old, v_new, self.alpha_f), self.u_) * ufl.dx
+            m(self.avg(self.a_old, a_new, self.alpha_m), self.u_) * dx_structure
+            + c(self.avg(self.v_old, v_new, self.alpha_f), self.u_) * dx_structure
             + k_nominal(self.avg(self.u_old, self.u, self.alpha_f), self.u_) * dx_structure(domain.domain_markers["modules"]["idx"])
             + k_nominal_connector(self.avg(self.u_old, self.u, self.alpha_f), self.u_) * dx_structure(domain.domain_markers["connectors"]["idx"])
             - structure.rho * ufl.inner(self.f, self.u_) * dx_structure(domain.domain_markers["modules"]["idx"])
