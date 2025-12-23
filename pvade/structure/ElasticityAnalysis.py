@@ -226,8 +226,11 @@ class Elasticity:
             else:
                 tracker_angle_rad = np.radians(params.pv_array.tracker_angle)
 
-
-            K = np.abs(12*(np.delete(R_reaction_torque, params.pv_array.fixed_location))/((params.pv_array.block_chord_div_by_panel_chord * params.pv_array.panel_chord)**3)/np.cos(tracker_angle_rad+phi)/(np.sin(tracker_angle_rad+phi)-np.sin(tracker_angle_rad))/(params.pv_array.block_chord_div_by_panel_chord * params.pv_array.panel_chord/2))
+            if np.linalg.norm(phi) == 0:
+                print('yes 0')
+                K = np.zeros(params.pv_array.modules_per_span)
+            else:
+                K = np.abs(12*(np.delete(R_reaction_torque, params.pv_array.fixed_location))/((params.pv_array.block_chord_div_by_panel_chord * params.pv_array.panel_chord)**3)/np.cos(tracker_angle_rad+phi)/(np.sin(tracker_angle_rad+phi)-np.sin(tracker_angle_rad))/(params.pv_array.block_chord_div_by_panel_chord * params.pv_array.panel_chord/2))
 
             # assume K is 0 at the fixed connector
             K = np.flip(np.insert(K, params.pv_array.fixed_location, 0))
