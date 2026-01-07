@@ -244,12 +244,7 @@ class Elasticity:
 
                 name_K = f"spring_stiffness_{panel_id:.0f}_{i:.0f}"
                 setattr(self, name_K, K[i])
-               
-
                 
-
-
-
         # num_panel_right_fixed = params.pv_array.modules_per_span // 2
         # num_panel_left_fixed = params.pv_array.modules_per_span - num_panel_right_fixed
 

@@ -625,55 +625,93 @@ class Flow:
     #         setattr(self, attr_name, total_torque)
 
     def compute_double_integral_panel_torques(self, domain, params):
-        torque_function_on_panels = dolfinx.fem.Function(self.Q)
-
-        torque_function_on_panels.x.array[:] = self.spatial_X_coords.x.array[:]*self.traction[2].x.array[:]-self.spatial_Z_coords.x.array[:]*self.traction[0].x.array[:]
 
         ds_fluid = ufl.Measure(
             "ds", domain=domain.fluid.msh, subdomain_data=domain.fluid.facet_tags
         )
-        
+
         for panel_id in range(
             int(params.pv_array.stream_rows * params.pv_array.span_rows)
-        ): 
-
-            whole_top_surface_facet_index = [] # facet index of the whole panel top surface in a row
-            whole_bot_surface_facet_index = [] # facet index of the whole panel bottom surface in a row
+        ):
+            whole_top_surface_facet_index = []  # facet index of the whole panel top surface in a row
+            whole_bot_surface_facet_index = []  # facet index of the whole panel bottom surface in a row
 
             for module_id in range(params.pv_array.modules_per_span):
-                
                 whole_top_surface_facet_index += domain.fluid.facet_tags.find(domain.domain_markers[f"panel_top_{panel_id:.0f}_{module_id:.0f}"]["idx"]).tolist()
                 whole_bot_surface_facet_index += domain.fluid.facet_tags.find(domain.domain_markers[f"panel_bottom_{panel_id:.0f}_{module_id:.0f}"]["idx"]).tolist()
 
-            whole_top_surf_submesh, entity_map, vertex_map, geom_map = dolfinx.mesh.create_submesh(domain.fluid.msh, 2, np.array(whole_top_surface_facet_index))
-            whole_bot_surf_submesh, entity_map, vertex_map, geom_map = dolfinx.mesh.create_submesh(domain.fluid.msh, 2, np.array(whole_bot_surface_facet_index))
+            whole_top_surf_submesh, entity_map, vertex_map, geom_map = dolfinx.mesh.create_submesh(domain.fluid.msh, 2, np.array(whole_top_surface_facet_index, dtype=np.int32))
+            whole_bot_surf_submesh, entity_map, vertex_map, geom_map = dolfinx.mesh.create_submesh(domain.fluid.msh, 2, np.array(whole_bot_surface_facet_index, dtype=np.int32))
+            
+            spatial_X_coords_top = dolfinx.fem.Function(dolfinx.fem.FunctionSpace(whole_top_surf_submesh, ('CG', 1)), name="X_coords_top")
+            spatial_X_coords_bot = dolfinx.fem.Function(dolfinx.fem.FunctionSpace(whole_bot_surf_submesh, ('CG', 1)), name="X_coords_bot")
+            spatial_Z_coords_top = dolfinx.fem.Function(dolfinx.fem.FunctionSpace(whole_top_surf_submesh, ('CG', 1)), name="Z_coords_top")
+            spatial_Z_coords_bot = dolfinx.fem.Function(dolfinx.fem.FunctionSpace(whole_bot_surf_submesh, ('CG', 1)), name="Z_coords_bot")
+            spatial_X_coords_top.interpolate(self.spatial_X_coords)
+            spatial_X_coords_bot.interpolate(self.spatial_X_coords)
+            spatial_Z_coords_top.interpolate(self.spatial_Z_coords)
+            spatial_Z_coords_bot.interpolate(self.spatial_Z_coords)
+            """
+            the torque should be relative to central of tube, traction x times z (z=0 at center tube) + traction z times x, (x=0 at center tube)
+            for z, how we should put the tube center at zero? It is not minus elevation
+            """
+            traction_z_array_top = dolfinx.fem.Function(dolfinx.fem.FunctionSpace(whole_top_surf_submesh, ('CG', 1)), name="traction_z_top")
+            traction_x_array_top = dolfinx.fem.Function(dolfinx.fem.FunctionSpace(whole_top_surf_submesh, ('CG', 1)), name="traction_x_top")
+
+            traction_z_array_bot = dolfinx.fem.Function(dolfinx.fem.FunctionSpace(whole_bot_surf_submesh, ('CG', 1)), name="traction_z_bot")
+            traction_x_array_bot = dolfinx.fem.Function(dolfinx.fem.FunctionSpace(whole_bot_surf_submesh, ('CG', 1)), name="traction_x_bot")
+            
+            traction_z_array_top.interpolate(self.traction[2])
+            traction_x_array_top.interpolate(self.traction[0])
+            traction_z_array_bot.interpolate(self.traction[2])
+            traction_x_array_bot.interpolate(self.traction[0])
+
+            # traction_z_array_top.x.array[:] = 10*np.sin(params.pv_array.tracker_angle[0]*np.pi/180)
+            # traction_z_array_bot.x.array[:] = 10*np.sin(params.pv_array.tracker_angle[0]*np.pi/180)
+            # traction_x_array_top.x.array[:] = 10*np.cos(params.pv_array.tracker_angle[0]*np.pi/180)
+            # traction_x_array_bot.x.array[:] = 10*np.cos(params.pv_array.tracker_angle[0]*np.pi/180)
+
+            torque_function_on_panels_top = dolfinx.fem.Function(dolfinx.fem.FunctionSpace(whole_top_surf_submesh, ('CG', 1)))
+            torque_function_on_panels_top.x.array[:] = (
+                (spatial_X_coords_top.x.array[:] - np.linspace(
+            0.0,
+            params.pv_array.stream_spacing * (params.pv_array.stream_rows - 1),
+            params.pv_array.stream_rows,
+        )[panel_id]) * traction_z_array_top.x.array[:]
+                - (spatial_Z_coords_top.x.array[:] - params.pv_array.elevation) * traction_x_array_top.x.array[:]
+            )
+
+            torque_function_on_panels_bot = dolfinx.fem.Function(dolfinx.fem.FunctionSpace(whole_bot_surf_submesh, ('CG', 1)))
+            torque_function_on_panels_bot.x.array[:] = (
+                (spatial_X_coords_bot.x.array[:] - np.linspace(
+            0.0,
+            params.pv_array.stream_spacing * (params.pv_array.stream_rows - 1),
+            params.pv_array.stream_rows,
+        )[panel_id]) * traction_z_array_bot.x.array[:]
+                - (spatial_Z_coords_bot.x.array[:] - params.pv_array.elevation) * traction_x_array_bot.x.array[:]
+            )
 
             dx_top_whole = ufl.Measure("dx", domain=whole_top_surf_submesh)
             dx_bot_whole = ufl.Measure("dx", domain=whole_bot_surf_submesh)
 
+            total_torque_on_panel_array = (
+                dolfinx.fem.assemble_scalar(dolfinx.fem.form(torque_function_on_panels_top * dx_top_whole))
+                + dolfinx.fem.assemble_scalar(dolfinx.fem.form(torque_function_on_panels_bot * dx_bot_whole))
+            )
+
             whole_top_submesh_function_space = dolfinx.fem.FunctionSpace(whole_top_surf_submesh, ('CG', 1))
-            whole_top_submesh_func = dolfinx.fem.Function(whole_top_submesh_function_space)
-            whole_top_submesh_func.interpolate()(torque_function_on_panels)
             whole_bot_submesh_function_space = dolfinx.fem.FunctionSpace(whole_bot_surf_submesh, ('CG', 1))
-            whole_bot_submesh_func = dolfinx.fem.Function(whole_bot_submesh_function_space)
-            whole_bot_submesh_func.interpolate()(torque_function_on_panels)
 
-            total_torque_on_panel_array = dolfinx.fem.assemble_scalar(dolfinx.fem.form(whole_top_submesh_func * dx_top_whole)) \
-                                        + dolfinx.fem.assemble_scalar(dolfinx.fem.form(whole_bot_submesh_func * dx_bot_whole))
-            
             attr_name = f"total_torque_panel_{panel_id:.0f}"
-
             total_torque_constant = getattr(self, attr_name)
 
             total_torque_constant.value = total_torque_on_panel_array
 
-            print('check total torque definiition', self.total_torque_panel_0)
-
             coords_top = whole_top_submesh_function_space.tabulate_dof_coordinates()
             coords_bot = whole_bot_submesh_function_space.tabulate_dof_coordinates()
 
-            top_integrated_func_along_y = np.zeros_like(whole_top_submesh_func.x.array[:])
-            bot_integrated_func_along_y = np.zeros_like(whole_bot_submesh_func.x.array[:])
+            top_integrated_func_along_y = np.zeros_like(torque_function_on_panels_top.x.array[:])
+            bot_integrated_func_along_y = np.zeros_like(torque_function_on_panels_bot.x.array[:])
 
             # in PVade, the front has the minimum y coordinates, if we integral from large y to small y, it is negative,
             # to keep it consistant as the theoretical model, we need to flip the sign of the integral
@@ -687,7 +725,7 @@ class Flow:
 
             ### integral of top surface:
             # Unique x-values (up to numerical tolerance)
-            ys_top = np.unique(np.round(top_coords_sorted[:, 0], decimals=6))
+            ys_top = np.unique(np.round(top_coords_sorted[:, 1], decimals=6))
 
             # get f(x) = integral of torque on top surface from left end to x (x is all unique x coordinates on top surface)
 
@@ -703,7 +741,7 @@ class Flow:
                 submesh_top_surface_part, entity_map, vertex_map, geom_map = dolfinx.mesh.create_submesh(whole_top_surf_submesh, 2, marked_facet_top.astype(np.int32))
                 top_sub_function_space = dolfinx.fem.FunctionSpace(submesh_top_surface_part, ('CG', 1))
                 top_sub_func = dolfinx.fem.Function(top_sub_function_space)
-                top_sub_func.interpolate(torque_function_on_panels)
+                top_sub_func.interpolate(torque_function_on_panels_top)
 
                 dx_top = ufl.Measure("dx", domain=submesh_top_surface_part)
                 integrated_top = dolfinx.fem.assemble_scalar(dolfinx.fem.form(top_sub_func * dx_top))
@@ -724,7 +762,7 @@ class Flow:
                 submesh_bot_surface_part, entity_map, vertex_map, geom_map = dolfinx.mesh.create_submesh(whole_bot_surf_submesh, 2, marked_facet_bot.astype(np.int32))
                 bot_sub_function_space = dolfinx.fem.FunctionSpace(submesh_bot_surface_part, ('CG', 1))
                 bot_sub_func = dolfinx.fem.Function(bot_sub_function_space)
-                bot_sub_func.interpolate(torque_function_on_panels)
+                bot_sub_func.interpolate(torque_function_on_panels_bot)
 
                 dx_bot = ufl.Measure("dx", domain=submesh_bot_surface_part)
                 integrated_bot = dolfinx.fem.assemble_scalar(dolfinx.fem.form(bot_sub_func * dx_bot))
@@ -752,9 +790,9 @@ class Flow:
 
             for connector_id in range(params.pv_array.modules_per_span):
                 torque_double_integral += dolfinx.fem.assemble_scalar(dolfinx.fem.form(single_integral_function_top_fluid * ds_fluid(
-                    domain.domain_markers[f"panel_top_{panel_id:.0f}_{params.pv_array.modules_per_span-1-connector_id:.0f}"]["idx"])))/self.pvarry.panel_chord
+                    domain.domain_markers[f"panel_top_{panel_id:.0f}_{params.pv_array.modules_per_span-1-connector_id:.0f}"]["idx"])))/params.pv_array.panel_chord
                 torque_double_integral += dolfinx.fem.assemble_scalar(dolfinx.fem.form(single_integral_function_bot_fluid * ds_fluid(
-                    domain.domain_markers[f"panel_bot_{panel_id:.0f}_{params.pv_array.modules_per_span-1-connector_id:.0f}"]["idx"])))/self.pvarry.panel_chord
+                    domain.domain_markers[f"panel_bottom_{panel_id:.0f}_{params.pv_array.modules_per_span-1-connector_id:.0f}"]["idx"])))/params.pv_array.panel_chord
                 attr_name = f"double_integral_total_torque_panel_{panel_id:.0f}_{connector_id+1:.0f}"
                 
                 double_integral_total_torque_panel_constant = getattr(self, attr_name)
@@ -762,7 +800,7 @@ class Flow:
 
                 # double_integral_total_torque_panel_0_0 is the double integral of first panel array at the most back connector (maximum y), 
                 # double_integral_total_torque_panel_0_10 is the double integral of first panel array at the most front connector (smallest y)
-           
+
     def _assemble_system(self, params):
         """Pre-assemble all LHS matrices and RHS vectors
 
@@ -890,6 +928,8 @@ class Flow:
 
         self.mesh_vel.vector.array[:] = self.mesh_vel.vector.array / params.solver.dt
         self.mesh_vel.x.scatter_forward()
+
+        self.compute_double_integral_panel_torques(domain, params)
 
         # Calculate the tentative velocity
         self._solver_step_1(params)
