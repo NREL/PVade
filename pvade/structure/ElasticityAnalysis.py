@@ -227,7 +227,6 @@ class Elasticity:
                 tracker_angle_rad = np.radians(params.pv_array.tracker_angle)
 
             if np.linalg.norm(phi) == 0:
-                print('yes 0')
                 K = np.zeros(params.pv_array.modules_per_span)
             else:
                 K = np.abs(12*(np.delete(R_reaction_torque, params.pv_array.fixed_location))/((params.pv_array.block_chord_div_by_panel_chord * params.pv_array.panel_chord)**3)/np.cos(tracker_angle_rad+phi)/(np.sin(tracker_angle_rad+phi)-np.sin(tracker_angle_rad))/(params.pv_array.block_chord_div_by_panel_chord * params.pv_array.panel_chord/2))
@@ -244,7 +243,7 @@ class Elasticity:
 
                 name_K = f"spring_stiffness_{panel_id:.0f}_{i:.0f}"
                 setattr(self, name_K, K[i])
-                
+
         # num_panel_right_fixed = params.pv_array.modules_per_span // 2
         # num_panel_left_fixed = params.pv_array.modules_per_span - num_panel_right_fixed
 

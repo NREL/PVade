@@ -79,6 +79,7 @@ def main(input_file=None):
     for k in range(params.solver.t_steps):
         current_time = (k + 1) * params.solver.dt
 
+
         if (
             structural_analysis
             and (k + 1) % solve_structure_interval_n == 0
