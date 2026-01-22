@@ -14,8 +14,8 @@ domain:
   z_max: 20
   l_char: 20
 pv_array:
-  stream_rows: 2
-  span_rows: 1
+  stream_rows: 3
+  span_rows: 2
   elevation: 1.45 # 1.5 - 0.5*0.1 = 1.4
   stream_spacing: 7.0
   panel_chord: 2.0
@@ -52,7 +52,7 @@ fluid:
   bc_y_min: slip # slip noslip free
   bc_z_max: slip # slip noslip free
   bc_z_min: noslip # slip noslip free
-  wind_direction: 15.0
+  wind_direction: 105.0
 structure:
   dt : 0.01
   rho: 124.0

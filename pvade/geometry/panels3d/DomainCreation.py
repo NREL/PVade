@@ -269,7 +269,7 @@ class DomainCreation(TemplateDomainCreation):
                         this_module = self.gmsh_model.occ.addBox(
                             -half_chord,
                             module_distances[module_id],
-                            -half_thickness,
+                            0.0,
                             params.pv_array.panel_chord,
                             module_span,
                             params.pv_array.panel_thickness,
@@ -993,7 +993,7 @@ class DomainCreation(TemplateDomainCreation):
                         if np.allclose(np.array(com), target_com):
                             located_this_surface = True
                             if "trash" not in key:
-                                print(key)
+                                # print(key)
                                 self._add_to_domain_markers(key, [surf_id], "facet")
 
                 if not located_this_surface:
