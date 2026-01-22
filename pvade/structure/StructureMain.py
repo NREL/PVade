@@ -93,15 +93,20 @@ class Structure:
             * self.poissons_ratio
             / ((1.0 + self.poissons_ratio) * (1.0 - 2.0 * self.poissons_ratio))
         )
-        
+
         # we are assuming the connectors has same mechanical properties as the tubes
         self.E_connector = params.structure.elasticity_modulus_tube  # 1.0e9
         self.poissons_ratio_connector = params.structure.poissons_ratio_tube  # 0.3
-        self.lame_mu_connector = self.E_connector / (2.0 * (1.0 + self.poissons_ratio_connector))
+        self.lame_mu_connector = self.E_connector / (
+            2.0 * (1.0 + self.poissons_ratio_connector)
+        )
         self.lame_lambda_connector = (
             self.E_connector
             * self.poissons_ratio_connector
-            / ((1.0 + self.poissons_ratio_connector) * (1.0 - 2.0 * self.poissons_ratio_connector))
+            / (
+                (1.0 + self.poissons_ratio_connector)
+                * (1.0 - 2.0 * self.poissons_ratio_connector)
+            )
         )
 
         if self.rank == 0:

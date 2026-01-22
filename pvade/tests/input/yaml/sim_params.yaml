@@ -14,7 +14,7 @@ domain:
   z_max: 20
   l_char: 20
 pv_array:
-  stream_rows: 7
+  stream_rows: 2
   span_rows: 1
   elevation: 1.45 # 1.5 - 0.5*0.1 = 1.4
   stream_spacing: 7.0
@@ -22,6 +22,15 @@ pv_array:
   panel_span: 7.0
   panel_thickness: 0.1 
   tracker_angle: -30.0
+  # wind_direction: 15.0
+  span_fixation_pts: [13.2]
+  # torque_tube_separation: 0.2 # gap between panel and tube center
+  # torque_tube_outer_radius: 0.1 # radius of the torque tube
+  # torque_tube_inner_radius: 0.09 # radius of the torque tube
+  # modules_per_span: 10
+  # fixed_location: 5   # fixed location of the panel along the span (from 0 (fixed at left) to modules_per_span (fixed at right))
+  # block_chord_div_by_panel_chord: 0.02
+  
 solver:
   dt: 0.005
   t_final: 0.05
@@ -43,3 +52,19 @@ fluid:
   bc_y_min: slip # slip noslip free
   bc_z_max: slip # slip noslip free
   bc_z_min: noslip # slip noslip free
+  wind_direction: 15.0
+structure:
+  dt : 0.01
+  rho: 124.0
+  poissons_ratio: 0.3
+  elasticity_modulus: 4.0e+09
+  body_force_x: 0.0
+  body_force_y: 0.0
+  body_force_z: 0.0
+  bc_list: []
+  motor_connection: true
+  tube_connection: true
+  beta_relaxation: 0.5
+  elasticity_modulus_tube: 2.0e+11
+  poissons_ratio_tube: 0.3
+  rho_tube: 7800.0

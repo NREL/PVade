@@ -207,8 +207,6 @@ class FSIDomain:
             gdim=self.ndim,
         )
 
-
-
         self.msh.topology.create_connectivity(self.ndim, self.ndim - 1)
 
         # Specify names for the mesh elements
@@ -285,13 +283,21 @@ class FSIDomain:
             # Get the idx associated with either "fluid" or "structure"
 
             # if structure includes modules and connectors
-            if sub_domain_name == "structure" and "structure" not in self.domain_markers:
-                marker_id = self.domain_markers["modules"]["idx"] 
+            if (
+                sub_domain_name == "structure"
+                and "structure" not in self.domain_markers
+            ):
+                marker_id = self.domain_markers["modules"]["idx"]
                 # Find all cells where cell tag = marker_id
-                submesh_cells_modules = self.cell_tags.find(marker_id)
-                marker_id = self.domain_markers["connectors"]["idx"]
-                submesh_cells = np.hstack((self.cell_tags.find(marker_id), submesh_cells_modules))
-                
+                if self.geometry.modeling_torque_tube:
+                    submesh_cells_modules = self.cell_tags.find(marker_id)
+                    marker_id = self.domain_markers["connectors"]["idx"]
+                    submesh_cells = np.hstack(
+                        (self.cell_tags.find(marker_id), submesh_cells_modules)
+                    )
+                else:
+                    submesh_cells = self.cell_tags.find(marker_id)
+
             else:
                 marker_id = self.domain_markers[sub_domain_name]["idx"]
                 # Find all cells where cell tag = marker_id
@@ -369,17 +375,14 @@ class FSIDomain:
             all_cell_values = np.zeros(num_cells, dtype=np.int32)
             all_cell_values[self.cell_tags.indices] = self.cell_tags.values
 
-
             sub_cell_map = sub_domain.msh.topology.index_map(self.ndim)
             sub_num_cells = sub_cell_map.size_local + sub_cell_map.num_ghosts
 
             sub_cell_values = np.empty(sub_num_cells, dtype=np.int32)
 
-
             for k, entity in enumerate(sub_domain.entity_map):
                 sub_cell_values[k] = all_cell_values[entity]
 
- 
             # sub_num_cells = sub_cell_map.size_local + sub_cell_map.num_ghosts
 
             sub_domain.cell_tags = dolfinx.mesh.meshtags(

@@ -109,9 +109,16 @@ def test_meshing_3dpanels_rotations(wind_direction, num_stream_rows, num_span_ro
     params.domain.y_min = -30.0
     params.domain.y_max = 30.0
 
+    # x_min: -10
+    # x_max: 50
+    # y_min: -20
+    # y_max: 27
+    # z_min: 0
+    # z_max: 20
+
     params.pv_array.stream_rows = num_stream_rows
     params.pv_array.span_rows = num_span_rows
-    params.pv_array.span_spacing = 15.0
+    params.pv_array.span_spacing = 7
     params.pv_array.tracker_angle = list(
         np.linspace(-52.0, 52.0, num_stream_rows * num_span_rows)
     )
