@@ -128,7 +128,7 @@ class FSIDomain:
 
     def build(self, params):
         """This function call builds the geometry, marks the boundaries and creates a mesh using Gmsh."""
-        
+
         self.modeling_torque_tube = False
 
         domain_creation_module = (
@@ -170,8 +170,6 @@ class FSIDomain:
 
                 self.modeling_torque_tube = False
 
-
-
             # Build the domain markers for each surface and cell
             if hasattr(self.geometry, "domain_markers"):
                 # If the "build" process created domain markers, use those directly...
@@ -196,9 +194,8 @@ class FSIDomain:
             self.ndim = (
                 self.geometry.ndim
             )  # gmsh_model.get_dimension() # ?? should this be domain.ndim?
-        
-        self.modeling_torque_tube = self.comm.bcast(self.modeling_torque_tube, root=0)
 
+        self.modeling_torque_tube = self.comm.bcast(self.modeling_torque_tube, root=0)
 
         # When finished, rank 0 needs to tell other ranks about how the domain_markers dictionary was created
         # and what values it holds. This is important now since the number of indices "idx" generated in the
@@ -302,7 +299,10 @@ class FSIDomain:
             ):
                 marker_id = self.domain_markers["modules"]["idx"]
                 # Find all cells where cell tag = marker_id
-                if self.modeling_torque_tube and params.general.geometry_modules == "panels3d":
+                if (
+                    self.modeling_torque_tube
+                    and params.general.geometry_modules == "panels3d"
+                ):
                     submesh_cells_modules = self.cell_tags.find(marker_id)
                     marker_id = self.domain_markers["connectors"]["idx"]
                     submesh_cells = np.hstack(
@@ -612,8 +612,9 @@ class FSIDomain:
             self.modeling_torque_tube = True
         else:
             self.modeling_torque_tube = False
-            assert(params.pv_array.modules_per_span == 1), "When not modeling torque tube, modules_per_span must be 1."
-
+            assert (
+                params.pv_array.modules_per_span == 1
+            ), "When not modeling torque tube, modules_per_span must be 1."
 
         sub_domain_list = ["fluid", "structure"]
 

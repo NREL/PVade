@@ -651,7 +651,6 @@ class Flow:
             self.integrated_force_y_form[-1] += self.traction[1] * ds_fluid(
                 domain.domain_markers[f"panel_right_{panel_id:.0f}"]["idx"]
             )
-            
 
             if self.ndim == 3:
                 self.integrated_force_x_form[-1] += self.traction[0] * ds_fluid(
@@ -673,11 +672,11 @@ class Flow:
                     domain.domain_markers[f"panel_back_{panel_id:.0f}"]["idx"]
                 )
                 self.integrated_force_z_form[-1] += self.traction[2] * ds_fluid(
-                domain.domain_markers[f"panel_left_{panel_id:.0f}"]["idx"]
-            )
+                    domain.domain_markers[f"panel_left_{panel_id:.0f}"]["idx"]
+                )
                 self.integrated_force_z_form[-1] += self.traction[2] * ds_fluid(
-                domain.domain_markers[f"panel_right_{panel_id:.0f}"]["idx"]
-            )
+                    domain.domain_markers[f"panel_right_{panel_id:.0f}"]["idx"]
+                )
             for module_id in range(params.pv_array.modules_per_span):
 
                 self.integrated_force_x_form[-1] += self.traction[0] * ds_fluid(
@@ -686,9 +685,9 @@ class Flow:
                     ]["idx"]
                 )
                 self.integrated_force_x_form[-1] += self.traction[0] * ds_fluid(
-                    domain.domain_markers[
-                        f"panel_top_{panel_id:.0f}_{module_id:.0f}"
-                    ]["idx"]
+                    domain.domain_markers[f"panel_top_{panel_id:.0f}_{module_id:.0f}"][
+                        "idx"
+                    ]
                 )
                 self.integrated_force_y_form[-1] += self.traction[1] * ds_fluid(
                     domain.domain_markers[
@@ -696,9 +695,9 @@ class Flow:
                     ]["idx"]
                 )
                 self.integrated_force_y_form[-1] += self.traction[1] * ds_fluid(
-                    domain.domain_markers[
-                        f"panel_top_{panel_id:.0f}_{module_id:.0f}"
-                    ]["idx"]
+                    domain.domain_markers[f"panel_top_{panel_id:.0f}_{module_id:.0f}"][
+                        "idx"
+                    ]
                 )
 
                 if self.ndim == 3:
@@ -1227,7 +1226,10 @@ class Flow:
         self.compute_lift_and_drag(params, current_time)
 
         # self.compute_panel_torques(domain, params)
-        if domain.modeling_torque_tube and params.general.geometry_modules == "panels3d":
+        if (
+            domain.modeling_torque_tube
+            and params.general.geometry_modules == "panels3d"
+        ):
             self.compute_double_integral_panel_torques(domain, params)
 
         # Compute the pressure drop between the inlet and outlet

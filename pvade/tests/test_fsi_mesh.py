@@ -136,8 +136,6 @@ def test_meshing_3dpanels_rotations(wind_direction, num_stream_rows, num_span_ro
     yc = yc.astype(float)
     yc -= np.mean(yc)
 
-
-
     counter = 0
 
     for span_row in range(params.pv_array.span_rows):
@@ -152,10 +150,10 @@ def test_meshing_3dpanels_rotations(wind_direction, num_stream_rows, num_span_ro
             # Create the 4 corners of this table corresponding to the *top* surface (+0.5*thickness)
             top_surface_corners = np.array(
                 [
-                    [-0.5 * chord, -0.5 * span, 0.5*thickness],
-                    [0.5 * chord, -0.5 * span, 0.5*thickness],
-                    [0.5 * chord, 0.5 * span, 0.5*thickness],
-                    [-0.5 * chord, 0.5 * span, 0.5*thickness],
+                    [-0.5 * chord, -0.5 * span, 0.5 * thickness],
+                    [0.5 * chord, -0.5 * span, 0.5 * thickness],
+                    [0.5 * chord, 0.5 * span, 0.5 * thickness],
+                    [-0.5 * chord, 0.5 * span, 0.5 * thickness],
                 ]
             )
 

@@ -66,6 +66,7 @@ class DomainCreation(TemplateDomainCreation):
         Returns:
             The function returns gmsh.model which contains the geometric description of the computational domain
         """
+
         def Rx(theta):
             rot_matrix = np.array(
                 [
@@ -118,8 +119,9 @@ class DomainCreation(TemplateDomainCreation):
             self.modeling_torque_tube = True
         else:
             self.modeling_torque_tube = False
-            assert(params.pv_array.modules_per_span == 1), "When not modeling torque tube, modules_per_span must be 1."
-
+            assert (
+                params.pv_array.modules_per_span == 1
+            ), "When not modeling torque tube, modules_per_span must be 1."
 
         # The centroid of each panel in the x-direction (these should start at x=0)
         x_centers = np.linspace(
@@ -203,12 +205,15 @@ class DomainCreation(TemplateDomainCreation):
                         module_distances[module_id + 1] - module_distances[module_id]
                     )
 
-                    if self.modeling_torque_tube and params.general.geometry_modules == "panels3d":
+                    if (
+                        self.modeling_torque_tube
+                        and params.general.geometry_modules == "panels3d"
+                    ):
                         # Create an 0-tracking-degree panel centered at (x, y, z) = (0, 0, 0)
                         this_module = self.gmsh_model.occ.addBox(
                             -half_chord,
                             module_distances[module_id],
-                            params.pv_array.torque_tube_separation-half_thickness,
+                            params.pv_array.torque_tube_separation - half_thickness,
                             params.pv_array.panel_chord,
                             module_span,
                             params.pv_array.panel_thickness,
@@ -323,7 +328,6 @@ class DomainCreation(TemplateDomainCreation):
                                         next_pt > eps
                                         and next_pt < params.pv_array.panel_span - eps
                                     ):
-                                    
 
                                         fixation_pts_list.append(next_pt)
 
@@ -355,7 +359,10 @@ class DomainCreation(TemplateDomainCreation):
 
                                 embedded_lines_tag_list.append(fixed_pt_tag)
 
-                if self.modeling_torque_tube and params.general.geometry_modules == "panels3d":  # add the last connector
+                if (
+                    self.modeling_torque_tube
+                    and params.general.geometry_modules == "panels3d"
+                ):  # add the last connector
                     last_standoff = self.gmsh_model.occ.addBox(
                         -params.pv_array.block_chord_div_by_panel_chord * half_chord,
                         module_distances[module_id + 1]
@@ -508,7 +515,8 @@ class DomainCreation(TemplateDomainCreation):
                     ):
                         target_key = f"modules"
                     elif np.isclose(
-                        vol_com[2], params.pv_array.torque_tube_separation / 2.0 - half_thickness
+                        vol_com[2],
+                        params.pv_array.torque_tube_separation / 2.0 - half_thickness,
                     ):
                         target_key = f"connectors"
 
@@ -531,12 +539,10 @@ class DomainCreation(TemplateDomainCreation):
                         if np.isclose(com[0], -half_chord):
                             target_key = f"panel_left_{panel_ct:.0f}"
                             surface_located_or_not = True
-                            
 
                         if np.isclose(com[0], half_chord):
                             target_key = f"panel_right_{panel_ct:.0f}"
                             surface_located_or_not = True
-                            
 
                         if (
                             np.isclose(com[1], module_distances[0])
@@ -548,7 +554,6 @@ class DomainCreation(TemplateDomainCreation):
                         ):
                             target_key = f"panel_front_{panel_ct:.0f}"
                             surface_located_or_not = True
-                            
 
                         if (
                             np.isclose(
@@ -564,28 +569,23 @@ class DomainCreation(TemplateDomainCreation):
                             target_key = f"panel_back_{panel_ct:.0f}"
                             surface_located_or_not = True
 
-
-                        if (not self.modeling_torque_tube) or (params.general.geometry_modules != "panels3d"):
-                            if (
-                               np.isclose(
-                                    com[2], params.pv_array.torque_tube_separation-half_thickness
-                                )
+                        if (not self.modeling_torque_tube) or (
+                            params.general.geometry_modules != "panels3d"
+                        ):
+                            if np.isclose(
+                                com[2],
+                                params.pv_array.torque_tube_separation - half_thickness,
                             ):
-                                target_key = (
-                                    f"panel_bottom_{panel_ct:.0f}_0"
-                                )
+                                target_key = f"panel_bottom_{panel_ct:.0f}_0"
                                 surface_located_or_not = True
-                                
 
-                            if (
-                                np.isclose(
-                                    com[2],
-                                    half_thickness + params.pv_array.torque_tube_separation,
-                                )
+                            if np.isclose(
+                                com[2],
+                                half_thickness + params.pv_array.torque_tube_separation,
                             ):
                                 target_key = f"panel_top_{panel_ct:.0f}_0"
                                 surface_located_or_not = True
-                                
+
                         else:
                             for module_id in range(params.pv_array.modules_per_span):
                                 if (
@@ -601,7 +601,9 @@ class DomainCreation(TemplateDomainCreation):
                                     * half_chord
                                     and np.isclose(com[0], 0)
                                     and np.isclose(
-                                        com[2], params.pv_array.torque_tube_separation-half_thickness
+                                        com[2],
+                                        params.pv_array.torque_tube_separation
+                                        - half_thickness,
                                     )
                                 ):
                                     target_key = (
@@ -628,7 +630,9 @@ class DomainCreation(TemplateDomainCreation):
                                         + half_thickness,
                                     )
                                 ):
-                                    target_key = f"panel_top_{panel_ct:.0f}_{module_id:.0f}"
+                                    target_key = (
+                                        f"panel_top_{panel_ct:.0f}_{module_id:.0f}"
+                                    )
                                     surface_located_or_not = True
                                     break
                             # if (
@@ -683,7 +687,9 @@ class DomainCreation(TemplateDomainCreation):
 
                             if (
                                 np.isclose(
-                                    com[2], params.pv_array.torque_tube_separation / 2.0 - half_thickness
+                                    com[2],
+                                    params.pv_array.torque_tube_separation / 2.0
+                                    - half_thickness,
                                 )
                                 and self.modeling_torque_tube
                                 and params.general.geometry_modules == "panels3d"
@@ -699,7 +705,9 @@ class DomainCreation(TemplateDomainCreation):
 
                             if (
                                 np.isclose(
-                                    com[2], params.pv_array.torque_tube_separation / 2.0 - half_thickness
+                                    com[2],
+                                    params.pv_array.torque_tube_separation / 2.0
+                                    - half_thickness,
                                 )
                                 and self.modeling_torque_tube
                                 and params.general.geometry_modules == "panels3d"
@@ -727,7 +735,11 @@ class DomainCreation(TemplateDomainCreation):
                                 surface_located_or_not = True
 
                             if (
-                                np.isclose(com[2], params.pv_array.torque_tube_separation - half_thickness)
+                                np.isclose(
+                                    com[2],
+                                    params.pv_array.torque_tube_separation
+                                    - half_thickness,
+                                )
                                 and self.modeling_torque_tube
                                 and params.general.geometry_modules == "panels3d"
                                 and np.isclose(
@@ -743,7 +755,9 @@ class DomainCreation(TemplateDomainCreation):
 
                             # if not the most left/right panel boundary, it is panel/panel interface
                             if not surface_located_or_not:
-                                for module_id in range(params.pv_array.modules_per_span):
+                                for module_id in range(
+                                    params.pv_array.modules_per_span
+                                ):
 
                                     # sturctures tagging
 
@@ -760,7 +774,9 @@ class DomainCreation(TemplateDomainCreation):
                                         break
 
                                     if (
-                                        np.isclose(com[1], module_distances[module_id + 1])
+                                        np.isclose(
+                                            com[1], module_distances[module_id + 1]
+                                        )
                                         and np.isclose(com[0], 0)
                                         and np.isclose(
                                             com[2],
@@ -782,7 +798,9 @@ class DomainCreation(TemplateDomainCreation):
 
                                     if (
                                         np.isclose(
-                                            com[2], params.pv_array.torque_tube_separation - half_thickness
+                                            com[2],
+                                            params.pv_array.torque_tube_separation
+                                            - half_thickness,
                                         )
                                         and np.isclose(com[0], 0.0)
                                         and np.isclose(
@@ -793,7 +811,8 @@ class DomainCreation(TemplateDomainCreation):
                                             / 2.0,
                                         )
                                         and self.modeling_torque_tube
-                                        and params.general.geometry_modules == "panels3d"
+                                        and params.general.geometry_modules
+                                        == "panels3d"
                                     ):
                                         target_key = f"interior_surface_{panel_ct:.0f}"
                                         surface_located_or_not = True
@@ -806,7 +825,8 @@ class DomainCreation(TemplateDomainCreation):
                                             * half_chord,
                                         )
                                         and self.modeling_torque_tube
-                                        and params.general.geometry_modules == "panels3d"
+                                        and params.general.geometry_modules
+                                        == "panels3d"
                                         and np.isclose(
                                             com[1],
                                             module_distances[module_id]
@@ -815,9 +835,7 @@ class DomainCreation(TemplateDomainCreation):
                                             / 2.0,
                                         )
                                     ):
-                                        target_key = (
-                                            f"block_right_{panel_ct:.0f}_{module_id:.0f}"
-                                        )
+                                        target_key = f"block_right_{panel_ct:.0f}_{module_id:.0f}"
                                         surface_located_or_not = True
                                         break
 
@@ -828,7 +846,8 @@ class DomainCreation(TemplateDomainCreation):
                                             * half_chord,
                                         )
                                         and self.modeling_torque_tube
-                                        and params.general.geometry_modules == "panels3d"
+                                        and params.general.geometry_modules
+                                        == "panels3d"
                                         and np.isclose(
                                             com[1],
                                             module_distances[module_id]
@@ -846,25 +865,29 @@ class DomainCreation(TemplateDomainCreation):
                                     if (
                                         np.isclose(
                                             com[2],
-                                            params.pv_array.torque_tube_separation / 2.0 - half_thickness,
+                                            params.pv_array.torque_tube_separation / 2.0
+                                            - half_thickness,
                                         )
                                         and self.modeling_torque_tube
-                                        and params.general.geometry_modules == "panels3d"
-                                        and np.isclose(com[1], module_distances[module_id])
-                                    ):
-                                        target_key = (
-                                            f"block_front_{panel_ct:.0f}_{module_id:.0f}"
+                                        and params.general.geometry_modules
+                                        == "panels3d"
+                                        and np.isclose(
+                                            com[1], module_distances[module_id]
                                         )
+                                    ):
+                                        target_key = f"block_front_{panel_ct:.0f}_{module_id:.0f}"
                                         surface_located_or_not = True
                                         break
 
                                     if (
                                         np.isclose(
                                             com[2],
-                                            params.pv_array.torque_tube_separation / 2.0 - half_thickness,
+                                            params.pv_array.torque_tube_separation / 2.0
+                                            - half_thickness,
                                         )
                                         and self.modeling_torque_tube
-                                        and params.general.geometry_modules == "panels3d"
+                                        and params.general.geometry_modules
+                                        == "panels3d"
                                         and np.isclose(
                                             com[1],
                                             module_distances[module_id]
@@ -881,7 +904,8 @@ class DomainCreation(TemplateDomainCreation):
                                     if (
                                         np.isclose(com[2], -half_thickness)
                                         and self.modeling_torque_tube
-                                        and params.general.geometry_modules == "panels3d"
+                                        and params.general.geometry_modules
+                                        == "panels3d"
                                         and np.isclose(
                                             com[1],
                                             module_distances[module_id]
@@ -890,22 +914,20 @@ class DomainCreation(TemplateDomainCreation):
                                             / 2.0,
                                         )
                                     ):
-                                        target_key = (
-                                            f"block_bottom_{panel_ct:.0f}_{module_id:.0f}"
-                                        )
+                                        target_key = f"block_bottom_{panel_ct:.0f}_{module_id:.0f}"
                                         surface_located_or_not = True
                                         break
 
                         if not surface_located_or_not:
                             target_key = f"trash_{panel_ct:.0f}"
-                            print('facet in trash')
+                            print("facet in trash")
 
                         if target_key is not None:
                             if target_key in this_panel_transformed_com:
                                 this_panel_transformed_com[target_key].append(com)
                             else:
                                 this_panel_transformed_com[target_key] = [com]
-                
+
                 # print(this_panel_transformed_com[f"trash_{panel_ct:.0f}"])
 
                 for (
@@ -972,8 +994,6 @@ class DomainCreation(TemplateDomainCreation):
                     array_rotation_rad,
                 )
 
-
-
                 # Now, apply the same transformations to the numpy representation
                 # Rotate the panel by its tracking angle along the y-axis
                 # (currently centered at (0.0, 0.0, 0.0))
@@ -1006,7 +1026,7 @@ class DomainCreation(TemplateDomainCreation):
                     )
                 else:
                     self.numpy_pt_total_array = np.copy(numpy_pt_panel_array)
-        
+
         # Fragment all panels from the overall domain
         self.gmsh_model.occ.fragment(domain_tag_list, panel_tag_list)
 
@@ -1082,7 +1102,7 @@ class DomainCreation(TemplateDomainCreation):
                     raise ValueError(f"A panel extends past the y_min wall.")
                 if this_surf_bbox[1] > params.domain.y_max:
                     raise ValueError(f"A panel extends past the y_max wall.")
-                if this_surf_bbox[2] < 0.0: #params.domain.z_min:
+                if this_surf_bbox[2] < 0.0:  # params.domain.z_min:
                     raise ValueError(
                         f"A panel extends past the z_min wall (ground level = 0.0)."
                     )
@@ -1277,9 +1297,9 @@ class DomainCreation(TemplateDomainCreation):
             self.modeling_torque_tube = True
         else:
             self.modeling_torque_tube = False
-            assert(params.pv_array.modules_per_span == 1), "When not modeling torque tube, modules_per_span must be 1."
-
-
+            assert (
+                params.pv_array.modules_per_span == 1
+            ), "When not modeling torque tube, modules_per_span must be 1."
 
         # The centroid of each panel in the x-direction (these should start at x=0)
         x_centers = np.linspace(
@@ -1355,12 +1375,15 @@ class DomainCreation(TemplateDomainCreation):
                         module_distances[module_id + 1] - module_distances[module_id]
                     )
 
-                    if self.modeling_torque_tube and params.general.geometry_modules == "panels3d":
+                    if (
+                        self.modeling_torque_tube
+                        and params.general.geometry_modules == "panels3d"
+                    ):
                         # Create an 0-tracking-degree panel centered at (x, y, z) = (0, 0, 0)
                         this_module = self.gmsh_model.occ.addBox(
                             -half_chord,
                             module_distances[module_id],
-                            params.pv_array.torque_tube_separation-half_thickness,
+                            params.pv_array.torque_tube_separation - half_thickness,
                             params.pv_array.panel_chord,
                             module_span,
                             params.pv_array.panel_thickness,
@@ -1505,7 +1528,10 @@ class DomainCreation(TemplateDomainCreation):
 
                                 embedded_lines_tag_list.append(fixed_pt_tag)
 
-                if self.modeling_torque_tube and params.general.geometry_modules == "panels3d":  # add the last connector
+                if (
+                    self.modeling_torque_tube
+                    and params.general.geometry_modules == "panels3d"
+                ):  # add the last connector
                     last_standoff = self.gmsh_model.occ.addBox(
                         -params.pv_array.block_chord_div_by_panel_chord * half_chord,
                         module_distances[module_id + 1]
@@ -1569,7 +1595,8 @@ class DomainCreation(TemplateDomainCreation):
                     ):
                         target_key = f"modules"
                     elif np.isclose(
-                        vol_com[2], params.pv_array.torque_tube_separation / 2.0 - half_thickness
+                        vol_com[2],
+                        params.pv_array.torque_tube_separation / 2.0 - half_thickness,
                     ):
                         target_key = f"connectors"
 
@@ -1592,12 +1619,10 @@ class DomainCreation(TemplateDomainCreation):
                         if np.isclose(com[0], -half_chord):
                             target_key = f"panel_left_{panel_ct:.0f}"
                             surface_located_or_not = True
-                            
 
                         if np.isclose(com[0], half_chord):
                             target_key = f"panel_right_{panel_ct:.0f}"
                             surface_located_or_not = True
-                            
 
                         if (
                             np.isclose(com[1], module_distances[0])
@@ -1609,7 +1634,6 @@ class DomainCreation(TemplateDomainCreation):
                         ):
                             target_key = f"panel_front_{panel_ct:.0f}"
                             surface_located_or_not = True
-                            
 
                         if (
                             np.isclose(
@@ -1625,28 +1649,23 @@ class DomainCreation(TemplateDomainCreation):
                             target_key = f"panel_back_{panel_ct:.0f}"
                             surface_located_or_not = True
 
-
-                        if (not self.modeling_torque_tube) or (params.general.geometry_modules != "panels3d"):
-                            if (
-                               np.isclose(
-                                    com[2], params.pv_array.torque_tube_separation-half_thickness
-                                )
+                        if (not self.modeling_torque_tube) or (
+                            params.general.geometry_modules != "panels3d"
+                        ):
+                            if np.isclose(
+                                com[2],
+                                params.pv_array.torque_tube_separation - half_thickness,
                             ):
-                                target_key = (
-                                    f"panel_bottom_{panel_ct:.0f}_0"
-                                )
+                                target_key = f"panel_bottom_{panel_ct:.0f}_0"
                                 surface_located_or_not = True
-                                
 
-                            if (
-                                np.isclose(
-                                    com[2],
-                                    half_thickness + params.pv_array.torque_tube_separation,
-                                )
+                            if np.isclose(
+                                com[2],
+                                half_thickness + params.pv_array.torque_tube_separation,
                             ):
                                 target_key = f"panel_top_{panel_ct:.0f}_0"
                                 surface_located_or_not = True
-                                
+
                         else:
                             for module_id in range(params.pv_array.modules_per_span):
                                 if (
@@ -1662,7 +1681,9 @@ class DomainCreation(TemplateDomainCreation):
                                     * half_chord
                                     and np.isclose(com[0], 0)
                                     and np.isclose(
-                                        com[2], params.pv_array.torque_tube_separation-half_thickness
+                                        com[2],
+                                        params.pv_array.torque_tube_separation
+                                        - half_thickness,
                                     )
                                 ):
                                     target_key = (
@@ -1689,7 +1710,9 @@ class DomainCreation(TemplateDomainCreation):
                                         + half_thickness,
                                     )
                                 ):
-                                    target_key = f"panel_top_{panel_ct:.0f}_{module_id:.0f}"
+                                    target_key = (
+                                        f"panel_top_{panel_ct:.0f}_{module_id:.0f}"
+                                    )
                                     surface_located_or_not = True
                                     break
                             # if (
@@ -1744,7 +1767,9 @@ class DomainCreation(TemplateDomainCreation):
 
                             if (
                                 np.isclose(
-                                    com[2], params.pv_array.torque_tube_separation / 2.0 - half_thickness
+                                    com[2],
+                                    params.pv_array.torque_tube_separation / 2.0
+                                    - half_thickness,
                                 )
                                 and self.modeling_torque_tube
                                 and params.general.geometry_modules == "panels3d"
@@ -1760,7 +1785,9 @@ class DomainCreation(TemplateDomainCreation):
 
                             if (
                                 np.isclose(
-                                    com[2], params.pv_array.torque_tube_separation / 2.0 - half_thickness
+                                    com[2],
+                                    params.pv_array.torque_tube_separation / 2.0
+                                    - half_thickness,
                                 )
                                 and self.modeling_torque_tube
                                 and params.general.geometry_modules == "panels3d"
@@ -1788,7 +1815,11 @@ class DomainCreation(TemplateDomainCreation):
                                 surface_located_or_not = True
 
                             if (
-                                np.isclose(com[2], params.pv_array.torque_tube_separation - half_thickness)
+                                np.isclose(
+                                    com[2],
+                                    params.pv_array.torque_tube_separation
+                                    - half_thickness,
+                                )
                                 and self.modeling_torque_tube
                                 and params.general.geometry_modules == "panels3d"
                                 and np.isclose(
@@ -1804,7 +1835,9 @@ class DomainCreation(TemplateDomainCreation):
 
                             # if not the most left/right panel boundary, it is panel/panel interface
                             if not surface_located_or_not:
-                                for module_id in range(params.pv_array.modules_per_span):
+                                for module_id in range(
+                                    params.pv_array.modules_per_span
+                                ):
 
                                     # sturctures tagging
 
@@ -1821,7 +1854,9 @@ class DomainCreation(TemplateDomainCreation):
                                         break
 
                                     if (
-                                        np.isclose(com[1], module_distances[module_id + 1])
+                                        np.isclose(
+                                            com[1], module_distances[module_id + 1]
+                                        )
                                         and np.isclose(com[0], 0)
                                         and np.isclose(
                                             com[2],
@@ -1843,7 +1878,9 @@ class DomainCreation(TemplateDomainCreation):
 
                                     if (
                                         np.isclose(
-                                            com[2], params.pv_array.torque_tube_separation - half_thickness
+                                            com[2],
+                                            params.pv_array.torque_tube_separation
+                                            - half_thickness,
                                         )
                                         and np.isclose(com[0], 0.0)
                                         and np.isclose(
@@ -1854,7 +1891,8 @@ class DomainCreation(TemplateDomainCreation):
                                             / 2.0,
                                         )
                                         and self.modeling_torque_tube
-                                        and params.general.geometry_modules == "panels3d"
+                                        and params.general.geometry_modules
+                                        == "panels3d"
                                     ):
                                         target_key = f"interior_surface_{panel_ct:.0f}"
                                         surface_located_or_not = True
@@ -1867,7 +1905,8 @@ class DomainCreation(TemplateDomainCreation):
                                             * half_chord,
                                         )
                                         and self.modeling_torque_tube
-                                        and params.general.geometry_modules == "panels3d"
+                                        and params.general.geometry_modules
+                                        == "panels3d"
                                         and np.isclose(
                                             com[1],
                                             module_distances[module_id]
@@ -1876,9 +1915,7 @@ class DomainCreation(TemplateDomainCreation):
                                             / 2.0,
                                         )
                                     ):
-                                        target_key = (
-                                            f"block_right_{panel_ct:.0f}_{module_id:.0f}"
-                                        )
+                                        target_key = f"block_right_{panel_ct:.0f}_{module_id:.0f}"
                                         surface_located_or_not = True
                                         break
 
@@ -1889,7 +1926,8 @@ class DomainCreation(TemplateDomainCreation):
                                             * half_chord,
                                         )
                                         and self.modeling_torque_tube
-                                        and params.general.geometry_modules == "panels3d"
+                                        and params.general.geometry_modules
+                                        == "panels3d"
                                         and np.isclose(
                                             com[1],
                                             module_distances[module_id]
@@ -1907,25 +1945,29 @@ class DomainCreation(TemplateDomainCreation):
                                     if (
                                         np.isclose(
                                             com[2],
-                                            params.pv_array.torque_tube_separation / 2.0 - half_thickness,
+                                            params.pv_array.torque_tube_separation / 2.0
+                                            - half_thickness,
                                         )
                                         and self.modeling_torque_tube
-                                        and params.general.geometry_modules == "panels3d"
-                                        and np.isclose(com[1], module_distances[module_id])
-                                    ):
-                                        target_key = (
-                                            f"block_front_{panel_ct:.0f}_{module_id:.0f}"
+                                        and params.general.geometry_modules
+                                        == "panels3d"
+                                        and np.isclose(
+                                            com[1], module_distances[module_id]
                                         )
+                                    ):
+                                        target_key = f"block_front_{panel_ct:.0f}_{module_id:.0f}"
                                         surface_located_or_not = True
                                         break
 
                                     if (
                                         np.isclose(
                                             com[2],
-                                            params.pv_array.torque_tube_separation / 2.0 - half_thickness,
+                                            params.pv_array.torque_tube_separation / 2.0
+                                            - half_thickness,
                                         )
                                         and self.modeling_torque_tube
-                                        and params.general.geometry_modules == "panels3d"
+                                        and params.general.geometry_modules
+                                        == "panels3d"
                                         and np.isclose(
                                             com[1],
                                             module_distances[module_id]
@@ -1942,7 +1984,8 @@ class DomainCreation(TemplateDomainCreation):
                                     if (
                                         np.isclose(com[2], -half_thickness)
                                         and self.modeling_torque_tube
-                                        and params.general.geometry_modules == "panels3d"
+                                        and params.general.geometry_modules
+                                        == "panels3d"
                                         and np.isclose(
                                             com[1],
                                             module_distances[module_id]
@@ -1951,22 +1994,20 @@ class DomainCreation(TemplateDomainCreation):
                                             / 2.0,
                                         )
                                     ):
-                                        target_key = (
-                                            f"block_bottom_{panel_ct:.0f}_{module_id:.0f}"
-                                        )
+                                        target_key = f"block_bottom_{panel_ct:.0f}_{module_id:.0f}"
                                         surface_located_or_not = True
                                         break
 
                         if not surface_located_or_not:
                             target_key = f"trash_{panel_ct:.0f}"
-                            print('facet in trash')
+                            print("facet in trash")
 
                         if target_key is not None:
                             if target_key in this_panel_transformed_com:
                                 this_panel_transformed_com[target_key].append(com)
                             else:
                                 this_panel_transformed_com[target_key] = [com]
-                
+
                 # print(this_panel_transformed_com[f"trash_{panel_ct:.0f}"])
 
                 for (
@@ -2033,8 +2074,6 @@ class DomainCreation(TemplateDomainCreation):
                     array_rotation_rad,
                 )
 
-
-
                 # Now, apply the same transformations to the numpy representation
                 # Rotate the panel by its tracking angle along the y-axis
                 # (currently centered at (0.0, 0.0, 0.0))
@@ -2067,7 +2106,7 @@ class DomainCreation(TemplateDomainCreation):
                     )
                 else:
                     self.numpy_pt_total_array = np.copy(numpy_pt_panel_array)
-        
+
         # Fragment all panels from the overall domain
         self.gmsh_model.occ.fragment(domain_tag_list, panel_tag_list)
 
@@ -2104,9 +2143,9 @@ class DomainCreation(TemplateDomainCreation):
                             #     self._add_to_domain_markers("structure_fluid_interface", [surf_id], "facet")
 
             if not located_this_surface:
-                    print(
-                        f"Warning: Surface {surf_tag} has not been added to domain markers"
-                    )
+                print(
+                    f"Warning: Surface {surf_tag} has not been added to domain markers"
+                )
 
             # Since this is not one of the exterior walls, we should check if it extends
             # past the boundaries x_min, x_max, ...
@@ -2129,7 +2168,7 @@ class DomainCreation(TemplateDomainCreation):
                 )
             if this_surf_bbox[2] > params.domain.z_max:
                 raise ValueError(f"A panel extends past the z_max wall.")
-            
+
         # mark the panel and connector volumes
         all_vol_tag_list = self.gmsh_model.occ.getEntities(self.ndim)
 
@@ -2146,7 +2185,6 @@ class DomainCreation(TemplateDomainCreation):
                         located_this_volume = True
                         if "trash" not in key:
                             self._add_to_domain_markers(key, [vol_id], "cell")
-
 
         # Record all the data collected to domain_markers as physics groups with physical names
         # because we are creating domain_markers _within_ the build method, we don't need to
@@ -2169,9 +2207,6 @@ class DomainCreation(TemplateDomainCreation):
                         self.ndim - 1, data["gmsh_tags"], data["idx"]
                     )
                     self.gmsh_model.setPhysicalName(self.ndim - 1, data["idx"], key)
-
-
-
 
     def set_length_scales_DEV(self, params, domain_markers):
         res_min = params.domain.l_char
@@ -2307,7 +2342,10 @@ class DomainCreation(TemplateDomainCreation):
                 domain_markers[f"panel_back_{panel_id}"]["gmsh_tags"]
             )
 
-            if self.modeling_torque_tube and params.general.geometry_modules == "panels3d":
+            if (
+                self.modeling_torque_tube
+                and params.general.geometry_modules == "panels3d"
+            ):
                 for module_id in range(params.pv_array.modules_per_span):
                     internal_surface_tags.extend(
                         domain_markers[f"panel_bottom_{panel_id:.0f}_{module_id:.0f}"][

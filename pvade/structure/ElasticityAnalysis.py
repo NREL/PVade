@@ -704,21 +704,29 @@ class Elasticity:
         self.z_unit_vector = dolfinx.fem.Constant(
             domain.structure.msh, [0.0, 0.0, 1.0]
         )  # surface traction, N/m^2
-        
-        if domain.modeling_torque_tube and params.general.geometry_modules == "panels3d":
+
+        if (
+            domain.modeling_torque_tube
+            and params.general.geometry_modules == "panels3d"
+        ):
             self.calculate_K_for_Robin_BC(domain, flow, params)
 
         dx_structure = ufl.Measure(
             "dx", domain=domain.structure.msh, subdomain_data=domain.structure.cell_tags
         )
-        
-        if domain.modeling_torque_tube and params.general.geometry_modules == "panels3d":
+
+        if (
+            domain.modeling_torque_tube
+            and params.general.geometry_modules == "panels3d"
+        ):
             self.res = (
                 m(self.avg(self.a_old, a_new, self.alpha_m), self.u_) * dx_structure
                 + c(self.avg(self.v_old, v_new, self.alpha_f), self.u_) * dx_structure
                 + k_nominal(self.avg(self.u_old, self.u, self.alpha_f), self.u_)
                 * dx_structure(domain.domain_markers["modules"]["idx"])
-                + k_nominal_connector(self.avg(self.u_old, self.u, self.alpha_f), self.u_)
+                + k_nominal_connector(
+                    self.avg(self.u_old, self.u, self.alpha_f), self.u_
+                )
                 * dx_structure(domain.domain_markers["connectors"]["idx"])
                 - structure.rho
                 * ufl.inner(self.f, self.u_)
@@ -731,14 +739,20 @@ class Elasticity:
             )  # - Wext(self.u)
 
             # Robin boundary condition terms
-            for panel_id in range(params.pv_array.stream_rows * params.pv_array.span_rows):
+            for panel_id in range(
+                params.pv_array.stream_rows * params.pv_array.span_rows
+            ):
                 for i in range(params.pv_array.modules_per_span + 1):
                     name_K = f"spring_stiffness_{panel_id:.0f}_{i:.0f}"
                     K_springs = dolfinx.fem.Constant(
                         domain.structure.msh, float(getattr(self, name_K))
                     )
-                    self.res -= ufl.dot(K_springs * self.u_, self.z_unit_vector) * self.ds(
-                        domain.domain_markers[f"block_bottom_{panel_id:.0f}_{i:.0f}"]["idx"]
+                    self.res -= ufl.dot(
+                        K_springs * self.u_, self.z_unit_vector
+                    ) * self.ds(
+                        domain.domain_markers[f"block_bottom_{panel_id:.0f}_{i:.0f}"][
+                            "idx"
+                        ]
                     )
         else:
             self.res = (
@@ -746,9 +760,7 @@ class Elasticity:
                 + c(self.avg(self.v_old, v_new, self.alpha_f), self.u_) * dx_structure
                 + k_nominal(self.avg(self.u_old, self.u, self.alpha_f), self.u_)
                 * dx_structure
-                - structure.rho
-                * ufl.inner(self.f, self.u_)
-                * dx_structure
+                - structure.rho * ufl.inner(self.f, self.u_) * dx_structure
                 - ufl.dot(ufl.dot(self.stress_predicted * J * ufl.inv(F.T), n), self.u_)
                 * self.ds
             )  # - Wext(self.u)

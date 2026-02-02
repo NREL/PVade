@@ -42,7 +42,7 @@ def main(input_file=None):
     domain = FSIDomain(params)
     if params.general.input_mesh_dir is not None:
         domain.read_mesh_files(params.general.input_mesh_dir, params)
-        
+
     else:
         domain.build(params)
 
@@ -79,7 +79,6 @@ def main(input_file=None):
 
     for k in range(params.solver.t_steps):
         current_time = (k + 1) * params.solver.dt
-
 
         if (
             structural_analysis
