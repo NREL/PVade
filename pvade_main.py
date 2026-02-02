@@ -42,9 +42,10 @@ def main(input_file=None):
     domain = FSIDomain(params)
     if params.general.input_mesh_dir is not None:
         domain.read_mesh_files(params.general.input_mesh_dir, params)
+        
     else:
         domain.build(params)
-    exit()
+
     # If we only want to create the mesh, we can stop here
     if params.general.mesh_only:
         list_timings(params.comm, [TimingType.wall])

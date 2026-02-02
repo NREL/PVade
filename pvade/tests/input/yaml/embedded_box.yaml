@@ -17,10 +17,10 @@ pv_array:
   span_rows: 1
   stream_spacing: 1.0
   span_spacing: 1.0
-  elevation: 0.5 # 0.0
+  elevation: 1.1
   panel_chord: 1.2
   panel_span: 1.1
-  panel_thickness: 1.0
+  panel_thickness: 0.8
   tracker_angle: 0.0
 
 

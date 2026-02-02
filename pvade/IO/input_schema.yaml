@@ -650,7 +650,7 @@ properties:
         type: "boolean"
         description: "Controls whether or not a boundary condition is applied along the lines defined by the spanwise fixation points which run in the streamwise direction and divide the panel into multiple rectangles in the spanwise direction."
       bc_list:
-        default: [front,back]
+        default: []#[panel_front,panel_back]
         # type: "list"
         description: "location for clamped boundary conditions"
       dt:

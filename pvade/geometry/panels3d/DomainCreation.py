@@ -66,7 +66,6 @@ class DomainCreation(TemplateDomainCreation):
         Returns:
             The function returns gmsh.model which contains the geometric description of the computational domain
         """
-
         def Rx(theta):
             rot_matrix = np.array(
                 [
@@ -111,6 +110,16 @@ class DomainCreation(TemplateDomainCreation):
 
         array_rotation = (params.fluid.wind_direction + 90.0) % 360.0
         array_rotation_rad = np.radians(array_rotation)
+
+        if (
+            params.pv_array.torque_tube_separation > 0.0
+            and params.pv_array.torque_tube_outer_radius > 0.0
+        ):
+            self.modeling_torque_tube = True
+        else:
+            self.modeling_torque_tube = False
+            assert(params.pv_array.modules_per_span == 1), "When not modeling torque tube, modules_per_span must be 1."
+
 
         # The centroid of each panel in the x-direction (these should start at x=0)
         x_centers = np.linspace(
@@ -164,14 +173,6 @@ class DomainCreation(TemplateDomainCreation):
 
         transformed_com = {}  # all panels
 
-        if (
-            params.pv_array.torque_tube_separation > 0.0
-            and params.pv_array.torque_tube_outer_radius > 0.0
-        ):
-            self.modeling_torque_tube = True
-        else:
-            self.modeling_torque_tube = False
-
         vol_tags_modules = []
         vol_tags_connectors = []
         # start to add panel
@@ -202,12 +203,12 @@ class DomainCreation(TemplateDomainCreation):
                         module_distances[module_id + 1] - module_distances[module_id]
                     )
 
-                    if self.modeling_torque_tube:
+                    if self.modeling_torque_tube and params.general.geometry_modules == "panels3d":
                         # Create an 0-tracking-degree panel centered at (x, y, z) = (0, 0, 0)
                         this_module = self.gmsh_model.occ.addBox(
                             -half_chord,
                             module_distances[module_id],
-                            params.pv_array.torque_tube_separation,
+                            params.pv_array.torque_tube_separation-half_thickness,
                             params.pv_array.panel_chord,
                             module_span,
                             params.pv_array.panel_thickness,
@@ -224,7 +225,7 @@ class DomainCreation(TemplateDomainCreation):
                             -params.pv_array.block_chord_div_by_panel_chord
                             * half_chord,
                             module_distances[module_id],
-                            0.0,
+                            -half_thickness,
                             2.0
                             * params.pv_array.block_chord_div_by_panel_chord
                             * half_chord,
@@ -238,25 +239,25 @@ class DomainCreation(TemplateDomainCreation):
 
                         # Add a bisecting line to the bottom of the connector in the spanwise direction
                         pt_1 = self.gmsh_model.occ.addPoint(
-                            0, module_distances[module_id], 0.0
+                            0, module_distances[module_id], -half_thickness
                         )
                         pt_2 = self.gmsh_model.occ.addPoint(
                             0,
                             module_distances[module_id]
                             + params.pv_array.block_chord_div_by_panel_chord
                             * half_chord,
-                            0.0,
+                            -half_thickness,
                         )
                         numpy_pt_list.append(
                             [
                                 0,
                                 module_distances[module_id],
-                                0.0,
+                                -half_thickness,
                                 0,
                                 module_distances[module_id]
                                 + params.pv_array.block_chord_div_by_panel_chord
                                 * half_chord,
-                                0.0,
+                                -half_thickness,
                             ]
                         )  # for this row
                         torque_tube_id = self.gmsh_model.occ.addLine(pt_1, pt_2)
@@ -269,7 +270,7 @@ class DomainCreation(TemplateDomainCreation):
                         this_module = self.gmsh_model.occ.addBox(
                             -half_chord,
                             module_distances[module_id],
-                            0.0,
+                            -half_thickness,
                             params.pv_array.panel_chord,
                             module_span,
                             params.pv_array.panel_thickness,
@@ -280,19 +281,19 @@ class DomainCreation(TemplateDomainCreation):
                         structure_panel_only_list.append((self.ndim, this_module))
 
                         pt_1 = self.gmsh_model.occ.addPoint(
-                            0, module_distances[module_id], 0.0
+                            0, module_distances[module_id], -half_thickness
                         )
                         pt_2 = self.gmsh_model.occ.addPoint(
-                            0, module_distances[module_id + 1], 0.0
+                            0, module_distances[module_id + 1], -half_thickness
                         )
                         numpy_pt_list.append(
                             [
                                 0,
                                 module_distances[module_id],
-                                0.0,
+                                -half_thickness,
                                 0,
                                 module_distances[module_id + 1],
-                                0.0,
+                                -half_thickness,
                             ]
                         )
                         torque_tube_id = self.gmsh_model.occ.addLine(pt_1, pt_2)
@@ -301,12 +302,65 @@ class DomainCreation(TemplateDomainCreation):
                             torque_tube_tag
                         )  # for this panel row
 
-                if self.modeling_torque_tube:  # add the last connector
+                        # Add lines in the streamwise direction to mimic sections of panel held rigid by motor
+                        if params.pv_array.span_fixation_pts is not None:
+                            if not isinstance(params.pv_array.span_fixation_pts, list):
+                                num_fixation_pts = int(
+                                    np.floor(
+                                        params.pv_array.panel_span
+                                        / params.pv_array.span_fixation_pts
+                                    )
+                                )
+
+                                fixation_pts_list = []
+
+                                for k in range(1, num_fixation_pts + 1):
+                                    next_pt = k * params.pv_array.span_fixation_pts
+
+                                    eps = 1e-9
+
+                                    if (
+                                        next_pt > eps
+                                        and next_pt < params.pv_array.panel_span - eps
+                                    ):
+                                    
+
+                                        fixation_pts_list.append(next_pt)
+
+                            else:
+                                fixation_pts_list = params.pv_array.span_fixation_pts
+
+                            for fp in fixation_pts_list:
+                                pt_1 = self.gmsh_model.occ.addPoint(
+                                    -half_chord, -half_span + fp, -half_thickness
+                                )
+                                pt_2 = self.gmsh_model.occ.addPoint(
+                                    half_chord, -half_span + fp, -half_thickness
+                                )
+
+                                # FIXME: don't add the fixation points into the numpy tagging for now
+                                numpy_pt_list.append(
+                                    [
+                                        -half_chord,
+                                        -half_span + fp,
+                                        -half_thickness,
+                                        half_chord,
+                                        -half_span + fp,
+                                        -half_thickness,
+                                    ]
+                                )
+
+                                fixed_pt_id = self.gmsh_model.occ.addLine(pt_1, pt_2)
+                                fixed_pt_tag = (1, fixed_pt_id)
+
+                                embedded_lines_tag_list.append(fixed_pt_tag)
+
+                if self.modeling_torque_tube and params.general.geometry_modules == "panels3d":  # add the last connector
                     last_standoff = self.gmsh_model.occ.addBox(
                         -params.pv_array.block_chord_div_by_panel_chord * half_chord,
                         module_distances[module_id + 1]
                         - params.pv_array.block_chord_div_by_panel_chord * half_chord,
-                        0.0,
+                        -half_thickness,
                         2.0
                         * params.pv_array.block_chord_div_by_panel_chord
                         * half_chord,
@@ -322,10 +376,10 @@ class DomainCreation(TemplateDomainCreation):
                         0,
                         module_distances[module_id + 1]
                         - params.pv_array.block_chord_div_by_panel_chord * half_chord,
-                        0.0,
+                        -half_thickness,
                     )
                     pt_2 = self.gmsh_model.occ.addPoint(
-                        0, module_distances[module_id + 1], 0.0
+                        0, module_distances[module_id + 1], -half_thickness
                     )
                     numpy_pt_list.append(
                         [
@@ -333,10 +387,10 @@ class DomainCreation(TemplateDomainCreation):
                             module_distances[module_id + 1]
                             - params.pv_array.block_chord_div_by_panel_chord
                             * half_chord,
-                            0.0,
+                            -half_thickness,
                             0,
                             module_distances[module_id + 1],
-                            0.0,
+                            -half_thickness,
                         ]
                     )
                     torque_tube_id = self.gmsh_model.occ.addLine(pt_1, pt_2)
@@ -450,12 +504,11 @@ class DomainCreation(TemplateDomainCreation):
                     )
                     if np.isclose(
                         vol_com[2],
-                        params.pv_array.torque_tube_separation
-                        + params.pv_array.panel_thickness / 2.0,
+                        params.pv_array.torque_tube_separation,
                     ):
                         target_key = f"modules"
                     elif np.isclose(
-                        vol_com[2], params.pv_array.torque_tube_separation / 2.0
+                        vol_com[2], params.pv_array.torque_tube_separation / 2.0 - half_thickness
                     ):
                         target_key = f"connectors"
 
@@ -490,8 +543,7 @@ class DomainCreation(TemplateDomainCreation):
                             and np.isclose(com[0], 0)
                             and np.isclose(
                                 com[2],
-                                params.pv_array.torque_tube_separation
-                                + params.pv_array.panel_thickness / 2.0,
+                                params.pv_array.torque_tube_separation,
                             )
                         ):
                             target_key = f"panel_front_{panel_ct:.0f}"
@@ -506,22 +558,21 @@ class DomainCreation(TemplateDomainCreation):
                             and np.isclose(com[0], 0)
                             and np.isclose(
                                 com[2],
-                                params.pv_array.torque_tube_separation
-                                + params.pv_array.panel_thickness / 2.0,
+                                params.pv_array.torque_tube_separation,
                             )
                         ):
                             target_key = f"panel_back_{panel_ct:.0f}"
                             surface_located_or_not = True
 
 
-                        if not self.modeling_torque_tube:
+                        if (not self.modeling_torque_tube) or (params.general.geometry_modules != "panels3d"):
                             if (
                                np.isclose(
-                                    com[2], params.pv_array.torque_tube_separation
+                                    com[2], params.pv_array.torque_tube_separation-half_thickness
                                 )
                             ):
                                 target_key = (
-                                    f"panel_bottom_{panel_ct:.0f}"
+                                    f"panel_bottom_{panel_ct:.0f}_0"
                                 )
                                 surface_located_or_not = True
                                 
@@ -529,11 +580,10 @@ class DomainCreation(TemplateDomainCreation):
                             if (
                                 np.isclose(
                                     com[2],
-                                    params.pv_array.torque_tube_separation
-                                    + params.pv_array.panel_thickness,
+                                    half_thickness + params.pv_array.torque_tube_separation,
                                 )
                             ):
-                                target_key = f"panel_top_{panel_ct:.0f}"
+                                target_key = f"panel_top_{panel_ct:.0f}_0"
                                 surface_located_or_not = True
                                 
                         else:
@@ -551,7 +601,7 @@ class DomainCreation(TemplateDomainCreation):
                                     * half_chord
                                     and np.isclose(com[0], 0)
                                     and np.isclose(
-                                        com[2], params.pv_array.torque_tube_separation
+                                        com[2], params.pv_array.torque_tube_separation-half_thickness
                                     )
                                 ):
                                     target_key = (
@@ -575,7 +625,7 @@ class DomainCreation(TemplateDomainCreation):
                                     and np.isclose(
                                         com[2],
                                         params.pv_array.torque_tube_separation
-                                        + params.pv_array.panel_thickness,
+                                        + half_thickness,
                                     )
                                 ):
                                     target_key = f"panel_top_{panel_ct:.0f}_{module_id:.0f}"
@@ -600,6 +650,7 @@ class DomainCreation(TemplateDomainCreation):
                                     * half_chord,
                                 )
                                 and self.modeling_torque_tube
+                                and params.general.geometry_modules == "panels3d"
                                 and np.isclose(
                                     com[1],
                                     module_distances[params.pv_array.modules_per_span]
@@ -618,6 +669,7 @@ class DomainCreation(TemplateDomainCreation):
                                     * half_chord,
                                 )
                                 and self.modeling_torque_tube
+                                and params.general.geometry_modules == "panels3d"
                                 and np.isclose(
                                     com[1],
                                     module_distances[params.pv_array.modules_per_span]
@@ -631,9 +683,10 @@ class DomainCreation(TemplateDomainCreation):
 
                             if (
                                 np.isclose(
-                                    com[2], params.pv_array.torque_tube_separation / 2.0
+                                    com[2], params.pv_array.torque_tube_separation / 2.0 - half_thickness
                                 )
                                 and self.modeling_torque_tube
+                                and params.general.geometry_modules == "panels3d"
                                 and np.isclose(
                                     com[1],
                                     module_distances[params.pv_array.modules_per_span]
@@ -646,9 +699,10 @@ class DomainCreation(TemplateDomainCreation):
 
                             if (
                                 np.isclose(
-                                    com[2], params.pv_array.torque_tube_separation / 2.0
+                                    com[2], params.pv_array.torque_tube_separation / 2.0 - half_thickness
                                 )
                                 and self.modeling_torque_tube
+                                and params.general.geometry_modules == "panels3d"
                                 and np.isclose(
                                     com[1],
                                     module_distances[params.pv_array.modules_per_span],
@@ -658,8 +712,9 @@ class DomainCreation(TemplateDomainCreation):
                                 surface_located_or_not = True
 
                             if (
-                                np.isclose(com[2], 0.0)
+                                np.isclose(com[2], -half_thickness)
                                 and self.modeling_torque_tube
+                                and params.general.geometry_modules == "panels3d"
                                 and np.isclose(
                                     com[1],
                                     module_distances[params.pv_array.modules_per_span]
@@ -672,8 +727,9 @@ class DomainCreation(TemplateDomainCreation):
                                 surface_located_or_not = True
 
                             if (
-                                np.isclose(com[2], params.pv_array.torque_tube_separation)
+                                np.isclose(com[2], params.pv_array.torque_tube_separation - half_thickness)
                                 and self.modeling_torque_tube
+                                and params.general.geometry_modules == "panels3d"
                                 and np.isclose(
                                     com[1],
                                     module_distances[params.pv_array.modules_per_span]
@@ -696,8 +752,7 @@ class DomainCreation(TemplateDomainCreation):
                                         and np.isclose(com[0], 0)
                                         and np.isclose(
                                             com[2],
-                                            params.pv_array.torque_tube_separation
-                                            + params.pv_array.panel_thickness / 2.0,
+                                            params.pv_array.torque_tube_separation,
                                         )
                                     ):
                                         target_key = f"interior_surface_{panel_ct:.0f}"
@@ -709,8 +764,7 @@ class DomainCreation(TemplateDomainCreation):
                                         and np.isclose(com[0], 0)
                                         and np.isclose(
                                             com[2],
-                                            params.pv_array.torque_tube_separation
-                                            + params.pv_array.panel_thickness / 2.0,
+                                            params.pv_array.torque_tube_separation,
                                         )
                                     ):
                                         target_key = f"interior_surface_{panel_ct:.0f}"
@@ -728,7 +782,7 @@ class DomainCreation(TemplateDomainCreation):
 
                                     if (
                                         np.isclose(
-                                            com[2], params.pv_array.torque_tube_separation
+                                            com[2], params.pv_array.torque_tube_separation - half_thickness
                                         )
                                         and np.isclose(com[0], 0.0)
                                         and np.isclose(
@@ -739,6 +793,7 @@ class DomainCreation(TemplateDomainCreation):
                                             / 2.0,
                                         )
                                         and self.modeling_torque_tube
+                                        and params.general.geometry_modules == "panels3d"
                                     ):
                                         target_key = f"interior_surface_{panel_ct:.0f}"
                                         surface_located_or_not = True
@@ -751,6 +806,7 @@ class DomainCreation(TemplateDomainCreation):
                                             * half_chord,
                                         )
                                         and self.modeling_torque_tube
+                                        and params.general.geometry_modules == "panels3d"
                                         and np.isclose(
                                             com[1],
                                             module_distances[module_id]
@@ -772,6 +828,7 @@ class DomainCreation(TemplateDomainCreation):
                                             * half_chord,
                                         )
                                         and self.modeling_torque_tube
+                                        and params.general.geometry_modules == "panels3d"
                                         and np.isclose(
                                             com[1],
                                             module_distances[module_id]
@@ -789,9 +846,10 @@ class DomainCreation(TemplateDomainCreation):
                                     if (
                                         np.isclose(
                                             com[2],
-                                            params.pv_array.torque_tube_separation / 2.0,
+                                            params.pv_array.torque_tube_separation / 2.0 - half_thickness,
                                         )
                                         and self.modeling_torque_tube
+                                        and params.general.geometry_modules == "panels3d"
                                         and np.isclose(com[1], module_distances[module_id])
                                     ):
                                         target_key = (
@@ -803,9 +861,10 @@ class DomainCreation(TemplateDomainCreation):
                                     if (
                                         np.isclose(
                                             com[2],
-                                            params.pv_array.torque_tube_separation / 2.0,
+                                            params.pv_array.torque_tube_separation / 2.0 - half_thickness,
                                         )
                                         and self.modeling_torque_tube
+                                        and params.general.geometry_modules == "panels3d"
                                         and np.isclose(
                                             com[1],
                                             module_distances[module_id]
@@ -820,8 +879,9 @@ class DomainCreation(TemplateDomainCreation):
                                         break
 
                                     if (
-                                        np.isclose(com[2], 0.0)
+                                        np.isclose(com[2], -half_thickness)
                                         and self.modeling_torque_tube
+                                        and params.general.geometry_modules == "panels3d"
                                         and np.isclose(
                                             com[1],
                                             module_distances[module_id]
@@ -912,6 +972,8 @@ class DomainCreation(TemplateDomainCreation):
                     array_rotation_rad,
                 )
 
+
+
                 # Now, apply the same transformations to the numpy representation
                 # Rotate the panel by its tracking angle along the y-axis
                 # (currently centered at (0.0, 0.0, 0.0))
@@ -949,6 +1011,8 @@ class DomainCreation(TemplateDomainCreation):
         self.gmsh_model.occ.fragment(domain_tag_list, panel_tag_list)
 
         self.gmsh_model.occ.synchronize()
+        gmsh.write("pnales.brep")
+        # exit()
 
         self.numpy_pt_total_array = np.reshape(
             self.numpy_pt_total_array, (-1, int(2 * self.ndim))
@@ -995,6 +1059,8 @@ class DomainCreation(TemplateDomainCreation):
                             if "trash" not in key:
                                 # print(key)
                                 self._add_to_domain_markers(key, [surf_id], "facet")
+                                # if "interior_surface" not in key:
+                                #     self._add_to_domain_markers("structure_fluid_interface", [surf_id], "facet")
 
                 if not located_this_surface:
                     print(
@@ -1016,7 +1082,7 @@ class DomainCreation(TemplateDomainCreation):
                     raise ValueError(f"A panel extends past the y_min wall.")
                 if this_surf_bbox[1] > params.domain.y_max:
                     raise ValueError(f"A panel extends past the y_max wall.")
-                if this_surf_bbox[2] < 0.0:
+                if this_surf_bbox[2] < 0.0: #params.domain.z_min:
                     raise ValueError(
                         f"A panel extends past the z_min wall (ground level = 0.0)."
                     )
@@ -1204,6 +1270,17 @@ class DomainCreation(TemplateDomainCreation):
         array_rotation = (params.fluid.wind_direction + 90.0) % 360.0
         array_rotation_rad = np.radians(array_rotation)
 
+        if (
+            params.pv_array.torque_tube_separation > 0.0
+            and params.pv_array.torque_tube_outer_radius > 0.0
+        ):
+            self.modeling_torque_tube = True
+        else:
+            self.modeling_torque_tube = False
+            assert(params.pv_array.modules_per_span == 1), "When not modeling torque tube, modules_per_span must be 1."
+
+
+
         # The centroid of each panel in the x-direction (these should start at x=0)
         x_centers = np.linspace(
             0.0,
@@ -1241,257 +1318,712 @@ class DomainCreation(TemplateDomainCreation):
         domain_tag_list = []
         # domain_tag_list.append(domain_tag)
 
+        # panel_tag_list includes all structure, panel+connector
         panel_tag_list = []
         panel_ct = 0
 
-        panel_id_y = -1
+        # only include panels
+        structure_panel_only_list = []
+        # only include connectors
+        structure_connector_only_list = []
 
-        prev_surf_tag = []
-        for k, yy in enumerate(y_centers):
-            panel_id_x = -1
-            panel_id_y += 1
-            for j, xx in enumerate(x_centers):
-                panel_id_x += 1
+        module_distances = np.linspace(
+            -half_span, half_span, params.pv_array.modules_per_span + 1
+        )
+
+        transformed_com = {}  # all panels
+
+        # panel_id_y = -1
+
+        # prev_surf_tag = []
+        for panel_id_y, yy in enumerate(y_centers):
+            # panel_id_x = -1
+            # panel_id_y += 1
+            for panel_id_x, xx in enumerate(x_centers):
+                # panel_id_x += 1
                 # Create an 0-tracking-degree panel centered at (x, y, z) = (0, 0, 0)
-                panel_id = self.gmsh_model.occ.addBox(
-                    -half_chord,
-                    -half_span,
-                    -half_thickness,
-                    params.pv_array.panel_chord,
-                    params.pv_array.panel_span,
-                    params.pv_array.panel_thickness,
-                )
 
-                panel_tag = (self.ndim, panel_id)
-                panel_tag_list.append(panel_tag)
+                this_panel_tag_list = []  # for each row
+                this_panel_transformed_com = {}  # for each row
 
-                numpy_pt_list = []
-                embedded_lines_tag_list = []
+                numpy_pt_list = []  # for each row
+                embedded_lines_tag_list = []  # for each row
 
-                # Add a bisecting line to the bottom of the panel in the spanwise direction
-                pt_1 = self.gmsh_model.occ.addPoint(0, -half_span, -half_thickness)
-                pt_2 = self.gmsh_model.occ.addPoint(0, half_span, -half_thickness)
+                for module_id in range(params.pv_array.modules_per_span):
 
-                numpy_pt_list.append(
-                    [0, -half_span, -half_thickness, 0, half_span, -half_thickness]
-                )
+                    module_span = (
+                        module_distances[module_id + 1] - module_distances[module_id]
+                    )
 
-                torque_tube_id = self.gmsh_model.occ.addLine(pt_1, pt_2)
-                torque_tube_tag = (1, torque_tube_id)
-                embedded_lines_tag_list.append(torque_tube_tag)
-
-                # Add lines in the streamwise direction to mimic sections of panel held rigid by motor
-                if params.pv_array.span_fixation_pts is not None:
-                    if not isinstance(params.pv_array.span_fixation_pts, list):
-                        num_fixation_pts = int(
-                            np.floor(
-                                params.pv_array.panel_span
-                                / params.pv_array.span_fixation_pts
-                            )
+                    if self.modeling_torque_tube and params.general.geometry_modules == "panels3d":
+                        # Create an 0-tracking-degree panel centered at (x, y, z) = (0, 0, 0)
+                        this_module = self.gmsh_model.occ.addBox(
+                            -half_chord,
+                            module_distances[module_id],
+                            params.pv_array.torque_tube_separation-half_thickness,
+                            params.pv_array.panel_chord,
+                            module_span,
+                            params.pv_array.panel_thickness,
                         )
 
-                        fixation_pts_list = []
+                        panel_tag_list.append((self.ndim, this_module))  # all panels
+                        this_panel_tag_list.append(
+                            (self.ndim, this_module)
+                        )  # this panel array/row
 
-                        for k in range(1, num_fixation_pts + 1):
-                            next_pt = k * params.pv_array.span_fixation_pts
+                        structure_panel_only_list.append((self.ndim, this_module))
 
-                            eps = 1e-9
+                        this_standoff = self.gmsh_model.occ.addBox(
+                            -params.pv_array.block_chord_div_by_panel_chord
+                            * half_chord,
+                            module_distances[module_id],
+                            -half_thickness,
+                            2.0
+                            * params.pv_array.block_chord_div_by_panel_chord
+                            * half_chord,
+                            params.pv_array.block_chord_div_by_panel_chord * half_chord,
+                            params.pv_array.torque_tube_separation,
+                        )
+                        panel_tag_list.append((self.ndim, this_standoff))
+                        this_panel_tag_list.append((self.ndim, this_standoff))
 
-                            if (
-                                next_pt > eps
-                                and next_pt < params.pv_array.panel_span - eps
-                            ):
-                                fixation_pts_list.append(next_pt)
+                        structure_connector_only_list.append((self.ndim, this_standoff))
 
-                    else:
-                        fixation_pts_list = params.pv_array.span_fixation_pts
-
-                    for fp in fixation_pts_list:
+                        # Add a bisecting line to the bottom of the connector in the spanwise direction
                         pt_1 = self.gmsh_model.occ.addPoint(
-                            -half_chord, -half_span + fp, -half_thickness
+                            0, module_distances[module_id], -half_thickness
                         )
                         pt_2 = self.gmsh_model.occ.addPoint(
-                            half_chord, -half_span + fp, -half_thickness
+                            0,
+                            module_distances[module_id]
+                            + params.pv_array.block_chord_div_by_panel_chord
+                            * half_chord,
+                            -half_thickness,
                         )
-
-                        # FIXME: don't add the fixation points into the numpy tagging for now
                         numpy_pt_list.append(
                             [
-                                -half_chord,
-                                -half_span + fp,
+                                0,
+                                module_distances[module_id],
                                 -half_thickness,
-                                half_chord,
-                                -half_span + fp,
+                                0,
+                                module_distances[module_id]
+                                + params.pv_array.block_chord_div_by_panel_chord
+                                * half_chord,
+                                -half_thickness,
+                            ]
+                        )  # for this row
+                        torque_tube_id = self.gmsh_model.occ.addLine(pt_1, pt_2)
+                        torque_tube_tag = (1, torque_tube_id)
+                        embedded_lines_tag_list.append(
+                            torque_tube_tag
+                        )  # for this panel row
+
+                    else:
+                        this_module = self.gmsh_model.occ.addBox(
+                            -half_chord,
+                            module_distances[module_id],
+                            -half_thickness,
+                            params.pv_array.panel_chord,
+                            module_span,
+                            params.pv_array.panel_thickness,
+                        )
+                        panel_tag_list.append((self.ndim, this_module))
+                        this_panel_tag_list.append((self.ndim, this_module))
+
+                        structure_panel_only_list.append((self.ndim, this_module))
+
+                        pt_1 = self.gmsh_model.occ.addPoint(
+                            0, module_distances[module_id], -half_thickness
+                        )
+                        pt_2 = self.gmsh_model.occ.addPoint(
+                            0, module_distances[module_id + 1], -half_thickness
+                        )
+                        numpy_pt_list.append(
+                            [
+                                0,
+                                module_distances[module_id],
+                                -half_thickness,
+                                0,
+                                module_distances[module_id + 1],
                                 -half_thickness,
                             ]
                         )
+                        torque_tube_id = self.gmsh_model.occ.addLine(pt_1, pt_2)
+                        torque_tube_tag = (1, torque_tube_id)
+                        embedded_lines_tag_list.append(
+                            torque_tube_tag
+                        )  # for this panel row
 
-                        fixed_pt_id = self.gmsh_model.occ.addLine(pt_1, pt_2)
-                        fixed_pt_tag = (1, fixed_pt_id)
+                        # Add lines in the streamwise direction to mimic sections of panel held rigid by motor
+                        if params.pv_array.span_fixation_pts is not None:
+                            if not isinstance(params.pv_array.span_fixation_pts, list):
+                                num_fixation_pts = int(
+                                    np.floor(
+                                        params.pv_array.panel_span
+                                        / params.pv_array.span_fixation_pts
+                                    )
+                                )
 
-                        embedded_lines_tag_list.append(fixed_pt_tag)
+                                fixation_pts_list = []
+
+                                for k in range(1, num_fixation_pts + 1):
+                                    next_pt = k * params.pv_array.span_fixation_pts
+
+                                    eps = 1e-9
+
+                                    if (
+                                        next_pt > eps
+                                        and next_pt < params.pv_array.panel_span - eps
+                                    ):
+                                        fixation_pts_list.append(next_pt)
+
+                            else:
+                                fixation_pts_list = params.pv_array.span_fixation_pts
+
+                            for fp in fixation_pts_list:
+                                pt_1 = self.gmsh_model.occ.addPoint(
+                                    -half_chord, -half_span + fp, -half_thickness
+                                )
+                                pt_2 = self.gmsh_model.occ.addPoint(
+                                    half_chord, -half_span + fp, -half_thickness
+                                )
+
+                                # FIXME: don't add the fixation points into the numpy tagging for now
+                                numpy_pt_list.append(
+                                    [
+                                        -half_chord,
+                                        -half_span + fp,
+                                        -half_thickness,
+                                        half_chord,
+                                        -half_span + fp,
+                                        -half_thickness,
+                                    ]
+                                )
+
+                                fixed_pt_id = self.gmsh_model.occ.addLine(pt_1, pt_2)
+                                fixed_pt_tag = (1, fixed_pt_id)
+
+                                embedded_lines_tag_list.append(fixed_pt_tag)
+
+                if self.modeling_torque_tube and params.general.geometry_modules == "panels3d":  # add the last connector
+                    last_standoff = self.gmsh_model.occ.addBox(
+                        -params.pv_array.block_chord_div_by_panel_chord * half_chord,
+                        module_distances[module_id + 1]
+                        - params.pv_array.block_chord_div_by_panel_chord * half_chord,
+                        -half_thickness,
+                        2.0
+                        * params.pv_array.block_chord_div_by_panel_chord
+                        * half_chord,
+                        params.pv_array.block_chord_div_by_panel_chord * half_chord,
+                        params.pv_array.torque_tube_separation,
+                    )
+                    this_panel_tag_list.append((self.ndim, last_standoff))
+                    panel_tag_list.append((self.ndim, last_standoff))
+
+                    structure_connector_only_list.append((self.ndim, last_standoff))
+
+                    pt_1 = self.gmsh_model.occ.addPoint(
+                        0,
+                        module_distances[module_id + 1]
+                        - params.pv_array.block_chord_div_by_panel_chord * half_chord,
+                        -half_thickness,
+                    )
+                    pt_2 = self.gmsh_model.occ.addPoint(
+                        0, module_distances[module_id + 1], -half_thickness
+                    )
+                    numpy_pt_list.append(
+                        [
+                            0,
+                            module_distances[module_id + 1]
+                            - params.pv_array.block_chord_div_by_panel_chord
+                            * half_chord,
+                            -half_thickness,
+                            0,
+                            module_distances[module_id + 1],
+                            -half_thickness,
+                        ]
+                    )
+                    torque_tube_id = self.gmsh_model.occ.addLine(pt_1, pt_2)
+                    torque_tube_tag = (1, torque_tube_id)
+                    embedded_lines_tag_list.append(torque_tube_tag)
 
                 # Store the result of fragmentation, it holds all the small surfaces we need to tag
                 panel_frags = self.gmsh_model.occ.fragment(
-                    [panel_tag], embedded_lines_tag_list
+                    this_panel_tag_list, embedded_lines_tag_list
+                )
+
+                for panel_tag in this_panel_tag_list:  # 3d cell domain
+                    self.gmsh_model.occ.synchronize()
+
+                    # Get the list of 2D surfaces (surfaces) that make up this panel
+                    surf_tags_for_this_panel = self.gmsh_model.getBoundary(
+                        [panel_tag], oriented=False
+                    )
+
+                    vol_com = self.gmsh_model.occ.getCenterOfMass(
+                        self.ndim, panel_tag[1]
+                    )
+                    if np.isclose(
+                        vol_com[2],
+                        params.pv_array.torque_tube_separation,
+                    ):
+                        target_key = f"modules"
+                    elif np.isclose(
+                        vol_com[2], params.pv_array.torque_tube_separation / 2.0 - half_thickness
+                    ):
+                        target_key = f"connectors"
+
+                    if target_key is not None:
+                        if target_key in this_panel_transformed_com:
+                            this_panel_transformed_com[target_key].append(vol_com)
+                        else:
+                            this_panel_transformed_com[target_key] = [vol_com]
+
+                    for surf_tag in surf_tags_for_this_panel:
+                        surf_dim = surf_tag[0]
+                        surf_id = surf_tag[1]
+                        com = self.gmsh_model.occ.getCenterOfMass(surf_dim, surf_id)
+
+                        target_key = None
+
+                        surface_located_or_not = False
+
+                        # sturctures tagging
+                        if np.isclose(com[0], -half_chord):
+                            target_key = f"panel_left_{panel_ct:.0f}"
+                            surface_located_or_not = True
+                            
+
+                        if np.isclose(com[0], half_chord):
+                            target_key = f"panel_right_{panel_ct:.0f}"
+                            surface_located_or_not = True
+                            
+
+                        if (
+                            np.isclose(com[1], module_distances[0])
+                            and np.isclose(com[0], 0)
+                            and np.isclose(
+                                com[2],
+                                params.pv_array.torque_tube_separation,
+                            )
+                        ):
+                            target_key = f"panel_front_{panel_ct:.0f}"
+                            surface_located_or_not = True
+                            
+
+                        if (
+                            np.isclose(
+                                com[1],
+                                module_distances[params.pv_array.modules_per_span],
+                            )
+                            and np.isclose(com[0], 0)
+                            and np.isclose(
+                                com[2],
+                                params.pv_array.torque_tube_separation,
+                            )
+                        ):
+                            target_key = f"panel_back_{panel_ct:.0f}"
+                            surface_located_or_not = True
+
+
+                        if (not self.modeling_torque_tube) or (params.general.geometry_modules != "panels3d"):
+                            if (
+                               np.isclose(
+                                    com[2], params.pv_array.torque_tube_separation-half_thickness
+                                )
+                            ):
+                                target_key = (
+                                    f"panel_bottom_{panel_ct:.0f}_0"
+                                )
+                                surface_located_or_not = True
+                                
+
+                            if (
+                                np.isclose(
+                                    com[2],
+                                    half_thickness + params.pv_array.torque_tube_separation,
+                                )
+                            ):
+                                target_key = f"panel_top_{panel_ct:.0f}_0"
+                                surface_located_or_not = True
+                                
+                        else:
+                            for module_id in range(params.pv_array.modules_per_span):
+                                if (
+                                    com[1]
+                                    >= module_distances[module_id]
+                                    + module_span / 2.0
+                                    - params.pv_array.block_chord_div_by_panel_chord
+                                    * half_chord
+                                    and com[1]
+                                    <= module_distances[module_id]
+                                    + module_span / 2.0
+                                    + params.pv_array.block_chord_div_by_panel_chord
+                                    * half_chord
+                                    and np.isclose(com[0], 0)
+                                    and np.isclose(
+                                        com[2], params.pv_array.torque_tube_separation-half_thickness
+                                    )
+                                ):
+                                    target_key = (
+                                        f"panel_bottom_{panel_ct:.0f}_{module_id:.0f}"
+                                    )
+                                    surface_located_or_not = True
+                                    break
+
+                                if (
+                                    com[1]
+                                    >= module_distances[module_id]
+                                    + module_span / 2.0
+                                    - params.pv_array.block_chord_div_by_panel_chord
+                                    * half_chord
+                                    and com[1]
+                                    <= module_distances[module_id]
+                                    + module_span / 2.0
+                                    + params.pv_array.block_chord_div_by_panel_chord
+                                    * half_chord
+                                    and np.isclose(com[0], 0)
+                                    and np.isclose(
+                                        com[2],
+                                        params.pv_array.torque_tube_separation
+                                        + half_thickness,
+                                    )
+                                ):
+                                    target_key = f"panel_top_{panel_ct:.0f}_{module_id:.0f}"
+                                    surface_located_or_not = True
+                                    break
+                            # if (
+                            #         np.isclose(
+                            #             com[2],
+                            #             params.pv_array.torque_tube_separation
+                            #             + params.pv_array.panel_thickness
+                            #         )
+
+                            #     ):
+                            #         target_key = f"panel_top_{panel_ct:.0f}"
+                            #         surface_located_or_not = True
+
+                            # mark the last block in each row
+                            if (
+                                np.isclose(
+                                    com[0],
+                                    params.pv_array.block_chord_div_by_panel_chord
+                                    * half_chord,
+                                )
+                                and self.modeling_torque_tube
+                                and params.general.geometry_modules == "panels3d"
+                                and np.isclose(
+                                    com[1],
+                                    module_distances[params.pv_array.modules_per_span]
+                                    - params.pv_array.block_chord_div_by_panel_chord
+                                    * half_chord
+                                    / 2.0,
+                                )
+                            ):
+                                target_key = f"block_right_{panel_ct:.0f}_{params.pv_array.modules_per_span:.0f}"
+                                surface_located_or_not = True
+
+                            if (
+                                np.isclose(
+                                    com[0],
+                                    -params.pv_array.block_chord_div_by_panel_chord
+                                    * half_chord,
+                                )
+                                and self.modeling_torque_tube
+                                and params.general.geometry_modules == "panels3d"
+                                and np.isclose(
+                                    com[1],
+                                    module_distances[params.pv_array.modules_per_span]
+                                    - params.pv_array.block_chord_div_by_panel_chord
+                                    * half_chord
+                                    / 2.0,
+                                )
+                            ):
+                                target_key = f"block_left_{panel_ct:.0f}_{params.pv_array.modules_per_span:.0f}"
+                                surface_located_or_not = True
+
+                            if (
+                                np.isclose(
+                                    com[2], params.pv_array.torque_tube_separation / 2.0 - half_thickness
+                                )
+                                and self.modeling_torque_tube
+                                and params.general.geometry_modules == "panels3d"
+                                and np.isclose(
+                                    com[1],
+                                    module_distances[params.pv_array.modules_per_span]
+                                    - params.pv_array.block_chord_div_by_panel_chord
+                                    * half_chord,
+                                )
+                            ):
+                                target_key = f"block_front_{panel_ct:.0f}_{params.pv_array.modules_per_span:.0f}"
+                                surface_located_or_not = True
+
+                            if (
+                                np.isclose(
+                                    com[2], params.pv_array.torque_tube_separation / 2.0 - half_thickness
+                                )
+                                and self.modeling_torque_tube
+                                and params.general.geometry_modules == "panels3d"
+                                and np.isclose(
+                                    com[1],
+                                    module_distances[params.pv_array.modules_per_span],
+                                )
+                            ):
+                                target_key = f"block_back_{panel_ct:.0f}_{params.pv_array.modules_per_span:.0f}"
+                                surface_located_or_not = True
+
+                            if (
+                                np.isclose(com[2], -half_thickness)
+                                and self.modeling_torque_tube
+                                and params.general.geometry_modules == "panels3d"
+                                and np.isclose(
+                                    com[1],
+                                    module_distances[params.pv_array.modules_per_span]
+                                    - params.pv_array.block_chord_div_by_panel_chord
+                                    * half_chord
+                                    / 2.0,
+                                )
+                            ):
+                                target_key = f"block_bottom_{panel_ct:.0f}_{params.pv_array.modules_per_span:.0f}"
+                                surface_located_or_not = True
+
+                            if (
+                                np.isclose(com[2], params.pv_array.torque_tube_separation - half_thickness)
+                                and self.modeling_torque_tube
+                                and params.general.geometry_modules == "panels3d"
+                                and np.isclose(
+                                    com[1],
+                                    module_distances[params.pv_array.modules_per_span]
+                                    - params.pv_array.block_chord_div_by_panel_chord
+                                    * half_chord
+                                    / 2.0,
+                                )
+                            ):
+                                target_key = f"interior_surface_{panel_ct:.0f}"  # block/panel interface
+                                surface_located_or_not = True
+
+                            # if not the most left/right panel boundary, it is panel/panel interface
+                            if not surface_located_or_not:
+                                for module_id in range(params.pv_array.modules_per_span):
+
+                                    # sturctures tagging
+
+                                    if (
+                                        np.isclose(com[1], module_distances[module_id])
+                                        and np.isclose(com[0], 0)
+                                        and np.isclose(
+                                            com[2],
+                                            params.pv_array.torque_tube_separation,
+                                        )
+                                    ):
+                                        target_key = f"interior_surface_{panel_ct:.0f}"
+                                        surface_located_or_not = True
+                                        break
+
+                                    if (
+                                        np.isclose(com[1], module_distances[module_id + 1])
+                                        and np.isclose(com[0], 0)
+                                        and np.isclose(
+                                            com[2],
+                                            params.pv_array.torque_tube_separation,
+                                        )
+                                    ):
+                                        target_key = f"interior_surface_{panel_ct:.0f}"
+                                        surface_located_or_not = True
+                                        break
+
+                                    # if (
+                                    #     np.isclose(com[2], params.pv_array.torque_tube_separation)
+                                    #     and np.isclose(com[0], 0.0) and com[1] >= module_distances[module_id]+module_span/2.0-params.pv_array.block_chord_div_by_panel_chord * half_chord/2.0
+                                    #     and com[1] <= module_distances[module_id]+module_span/2.0+params.pv_array.block_chord_div_by_panel_chord * half_chord/2.0
+                                    # ):
+                                    #     target_key = f"panel_bottom_{panel_ct:.0f}"
+                                    #     surface_located_or_not = True
+                                    #     break
+
+                                    if (
+                                        np.isclose(
+                                            com[2], params.pv_array.torque_tube_separation - half_thickness
+                                        )
+                                        and np.isclose(com[0], 0.0)
+                                        and np.isclose(
+                                            com[1],
+                                            module_distances[module_id]
+                                            + params.pv_array.block_chord_div_by_panel_chord
+                                            * half_chord
+                                            / 2.0,
+                                        )
+                                        and self.modeling_torque_tube
+                                        and params.general.geometry_modules == "panels3d"
+                                    ):
+                                        target_key = f"interior_surface_{panel_ct:.0f}"
+                                        surface_located_or_not = True
+                                        break
+
+                                    if (
+                                        np.isclose(
+                                            com[0],
+                                            params.pv_array.block_chord_div_by_panel_chord
+                                            * half_chord,
+                                        )
+                                        and self.modeling_torque_tube
+                                        and params.general.geometry_modules == "panels3d"
+                                        and np.isclose(
+                                            com[1],
+                                            module_distances[module_id]
+                                            + params.pv_array.block_chord_div_by_panel_chord
+                                            * half_chord
+                                            / 2.0,
+                                        )
+                                    ):
+                                        target_key = (
+                                            f"block_right_{panel_ct:.0f}_{module_id:.0f}"
+                                        )
+                                        surface_located_or_not = True
+                                        break
+
+                                    if (
+                                        np.isclose(
+                                            com[0],
+                                            -params.pv_array.block_chord_div_by_panel_chord
+                                            * half_chord,
+                                        )
+                                        and self.modeling_torque_tube
+                                        and params.general.geometry_modules == "panels3d"
+                                        and np.isclose(
+                                            com[1],
+                                            module_distances[module_id]
+                                            + params.pv_array.block_chord_div_by_panel_chord
+                                            * half_chord
+                                            / 2.0,
+                                        )
+                                    ):
+                                        target_key = (
+                                            f"block_left_{panel_ct:.0f}_{module_id:.0f}"
+                                        )
+                                        surface_located_or_not = True
+                                        break
+
+                                    if (
+                                        np.isclose(
+                                            com[2],
+                                            params.pv_array.torque_tube_separation / 2.0 - half_thickness,
+                                        )
+                                        and self.modeling_torque_tube
+                                        and params.general.geometry_modules == "panels3d"
+                                        and np.isclose(com[1], module_distances[module_id])
+                                    ):
+                                        target_key = (
+                                            f"block_front_{panel_ct:.0f}_{module_id:.0f}"
+                                        )
+                                        surface_located_or_not = True
+                                        break
+
+                                    if (
+                                        np.isclose(
+                                            com[2],
+                                            params.pv_array.torque_tube_separation / 2.0 - half_thickness,
+                                        )
+                                        and self.modeling_torque_tube
+                                        and params.general.geometry_modules == "panels3d"
+                                        and np.isclose(
+                                            com[1],
+                                            module_distances[module_id]
+                                            + params.pv_array.block_chord_div_by_panel_chord
+                                            * half_chord,
+                                        )
+                                    ):
+                                        target_key = (
+                                            f"block_back_{panel_ct:.0f}_{module_id:.0f}"
+                                        )
+                                        surface_located_or_not = True
+                                        break
+
+                                    if (
+                                        np.isclose(com[2], -half_thickness)
+                                        and self.modeling_torque_tube
+                                        and params.general.geometry_modules == "panels3d"
+                                        and np.isclose(
+                                            com[1],
+                                            module_distances[module_id]
+                                            + params.pv_array.block_chord_div_by_panel_chord
+                                            * half_chord
+                                            / 2.0,
+                                        )
+                                    ):
+                                        target_key = (
+                                            f"block_bottom_{panel_ct:.0f}_{module_id:.0f}"
+                                        )
+                                        surface_located_or_not = True
+                                        break
+
+                        if not surface_located_or_not:
+                            target_key = f"trash_{panel_ct:.0f}"
+                            print('facet in trash')
+
+                        if target_key is not None:
+                            if target_key in this_panel_transformed_com:
+                                this_panel_transformed_com[target_key].append(com)
+                            else:
+                                this_panel_transformed_com[target_key] = [com]
+                
+                # print(this_panel_transformed_com[f"trash_{panel_ct:.0f}"])
+
+                for (
+                    key,
+                    val,
+                ) in (
+                    this_panel_transformed_com.items()
+                ):  # all facets for each panel row.
+                    for row_num, com in enumerate(val):
+                        com_array = np.array(com)
+
+                        com_array = np.dot(com_array, Ry(tracker_angle_rad).T)
+
+                        com_array[0] += xx
+                        com_array[1] += yy
+                        com_array[2] += params.pv_array.elevation
+
+                        com_array[0] -= x_center_of_mass
+                        com_array[1] -= y_center_of_mass
+
+                        com_array = np.dot(com_array, Rz(array_rotation_rad).T)
+
+                        com_array[0] += x_center_of_mass
+                        com_array[1] += y_center_of_mass
+
+                        if key in transformed_com:
+                            transformed_com[key].append(com_array)
+                        else:
+                            transformed_com[key] = [com_array]  # including all rows
+
+                # actually this is panel array count
+                panel_ct += 1
+
+                # Rotate the panel by its tracking angle along the y-axis
+                # (currently centered at (0.0, 0.0, 0.0))
+                self.gmsh_model.occ.rotate(
+                    this_panel_tag_list,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0,
+                    1,
+                    0,
+                    tracker_angle_rad,
                 )
 
                 # Translate the panel by (x_center, y_center, elev)
                 self.gmsh_model.occ.translate(
-                    [panel_tag],
+                    this_panel_tag_list,
                     xx,
                     yy,
                     params.pv_array.elevation,
                 )
 
-                # extract just the first entry, and remove the 3d entry in position 0
-                panel_surfs = panel_frags[0]
-                panel_surfs.pop(0)
-                panel_surfs = [k[1] for k in panel_surfs]
-
-                # TODO: USE THESE UNAMBIGUOUS NAMES IN A FUTURE REFACTOR
-                # self._add_to_domain_markers(f"x_min_{panel_ct:.0f}", [panel_surfs[0]], "facet")
-                # self._add_to_domain_markers(f"x_max_{panel_ct:.0f}", [panel_surfs[1]], "facet")
-                # self._add_to_domain_markers(f"y_min_{panel_ct:.0f}", [panel_surfs[2]], "facet")
-                # self._add_to_domain_markers(f"y_max_{panel_ct:.0f}", [panel_surfs[3]], "facet")
-                # self._add_to_domain_markers(f"z_min_{panel_ct:.0f}", panel_surfs[4:-1], "facet")
-                # self._add_to_domain_markers(f"z_max_{panel_ct:.0f}", [panel_surfs[-1]], "facet")
-
-                # self._add_to_domain_markers(f"front_{panel_ct:.0f}", [panel_surfs[0]], "facet")
-                # self._add_to_domain_markers(f"back_{panel_ct:.0f}", [panel_surfs[1]], "facet")
-                # self._add_to_domain_markers(f"left_{panel_ct:.0f}", [panel_surfs[2]], "facet")
-                # self._add_to_domain_markers(f"right_{panel_ct:.0f}", [panel_surfs[3]], "facet")
-                # self._add_to_domain_markers(f"bottom_{panel_ct:.0f}", panel_surfs[4:-1], "facet")
-                # self._add_to_domain_markers(f"top_{panel_ct:.0f}", [panel_surfs[-1]], "facet")
-
-                # self._add_to_domain_markers(
-                #     f"front_{panel_ct:.0f}", [panel_surfs[1]], "facet"
-                # )  # should be bottom
-                # self._add_to_domain_markers(
-                #     f"back_{panel_ct:.0f}", [panel_surfs[2]], "facet"
-                # )
-
-                # self._add_to_domain_markers(
-                #     f"left_{panel_ct:.0f}", [panel_surfs[3]], "facet"
-                # )  # should be left
-                # self._add_to_domain_markers(
-                #     f"right_{panel_ct:.0f}", [panel_surfs[4]], "facet"
-                # )  # correct 4
-
-                # self._add_to_domain_markers(
-                #     f"bottom_{panel_ct:.0f}", panel_surfs[5:-1], "facet"
-                # )
-                # self._add_to_domain_markers(
-                #     f"top_{panel_ct:.0f}", [panel_surfs[-1]], "facet"
-                # )  # should be front
-
-                top_coord = (
-                    params.domain.z_min
-                    + (params.pv_array.elevation - params.domain.z_min)
-                    + params.pv_array.panel_thickness / 2
-                )
-                print("top", top_coord)
-                bottom_coord = (
-                    params.domain.z_min
-                    + (params.pv_array.elevation - params.domain.z_min)
-                    - params.pv_array.panel_thickness / 2
-                )
-                print("bottom", bottom_coord)
-                left_coord = -params.pv_array.panel_chord / 2 + panel_id_x * (
-                    params.pv_array.stream_spacing
-                )
-                print("left", left_coord)
-                right_coord = +params.pv_array.panel_chord / 2 + panel_id_x * (
-                    params.pv_array.stream_spacing
-                )
-                print("right", right_coord)
-
-                front_coord = -params.pv_array.panel_span / 2 + yy
-                print("front", front_coord)
-                back_coord = +params.pv_array.panel_span / 2 + yy
-                print("back", back_coord)
-
-                surf_tag_list_total = self.gmsh_model.occ.getEntities(self.ndim - 1)
-
-                surf_tag_list = [
-                    vector
-                    for vector in surf_tag_list_total
-                    if vector not in prev_surf_tag
-                ]
-
-                prev_surf_tag = surf_tag_list_total
-                for surf_tag in surf_tag_list:
-                    surf_id = surf_tag[1]
-                    com = self.gmsh_model.occ.getCenterOfMass(self.ndim - 1, surf_id)
-                    print(com)
-                    # sturctures tagging
-                    if np.isclose(com[2], bottom_coord):
-                        self._add_to_domain_markers(
-                            f"bottom_{panel_ct:.0f}", [surf_id], "facet"
-                        )
-                        print("bottom found")
-                        # self._add_to_domain_markers("x_min", [surf_id], "facet")
-
-                    elif np.allclose(com[2], top_coord):
-                        self._add_to_domain_markers(
-                            f"top_{panel_ct:.0f}", [surf_id], "facet"
-                        )
-                        print("top found")
-                        # self._add_to_domain_markers("x_max", [surf_id], "facet")
-
-                    elif np.allclose(com[0], left_coord):
-                        self._add_to_domain_markers(
-                            f"left_{panel_ct:.0f}", [surf_id], "facet"
-                        )
-                        print("left found")
-                        # self._add_to_domain_markers("y_min", [surf_id], "facet")
-
-                    elif np.allclose(com[0], right_coord):
-                        self._add_to_domain_markers(
-                            f"right_{panel_ct:.0f}", [surf_id], "facet"
-                        )
-                        print("right found")
-
-                    elif np.allclose(com[1], front_coord):
-                        self._add_to_domain_markers(
-                            f"front_{panel_ct:.0f}", [surf_id], "facet"
-                        )
-                        print("front found")
-                        # self._add_to_domain_markers("y_min", [surf_id], "facet")
-
-                    elif np.allclose(com[1], back_coord):
-                        self._add_to_domain_markers(
-                            f"back_{panel_ct:.0f}", [surf_id], "facet"
-                        )
-                        print("back found")
-                        # self._add_to_domain_markers("y_max", [surf_id], "facet")
-
-                panel_ct += 1
-
-                # Rotate the panel by its tracking angle along the y-axis (currently centered at (0, 0, 0))
-                self.gmsh_model.occ.rotate(
-                    [panel_tag], 0, 0, 0, 0, 1, 0, tracker_angle_rad
-                )
-
-                numpy_pt_panel_array = np.array(numpy_pt_list)
-                numpy_pt_panel_array = np.reshape(numpy_pt_panel_array, (-1, self.ndim))
-
-                numpy_pt_panel_array = np.dot(
-                    numpy_pt_panel_array, Ry(tracker_angle_rad).T
-                )
-
-                # if not hasattr(self, "numpy_pt_array"):
-                #     numpy_pt_array = np.array(numpy_pt_list)
-                # else:
-                #     numpy_pt_array = np.vcat(numpy_pt_array, np.array(numpy_pt_list))
-
-                numpy_pt_panel_array[:, 0] += xx
-                numpy_pt_panel_array[:, 1] += yy
-                numpy_pt_panel_array[:, 2] += params.pv_array.elevation
-
                 # Rotate the panel about the center of the full array as a proxy for changing wind direction (x_center, y_center, 0)
                 self.gmsh_model.occ.rotate(
-                    [panel_tag],
+                    this_panel_tag_list,
                     x_center_of_mass,
                     y_center_of_mass,
                     0,
@@ -1501,6 +2033,24 @@ class DomainCreation(TemplateDomainCreation):
                     array_rotation_rad,
                 )
 
+
+
+                # Now, apply the same transformations to the numpy representation
+                # Rotate the panel by its tracking angle along the y-axis
+                # (currently centered at (0.0, 0.0, 0.0))
+                numpy_pt_panel_array = np.array(numpy_pt_list)
+                numpy_pt_panel_array = np.reshape(numpy_pt_panel_array, (-1, self.ndim))
+
+                numpy_pt_panel_array = np.dot(
+                    numpy_pt_panel_array, Ry(tracker_angle_rad).T
+                )
+
+                # Translate the panel by (x_center, y_center, elev)
+                numpy_pt_panel_array[:, 0] += xx
+                numpy_pt_panel_array[:, 1] += yy
+                numpy_pt_panel_array[:, 2] += params.pv_array.elevation
+
+                # Rotate the panel about the center of the full array as a proxy for changing wind direction (x_center, y_center, 0)
                 numpy_pt_panel_array[:, 0] -= x_center_of_mass
                 numpy_pt_panel_array[:, 1] -= y_center_of_mass
 
@@ -1517,86 +2067,86 @@ class DomainCreation(TemplateDomainCreation):
                     )
                 else:
                     self.numpy_pt_total_array = np.copy(numpy_pt_panel_array)
-
-                # Check that this panel still exists in the confines of the domain
-                bbox = self.gmsh_model.occ.get_bounding_box(panel_tag[0], panel_tag[1])
-
-                if bbox[0] < params.domain.x_min:
-                    raise ValueError(
-                        f"Panel with location (x, y) = ({xx}, {yy}) extends past x_min wall."
-                    )
-                if bbox[1] < params.domain.y_min:
-                    raise ValueError(
-                        f"Panel with location (x, y) = ({xx}, {yy}) extends past y_min wall."
-                    )
-                if bbox[3] > params.domain.x_max:
-                    raise ValueError(
-                        f"Panel with location (x, y) = ({xx}, {yy}) extends past x_max wall."
-                    )
-                if bbox[4] > params.domain.y_max:
-                    raise ValueError(
-                        f"Panel with location (x, y) = ({xx}, {yy}) extends past y_max wall."
-                    )
-
+        
         # Fragment all panels from the overall domain
         self.gmsh_model.occ.fragment(domain_tag_list, panel_tag_list)
 
         self.gmsh_model.occ.synchronize()
+        gmsh.write("pnales.brep")
+        # exit()
 
         self.numpy_pt_total_array = np.reshape(
             self.numpy_pt_total_array, (-1, int(2 * self.ndim))
         )
 
-        # import matplotlib.pyplot as plt
-        # for k in self.numpy_pt_total_array:
-        #     plt.plot([k[0], k[3]], [k[1], k[4]])
-        # plt.show()
+        # print(transformed_com)
+        # exit()
 
-        # # Surfaces are the entities with dimension equal to the mesh dimension -1
-        # surf_tag_list = self.gmsh_model.occ.getEntities(self.ndim-1)
+        # for all panels
+        # Loop over all the finalized surfaces after fragmentation and tag everything
+        all_surf_tag_list = self.gmsh_model.occ.getEntities(self.ndim - 1)
 
-        # for surf_tag in surf_tag_list:
-        #     surf_id = surf_tag[1]
-        #     com = self.gmsh_model.occ.getCenterOfMass(self.ndim-1, surf_id)
+        for surf_tag in all_surf_tag_list:
+            surf_id = surf_tag[1]
+            com = self.gmsh_model.occ.getCenterOfMass(self.ndim - 1, surf_id)
 
-        #     #sturctures tagging
-        #     if np.isclose(com[0], params.domain.x_min):
-        #         self._add_to_domain_markers("x_min", [surf_id], "facet")
+            located_this_surface = False
 
-        #     elif np.allclose(com[0], params.domain.x_max):
-        #         self._add_to_domain_markers("x_max", [surf_id], "facet")
+            for key, val in transformed_com.items():
+                for target_com in val:
+                    # print(target_com)
+                    if np.allclose(np.array(com), target_com):
+                        located_this_surface = True
+                        if "trash" not in key:
+                            # print(key)
+                            self._add_to_domain_markers(key, [surf_id], "facet")
+                            # if "interior_surface" not in key:
+                            #     self._add_to_domain_markers("structure_fluid_interface", [surf_id], "facet")
 
-        #     elif np.allclose(com[1], params.domain.y_min):
-        #         self._add_to_domain_markers("y_min", [surf_id], "facet")
+            if not located_this_surface:
+                    print(
+                        f"Warning: Surface {surf_tag} has not been added to domain markers"
+                    )
 
-        #     elif np.allclose(com[1], params.domain.y_max):
-        #         self._add_to_domain_markers("y_max", [surf_id], "facet")
+            # Since this is not one of the exterior walls, we should check if it extends
+            # past the boundaries x_min, x_max, ...
+            this_surf_bbox = self.gmsh_model.occ.get_bounding_box(
+                self.ndim - 1, surf_id
+            )
 
-        #     elif np.allclose(com[2], params.domain.z_min):
-        #         self._add_to_domain_markers("z_min", [surf_id], "facet")
+            # Test that the rotated point still exists in the box domain
+            if this_surf_bbox[0] < params.domain.x_min:
+                raise ValueError(f"A panel extends past the x_min wall.")
+            if this_surf_bbox[0] > params.domain.x_max:
+                raise ValueError(f"A panel extends past the x_max wall.")
+            if this_surf_bbox[1] < params.domain.y_min:
+                raise ValueError(f"A panel extends past the y_min wall.")
+            if this_surf_bbox[1] > params.domain.y_max:
+                raise ValueError(f"A panel extends past the y_max wall.")
+            if this_surf_bbox[2] < 0.0:
+                raise ValueError(
+                    f"A panel extends past the z_min wall (ground level = 0.0)."
+                )
+            if this_surf_bbox[2] > params.domain.z_max:
+                raise ValueError(f"A panel extends past the z_max wall.")
+            
+        # mark the panel and connector volumes
+        all_vol_tag_list = self.gmsh_model.occ.getEntities(self.ndim)
 
-        #     elif np.allclose(com[2], params.domain.z_max):
-        #         self._add_to_domain_markers("z_max", [surf_id], "facet")
-
-        # Volumes are the entities with dimension equal to the mesh dimension
-        vol_tag_list = self.gmsh_model.occ.getEntities(self.ndim)
-        structure_vol_list = []
-        # fluid_vol_list = []
-
-        for vol_tag in vol_tag_list:
+        for vol_tag in all_vol_tag_list:
             vol_id = vol_tag[1]
-            structure_vol_list.append(vol_id)
-        #     vol_id = vol_tag[1]
+            com = self.gmsh_model.occ.getCenterOfMass(self.ndim, vol_id)
 
-        #     if vol_id <= params.pv_array.stream_rows * params.pv_array.span_rows:
-        #         # Solid Cell
+            located_this_volume = False
 
-        # else:
-        #     # Fluid Cell
-        #     fluid_vol_list.append(vol_id)
+            for key, val in transformed_com.items():
+                for target_com in val:
+                    # print(target_com)
+                    if np.allclose(np.array(com), target_com):
+                        located_this_volume = True
+                        if "trash" not in key:
+                            self._add_to_domain_markers(key, [vol_id], "cell")
 
-        self._add_to_domain_markers("structure", structure_vol_list, "cell")
-        # self._add_to_domain_markers("fluid", fluid_vol_list, "cell")
 
         # Record all the data collected to domain_markers as physics groups with physical names
         # because we are creating domain_markers _within_ the build method, we don't need to
@@ -1619,6 +2169,9 @@ class DomainCreation(TemplateDomainCreation):
                         self.ndim - 1, data["gmsh_tags"], data["idx"]
                     )
                     self.gmsh_model.setPhysicalName(self.ndim - 1, data["idx"], key)
+
+
+
 
     def set_length_scales_DEV(self, params, domain_markers):
         res_min = params.domain.l_char
@@ -1754,7 +2307,7 @@ class DomainCreation(TemplateDomainCreation):
                 domain_markers[f"panel_back_{panel_id}"]["gmsh_tags"]
             )
 
-            if self.modeling_torque_tube:
+            if self.modeling_torque_tube and params.general.geometry_modules == "panels3d":
                 for module_id in range(params.pv_array.modules_per_span):
                     internal_surface_tags.extend(
                         domain_markers[f"panel_bottom_{panel_id:.0f}_{module_id:.0f}"][
@@ -1768,10 +2321,10 @@ class DomainCreation(TemplateDomainCreation):
                     )
             else:
                 internal_surface_tags.extend(
-                    domain_markers[f"panel_bottom_{panel_id}"]["gmsh_tags"]
+                    domain_markers[f"panel_bottom_{panel_id}_0"]["gmsh_tags"]
                 )
                 internal_surface_tags.extend(
-                    domain_markers[f"panel_top_{panel_id}"]["gmsh_tags"]
+                    domain_markers[f"panel_top_{panel_id}_0"]["gmsh_tags"]
                 )
 
         # print(internal_surface_tags)

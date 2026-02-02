@@ -585,27 +585,27 @@ def build_temperature_boundary_conditions(domain, params, functionspace):
             or params.general.geometry_module == "heliostats3d"
             or params.general.geometry_module == "flag2d"
         ):
+            for module_id in range(params.pv_array.modules_per_span):
+                for location in (
+                    f"panel_bottom_{panel_id}_{module_id}",
+                    f"panel_top_{panel_id}_{module_id}",
+                    f"panel_left_{panel_id}",
+                    f"panel_right_{panel_id}",
+                    # f"front_{panel_id}", # not valid in panels2d?
+                    # f"back_{panel_id}",
+                ):
+                    T0_pv_panel_scalar = dolfinx.fem.Constant(
+                        domain.fluid.msh, PETSc.ScalarType(params.fluid.T0_panel)
+                    )
 
-            for location in (
-                f"bottom_{panel_id}",
-                f"top_{panel_id}",
-                f"left_{panel_id}",
-                f"right_{panel_id}",
-                # f"front_{panel_id}", # not valid in panels2d?
-                # f"back_{panel_id}",
-            ):
-                T0_pv_panel_scalar = dolfinx.fem.Constant(
-                    domain.fluid.msh, PETSc.ScalarType(params.fluid.T0_panel)
-                )
+                    panel_sfc_dofs = get_facet_dofs_by_gmsh_tag(
+                        domain, functionspace, location
+                    )
+                    bc = dolfinx.fem.dirichletbc(
+                        T0_pv_panel_scalar, panel_sfc_dofs, functionspace
+                    )
 
-                panel_sfc_dofs = get_facet_dofs_by_gmsh_tag(
-                    domain, functionspace, location
-                )
-                bc = dolfinx.fem.dirichletbc(
-                    T0_pv_panel_scalar, panel_sfc_dofs, functionspace
-                )
-
-                bcT.append(bc)
+                    bcT.append(bc)
 
     # if params.general.debug_flag == True:
     #     print('built temperature boundary conditions')

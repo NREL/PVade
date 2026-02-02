@@ -116,10 +116,10 @@ class DomainCreation(TemplateDomainCreation):
             elif np.allclose(com[1], params.domain.y_max):
                 self._add_to_domain_markers("y_max", [surf_id], "facet")
 
-        self._add_to_domain_markers("left_0", [5], "facet")
-        self._add_to_domain_markers("bottom_0", [6], "facet")
-        self._add_to_domain_markers("right_0", [7], "facet")
-        self._add_to_domain_markers("top_0", [8], "facet")
+        self._add_to_domain_markers("panel_left_0", [5], "facet")
+        self._add_to_domain_markers("panel_bottom_0_0", [6], "facet")
+        self._add_to_domain_markers("panel_right_0", [7], "facet")
+        self._add_to_domain_markers("panel_top_0_0", [8], "facet")
 
         # Tag objects as either structure or fluid
         vol_tag_list = self.gmsh_model.occ.getEntities(self.ndim)

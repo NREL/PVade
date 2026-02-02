@@ -49,7 +49,7 @@ def test_calc_distance_to_panel_surface():
 
     dx = params.domain.x_max - 0.5 * params.pv_array.panel_chord
     dy = params.domain.y_max - 0.5 * params.pv_array.panel_span
-    dz = params.pv_array.elevation
+    dz = params.domain.z_max - 0.5 * params.pv_array.panel_thickness
     truth_max_dist = np.sqrt(dx * dx + dy * dy + dz * dz)
 
     assert np.isclose(max_dist, truth_max_dist)

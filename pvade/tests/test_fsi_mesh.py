@@ -109,16 +109,9 @@ def test_meshing_3dpanels_rotations(wind_direction, num_stream_rows, num_span_ro
     params.domain.y_min = -30.0
     params.domain.y_max = 30.0
 
-    # x_min: -10
-    # x_max: 50
-    # y_min: -20
-    # y_max: 27
-    # z_min: 0
-    # z_max: 20
-
     params.pv_array.stream_rows = num_stream_rows
     params.pv_array.span_rows = num_span_rows
-    params.pv_array.span_spacing = 7
+    params.pv_array.span_spacing = 15.0
     params.pv_array.tracker_angle = list(
         np.linspace(-52.0, 52.0, num_stream_rows * num_span_rows)
     )
@@ -139,7 +132,11 @@ def test_meshing_3dpanels_rotations(wind_direction, num_stream_rows, num_span_ro
 
     # Arrays always start at xc = 0, but are centered in the y-direction
     # so now shift the mean to 0.0
+    # yc -= np.mean(yc)
+    yc = yc.astype(float)
     yc -= np.mean(yc)
+
+
 
     counter = 0
 
@@ -155,10 +152,10 @@ def test_meshing_3dpanels_rotations(wind_direction, num_stream_rows, num_span_ro
             # Create the 4 corners of this table corresponding to the *top* surface (+0.5*thickness)
             top_surface_corners = np.array(
                 [
-                    [-0.5 * chord, -0.5 * span, thickness],
-                    [0.5 * chord, -0.5 * span, thickness],
-                    [0.5 * chord, 0.5 * span, thickness],
-                    [-0.5 * chord, 0.5 * span, thickness],
+                    [-0.5 * chord, -0.5 * span, 0.5*thickness],
+                    [0.5 * chord, -0.5 * span, 0.5*thickness],
+                    [0.5 * chord, 0.5 * span, 0.5*thickness],
+                    [-0.5 * chord, 0.5 * span, 0.5*thickness],
                 ]
             )
 
