@@ -83,6 +83,8 @@ class DomainCreation(TemplateDomainCreation):
 
             return rot_matrix
 
+        self.modeling_torque_tube = False
+        
         # Compute and store some useful geometric quantities
         self.x_span = params.domain.x_max - params.domain.x_min
         self.y_span = params.domain.y_max - params.domain.y_min
@@ -247,22 +249,22 @@ class DomainCreation(TemplateDomainCreation):
                 # self._add_to_domain_markers(f"z_max_{panel_ct:.0f}", [panel_surfs[-1]], "facet")
 
                 self._add_to_domain_markers(
-                    f"front_{panel_ct:.0f}", [panel_surfs[0]], "facet"
+                    f"panel_front_{panel_ct:.0f}", [panel_surfs[0]], "facet"
                 )
                 self._add_to_domain_markers(
-                    f"back_{panel_ct:.0f}", [panel_surfs[1]], "facet"
+                    f"panel_back_{panel_ct:.0f}", [panel_surfs[1]], "facet"
                 )
                 self._add_to_domain_markers(
-                    f"left_{panel_ct:.0f}", [panel_surfs[2]], "facet"
+                    f"panel_left_{panel_ct:.0f}", [panel_surfs[2]], "facet"
                 )
                 self._add_to_domain_markers(
-                    f"right_{panel_ct:.0f}", [panel_surfs[3]], "facet"
+                    f"panel_right_{panel_ct:.0f}", [panel_surfs[3]], "facet"
                 )
                 self._add_to_domain_markers(
-                    f"bottom_{panel_ct:.0f}", panel_surfs[4:-1], "facet"
+                    f"panel_bottom_{panel_ct:.0f}_0", panel_surfs[4:-1], "facet"
                 )
                 self._add_to_domain_markers(
-                    f"top_{panel_ct:.0f}", [panel_surfs[-1]], "facet"
+                    f"panel_top_{panel_ct:.0f}_0", [panel_surfs[-1]], "facet"
                 )
 
                 # self._add_to_domain_markers(f"right_{panel_ct:.0f}", [panel_surfs[1]], "facet")#correct
@@ -990,22 +992,22 @@ class DomainCreation(TemplateDomainCreation):
 
         for panel_id in range(params.pv_array.stream_rows * params.pv_array.span_rows):
             internal_surface_tags.append(
-                domain_markers[f"bottom_{panel_id}"]["gmsh_tags"][0]
+                domain_markers[f"panel_bottom_{panel_id}_0"]["gmsh_tags"][0]
             )
             internal_surface_tags.append(
-                domain_markers[f"top_{panel_id}"]["gmsh_tags"][0]
+                domain_markers[f"panel_top_{panel_id}_0"]["gmsh_tags"][0]
             )
             internal_surface_tags.append(
-                domain_markers[f"left_{panel_id}"]["gmsh_tags"][0]
+                domain_markers[f"panel_left_{panel_id}"]["gmsh_tags"][0]
             )
             internal_surface_tags.append(
-                domain_markers[f"right_{panel_id}"]["gmsh_tags"][0]
+                domain_markers[f"panel_right_{panel_id}"]["gmsh_tags"][0]
             )
             internal_surface_tags.append(
-                domain_markers[f"front_{panel_id}"]["gmsh_tags"][0]
+                domain_markers[f"panel_front_{panel_id}"]["gmsh_tags"][0]
             )
             internal_surface_tags.append(
-                domain_markers[f"back_{panel_id}"]["gmsh_tags"][0]
+                domain_markers[f"panel_back_{panel_id}"]["gmsh_tags"][0]
             )
 
         min_dist = []

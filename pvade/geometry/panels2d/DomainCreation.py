@@ -184,22 +184,22 @@ class DomainCreation(TemplateDomainCreation):
 
                 if np.isclose(com[0], x_min_panel):
                     self._add_to_domain_markers(
-                        f"left_{panel_id:.0f}", [surf_id], "facet"
+                        f"panel_left_{panel_id:.0f}", [surf_id], "facet"
                     )
 
                 elif np.isclose(com[0], x_max_panel):
                     self._add_to_domain_markers(
-                        f"right_{panel_id:.0f}", [surf_id], "facet"
+                        f"panel_right_{panel_id:.0f}", [surf_id], "facet"
                     )
 
                 elif np.isclose(com[1], y_min_panel):
                     self._add_to_domain_markers(
-                        f"bottom_{panel_id:.0f}", [100], "facet"
+                        f"panel_bottom_{panel_id:.0f}_0", [surf_id], "facet"
                     )
 
                 elif np.isclose(com[1], y_max_panel):
                     self._add_to_domain_markers(
-                        f"top_{panel_id:.0f}", [surf_id], "facet"
+                        f"panel_top_{panel_id:.0f}_0", [surf_id], "facet"
                     )
 
             # Rotate the panel currently centered at

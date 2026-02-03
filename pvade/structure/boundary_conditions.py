@@ -273,7 +273,10 @@ def build_structure_boundary_conditions(domain, params, functionspace):
 
     for num_panel in range(total_num_panels):
         for location in params.structure.bc_list:  # it is empty
-            location_panel = f"{location}_{num_panel}"
+            if location == "panel_top" or location == "panel_bottom":
+                location_panel = f"{location}_{num_panel}_0"
+            else:
+                location_panel = f"{location}_{num_panel}"
             # f"front_{num_panel}" , f"back_{num_panel}":
             # for location in  [f"left_{num_panel}"]:# , f"right_{num_panel}":
             # for location in  f"left_{num_panel}":

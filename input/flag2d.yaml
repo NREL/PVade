@@ -52,7 +52,7 @@ structure:
   body_force_x: 0
   body_force_y: 0
   body_force_z: 0 #100
-  bc_list: ["left"]
+  bc_list: ["panel_left"]
   motor_connection: False
   tube_connection: False
   beta_relaxation: 0.005
