@@ -154,7 +154,7 @@ properties:
         units: "meter"
       span_fixation_pts:
         default: 3.5
-        minimum: 1.0
+        minimum: 0.2
         # maximum: 32.0
         type:
           - "number"

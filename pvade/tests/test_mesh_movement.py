@@ -49,7 +49,11 @@ def test_calc_distance_to_panel_surface():
 
     dx = params.domain.x_max - 0.5 * params.pv_array.panel_chord
     dy = params.domain.y_max - 0.5 * params.pv_array.panel_span
-    dz = params.domain.z_max - 0.5 * params.pv_array.panel_thickness
+    dz = (
+        params.domain.z_max
+        - 0.5 * params.pv_array.panel_thickness
+        - params.pv_array.elevation
+    )
     truth_max_dist = np.sqrt(dx * dx + dy * dy + dz * dz)
 
     assert np.isclose(max_dist, truth_max_dist)
@@ -113,7 +117,10 @@ def test_move_mesh():
     assert np.isclose(
         np.amin(structure_coords_before[:, 1]), -0.5 * params.pv_array.panel_span
     )
-    assert np.isclose(np.amin(structure_coords_before[:, 2]), params.pv_array.elevation)
+    assert np.isclose(
+        np.amin(structure_coords_before[:, 2]),
+        params.pv_array.elevation - 0.5 * params.pv_array.panel_thickness,
+    )
 
     assert np.isclose(
         np.amax(structure_coords_before[:, 0]), 0.5 * params.pv_array.panel_chord
@@ -123,7 +130,7 @@ def test_move_mesh():
     )
     assert np.isclose(
         np.amax(structure_coords_before[:, 2]),
-        params.pv_array.elevation + params.pv_array.panel_thickness,
+        params.pv_array.elevation + 0.5 * params.pv_array.panel_thickness,
     )
 
     # Move the mesh by the amount prescribed in u_delta

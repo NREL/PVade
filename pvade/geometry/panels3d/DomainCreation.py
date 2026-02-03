@@ -169,6 +169,7 @@ class DomainCreation(TemplateDomainCreation):
         # only include connectors
         structure_connector_only_list = []
 
+        # if params.pv_array.modules_per_span > 1:
         module_distances = np.linspace(
             -half_span, half_span, params.pv_array.modules_per_span + 1
         )
@@ -271,7 +272,7 @@ class DomainCreation(TemplateDomainCreation):
                             torque_tube_tag
                         )  # for this panel row
 
-                    else:
+                    else:  # this loop is to add panel only, no torque tube modeling
                         this_module = self.gmsh_model.occ.addBox(
                             -half_chord,
                             module_distances[module_id],
@@ -285,12 +286,14 @@ class DomainCreation(TemplateDomainCreation):
 
                         structure_panel_only_list.append((self.ndim, this_module))
 
+                        # Add a bisecting line to the bottom of the panel in the spanwise direction
                         pt_1 = self.gmsh_model.occ.addPoint(
                             0, module_distances[module_id], -half_thickness
                         )
                         pt_2 = self.gmsh_model.occ.addPoint(
                             0, module_distances[module_id + 1], -half_thickness
                         )
+                        # numpy_pt_list for this row
                         numpy_pt_list.append(
                             [
                                 0,
@@ -301,8 +304,11 @@ class DomainCreation(TemplateDomainCreation):
                                 -half_thickness,
                             ]
                         )
-                        torque_tube_id = self.gmsh_model.occ.addLine(pt_1, pt_2)
+                        torque_tube_id = self.gmsh_model.occ.addLine(
+                            pt_1, pt_2
+                        )  # line simulating torque tube attached horizontally at the bottom of the module
                         torque_tube_tag = (1, torque_tube_id)
+                        # Store all the embedded lines that we need in the mesh
                         embedded_lines_tag_list.append(
                             torque_tube_tag
                         )  # for this panel row
@@ -1114,17 +1120,18 @@ class DomainCreation(TemplateDomainCreation):
 
         for vol_tag in all_vol_tag_list:
             vol_id = vol_tag[1]
-            com = self.gmsh_model.occ.getCenterOfMass(self.ndim, vol_id)
+            if vol_id != all_vol_tag_list[-1][-1]:
+                com = self.gmsh_model.occ.getCenterOfMass(self.ndim, vol_id)
 
-            located_this_volume = False
+                located_this_volume = False
 
-            for key, val in transformed_com.items():
-                for target_com in val:
-                    # print(target_com)
-                    if np.allclose(np.array(com), target_com):
-                        located_this_volume = True
-                        if "trash" not in key:
-                            self._add_to_domain_markers(key, [vol_id], "cell")
+                for key, val in transformed_com.items():
+                    for target_com in val:
+                        # print(target_com)
+                        if np.allclose(np.array(com), target_com):
+                            located_this_volume = True
+                            if "trash" not in key:
+                                self._add_to_domain_markers(key, [vol_id], "cell")
 
         # Mark the fluid volume
         # Volumes are the entities with dimension equal to the mesh dimension
@@ -2357,7 +2364,7 @@ class DomainCreation(TemplateDomainCreation):
                             "gmsh_tags"
                         ]
                     )
-            else:
+            else:  # delete after testing
                 internal_surface_tags.extend(
                     domain_markers[f"panel_bottom_{panel_id}_0"]["gmsh_tags"]
                 )
