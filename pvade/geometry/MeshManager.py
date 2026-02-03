@@ -141,7 +141,7 @@ class FSIDomain:
             raise ValueError(f"Could not import {domain_creation_module}")
 
         self.geometry = dcm.DomainCreation(params)
-        
+
         # Only rank 0 builds the geometry and meshes the domain
         if self.rank == 0:
             if (

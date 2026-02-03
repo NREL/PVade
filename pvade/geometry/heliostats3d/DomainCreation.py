@@ -84,7 +84,7 @@ class DomainCreation(TemplateDomainCreation):
             return rot_matrix
 
         self.modeling_torque_tube = False
-        
+
         # Compute and store some useful geometric quantities
         self.x_span = params.domain.x_max - params.domain.x_min
         self.y_span = params.domain.y_max - params.domain.y_min
