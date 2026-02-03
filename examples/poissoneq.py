@@ -10,7 +10,6 @@ from petsc4py.PETSc import ScalarType
 from timeit import default_timer as timer
 from dolfinx.common import TimingType, list_timings
 
-
 start = timer()
 elems = int(sys.argv[1])  # nelems
 # Create mesh and define function space
