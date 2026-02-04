@@ -705,20 +705,14 @@ class Elasticity:
             domain.structure.msh, [0.0, 0.0, 1.0]
         )  # surface traction, N/m^2
 
-        if (
-            domain.modeling_torque_tube
-            and params.general.geometry_module == "panels3d"
-        ):
+        if domain.modeling_torque_tube and params.general.geometry_module == "panels3d":
             self.calculate_K_for_Robin_BC(domain, flow, params)
 
         dx_structure = ufl.Measure(
             "dx", domain=domain.structure.msh, subdomain_data=domain.structure.cell_tags
         )
 
-        if (
-            domain.modeling_torque_tube
-            and params.general.geometry_module == "panels3d"
-        ):
+        if domain.modeling_torque_tube and params.general.geometry_module == "panels3d":
             self.res = (
                 m(self.avg(self.a_old, a_new, self.alpha_m), self.u_) * dx_structure
                 + c(self.avg(self.v_old, v_new, self.alpha_f), self.u_) * dx_structure

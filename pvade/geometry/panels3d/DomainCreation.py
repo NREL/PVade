@@ -679,7 +679,7 @@ class DomainCreation(TemplateDomainCreation):
                                     * half_chord,
                                 )
                                 and self.modeling_torque_tube
-                                and params.general.geometry_module== "panels3d"
+                                and params.general.geometry_module == "panels3d"
                                 and np.isclose(
                                     com[1],
                                     module_distances[params.pv_array.modules_per_span]
@@ -817,8 +817,7 @@ class DomainCreation(TemplateDomainCreation):
                                             / 2.0,
                                         )
                                         and self.modeling_torque_tube
-                                        and params.general.geometry_module
-                                        == "panels3d"
+                                        and params.general.geometry_module == "panels3d"
                                     ):
                                         target_key = f"interior_surface_{panel_ct:.0f}"
                                         surface_located_or_not = True
@@ -831,8 +830,7 @@ class DomainCreation(TemplateDomainCreation):
                                             * half_chord,
                                         )
                                         and self.modeling_torque_tube
-                                        and params.general.geometry_module
-                                        == "panels3d"
+                                        and params.general.geometry_module == "panels3d"
                                         and np.isclose(
                                             com[1],
                                             module_distances[module_id]
@@ -852,8 +850,7 @@ class DomainCreation(TemplateDomainCreation):
                                             * half_chord,
                                         )
                                         and self.modeling_torque_tube
-                                        and params.general.geometry_module
-                                        == "panels3d"
+                                        and params.general.geometry_module == "panels3d"
                                         and np.isclose(
                                             com[1],
                                             module_distances[module_id]
@@ -875,8 +872,7 @@ class DomainCreation(TemplateDomainCreation):
                                             - half_thickness,
                                         )
                                         and self.modeling_torque_tube
-                                        and params.general.geometry_module
-                                        == "panels3d"
+                                        and params.general.geometry_module == "panels3d"
                                         and np.isclose(
                                             com[1], module_distances[module_id]
                                         )
@@ -892,8 +888,7 @@ class DomainCreation(TemplateDomainCreation):
                                             - half_thickness,
                                         )
                                         and self.modeling_torque_tube
-                                        and params.general.geometry_module
-                                        == "panels3d"
+                                        and params.general.geometry_module == "panels3d"
                                         and np.isclose(
                                             com[1],
                                             module_distances[module_id]
@@ -910,8 +905,7 @@ class DomainCreation(TemplateDomainCreation):
                                     if (
                                         np.isclose(com[2], -half_thickness)
                                         and self.modeling_torque_tube
-                                        and params.general.geometry_module
-                                        == "panels3d"
+                                        and params.general.geometry_module == "panels3d"
                                         and np.isclose(
                                             com[1],
                                             module_distances[module_id]
@@ -1898,8 +1892,7 @@ class DomainCreation(TemplateDomainCreation):
                                             / 2.0,
                                         )
                                         and self.modeling_torque_tube
-                                        and params.general.geometry_module
-                                        == "panels3d"
+                                        and params.general.geometry_module == "panels3d"
                                     ):
                                         target_key = f"interior_surface_{panel_ct:.0f}"
                                         surface_located_or_not = True
@@ -1912,8 +1905,7 @@ class DomainCreation(TemplateDomainCreation):
                                             * half_chord,
                                         )
                                         and self.modeling_torque_tube
-                                        and params.general.geometry_module
-                                        == "panels3d"
+                                        and params.general.geometry_module == "panels3d"
                                         and np.isclose(
                                             com[1],
                                             module_distances[module_id]
@@ -1933,8 +1925,7 @@ class DomainCreation(TemplateDomainCreation):
                                             * half_chord,
                                         )
                                         and self.modeling_torque_tube
-                                        and params.general.geometry_module
-                                        == "panels3d"
+                                        and params.general.geometry_module == "panels3d"
                                         and np.isclose(
                                             com[1],
                                             module_distances[module_id]
@@ -1956,8 +1947,7 @@ class DomainCreation(TemplateDomainCreation):
                                             - half_thickness,
                                         )
                                         and self.modeling_torque_tube
-                                        and params.general.geometry_module
-                                        == "panels3d"
+                                        and params.general.geometry_module == "panels3d"
                                         and np.isclose(
                                             com[1], module_distances[module_id]
                                         )
@@ -1973,8 +1963,7 @@ class DomainCreation(TemplateDomainCreation):
                                             - half_thickness,
                                         )
                                         and self.modeling_torque_tube
-                                        and params.general.geometry_module
-                                        == "panels3d"
+                                        and params.general.geometry_module == "panels3d"
                                         and np.isclose(
                                             com[1],
                                             module_distances[module_id]
@@ -1991,8 +1980,7 @@ class DomainCreation(TemplateDomainCreation):
                                     if (
                                         np.isclose(com[2], -half_thickness)
                                         and self.modeling_torque_tube
-                                        and params.general.geometry_module
-                                        == "panels3d"
+                                        and params.general.geometry_module == "panels3d"
                                         and np.isclose(
                                             com[1],
                                             module_distances[module_id]
