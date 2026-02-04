@@ -1228,7 +1228,7 @@ class Flow:
         # self.compute_panel_torques(domain, params)
         if (
             domain.modeling_torque_tube
-            and params.general.geometry_modules == "panels3d"
+            and params.general.geometry_module == "panels3d"
         ):
             self.compute_double_integral_panel_torques(domain, params)
 

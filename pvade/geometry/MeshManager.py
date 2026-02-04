@@ -301,7 +301,7 @@ class FSIDomain:
                 # Find all cells where cell tag = marker_id
                 if (
                     self.modeling_torque_tube
-                    and params.general.geometry_modules == "panels3d"
+                    and params.general.geometry_module == "panels3d"
                 ):
                     submesh_cells_modules = self.cell_tags.find(marker_id)
                     marker_id = self.domain_markers["connectors"]["idx"]

@@ -347,7 +347,7 @@ def build_structure_boundary_conditions(domain, params, functionspace):
 
         return fn_handle
 
-    if domain.modeling_torque_tube and params.general.geometry_modules == "panels3d":
+    if domain.modeling_torque_tube and params.general.geometry_module == "panels3d":
         # # Start pinning along the lines expressed byt numpy_pt_total_array
         # The center line of connectors bottom surface is fixed to remove rigid body motion
 

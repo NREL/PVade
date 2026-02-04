@@ -707,7 +707,7 @@ class Elasticity:
 
         if (
             domain.modeling_torque_tube
-            and params.general.geometry_modules == "panels3d"
+            and params.general.geometry_module == "panels3d"
         ):
             self.calculate_K_for_Robin_BC(domain, flow, params)
 
@@ -717,7 +717,7 @@ class Elasticity:
 
         if (
             domain.modeling_torque_tube
-            and params.general.geometry_modules == "panels3d"
+            and params.general.geometry_module == "panels3d"
         ):
             self.res = (
                 m(self.avg(self.a_old, a_new, self.alpha_m), self.u_) * dx_structure
