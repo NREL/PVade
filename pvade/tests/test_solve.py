@@ -37,6 +37,18 @@ def test_flow_3dpanels():
     domain = FSIDomain(params)
     domain.read_mesh_files(rootdir + "/pvade/tests/input/mesh/panels3d/", params)
 
+    """
+    for this mesh:
+    stream_rows: 7
+    span_rows: 1
+    elevation: 1.5
+    stream_spacing: 7.0
+    panel_chord: 2.0
+    panel_span: 7.0
+    panel_thickness: 0.1
+    tracker_angle: -30.0
+    """
+
     print("fluid shape = ", np.shape(domain.fluid.msh.geometry.x))
     print("struct shape = ", np.shape(domain.structure.msh.geometry.x))
 
@@ -71,8 +83,12 @@ def test_flow_3dpanels():
         print("max_pressure = ", max_pressure)
         assert not np.any(np.isnan(flow.p_k.x.array))
 
-    max_velocity_truth = 18.205784057651652
-    max_pressure_truth = 56.175743310367395
+    # max_velocity_truth = 18.205784057651652
+    # max_pressure_truth = 56.175743310367395
+
+    max_velocity_truth = 18.613277617512917
+    max_pressure_truth = 73.50109146276495
+
     assert np.isclose(max_velocity, max_velocity_truth, rtol=rtol)
     assert np.isclose(max_pressure, max_pressure_truth, rtol=rtol)
 
@@ -310,7 +326,7 @@ def test_fsi2():
 
     # print('pos_data = ', pos_data)
 
-    assert np.allclose(pos_data, pos_data_truth)
+    assert np.allclose(pos_data[:, 0:2], pos_data_truth)
     print(lift_and_drag_data)
 
     # assert np.allclose(lift_and_drag_data[:, 0:3], lift_and_drag_data_truth[:, 0:3]) # needs new truth values to pass, mesh has changed

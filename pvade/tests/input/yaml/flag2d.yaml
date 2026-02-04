@@ -4,7 +4,7 @@ general:
   mesh_only: false
   structural_analysis: True
   fluid_analysis: True
-  input_mesh_dir: pvade/tests/input/mesh/flag2d
+  input_mesh_dir: #pvade/tests/input/mesh/flag2d
 domain:
   x_min: 0.0
   x_max: 2.5
@@ -53,7 +53,7 @@ structure:
   body_force_x: 0
   body_force_y: 0
   body_force_z: 0 #100
-  bc_list: ["left"]
+  bc_list: ["panel_left"]
   motor_connection: False
   tube_connection: False
   beta_relaxation: 0.005

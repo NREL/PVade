@@ -132,6 +132,8 @@ def test_meshing_3dpanels_rotations(wind_direction, num_stream_rows, num_span_ro
 
     # Arrays always start at xc = 0, but are centered in the y-direction
     # so now shift the mean to 0.0
+    # yc -= np.mean(yc)
+    yc = yc.astype(float)
     yc -= np.mean(yc)
 
     counter = 0

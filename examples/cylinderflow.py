@@ -45,7 +45,6 @@ from dolfinx.fem.petsc import (
 from dolfinx.io import VTXWriter, gmshio, XDMFFile
 from dolfinx.mesh import locate_entities_boundary
 
-
 ####################################################
 #                                                  #
 #           MESH PARAMETERS                        #

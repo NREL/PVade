@@ -136,7 +136,7 @@ properties:
         minimum: 0.0
         maximum: 10.0
         type: "number"
-        description: "The vertical distance between the center of the panel and the ground."
+        description: "The vertical distance between the center of the torque tube and the ground."
         units: "meter"
       stream_spacing:
         default: 7.0
@@ -154,7 +154,7 @@ properties:
         units: "meter"
       span_fixation_pts:
         default: 3.5
-        minimum: 1.0
+        minimum: 0.2
         # maximum: 32.0
         type:
           - "number"
@@ -198,6 +198,39 @@ properties:
         be unrolled such that tracking_angle_0 is applied to the panel at (x_min, y_min), tracking_angle_1 is applied to the panel at
         (x_min + x_spacing, y_min), etc., i.e., x-major direction. If argument is a single value, that tracking angle will be applied to the every panel."
         units: "degree"
+      torque_tube_separation:
+        default: 0.0
+        minimum: 0.0
+        maximum: 1.0
+        type: "number"
+        description: "The distance between the bottom of the panel structure and the centerline of the torque tube, in meters."
+      torque_tube_outer_radius:
+        default: 0.0
+        minimum: 0.0
+        maximum: 1.0
+        type: "number"
+        description: "The radius of the torque tube, in meters."
+      torque_tube_inner_radius:
+        default: 0.0
+        minimum: 0.0
+        maximum: 1.0
+        type: "number"
+        description: "The radius of the torque tube, in meters."
+      modules_per_span:
+        default: 1
+        minimum: 1
+        type: "integer"
+        description: "The number of modules/panels per every panel_span distance. This can be thought of as the number of modules/panels per each table, counted in the spanwise direction only (i.e., 2-in-portait systems should report only the number in the spanwise direction, vs 2x that value)."
+      fixed_location:
+        default: 5
+        type: "integer"
+        description: "If an integer between 0 and modules_per_span, indicates the fixed location"
+      block_chord_div_by_panel_chord:
+        default: 0.1
+        minimum: 0.01
+        type: "number"
+        description: "block length or width divided by panel chord"
+      
   solver:
     additionalProperties: false
     type: "object"
@@ -617,7 +650,7 @@ properties:
         type: "boolean"
         description: "Controls whether or not a boundary condition is applied along the lines defined by the spanwise fixation points which run in the streamwise direction and divide the panel into multiple rectangles in the spanwise direction."
       bc_list:
-        default: [front,back]
+        default: []#[panel_front,panel_back]
         # type: "list"
         description: "location for clamped boundary conditions"
       dt:
@@ -648,6 +681,27 @@ properties:
         type: "number"
         description: "poissons ratio of the panel structure."
         units: "None"
+      elasticity_modulus_tube:
+        default: 200.0e+9
+        minimum: 1.0e+2
+        maximum: 500.0e+9
+        type: "number"
+        description: "The effective Young's modulus of the torque tube."
+        units: "Pascal"  
+      poissons_ratio_tube: 
+        default: 0.3
+        minimum: 0.1
+        maximum: 0.9
+        type: "number"
+        description: "poissons ratio of the torque tube."
+        units: "None"
+      rho_tube:
+        default: 1.0
+        # minimum: 0.001
+        # maximum: 1000.0
+        type: "number"
+        description: "The density of the structure."
+        units: "kg/meter^3"
       body_force_x: 
         default:  100
         type: "number"

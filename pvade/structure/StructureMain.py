@@ -80,6 +80,10 @@ class Structure:
             domain.structure.msh, params.structure.rho
         )  # Constant(0.)
 
+        self.rho_connector = dolfinx.fem.Constant(
+            domain.structure.msh, params.structure.rho_tube
+        )
+
         # Define structural properties
         self.E = params.structure.elasticity_modulus  # 1.0e9
         self.poissons_ratio = params.structure.poissons_ratio  # 0.3
@@ -88,6 +92,21 @@ class Structure:
             self.E
             * self.poissons_ratio
             / ((1.0 + self.poissons_ratio) * (1.0 - 2.0 * self.poissons_ratio))
+        )
+
+        # we are assuming the connectors has same mechanical properties as the tubes
+        self.E_connector = params.structure.elasticity_modulus_tube  # 1.0e9
+        self.poissons_ratio_connector = params.structure.poissons_ratio_tube  # 0.3
+        self.lame_mu_connector = self.E_connector / (
+            2.0 * (1.0 + self.poissons_ratio_connector)
+        )
+        self.lame_lambda_connector = (
+            self.E_connector
+            * self.poissons_ratio_connector
+            / (
+                (1.0 + self.poissons_ratio_connector)
+                * (1.0 - 2.0 * self.poissons_ratio_connector)
+            )
         )
 
         if self.rank == 0:
@@ -110,9 +129,21 @@ class Structure:
                 else:
                     tracker_angle_rad = np.radians(params.pv_array.tracker_angle)
 
-                x1 = 0.5 * params.pv_array.panel_chord * np.cos(tracker_angle_rad)
-                x2 = 0.5 * params.pv_array.panel_thickness * np.sin(tracker_angle_rad)
-                corner = [x1 - x2, 0.5 * params.pv_array.panel_span]
+                """
+                y
+
+                ^
+                | 
+                |---o NE corner (measured on bottom of panel)
+                |   |
+                |   |
+                |-----> x
+                """
+
+                corner = [
+                    0.5 * params.pv_array.panel_chord * np.cos(tracker_angle_rad),
+                    0.5 * params.pv_array.panel_span,
+                ]
 
             east_edge = np.logical_and(corner[0] - eps < x[0], x[0] < corner[0] + eps)
             north_edge = np.logical_and(corner[1] - eps < x[1], x[1] < corner[1] + eps)
@@ -121,12 +152,12 @@ class Structure:
 
             return north_east_corner
 
-        north_east_corner_facets = dolfinx.mesh.locate_entities_boundary(
+        north_east_corner_vertices = dolfinx.mesh.locate_entities_boundary(
             domain.structure.msh, 0, _north_east_corner
         )
 
         self.north_east_corner_dofs = dolfinx.fem.locate_dofs_topological(
-            self.elasticity.V, 0, north_east_corner_facets
+            self.elasticity.V, 0, north_east_corner_vertices
         )
 
     def build_boundary_conditions(self, domain, params):
@@ -189,7 +220,7 @@ class Structure:
     def avg(self, x_old, x_new, alpha):
         return alpha * x_old + (1 - alpha) * x_new
 
-    def build_forms(self, domain, params):
+    def build_forms(self, domain, params, flow):
         """Builds all variational statements
 
         This method creates all the functions, expressions, and variational
@@ -205,7 +236,7 @@ class Structure:
             params (:obj:`pvade.Parameters.SimParams`): A SimParams object
 
         """
-        self.elasticity.build_forms(domain, params, self)
+        self.elasticity.build_forms(domain, params, self, flow)
 
     def _assemble_system(self, params):
         """Pre-assemble all LHS matrices and RHS vectors

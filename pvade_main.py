@@ -16,6 +16,10 @@ from pvade.structure.StructureMain import Structure
 import os
 from mpi4py import MPI
 
+"""
+to run: python -u pvade_main.py --input_file=input/duramat_case_study.yaml --domain.l_char=3.0 --pv_array.torque_tube_radius=0.1 --pv_array.torque_tube_separation=0.2 --pv_array.stream_rows=2 --pv_array.tracker_angle=[20,20] --pv_array.modules_per_span=10
+"""
+
 
 def main(input_file=None):
     # Get the path to the input file from the command line
@@ -38,6 +42,7 @@ def main(input_file=None):
     domain = FSIDomain(params)
     if params.general.input_mesh_dir is not None:
         domain.read_mesh_files(params.general.input_mesh_dir, params)
+
     else:
         domain.build(params)
 
@@ -60,7 +65,7 @@ def main(input_file=None):
         structure = Structure(domain, params)
         structure.build_boundary_conditions(domain, params)
         # # # Build the fluid forms
-        structure.build_forms(domain, params)
+        structure.build_forms(domain, params, flow)
     else:
         structure = None
 

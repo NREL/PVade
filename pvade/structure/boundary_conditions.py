@@ -272,8 +272,11 @@ def build_structure_boundary_conditions(domain, params, functionspace):
     total_num_panels = params.pv_array.stream_rows * params.pv_array.span_rows
 
     for num_panel in range(total_num_panels):
-        for location in params.structure.bc_list:
-            location_panel = f"{location}_{num_panel}"
+        for location in params.structure.bc_list:  # it is empty
+            if location == "panel_top" or location == "panel_bottom":
+                location_panel = f"{location}_{num_panel}_0"
+            else:
+                location_panel = f"{location}_{num_panel}"
             # f"front_{num_panel}" , f"back_{num_panel}":
             # for location in  [f"left_{num_panel}"]:# , f"right_{num_panel}":
             # for location in  f"left_{num_panel}":
@@ -344,43 +347,78 @@ def build_structure_boundary_conditions(domain, params, functionspace):
 
         return fn_handle
 
-    # Start pinning along the lines expressed byt numpy_pt_total_array
-    # First, determine the total number of rows (number of lines to pin)
-    num_nodes = np.shape(domain.numpy_pt_total_array)[0]
+    if domain.modeling_torque_tube and params.general.geometry_module == "panels3d":
+        # # Start pinning along the lines expressed byt numpy_pt_total_array
+        # The center line of connectors bottom surface is fixed to remove rigid body motion
 
-    # Determine how many pinning lines exist per each panel (e.g., 24 lines distributed on 8 panels means 3 lines per panel)
-    nodes_per_panel = int(num_nodes / total_num_panels)
+        if params.structure.tube_connection == True:
+            # If making torque tube connections, pass only those pinning lines to the BC identification function
+            tube_nodes = domain.numpy_pt_total_array[:, :]
 
-    # The torque tube entry (oriented spanwise along the middle, divides panel into upstream and downstream rectangular halves)
-    # is always the first entry, e.g., [0, ..., ..., 3, ..., ..., 6, ..., ...], [0, 3, 6] are the torque tubes
-    tube_nodes_idx = np.arange(0, num_nodes, nodes_per_panel, dtype=np.int64)
+            facet_uppoint = dolfinx.mesh.locate_entities(
+                domain.structure.msh, 1, connection_point_up_helper(tube_nodes)
+            )
+            dofs_disp = dolfinx.fem.locate_dofs_topological(
+                functionspace, 1, [facet_uppoint]
+            )
 
-    if params.structure.tube_connection == True:
-        # If making torque tube connections, pass only those pinning lines to the BC identification function
-        tube_nodes = domain.numpy_pt_total_array[tube_nodes_idx, :]
+            bc.append(dolfinx.fem.dirichletbc(zero_vec, dofs_disp, functionspace))
 
-        facet_uppoint = dolfinx.mesh.locate_entities(
-            domain.structure.msh, 1, connection_point_up_helper(tube_nodes)
-        )
-        dofs_disp = dolfinx.fem.locate_dofs_topological(
-            functionspace, 1, [facet_uppoint]
-        )
+        if params.structure.motor_connection == True:
+            # The bottom surface of the center connector is fixed to represent the motor mount
+            motor_location = (
+                params.pv_array.fixed_location
+            )  # fixed location along the span, if fixed_location=5, it means the left boundary of the 6th connector is fixed
+            for panel_id in range(total_num_panels):
 
-        bc.append(dolfinx.fem.dirichletbc(zero_vec, dofs_disp, functionspace))
+                mount_facet = domain.structure.facet_tags.find(
+                    domain.domain_markers[
+                        f"block_left_{panel_id:.0f}_{motor_location:.0f}"
+                    ]["idx"]
+                )
 
-    if params.structure.motor_connection == True:
-        # If making motor mount connections, pass only those pinning lines to the BC identification function
-        # this is done by making a copy of the numpy_pt_total_array with the torque tube lines *deleted*
-        # not done in place, so numpy_pt_total_array remains unaltered.
-        motor_nodes = np.delete(domain.numpy_pt_total_array, tube_nodes_idx, axis=0)
+                dofs_disp = dolfinx.fem.locate_dofs_topological(
+                    functionspace, 2, [mount_facet]
+                )
 
-        facet_uppoint = dolfinx.mesh.locate_entities(
-            domain.structure.msh, 1, connection_point_up_helper(motor_nodes)
-        )
-        dofs_disp = dolfinx.fem.locate_dofs_topological(
-            functionspace, 1, [facet_uppoint]
-        )
+                bc.append(dolfinx.fem.dirichletbc(zero_vec, dofs_disp, functionspace))
+    else:
+        # Start pinning along the lines expressed byt numpy_pt_total_array
+        # First, determine the total number of rows (number of lines to pin)
+        num_nodes = np.shape(domain.numpy_pt_total_array)[0]
 
-        bc.append(dolfinx.fem.dirichletbc(zero_vec, dofs_disp, functionspace))
+        # Determine how many pinning lines exist per each panel (e.g., 24 lines distributed on 8 panels means 3 lines per panel)
+        nodes_per_panel = int(num_nodes / total_num_panels)
 
+        # The torque tube entry (oriented spanwise along the middle, divides panel into upstream and downstream rectangular halves)
+        # is always the first entry, e.g., [0, ..., ..., 3, ..., ..., 6, ..., ...], [0, 3, 6] are the torque tubes
+        tube_nodes_idx = np.arange(0, num_nodes, nodes_per_panel, dtype=np.int64)
+
+        if params.structure.tube_connection == True:
+            # If making torque tube connections, pass only those pinning lines to the BC identification function
+            tube_nodes = domain.numpy_pt_total_array[tube_nodes_idx, :]
+
+            facet_uppoint = dolfinx.mesh.locate_entities(
+                domain.structure.msh, 1, connection_point_up_helper(tube_nodes)
+            )
+            dofs_disp = dolfinx.fem.locate_dofs_topological(
+                functionspace, 1, [facet_uppoint]
+            )
+
+            bc.append(dolfinx.fem.dirichletbc(zero_vec, dofs_disp, functionspace))
+
+        if params.structure.motor_connection == True:
+            # If making motor mount connections, pass only those pinning lines to the BC identification function
+            # this is done by making a copy of the numpy_pt_total_array with the torque tube lines *deleted*
+            # not done in place, so numpy_pt_total_array remains unaltered.
+            motor_nodes = np.delete(domain.numpy_pt_total_array, tube_nodes_idx, axis=0)
+
+            facet_uppoint = dolfinx.mesh.locate_entities(
+                domain.structure.msh, 1, connection_point_up_helper(motor_nodes)
+            )
+            dofs_disp = dolfinx.fem.locate_dofs_topological(
+                functionspace, 1, [facet_uppoint]
+            )
+
+            bc.append(dolfinx.fem.dirichletbc(zero_vec, dofs_disp, functionspace))
     return bc
