@@ -19,6 +19,7 @@ dependencies:
   - python-gmsh
   - pyyaml
   - scipy
+  - setuptools=80.9.0
   - snakeviz
   - sphinx
   - tqdm
