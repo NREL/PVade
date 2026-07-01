@@ -25,12 +25,10 @@ New users are encouraged to review the [Getting Started](https://pvade.readthedo
     ```
 e.g. 
    ```bash
-    python pvade_main.py --input input/2d_cyld.yaml 
-    ```
-Note for parallel runs, use mpirun
-   ```bash
-    mpirun -n 8 python pvade_main.py --input input/2d_cyld.yaml 
-    ```
+   python pvade_main.py --input input/2d_cyld.yaml 
+   ```
+
+
 
 ## Citation
 
