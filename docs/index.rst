@@ -11,7 +11,7 @@ PVade is an open source fluid-structure interaction model which can be used to s
 .. note::
    This is an active research project and there may be areas where the documentation needs additional work to keep up with our latest developments. While we work to close this gap, feel free to raise issues or ask questions on GitHub_.
 
-.. _GitHub: https://github.com/NREL/PVade
+.. _GitHub: https://github.com/NatLabRockies/PVade
 
 Organization
 ------------
@@ -19,7 +19,7 @@ Organization
 Documentation is currently organized into three main categories:
 
 * :ref:`User Manual`: User guides covering basic topics and use cases for the PVade software
-* :ref:`Theory Manual`: Walktrough in the PVade code blocks
+* :ref:`Theory Manual`: Walkthrough in the PVade code blocks
 * :ref:`Technical Reference`: Programming details on the PVade API and functions
 * :ref:`Background`: Information and research sources for fluid and structural solvers and PV topics
 
@@ -40,4 +40,4 @@ Contents
    how_to_guides/index
    technical_reference/index
    background/index
-..   theory_manual/index
+   theory_manual/index

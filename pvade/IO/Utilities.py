@@ -1,7 +1,27 @@
+"""Command-line and profiling utility functions for PVade.
+
+This module contains lightweight helpers for parsing the input-file path
+from the command line (:func:`get_input_file`) and for extracting solver
+timing metrics from a profiling output file (:func:`write_metrics`).
+"""
+
 import argparse
 
 
 def get_input_file():
+    """Parse the path to the PVade input YAML file from the command line.
+
+    Reads the ``--input_file`` argument from ``sys.argv`` and verifies that
+    a value was supplied.  Raises a :class:`ValueError` when no input file
+    is specified.
+
+    Returns:
+        str: The full path to the input YAML file as provided on the command
+        line.
+
+    Raises:
+        ValueError: If ``--input_file`` is not provided or is ``None``.
+    """
     parser = argparse.ArgumentParser()
 
     parser.add_argument(
@@ -24,6 +44,19 @@ def get_input_file():
 
 
 def write_metrics(flow, prof_filename="profiling.txt"):
+    """Print solver timing metrics extracted from a profiling output file.
+
+    Reads the profiling file produced by ``cProfile`` or a similar tool and
+    searches for lines matching known solver-step identifiers.  Prints the
+    total time, per-call time, and call count for the main solve step as well
+    as individual IPCS sub-steps and mesh I/O operations.
+
+    Args:
+        flow (:obj:`pvade.fluid.FlowManager.Flow`): The Flow object; metrics
+            are only printed when ``flow.fluid_analysis`` is ``True``.
+        prof_filename (str, optional): Path to the profiling output file.
+            Defaults to ``"profiling.txt"``.
+    """
     with open(prof_filename, "r") as output_file:
         if flow.fluid_analysis == True:
             # solver_line = [line for line in output_file if "(solve)" in line]

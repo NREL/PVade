@@ -1,4 +1,11 @@
-"""Summary"""
+"""Incompressible Navier–Stokes fluid solver (fractional-step / IPCS method).
+
+This module provides the :class:`Flow` class, which assembles and solves the
+incompressible Navier–Stokes equations on an ALE (Arbitrary Lagrangian–Eulerian)
+mesh using the three-step Incremental Pressure Correction Scheme (IPCS).  An
+optional energy equation (advection–diffusion with SUPG stabilisation) handles
+buoyancy-driven or thermally-stratified flows.
+"""
 
 import dolfinx
 import ufl
@@ -19,7 +26,41 @@ from pvade.fluid.boundary_conditions import (
 
 
 class Flow:
-    """This class solves the CFD problem"""
+    """Incompressible Navier–Stokes fluid solver.
+
+    Implements the IPCS fractional-step method on an ALE mesh.  On each time
+    step the solver computes a tentative velocity, a pressure correction
+    (to enforce incompressibility), a corrected velocity, and optionally a
+    temperature field.  The class also computes integrated aerodynamic forces
+    on immersed panels, CFL numbers, and pressure drops.
+
+    Attributes:
+        comm: MPI communicator shared by all PVade objects.
+        rank (int): Rank of this MPI process.
+        num_procs (int): Total number of MPI processes.
+        fluid_analysis (bool): Flag indicating whether a fluid analysis is
+            being performed.
+        thermal_analysis (bool): Flag indicating whether the energy equation
+            is solved.
+        name (str): Human-readable identifier (always ``"fluid"``).
+        Q (dolfinx.fem.FunctionSpace): Scalar Lagrange P1 pressure space.
+        V (dolfinx.fem.FunctionSpace): Vector Lagrange P2 velocity space.
+        T (dolfinx.fem.FunctionSpace): Tensor Lagrange P2 stress space on the
+            deformed fluid mesh.
+        T_undeformed (dolfinx.fem.FunctionSpace): Tensor Lagrange P2 stress
+            space on the reference (undeformed) fluid mesh.
+        S (dolfinx.fem.FunctionSpace): Scalar Lagrange P1 temperature space
+            (only when *thermal_analysis* is ``True``).
+        DG (dolfinx.fem.FunctionSpace): Discontinuous Galerkin P0 space used
+            for CFL field storage.
+        first_call_to_solver (bool): Flag indicating the first solver call
+            (triggers one-time assembly).
+        ndim (int): Spatial dimension of the fluid problem.
+        facet_dim (int): Facet dimension (``ndim - 1``).
+        hmin (float): Global minimum cell diameter across all MPI ranks.
+        num_Q_dofs (int): Global number of pressure DOFs.
+        num_V_dofs (int): Global number of velocity DOFs.
+    """
 
     def __init__(self, domain, params):
         """Initialize the fluid solver

@@ -12,8 +12,8 @@ Running PVade requires the following:
    If an input parameter is not defined in the input file, PVade will use a preset value for the parameter
 
 
-Once we obtain a successful installation of PVade, we can execute the main script `ns_main.py` to run a simulation.
-'ns_main.py' takes as an argument an input file that describes the simulation to run.
+Once we obtain a successful installation of PVade, we can execute the main script `pvade_main.py` to run a simulation.
+'pvade_main.py' takes as an argument an input file that describes the simulation to run.
 
 as of now there are 5 geometries included in PVade: 
 
@@ -45,7 +45,7 @@ In order to run a Flag 2D example we can execute the following:
 
 .. code::
 
-    python $PVade/ns_main.py --input input/flag2d.yaml
+    python $PVade/pvade_main.py --input input/flag2d.yaml
 
 
 

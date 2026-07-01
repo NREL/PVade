@@ -1,4 +1,11 @@
-"""Summary"""
+"""Modal (eigenvalue) analysis for structural mechanics.
+
+This module provides the :class:`ModalAnalysis` class, which assembles the
+structural mass and stiffness matrices and solves the generalised eigenvalue
+problem to obtain natural frequencies and mode shapes.  It shares the same
+time-integration infrastructure as :class:`~pvade.structure.ElasticityAnalysis.Elasticity`
+but is intended for free-vibration studies rather than time-domain forcing.
+"""
 
 import dolfinx
 import ufl
@@ -17,7 +24,44 @@ from contextlib import ExitStack
 
 
 class ModalAnalysis:
-    """This class solves the CFD problem"""
+    """Modal (eigenvalue) analysis solver.
+
+    Assembles the structural mass and stiffness matrices and solves the
+    generalised eigenvalue problem to extract natural frequencies and mode
+    shapes of the structure.  The class also exposes the same
+    update-formula helpers as :class:`~pvade.structure.ElasticityAnalysis.Elasticity`
+    so that it can be used as a drop-in replacement when only the linear
+    structural response is of interest.
+
+    Attributes:
+        comm: MPI communicator shared by all PVade objects.
+        rank (int): Rank of this MPI process.
+        num_procs (int): Total number of MPI processes.
+        structural_analysis (bool): Flag passed through from *params*.
+        name (str): Human-readable identifier (always ``"structure"``).
+        V (dolfinx.fem.FunctionSpace): Lagrange vector function space of
+            degree 2 on the structure mesh.
+        first_call_to_solver (bool): Flag indicating whether the solver has
+            been called for the first time.
+        num_V_dofs (int): Global number of degrees of freedom in ``V``.
+        ndim (int): Topological dimension of the structure mesh.
+        facet_dim (int): Facet dimension (``ndim - 1``).
+        hmin (float): Global minimum cell diameter across all MPI ranks.
+        rho (dolfinx.fem.Constant): Mass density :math:`\\rho`.
+        eta_m (dolfinx.fem.Constant): Rayleigh mass-proportional damping coefficient.
+        eta_k (dolfinx.fem.Constant): Rayleigh stiffness-proportional damping coefficient.
+        alpha_m (dolfinx.fem.Constant): Generalized-alpha parameter :math:`\\alpha_m`.
+        alpha_f (dolfinx.fem.Constant): Generalized-alpha parameter :math:`\\alpha_f`.
+        gamma (float): Generalized-alpha parameter :math:`\\gamma`.
+        beta (float): Generalized-alpha parameter :math:`\\beta`.
+        E (float): Young's modulus.
+        poissons_ratio (float): Poisson's ratio.
+        lame_mu (float): First Lamé parameter :math:`\\mu`.
+        lame_lambda (float): Second Lamé parameter :math:`\\lambda`.
+        dt_st (dolfinx.fem.Constant): Structural time step size.
+        north_east_corner_dofs (np.ndarray): DOF indices for the probe point
+            at the north-east corner of the structure.
+    """
 
     def __init__(self, domain, structural_analysis, params):
         """Initialize the fluid solver
@@ -251,6 +295,26 @@ class ModalAnalysis:
         self.bc = build_structure_boundary_conditions(domain, params, self.V)
 
     def update_a(self, u, u_old, v_old, a_old, dt, beta, ufl=True):
+        """Compute the new acceleration using the Newmark update formula.
+
+        .. math::
+
+            a = \\frac{u - u_0 - v_0 \\, dt}{\\beta \\, dt^2}
+                - \\frac{1 - 2\\beta}{2\\beta} \\, a_0
+
+        Args:
+            u: Current displacement field (UFL expression or NumPy array).
+            u_old: Displacement field at the previous time step.
+            v_old: Velocity field at the previous time step.
+            a_old: Acceleration field at the previous time step.
+            dt: Time step size (UFL constant or Python float).
+            beta: Newmark :math:`\\beta` parameter.
+            ufl (bool): If ``True``, operands are UFL objects; if ``False``,
+                Python floats are used for ``dt`` and ``beta``.
+
+        Returns:
+            Updated acceleration field (UFL expression or NumPy array).
+        """
         # Update formula for acceleration
         # a = 1/(2*beta)*((u - u0 - v0*dt)/(0.5*dt*dt) - (1-2*beta)*a0)
         if ufl:
@@ -266,6 +330,26 @@ class ModalAnalysis:
     # Update formula for velocity
     # v = dt * ((1-gamma)*a0 + gamma*a) + v0
     def update_v(self, a, u_old, v_old, a_old, dt, gamma, ufl=True):
+                """Compute the new velocity using the Newmark update formula.
+
+                .. math::
+
+                    v = v_0 + dt \\left[(1 - \\gamma) \\, a_0 + \\gamma \\, a \\right]
+
+                Args:
+                    a: Current acceleration field (UFL expression or NumPy array).
+                    u_old: Displacement field at the previous time step (unused,
+                        kept for API consistency).
+                    v_old: Velocity field at the previous time step.
+                    a_old: Acceleration field at the previous time step.
+                    dt: Time step size (UFL constant or Python float).
+                    gamma: Newmark :math:`\\gamma` parameter.
+                    ufl (bool): If ``True``, operands are UFL objects; if ``False``,
+                        Python floats are used for ``dt`` and ``gamma``.
+
+                Returns:
+                    Updated velocity field (UFL expression or NumPy array).
+                """
         if ufl:
             dt_ = dt
             gamma_ = gamma
@@ -287,6 +371,20 @@ class ModalAnalysis:
         u_old.x.array[:] = u_vec
 
     def avg(self, x_old, x_new, alpha):
+        """Return the generalized-alpha weighted average of two fields.
+
+        .. math::
+
+            x_{\\alpha} = \\alpha \\, x_{\\text{old}} + (1 - \\alpha) \\, x_{\\text{new}}
+
+        Args:
+            x_old: Field value at the previous time step.
+            x_new: Field value at the current time step.
+            alpha: Weighting parameter.
+
+        Returns:
+            Weighted average of ``x_old`` and ``x_new``.
+        """
         return alpha * x_old + (1 - alpha) * x_new
 
     def build_forms(self, domain, params):

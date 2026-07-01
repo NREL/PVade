@@ -10,7 +10,8 @@ import cProfile
 import sys
 import tqdm.autonotebook
 import numpy as np
-
+import logging
+import warnings
 
 from pvade.structure.StructureMain import Structure
 import os
@@ -18,6 +19,7 @@ from mpi4py import MPI
 
 
 def main(input_file=None):
+    logging.disable(logging.CRITICAL)
     # Get the path to the input file from the command line
     if input_file is None:
         input_file = get_input_file()

@@ -7,9 +7,9 @@
 
 ## Getting Started
 
-New users are encouraged to review the [Getting Started](https://pvade.readthedocs.io/en/latest/how_to_guides/getting_started.html) guide which describes how to create the Conda environment and run the example simulations.
+New users are encouraged to review the [Getting Started](https://pvade.readthedocs.io/en/latest/how_to_guides/installing_pvade.html#installing-pvade) guide which describes how to create the Conda environment and run the example simulations.
 
-## Developer Quick Start
+## Quick Start
 
 1. To use this software, begin by creating a Conda environment using the provided `environment.yaml` file:
     ```bash
@@ -21,7 +21,15 @@ New users are encouraged to review the [Getting Started](https://pvade.readthedo
     ```
 2. From within your activate Conda environment, a simulation can be executed with:
     ```bash
-    python ns_main.py --command_line_arg value
+    python pvade_main.py --command_line_arg value
+    ```
+e.g. 
+   ```bash
+    python pvade_main.py --input input/2d_cyld.yaml 
+    ```
+Note for parallel runs, use mpirun
+   ```bash
+    mpirun -n 8 python pvade_main.py --input input/2d_cyld.yaml 
     ```
 
 ## Citation

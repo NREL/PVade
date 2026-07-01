@@ -1,3 +1,12 @@
+"""Boundary condition utilities for the incompressible Navier–Stokes solver.
+
+This module provides functions and classes for building Dirichlet boundary
+conditions on velocity, pressure, and temperature fields.  It also contains
+:class:`InflowVelocity`, a callable class that evaluates user-selected inflow
+profiles (uniform, parabolic, log-law, or from a pre-computed HDF5 file) at
+any spatial position and simulation time.
+"""
+
 import dolfinx
 from petsc4py import PETSc
 
@@ -108,6 +117,31 @@ def build_vel_bc_by_type(bc_type, domain, functionspace, bc_location):
 
 
 class InflowVelocity:
+    """Callable inflow velocity profile for use as a Dirichlet boundary condition.
+
+    Supports the following profile types, selected via
+    ``params.fluid.velocity_profile_type``:
+
+    * ``"uniform"`` – constant streamwise velocity equal to ``u_ref``.
+    * ``"parabolic"`` – parabolic Poiseuille-like profile.
+    * ``"loglaw"`` – atmospheric surface-layer log-law profile.
+    * ``"specified_from_file"`` – time-varying 3-D inflow field read from an
+      HDF5 file and interpolated to the current mesh and time.
+
+    An optional cosine ramp (``params.fluid.ramp_window``) smoothly increases
+    the inflow speed from zero to ``u_ref`` during the early simulation phase.
+
+    Attributes:
+        ndim (int): Number of spatial dimensions of the mesh.
+        params (:obj:`pvade.IO.Parameters.SimParams`): Simulation parameters.
+        current_time (float): Current simulation time used when interpolating
+            time-varying inflow data.
+        u_ref (float): Effective reference velocity computed from the inflow
+            file (only set when *velocity_profile_type* is
+            ``"specified_from_file"``).
+        inflow_t_final (float): The last time instant available in the inflow
+            HDF5 file.
+    """
     def __init__(self, ndim, params, current_time):
         """Inflow velocity object
 
@@ -308,6 +342,33 @@ class InflowVelocity:
 
 
 def get_inflow_profile_function(domain, params, functionspace, current_time):
+    """Build a DOLFINx function object containing the inflow velocity field.
+
+    Constructs a :class:`dolfinx.fem.Function` on *functionspace* and
+    populates it with the inflow velocity profile prescribed by
+    ``params.fluid.velocity_profile_type``. For the log-law profile, the
+    velocity is set to zero below the surface-layer height (``d0 + z0``) to
+    avoid logarithm singularities.
+
+    Args:
+        domain (:obj:`pvade.geometry.MeshManager.FSIDomain`): The domain
+            object, used to access the fluid mesh and MPI communicator.
+        params (:obj:`pvade.IO.Parameters.SimParams`): A SimParams object.
+        functionspace (dolfinx.fem.FunctionSpace): The velocity function space
+            on which the inflow profile is interpolated.
+        current_time (float): The simulation time at which the inflow profile
+            is evaluated (relevant for ``"specified_from_file"``).
+
+    Returns:
+        tuple:
+            - **inflow_function** (*dolfinx.fem.Function*): The interpolated
+              inflow velocity field.
+            - **inflow_velocity** (:class:`InflowVelocity`): The callable
+              object used for interpolation.
+            - **upper_cells** (*np.ndarray or None*): Mesh cell indices above
+              the surface-layer roughness height (only non-``None`` for the
+              log-law profile).
+    """
     ndim = domain.ndim
     # print('ndim = ',ndim)
 

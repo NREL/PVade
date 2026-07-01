@@ -1,4 +1,9 @@
-"""Summary"""
+"""Nonlinear elasticity solver using the Saint Venant–Kirchhoff material model.
+
+This module implements the :class:`Elasticity` class, which assembles and solves
+the structural mechanics problem using a generalized-alpha time integration
+scheme on a FEniCSx / DOLFINx mesh.
+"""
 
 import dolfinx
 import ufl
@@ -17,20 +22,46 @@ from contextlib import ExitStack
 
 
 class Elasticity:
-    """This class solves the CFD problem"""
+    """Nonlinear structural elasticity solver.
+
+    Assembles and solves the structural deformation problem using the
+    Saint Venant–Kirchhoff constitutive model and the generalized-alpha
+    time integration scheme.  The class provides methods to build boundary
+    conditions, assemble variational forms, and advance the solution in time.
+
+    Attributes:
+        comm: MPI communicator shared by all PVade objects.
+        rank (int): Rank of this MPI process.
+        num_procs (int): Total number of MPI processes.
+        V (dolfinx.fem.FunctionSpace): Lagrange vector function space of degree 2
+            defined on the structure mesh.
+        W (dolfinx.fem.FunctionSpace): Discontinuous Lagrange scalar function space
+            of degree 0 defined on the structure mesh.
+        first_call_to_solver (bool): Flag indicating whether the solver has been
+            called for the first time.
+        num_V_dofs (int): Global number of degrees of freedom in ``V``.
+        eta_m (dolfinx.fem.Constant): Rayleigh mass-proportional damping coefficient.
+        eta_k (dolfinx.fem.Constant): Rayleigh stiffness-proportional damping coefficient.
+        alpha_m (dolfinx.fem.Constant): Generalized-alpha parameter :math:`\\alpha_m`.
+        alpha_f (dolfinx.fem.Constant): Generalized-alpha parameter :math:`\\alpha_f`.
+        gamma (float): Generalized-alpha parameter :math:`\\gamma`.
+        beta (float): Generalized-alpha parameter :math:`\\beta`.
+        dt_st (dolfinx.fem.Constant): Structural time step size.
+    """
 
     def __init__(self, domain, structural_analysis, params):
-        """Initialize the fluid solver
+        """Initialize the Elasticity class.
 
-        This method initialize the Flow object, namely, it creates all the
-        necessary function spaces on the mesh, initializes key counting and
-        boolean variables and records certain characteristic quantities like
-        the minimum cell size and the number of degrees of freedom attributed
-        to both the pressure and velocity function spaces.
+        Sets up the FEniCSx function spaces, Rayleigh damping constants, and
+        generalized-alpha time integration parameters on the structure submesh.
 
         Args:
-            domain (:obj:`pvade.geometry.MeshManager.Domain`): A Domain object
-
+            domain (:obj:`pvade.geometry.MeshManager.FSIDomain`): A Domain object
+                that holds the fluid and structure submeshes.
+            structural_analysis (bool): Flag indicating whether a structural
+                analysis is being performed.
+            params (:obj:`pvade.IO.Parameters.SimParams`): A SimParams object
+                containing all user-specified simulation parameters.
         """
         # self.structural_analysis = structural_analysis
         # self.name = "structure"
@@ -88,6 +119,26 @@ class Elasticity:
         self.bc = build_structure_boundary_conditions(domain, params, self.V)
 
     def update_a(self, u, u_old, v_old, a_old, dt, beta, ufl=True):
+        """Compute the new acceleration using the Newmark update formula.
+
+        .. math::
+
+            a = \\frac{u - u_0 - v_0 \\, dt}{\\beta \\, dt^2}
+                - \\frac{1 - 2\\beta}{2\\beta} \\, a_0
+
+        Args:
+            u: Current displacement field (UFL expression or NumPy array).
+            u_old: Displacement field at the previous time step.
+            v_old: Velocity field at the previous time step.
+            a_old: Acceleration field at the previous time step.
+            dt: Time step size (UFL constant or Python float).
+            beta: Newmark :math:`\\beta` parameter.
+            ufl (bool): If ``True``, operands are UFL objects; if ``False``,
+                Python floats are used for ``dt`` and ``beta``.
+
+        Returns:
+            Updated acceleration field (UFL expression or NumPy array).
+        """
         # Update formula for acceleration
         # a = 1/(2*beta)*((u - u0 - v0*dt)/(0.5*dt*dt) - (1-2*beta)*a0)
         if ufl:
@@ -103,6 +154,26 @@ class Elasticity:
     # Update formula for velocity
     # v = dt * ((1-gamma)*a0 + gamma*a) + v0
     def update_v(self, a, u_old, v_old, a_old, dt, gamma, ufl=True):
+        """Compute the new velocity using the Newmark update formula.
+
+        .. math::
+
+            v = v_0 + dt \\left[(1 - \\gamma) \\, a_0 + \\gamma \\, a \\right]
+
+        Args:
+            a: Current acceleration field (UFL expression or NumPy array).
+            u_old: Displacement field at the previous time step (unused, kept
+                for API consistency).
+            v_old: Velocity field at the previous time step.
+            a_old: Acceleration field at the previous time step.
+            dt: Time step size (UFL constant or Python float).
+            gamma: Newmark :math:`\\gamma` parameter.
+            ufl (bool): If ``True``, operands are UFL objects; if ``False``,
+                Python floats are used for ``dt`` and ``gamma``.
+
+        Returns:
+            Updated velocity field (UFL expression or NumPy array).
+        """
         if ufl:
             dt_ = dt
             gamma_ = gamma
@@ -124,6 +195,20 @@ class Elasticity:
         u_old.x.array[:] = u_vec
 
     def avg(self, x_old, x_new, alpha):
+        """Return the generalized-alpha weighted average of two fields.
+
+        .. math::
+
+            x_{\\alpha} = \\alpha \\, x_{\\text{old}} + (1 - \\alpha) \\, x_{\\text{new}}
+
+        Args:
+            x_old: Field value at the previous time step.
+            x_new: Field value at the current time step.
+            alpha: Weighting parameter (typically ``alpha_m`` or ``alpha_f``).
+
+        Returns:
+            Weighted average of ``x_old`` and ``x_new``.
+        """
         return alpha * x_old + (1 - alpha) * x_new
 
     def build_forms(self, domain, params, structure):
@@ -404,7 +489,23 @@ class Elasticity:
         # self.solver.setOperators(self.A)
 
     def build_nullspace(self, V):
-        """Build PETSc nullspace for 3D elasticity"""
+        """Build the PETSc rigid-body nullspace for 3-D elasticity.
+
+        Constructs six orthonormal vectors corresponding to the three
+        translational and three rotational rigid-body modes and assembles
+        them into a PETSc :class:`NullSpace` object.  This nullspace is
+        required by certain iterative solvers (e.g., AMG) to avoid
+        near-singular behaviour.
+
+        Args:
+            V (dolfinx.fem.FunctionSpace): The vector function space for which
+                the nullspace is constructed.  Must have exactly three
+                sub-spaces (x, y, z displacement components).
+
+        Returns:
+            :class:`petsc4py.PETSc.NullSpace`: A PETSc nullspace object
+            containing the six rigid-body modes.
+        """
 
         # Create list of vectors for building nullspace
         index_map = V.dofmap.index_map
@@ -439,6 +540,22 @@ class Elasticity:
         return PETSc.NullSpace().create(vectors=ns)
 
     def solve(self, params, dataIO, structure):
+        """Advance the structural solution by one time step.
+
+        On the first call this method assembles the nonlinear problem and
+        creates the Newton solver with LU factorisation. On every call it
+        solves the nonlinear system, scatters the solution, computes the
+        displacement increment ``u_delta``, updates the old fields, and
+        appends the corner displacement to ``accel_pos.csv``.
+
+        Args:
+            params (:obj:`pvade.IO.Parameters.SimParams`): A SimParams object.
+            dataIO: The DataStream I/O object (currently unused inside this
+                method but kept for API consistency).
+            structure (:obj:`pvade.structure.StructureMain.Structure`): The
+                parent Structure object, used to access
+                ``north_east_corner_dofs`` and ``ndim``.
+        """
         # def σ(v):
         #     """Return an expression for the stress σ given a displacement field"""
         #     return 2.0 * self.lame_mu * ufl.sym(ufl.grad(v)) + self.lame_lambda * ufl.tr(

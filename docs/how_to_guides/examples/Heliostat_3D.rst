@@ -52,7 +52,7 @@ For this example, the following values are used, as shown in the input file (`in
 
 This example is executed in parallel using::
 
-  mpirun -n 8 python ns_main.py --input_file input/single_heliostat.yaml
+  mpirun -n 8 python pvade_main.py --input_file input/single_heliostat.yaml
 
 However, this example is best run on a supercomputer using the included batch script (`PVade/docs/how_to_guides/examples/runscripts/run.sh`)::
 

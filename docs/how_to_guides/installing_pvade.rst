@@ -34,19 +34,19 @@ where ``my_env_name`` can be replaced with a short name for your Conda environme
 
 from within your activate Conda environment, a simulation can be executed with::
 
-  python main.py --command_line_arg value
+  python pvade_main.py --command_line_arg value
 
 
 We can test the successful installation of PVade and it's MPI implementation by running the following example ::
   
-  mpirun -np $num_cores python -u $PVade/example/poissoneq.py 64  cg none 1
+  mpirun -np $num_cores python -u $PVade/examples/poissoneq.py 64  cg none 1
 
 The example solve a Poisson's equation in 3 dimensions using 64 elements and 1 order Lagrange shape functions with cg as the ksp solver and no preconditioners. 
 For more details about the poisson's problem we refer the use to the folowing link https://jsdokken.com/dolfinx-tutorial/chapter1/fundamentals.html 
 
 
 
-Accessing the DOLFINx programming environment on Windows: a review
+On a Windows machine
 ------------------------------------------------------------------------------
 
 Current as of: May 2024.
@@ -80,7 +80,7 @@ I found this method to be the easiest to set up, access, and understand.
 
 2. Using Docker
 
-[Install](https://docs.docker.com/desktop/install/windows-install/) Docker. Docker Desktop needs a license, as NREL is a large organization. I don't know if these are available. However, a Docker Destop license is not necessary for installing a DOLFINx environment in Docker.
+[Install](https://docs.docker.com/desktop/install/windows-install/) Docker. Docker Desktop needs a license, as NLR is a large organization. I don't know if these are available. However, a Docker Destop license is not necessary for installing a DOLFINx environment in Docker.
 
 Docker uses images, which are recipes for programming environments, and containers, which are instances based on an image. Containers can be created and destroyed, entered and exited. 
 
@@ -159,7 +159,7 @@ Development to get spack to work on Windows is underway. Development to port the
 
 
 
-On NREL HPC machine Kestrel 
+On NLR HPC machine Kestrel 
 ----------------------------
 
 In order to use PVade on Kestrel, we can use one of the two options.
@@ -179,14 +179,14 @@ You can allocate one use it interactively through:
    ~$ salloc --nodes=1 --time=4:00:00 --partition=$partition_name --account $account_name --mem=0 --exclusive
 
 Make sure you specify the partition name ``$partition_name`` and the account name ``$account_name``. 
-Next, we clone the repository from https://github.com/NREL/PVade.git.
+Next, we clone the repository from https://github.com/NatLabRockies/PVade.
 
 .. code:: bash
 
-   ~$ git clone https://github.com/NREL/PVade.git
+   ~$ git clone https://github.com/NatLabRockies/PVade.git
 
 .. note:: 
-   the same can be achieved by downloading the latest release from https://github.com/NREL/PVade/releases
+   the same can be achieved by downloading the latest release from https://github.com/NatLabRockies/PVade/releases
 
 
 We will refer to ``$PVade`` as the location of the cloned repo. 

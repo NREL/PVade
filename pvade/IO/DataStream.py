@@ -1,3 +1,14 @@
+"""Input/output utilities for PVade simulations.
+
+This module provides:
+
+* :func:`start_print_and_log` – redirect ``stdout`` and ``stderr`` to a log
+    file while still echoing output to the terminal.
+* :class:`DataStream` – manages XDMF solution files, writing initial and
+    per-timestep snapshots of velocity, pressure, displacement, stress, and
+    optional temperature fields.
+"""
+
 import dolfinx
 import ufl
 import sys
@@ -11,6 +22,18 @@ from datetime import datetime
 
 
 def start_print_and_log(rank, logfile_name):
+    """Redirect ``stdout`` and ``stderr`` to a timestamped log file.
+
+    Replaces the process ``sys.stdout`` and ``sys.stderr`` with
+    :class:`PrintAndLog` instances that tee output to both the terminal and
+    the file *logfile_name*.  The log file is initialised as an empty file
+    before redirection begins.
+
+    Args:
+        rank (int): MPI rank of the calling process.
+        logfile_name (str): Full path to the log file that will be created (or
+            overwritten if it already exists).
+    """
 
     class PrintAndLog:
         """
@@ -49,7 +72,7 @@ def start_print_and_log(rank, logfile_name):
                     fp.write(f"{timestamp} [{self.message_type}] {cleaned_message}")
 
         def flush(self):
-            # Dummy method
+            """Flush the output stream (no-op; required by the file-like interface)."""
             pass
 
     with open(logfile_name, "w") as fp:
