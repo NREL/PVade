@@ -1,3 +1,13 @@
+import warnings
+
+# Suppress third-party deprecation warning from ufl importing pkg_resources.
+warnings.filterwarnings(
+    "ignore",
+    message=r"pkg_resources is deprecated as an API.*",
+    category=UserWarning,
+    module=r"ufl.*",
+)
+
 from pvade.fluid.FlowManager import Flow
 from pvade.IO.DataStream import DataStream, start_print_and_log
 from pvade.fsi.FSI import FSI
@@ -11,7 +21,6 @@ import sys
 import tqdm.autonotebook
 import numpy as np
 import logging
-import warnings
 
 from pvade.structure.StructureMain import Structure
 import os

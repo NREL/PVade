@@ -15,9 +15,13 @@ Panels 3D Case Type
 Panels 3D Input File
 --------------------
 
-The default case is defined in:
+The baseline 3D panels case is defined in:
 
 - ``input/panels3d.yaml``
+
+For the Duramat turbulent-inflow case-study configuration, use:
+
+- ``input/turbinflow_duramat_case_study.yaml``
 
 Key settings include:
 
@@ -35,6 +39,12 @@ From the repository root:
 .. code-block:: bash
 
 	conda run -n PVade mpirun -n 4 python pvade_main.py --input_file input/panels3d.yaml
+
+Duramat case-study run:
+
+.. code-block:: bash
+
+	conda run -n PVade mpirun -n 4 python pvade_main.py --input_file input/turbinflow_duramat_case_study.yaml
 
 For a short debug run:
 

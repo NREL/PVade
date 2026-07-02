@@ -12,8 +12,18 @@
 #
 import os
 import sys
+import warnings
 
 sys.path.insert(0, os.path.abspath("../pvade"))
+
+# Suppress third-party deprecation warning from ufl importing pkg_resources.
+# This keeps Sphinx output clean while upstream dependencies migrate.
+warnings.filterwarnings(
+    "ignore",
+    message=r"pkg_resources is deprecated as an API.*",
+    category=UserWarning,
+    module=r"ufl.*",
+)
 
 
 # -- Project information -----------------------------------------------------
