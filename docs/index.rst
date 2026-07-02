@@ -23,7 +23,7 @@ Documentation is currently organized into three main categories:
 * :ref:`Technical Reference`: Programming details on the PVade API and functions
 * :ref:`Background`: Information and research sources for fluid and structural solvers and PV topics
 
-New users may find it helpful to review the :ref:`Getting Started` materials first.
+New users may find it helpful to review the :ref:`User Manual` materials first.
 
 
 
@@ -39,5 +39,6 @@ Contents
 
    how_to_guides/index
    technical_reference/index
-   background/index
    theory_manual/index
+   background/index
+   

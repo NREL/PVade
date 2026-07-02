@@ -330,26 +330,26 @@ class ModalAnalysis:
     # Update formula for velocity
     # v = dt * ((1-gamma)*a0 + gamma*a) + v0
     def update_v(self, a, u_old, v_old, a_old, dt, gamma, ufl=True):
-                """Compute the new velocity using the Newmark update formula.
+        """Compute the new velocity using the Newmark update formula.
 
-                .. math::
+        .. math::
 
-                    v = v_0 + dt \\left[(1 - \\gamma) \\, a_0 + \\gamma \\, a \\right]
+            v = v_0 + dt \\left[(1 - \\gamma) \\, a_0 + \\gamma \\, a \\right]
 
-                Args:
-                    a: Current acceleration field (UFL expression or NumPy array).
-                    u_old: Displacement field at the previous time step (unused,
-                        kept for API consistency).
-                    v_old: Velocity field at the previous time step.
-                    a_old: Acceleration field at the previous time step.
-                    dt: Time step size (UFL constant or Python float).
-                    gamma: Newmark :math:`\\gamma` parameter.
-                    ufl (bool): If ``True``, operands are UFL objects; if ``False``,
-                        Python floats are used for ``dt`` and ``gamma``.
+        Args:
+            a: Current acceleration field (UFL expression or NumPy array).
+            u_old: Displacement field at the previous time step (unused,
+                kept for API consistency).
+            v_old: Velocity field at the previous time step.
+            a_old: Acceleration field at the previous time step.
+            dt: Time step size (UFL constant or Python float).
+            gamma: Newmark :math:`\\gamma` parameter.
+            ufl (bool): If ``True``, operands are UFL objects; if ``False``,
+                Python floats are used for ``dt`` and ``gamma``.
 
-                Returns:
-                    Updated velocity field (UFL expression or NumPy array).
-                """
+        Returns:
+            Updated velocity field (UFL expression or NumPy array).
+        """
         if ufl:
             dt_ = dt
             gamma_ = gamma

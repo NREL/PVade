@@ -219,7 +219,7 @@ class Structure:
     # Update formula for velocity
     # v = dt * ((1-gamma)*a0 + gamma*a) + v0
     def update_v(self, a, u_old, v_old, a_old, dt, gamma, ufl=True):
-                """Compute the new velocity using the Newmark update formula.
+        """Compute the new velocity using the Newmark update formula.
 
                 Delegates to :meth:`pvade.structure.ElasticityAnalysis.Elasticity.update_v`.
 
@@ -235,14 +235,15 @@ class Structure:
 
                 Returns:
                     Updated velocity field.
-                """
+        """
         if ufl:
             dt_ = dt
             gamma_ = gamma
         else:
             dt_ = float(dt)
             gamma_ = float(gamma)
-        return v_old + dt_ * ((1 - gamma_) * a_old + gamma_ * a)
+        return v_old + dt_ * ((1 - gamma_) * a_old + gamma_ * a)    
+        
 
     def update_fields(self, u, u_old, v_old, a_old, dt, beta, gamma):
         """Update fields at the end of each time step."""
