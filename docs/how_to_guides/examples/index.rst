@@ -27,3 +27,6 @@ The examples in this section map to the currently available YAML files in
    Panels_3D
    Turbulent_Inflow_Panels_3D
    Heliostat_3D
+   Gmsh_Code
+   Cylinderflow_Python
+   Synthetic_Turbulent_Inflow
