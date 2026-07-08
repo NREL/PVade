@@ -1,0 +1,184 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.17.0" xml:lang="en-US">
+  <compounddef id="test__mesh__movement_8py" kind="file" language="Python">
+    <compoundname>test_mesh_movement.py</compoundname>
+    <innernamespace refid="namespacetest__mesh__movement">test_mesh_movement</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1" refid="namespacetest__mesh__movement" refkind="compound"><highlight class="keyword">import</highlight><highlight class="normal"><sp/>pytest</highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight><highlight class="keyword">import</highlight><highlight class="normal"><sp/>dolfinx</highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight><highlight class="keyword">import</highlight><highlight class="normal"><sp/>ufl</highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight><highlight class="keyword">import</highlight><highlight class="normal"><sp/>numpy<sp/></highlight><highlight class="keyword">as</highlight><highlight class="normal"><sp/>np</highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="keyword">import</highlight><highlight class="normal"><sp/>os</highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight><highlight class="keyword">import</highlight><highlight class="normal"><sp/>matplotlib.pyplot<sp/></highlight><highlight class="keyword">as</highlight><highlight class="normal"><sp/>plt</highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="keyword">from</highlight><highlight class="normal"><sp/><ref refid="namespacepvade_1_1_i_o_1_1_parameters" kindref="compound">pvade.IO.Parameters</ref><sp/></highlight><highlight class="keyword">import</highlight><highlight class="normal"><sp/>SimParams</highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight><highlight class="keyword">from</highlight><highlight class="normal"><sp/><ref refid="namespacepvade_1_1geometry_1_1_mesh_manager" kindref="compound">pvade.geometry.MeshManager</ref><sp/></highlight><highlight class="keyword">import</highlight><highlight class="normal"><sp/>FSIDomain</highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal">input_path<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;pvade/tests/input/yaml/&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="preprocessor">@pytest.mark.regression</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="keyword">def<sp/></highlight><highlight class="normal"><ref refid="namespacetest__mesh__movement_1ad6c8d9d3803cb7ed1689c7c6acc2f050" kindref="member">test_calc_distance_to_panel_surface</ref>():</highlight></codeline>
+<codeline lineno="16"><highlight class="normal"><sp/><sp/><sp/><sp/>input_file<sp/>=<sp/>os.path.join(input_path,<sp/></highlight><highlight class="stringliteral">&quot;embedded_box.yaml&quot;</highlight><highlight class="normal">)<sp/><sp/></highlight><highlight class="comment">#<sp/>get_input_file()</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"><sp/><sp/><sp/><sp/>params<sp/>=<sp/><ref refid="classpvade_1_1_i_o_1_1_parameters_1_1_sim_params" kindref="compound">SimParams</ref>(input_file)</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"><sp/><sp/><sp/><sp/>domain<sp/>=<sp/><ref refid="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain" kindref="compound">FSIDomain</ref>(params)</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"><sp/><sp/><sp/><sp/>domain.build(params)</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">#<sp/>Call<sp/>the<sp/>function<sp/>that<sp/>calculates<sp/>the<sp/>distance<sp/>to<sp/>the<sp/>panel<sp/>surface</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="24"><highlight class="normal"><sp/><sp/><sp/><sp/>min_dist_cutoff<sp/>=<sp/>1.0e-8</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"><sp/><sp/><sp/><sp/>domain._calc_distance_to_panel_surface(params,<sp/>min_dist_cutoff=min_dist_cutoff)</highlight></codeline>
+<codeline lineno="26"><highlight class="normal"></highlight></codeline>
+<codeline lineno="27"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">#<sp/>After<sp/>this<sp/>step,<sp/>the<sp/>domain<sp/>should<sp/>have<sp/>a<sp/>distance<sp/>attribute</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="28"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">assert</highlight><highlight class="normal"><sp/>hasattr(domain,<sp/></highlight><highlight class="stringliteral">&quot;distance&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"></highlight></codeline>
+<codeline lineno="30"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">#<sp/>Get<sp/>the<sp/>coordinates<sp/>of<sp/>the<sp/>function<sp/>space<sp/>and<sp/>get<sp/>the<sp/>values<sp/>of<sp/>the<sp/>distance<sp/>function</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="31"><highlight class="normal"><sp/><sp/><sp/><sp/>coords<sp/>=<sp/>domain.V1.tabulate_dof_coordinates()</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"><sp/><sp/><sp/><sp/>vals<sp/>=<sp/>domain.distance.vector.array[:]</highlight></codeline>
+<codeline lineno="33"><highlight class="normal"></highlight></codeline>
+<codeline lineno="34"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">#<sp/>Assert<sp/>that<sp/>all<sp/>distance<sp/>values<sp/>are<sp/>positive<sp/>(minimum<sp/>should<sp/>be<sp/>min_dist_cutoff)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="35"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">assert</highlight><highlight class="normal"><sp/>np.all(vals<sp/>&gt;<sp/>0)</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"></highlight></codeline>
+<codeline lineno="37"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">#<sp/>The<sp/>number<sp/>of<sp/>rows<sp/>in<sp/>coords<sp/>should<sp/>be<sp/>equal<sp/>to<sp/>the<sp/>number<sp/>of<sp/>distance<sp/>values</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="38"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">#<sp/>but<sp/>this<sp/>won&apos;t<sp/>be<sp/>true<sp/>in<sp/>parallel<sp/>since<sp/>the<sp/>mesh<sp/>includes<sp/>all<sp/>ghost<sp/>points</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="39"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">#<sp/>and<sp/>the<sp/>functions<sp/>do<sp/>not,<sp/>so<sp/>we<sp/>assert<sp/>&gt;=</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="40"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">assert</highlight><highlight class="normal"><sp/>np.shape(coords)[0]<sp/>&gt;=<sp/>np.shape(vals)[0]</highlight></codeline>
+<codeline lineno="41"><highlight class="normal"></highlight></codeline>
+<codeline lineno="42"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">#<sp/>The<sp/>minimum<sp/>distance<sp/>should<sp/>be<sp/>the<sp/>one<sp/>enforced<sp/>by<sp/>min_dist_cutoff</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="43"><highlight class="normal"><sp/><sp/><sp/><sp/>min_dist<sp/>=<sp/>np.amin(vals)</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">assert</highlight><highlight class="normal"><sp/>np.isclose(min_dist,<sp/>min_dist_cutoff)</highlight></codeline>
+<codeline lineno="45"><highlight class="normal"></highlight></codeline>
+<codeline lineno="46"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">#<sp/>The<sp/>maximum<sp/>distance<sp/>should<sp/>be<sp/>at<sp/>the<sp/>separation<sp/>between<sp/>corners</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="47"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">#<sp/>(i.e.,<sp/>the<sp/>hypotenuse,<sp/>or<sp/>close<sp/>to<sp/>sqrt(0.5^2<sp/>+<sp/>0.5^2<sp/>+<sp/>0.5^2))</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="48"><highlight class="normal"><sp/><sp/><sp/><sp/>max_dist<sp/>=<sp/>np.amax(vals)</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"></highlight></codeline>
+<codeline lineno="50"><highlight class="normal"><sp/><sp/><sp/><sp/>dx<sp/>=<sp/>params.domain.x_max<sp/>-<sp/>0.5<sp/>*<sp/>params.pv_array.panel_chord</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"><sp/><sp/><sp/><sp/>dy<sp/>=<sp/>params.domain.y_max<sp/>-<sp/>0.5<sp/>*<sp/>params.pv_array.panel_span</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"><sp/><sp/><sp/><sp/>dz<sp/>=<sp/>params.domain.z_max<sp/>-<sp/>0.5<sp/>*<sp/>params.pv_array.panel_thickness</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><sp/><sp/><sp/><sp/>truth_max_dist<sp/>=<sp/>np.sqrt(dx<sp/>*<sp/>dx<sp/>+<sp/>dy<sp/>*<sp/>dy<sp/>+<sp/>dz<sp/>*<sp/>dz)</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"></highlight></codeline>
+<codeline lineno="55"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">assert</highlight><highlight class="normal"><sp/>np.isclose(max_dist,<sp/>truth_max_dist)</highlight></codeline>
+<codeline lineno="56"><highlight class="normal"></highlight></codeline>
+<codeline lineno="57"><highlight class="normal"></highlight></codeline>
+<codeline lineno="58"><highlight class="normal"></highlight><highlight class="preprocessor">@pytest.mark.regression</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="59"><highlight class="normal"></highlight><highlight class="keyword">def<sp/></highlight><highlight class="normal"><ref refid="namespacetest__mesh__movement_1affc094e61f6dfdfd7387ba4a62bdcb98" kindref="member">test_move_mesh</ref>():</highlight></codeline>
+<codeline lineno="60"><highlight class="normal"><sp/><sp/><sp/><sp/>input_file<sp/>=<sp/>os.path.join(input_path,<sp/></highlight><highlight class="stringliteral">&quot;embedded_box.yaml&quot;</highlight><highlight class="normal">)<sp/><sp/></highlight><highlight class="comment">#<sp/>get_input_file()</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="61"><highlight class="normal"></highlight></codeline>
+<codeline lineno="62"><highlight class="normal"><sp/><sp/><sp/><sp/>params<sp/>=<sp/><ref refid="classpvade_1_1_i_o_1_1_parameters_1_1_sim_params" kindref="compound">SimParams</ref>(input_file)</highlight></codeline>
+<codeline lineno="63"><highlight class="normal"></highlight></codeline>
+<codeline lineno="64"><highlight class="normal"><sp/><sp/><sp/><sp/>domain<sp/>=<sp/><ref refid="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain" kindref="compound">FSIDomain</ref>(params)</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">#<sp/>domain.build(params)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="66"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">#<sp/>This<sp/>will<sp/>exist<sp/>by<sp/>evaluating<sp/>the<sp/>previous<sp/>test,<sp/>test_calc_distance_to_panel_surface,</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="67"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">#<sp/>first<sp/>in<sp/>the<sp/>sequence,<sp/>as<sp/>the<sp/>files<sp/>are<sp/>created<sp/>during<sp/>the<sp/>write_to_read_hack<sp/>step.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="68"><highlight class="normal"><sp/><sp/><sp/><sp/>domain.read_mesh_files(os.path.join(params.general.output_dir,<sp/></highlight><highlight class="stringliteral">&quot;mesh&quot;</highlight><highlight class="normal">),<sp/>params)</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"></highlight></codeline>
+<codeline lineno="70"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">#<sp/>Create<sp/>a<sp/>dummy<sp/>elasticity<sp/>object<sp/>that<sp/>we<sp/>can<sp/>prescribe<sp/>displacement<sp/>values<sp/>for</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="71"><highlight class="normal"></highlight></codeline>
+<codeline lineno="72"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal">dummy_elasticity:</highlight></codeline>
+<codeline lineno="73"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">def<sp/></highlight><highlight class="normal">__init__(self,<sp/>domain,<sp/>x_shift,<sp/>y_shift,<sp/>z_shift):</highlight></codeline>
+<codeline lineno="74"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">#<sp/>Build<sp/>a<sp/>dummy<sp/>displacement<sp/>function<sp/>to<sp/>test<sp/>mesh<sp/>movement<sp/>with</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>P1<sp/>=<sp/>ufl.VectorElement(</highlight><highlight class="stringliteral">&quot;Lagrange&quot;</highlight><highlight class="normal">,<sp/>domain.structure.msh.ufl_cell(),<sp/>1)</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>V<sp/>=<sp/>dolfinx.fem.FunctionSpace(domain.structure.msh,<sp/>P1)</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>self.u_delta<sp/>=<sp/>dolfinx.fem.Function(V)</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"></highlight></codeline>
+<codeline lineno="79"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>self.u_delta.vector.array[0::3]<sp/>=<sp/>x_shift</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>self.u_delta.vector.array[1::3]<sp/>=<sp/>y_shift</highlight></codeline>
+<codeline lineno="81"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>self.u_delta.vector.array[2::3]<sp/>=<sp/>z_shift</highlight></codeline>
+<codeline lineno="82"><highlight class="normal"></highlight></codeline>
+<codeline lineno="83"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal">dummy_structure:</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">def<sp/></highlight><highlight class="normal">__init__(self,<sp/>domain,<sp/>x_shift,<sp/>y_shift,<sp/>z_shift):</highlight></codeline>
+<codeline lineno="85"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>self.elasticity<sp/>=<sp/>dummy_elasticity(domain,<sp/>x_shift,<sp/>y_shift,<sp/>z_shift)</highlight></codeline>
+<codeline lineno="86"><highlight class="normal"></highlight></codeline>
+<codeline lineno="87"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">#<sp/>Specify<sp/>the<sp/>distance<sp/>to<sp/>shift<sp/>the<sp/>structure<sp/>in<sp/>the<sp/>x,<sp/>y,<sp/>and<sp/>z<sp/>direction</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="88"><highlight class="normal"><sp/><sp/><sp/><sp/>x_shift<sp/>=<sp/>0.05</highlight></codeline>
+<codeline lineno="89"><highlight class="normal"><sp/><sp/><sp/><sp/>y_shift<sp/>=<sp/>0.1</highlight></codeline>
+<codeline lineno="90"><highlight class="normal"><sp/><sp/><sp/><sp/>z_shift<sp/>=<sp/>0.2</highlight></codeline>
+<codeline lineno="91"><highlight class="normal"></highlight></codeline>
+<codeline lineno="92"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">#<sp/>Build<sp/>the<sp/>elasticity,<sp/>prescribe<sp/>those<sp/>motions<sp/>for<sp/>u_delta<sp/>(used<sp/>to<sp/>move<sp/>the<sp/>mesh)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="93"><highlight class="normal"><sp/><sp/><sp/><sp/>Structure<sp/>=<sp/>dummy_structure(domain,<sp/>x_shift,<sp/>y_shift,<sp/>z_shift)</highlight></codeline>
+<codeline lineno="94"><highlight class="normal"><sp/><sp/><sp/><sp/>elasticity<sp/>=<sp/>Structure.elasticity</highlight></codeline>
+<codeline lineno="95"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">#<sp/>elasticity<sp/>=<sp/>dummy_elasticity(domain,<sp/>x_shift,<sp/>y_shift,<sp/>z_shift)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="96"><highlight class="normal"></highlight></codeline>
+<codeline lineno="97"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">#<sp/>Make<sp/>a<sp/>copy<sp/>of<sp/>the<sp/>locations<sp/>before<sp/>for<sp/>testing</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="98"><highlight class="normal"><sp/><sp/><sp/><sp/>fluid_coords_before<sp/>=<sp/>np.copy(domain.fluid.msh.geometry.x)</highlight></codeline>
+<codeline lineno="99"><highlight class="normal"><sp/><sp/><sp/><sp/>structure_coords_before<sp/>=<sp/>np.copy(domain.structure.msh.geometry.x)</highlight></codeline>
+<codeline lineno="100"><highlight class="normal"></highlight></codeline>
+<codeline lineno="101"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">#<sp/>Assert<sp/>the<sp/>generated<sp/>mesh<sp/>for<sp/>fluid<sp/>and<sp/>structure<sp/>hits<sp/>all<sp/>the<sp/>right<sp/>min/max<sp/>values</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="102"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">assert</highlight><highlight class="normal"><sp/>np.isclose(np.amin(fluid_coords_before[:,<sp/>0]),<sp/>params.domain.x_min)</highlight></codeline>
+<codeline lineno="103"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">assert</highlight><highlight class="normal"><sp/>np.isclose(np.amin(fluid_coords_before[:,<sp/>1]),<sp/>params.domain.y_min)</highlight></codeline>
+<codeline lineno="104"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">assert</highlight><highlight class="normal"><sp/>np.isclose(np.amin(fluid_coords_before[:,<sp/>2]),<sp/>params.domain.z_min)</highlight></codeline>
+<codeline lineno="105"><highlight class="normal"></highlight></codeline>
+<codeline lineno="106"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">assert</highlight><highlight class="normal"><sp/>np.isclose(np.amax(fluid_coords_before[:,<sp/>0]),<sp/>params.domain.x_max)</highlight></codeline>
+<codeline lineno="107"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">assert</highlight><highlight class="normal"><sp/>np.isclose(np.amax(fluid_coords_before[:,<sp/>1]),<sp/>params.domain.y_max)</highlight></codeline>
+<codeline lineno="108"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">assert</highlight><highlight class="normal"><sp/>np.isclose(np.amax(fluid_coords_before[:,<sp/>2]),<sp/>params.domain.z_max)</highlight></codeline>
+<codeline lineno="109"><highlight class="normal"></highlight></codeline>
+<codeline lineno="110"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">assert</highlight><highlight class="normal"><sp/>np.isclose(</highlight></codeline>
+<codeline lineno="111"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>np.amin(structure_coords_before[:,<sp/>0]),<sp/>-0.5<sp/>*<sp/>params.pv_array.panel_chord</highlight></codeline>
+<codeline lineno="112"><highlight class="normal"><sp/><sp/><sp/><sp/>)</highlight></codeline>
+<codeline lineno="113"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">assert</highlight><highlight class="normal"><sp/>np.isclose(</highlight></codeline>
+<codeline lineno="114"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>np.amin(structure_coords_before[:,<sp/>1]),<sp/>-0.5<sp/>*<sp/>params.pv_array.panel_span</highlight></codeline>
+<codeline lineno="115"><highlight class="normal"><sp/><sp/><sp/><sp/>)</highlight></codeline>
+<codeline lineno="116"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">assert</highlight><highlight class="normal"><sp/>np.isclose(</highlight></codeline>
+<codeline lineno="117"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>np.amin(structure_coords_before[:,<sp/>2]),<sp/>-0.5<sp/>*<sp/>params.pv_array.panel_thickness</highlight></codeline>
+<codeline lineno="118"><highlight class="normal"><sp/><sp/><sp/><sp/>)</highlight></codeline>
+<codeline lineno="119"><highlight class="normal"></highlight></codeline>
+<codeline lineno="120"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">assert</highlight><highlight class="normal"><sp/>np.isclose(</highlight></codeline>
+<codeline lineno="121"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>np.amax(structure_coords_before[:,<sp/>0]),<sp/>0.5<sp/>*<sp/>params.pv_array.panel_chord</highlight></codeline>
+<codeline lineno="122"><highlight class="normal"><sp/><sp/><sp/><sp/>)</highlight></codeline>
+<codeline lineno="123"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">assert</highlight><highlight class="normal"><sp/>np.isclose(</highlight></codeline>
+<codeline lineno="124"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>np.amax(structure_coords_before[:,<sp/>1]),<sp/>0.5<sp/>*<sp/>params.pv_array.panel_span</highlight></codeline>
+<codeline lineno="125"><highlight class="normal"><sp/><sp/><sp/><sp/>)</highlight></codeline>
+<codeline lineno="126"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">assert</highlight><highlight class="normal"><sp/>np.isclose(</highlight></codeline>
+<codeline lineno="127"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>np.amax(structure_coords_before[:,<sp/>2]),<sp/>0.5<sp/>*<sp/>params.pv_array.panel_thickness</highlight></codeline>
+<codeline lineno="128"><highlight class="normal"><sp/><sp/><sp/><sp/>)</highlight></codeline>
+<codeline lineno="129"><highlight class="normal"></highlight></codeline>
+<codeline lineno="130"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">#<sp/>Move<sp/>the<sp/>mesh<sp/>by<sp/>the<sp/>amount<sp/>prescribed<sp/>in<sp/>u_delta</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="131"><highlight class="normal"><sp/><sp/><sp/><sp/>domain.move_mesh(Structure,<sp/>params)</highlight></codeline>
+<codeline lineno="132"><highlight class="normal"></highlight></codeline>
+<codeline lineno="133"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">#<sp/>Get<sp/>a<sp/>copy<sp/>of<sp/>the<sp/>new<sp/>positions</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="134"><highlight class="normal"><sp/><sp/><sp/><sp/>fluid_coords_after<sp/>=<sp/>np.copy(domain.fluid.msh.geometry.x[:])</highlight></codeline>
+<codeline lineno="135"><highlight class="normal"><sp/><sp/><sp/><sp/>structure_coords_after<sp/>=<sp/>np.copy(domain.structure.msh.geometry.x[:])</highlight></codeline>
+<codeline lineno="136"><highlight class="normal"></highlight></codeline>
+<codeline lineno="137"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">#<sp/>Calculate<sp/>the<sp/>total<sp/>displacement</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="138"><highlight class="normal"><sp/><sp/><sp/><sp/>delta_fluid_coords<sp/>=<sp/>fluid_coords_after<sp/>-<sp/>fluid_coords_before</highlight></codeline>
+<codeline lineno="139"><highlight class="normal"><sp/><sp/><sp/><sp/>delta_structure_coords<sp/>=<sp/>structure_coords_after<sp/>-<sp/>structure_coords_before</highlight></codeline>
+<codeline lineno="140"><highlight class="normal"></highlight></codeline>
+<codeline lineno="141"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">#<sp/>Assert<sp/>that<sp/>the<sp/>fluid<sp/>mesh<sp/>moved,<sp/>at<sp/>most,<sp/>the<sp/>amount<sp/>specified</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="142"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">assert</highlight><highlight class="normal"><sp/>np.isclose(np.amax(delta_fluid_coords[:,<sp/>0]),<sp/>x_shift)</highlight></codeline>
+<codeline lineno="143"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">assert</highlight><highlight class="normal"><sp/>np.isclose(np.amax(delta_fluid_coords[:,<sp/>1]),<sp/>y_shift)</highlight></codeline>
+<codeline lineno="144"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">assert</highlight><highlight class="normal"><sp/>np.isclose(np.amax(delta_fluid_coords[:,<sp/>2]),<sp/>z_shift)</highlight></codeline>
+<codeline lineno="145"><highlight class="normal"></highlight></codeline>
+<codeline lineno="146"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">#<sp/>Assert<sp/>that<sp/>the<sp/>structure<sp/>mesh<sp/>hasn&apos;t<sp/>moved<sp/>(probably<sp/>not<sp/>necessary)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="147"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">assert</highlight><highlight class="normal"><sp/>np.allclose(delta_structure_coords[:,<sp/>0],<sp/>0.0)</highlight></codeline>
+<codeline lineno="148"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">assert</highlight><highlight class="normal"><sp/>np.allclose(delta_structure_coords[:,<sp/>1],<sp/>0.0)</highlight></codeline>
+<codeline lineno="149"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">assert</highlight><highlight class="normal"><sp/>np.allclose(delta_structure_coords[:,<sp/>2],<sp/>0.0)</highlight></codeline>
+<codeline lineno="150"><highlight class="normal"></highlight></codeline>
+<codeline lineno="151"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">#<sp/>Assert<sp/>that<sp/>the<sp/>fluid<sp/>still<sp/>has<sp/>the<sp/>same<sp/>bounding<sp/>box</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="152"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">#<sp/>(i.e.,<sp/>no<sp/>penetration<sp/>of<sp/>the<sp/>moved<sp/>nodes<sp/>through<sp/>the<sp/>original<sp/>domain)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="153"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">assert</highlight><highlight class="normal"><sp/>np.isclose(np.amin(fluid_coords_after[:,<sp/>0]),<sp/>params.domain.x_min)</highlight></codeline>
+<codeline lineno="154"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">assert</highlight><highlight class="normal"><sp/>np.isclose(np.amin(fluid_coords_after[:,<sp/>1]),<sp/>params.domain.y_min)</highlight></codeline>
+<codeline lineno="155"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">assert</highlight><highlight class="normal"><sp/>np.isclose(np.amin(fluid_coords_after[:,<sp/>2]),<sp/>params.domain.z_min)</highlight></codeline>
+<codeline lineno="156"><highlight class="normal"></highlight></codeline>
+<codeline lineno="157"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>k<sp/></highlight><highlight class="keywordflow">in</highlight><highlight class="normal"><sp/>range(3):</highlight></codeline>
+<codeline lineno="158"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>max_val<sp/>=<sp/>np.amax(fluid_coords_after[:,<sp/>k])</highlight></codeline>
+<codeline lineno="159"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>print(f</highlight><highlight class="stringliteral">&quot;in<sp/>dir<sp/>{k},<sp/>max<sp/>=<sp/>{max_val}&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="160"><highlight class="normal"></highlight></codeline>
+<codeline lineno="161"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">assert</highlight><highlight class="normal"><sp/>np.isclose(np.amax(fluid_coords_after[:,<sp/>0]),<sp/>params.domain.x_max)</highlight></codeline>
+<codeline lineno="162"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">assert</highlight><highlight class="normal"><sp/>np.isclose(np.amax(fluid_coords_after[:,<sp/>1]),<sp/>params.domain.y_max)</highlight></codeline>
+<codeline lineno="163"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">assert</highlight><highlight class="normal"><sp/>np.isclose(np.amax(fluid_coords_after[:,<sp/>2]),<sp/>params.domain.z_max)</highlight></codeline>
+<codeline lineno="164"><highlight class="normal"></highlight></codeline>
+<codeline lineno="165"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">#<sp/>fig,<sp/>ax<sp/>=<sp/>plt.subplots(1,<sp/>2)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="166"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">#<sp/>ax[0].scatter(fluid_coords_before[:,<sp/>0],<sp/>fluid_coords_before[:,<sp/>1])</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="167"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">#<sp/>ax[0].scatter(structure_coords_before[:,<sp/>0],<sp/>structure_coords_before[:,<sp/>1])</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="168"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">#<sp/>ax[1].scatter(fluid_coords_after[:,<sp/>0],<sp/>fluid_coords_after[:,<sp/>1])</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="169"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">#<sp/>ax[1].scatter(structure_coords_after[:,<sp/>0],<sp/>structure_coords_after[:,<sp/>1])</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="170"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">#<sp/>plt.show()</highlight><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/tests/test_mesh_movement.py"/>
+  </compounddef>
+</doxygen>

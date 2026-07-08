@@ -1,0 +1,113 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.17.0" xml:lang="en-US">
+  <compounddef id="classpvade_1_1structure_1_1boundary__conditions_1_1_inflow_velocity" kind="class" language="Python" prot="public">
+    <compoundname>pvade::structure::boundary_conditions::InflowVelocity</compoundname>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="classpvade_1_1structure_1_1boundary__conditions_1_1_inflow_velocity_1abfbf5ce48da81542e2e214326763754b" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.structure.boundary_conditions.InflowVelocity::geom_dim</definition>
+        <argsstring></argsstring>
+        <name>geom_dim</name>
+        <qualifiedname>pvade.structure.boundary_conditions.InflowVelocity.geom_dim</qualifiedname>
+        <initializer>=  geom_dim</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/boundary_conditions.py" line="115" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/boundary_conditions.py" bodystart="115" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1structure_1_1boundary__conditions_1_1_inflow_velocity_1ac0ead32c07617e3c37b4706b66d586aa" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.structure.boundary_conditions.InflowVelocity::params</definition>
+        <argsstring></argsstring>
+        <name>params</name>
+        <qualifiedname>pvade.structure.boundary_conditions.InflowVelocity.params</qualifiedname>
+        <initializer>=  params</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/boundary_conditions.py" line="116" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/boundary_conditions.py" bodystart="116" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classpvade_1_1structure_1_1boundary__conditions_1_1_inflow_velocity_1a35a504641fbf4d994d120c1b958d8c1a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>pvade.structure.boundary_conditions.InflowVelocity.__init__</definition>
+        <argsstring>(self, geom_dim, params)</argsstring>
+        <name>__init__</name>
+        <qualifiedname>pvade.structure.boundary_conditions.InflowVelocity.__init__</qualifiedname>
+        <param>
+          <type>self</type>
+          <defname>self</defname>
+        </param>
+        <param>
+          <type><ref refid="classpvade_1_1structure_1_1boundary__conditions_1_1_inflow_velocity_1abfbf5ce48da81542e2e214326763754b" kindref="member">geom_dim</ref></type>
+          <defname>geom_dim</defname>
+        </param>
+        <param>
+          <type><ref refid="classpvade_1_1structure_1_1boundary__conditions_1_1_inflow_velocity_1ac0ead32c07617e3c37b4706b66d586aa" kindref="member">params</ref></type>
+          <defname>params</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><verbatim>Inflow velocity object
+
+Args:
+    geom_dim (int): The geometric dimension (as opposed to the topological dimension, usually this is 3)
+    params (:obj:`pvade.Parameters.SimParams`): A SimParams object
+</verbatim> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/boundary_conditions.py" line="108" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/boundary_conditions.py" bodystart="108" bodyend="117"/>
+      </memberdef>
+      <memberdef kind="function" id="classpvade_1_1structure_1_1boundary__conditions_1_1_inflow_velocity_1a290c3533a25770fc07abf2e1b8b41a1d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>pvade.structure.boundary_conditions.InflowVelocity.__call__</definition>
+        <argsstring>(self, x)</argsstring>
+        <name>__call__</name>
+        <qualifiedname>pvade.structure.boundary_conditions.InflowVelocity.__call__</qualifiedname>
+        <param>
+          <type>self</type>
+          <defname>self</defname>
+        </param>
+        <param>
+          <type>x</type>
+          <defname>x</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><verbatim>Define an inflow expression for use as boundary condition
+
+Args:
+    x (np.ndarray): Array of coordinates
+
+Returns:
+    np.ndarray: Value of velocity at each coordinate in input array
+</verbatim> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/boundary_conditions.py" line="118" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/boundary_conditions.py" bodystart="118" bodyend="164"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/boundary_conditions.py" line="107" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/boundary_conditions.py" bodystart="107" bodyend="164"/>
+    <listofallmembers>
+      <member refid="classpvade_1_1structure_1_1boundary__conditions_1_1_inflow_velocity_1a290c3533a25770fc07abf2e1b8b41a1d" prot="public" virt="non-virtual"><scope>pvade::structure::boundary_conditions::InflowVelocity</scope><name>__call__</name></member>
+      <member refid="classpvade_1_1structure_1_1boundary__conditions_1_1_inflow_velocity_1a35a504641fbf4d994d120c1b958d8c1a" prot="public" virt="non-virtual"><scope>pvade::structure::boundary_conditions::InflowVelocity</scope><name>__init__</name></member>
+      <member refid="classpvade_1_1structure_1_1boundary__conditions_1_1_inflow_velocity_1abfbf5ce48da81542e2e214326763754b" prot="public" virt="non-virtual"><scope>pvade::structure::boundary_conditions::InflowVelocity</scope><name>geom_dim</name></member>
+      <member refid="classpvade_1_1structure_1_1boundary__conditions_1_1_inflow_velocity_1ac0ead32c07617e3c37b4706b66d586aa" prot="public" virt="non-virtual"><scope>pvade::structure::boundary_conditions::InflowVelocity</scope><name>params</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

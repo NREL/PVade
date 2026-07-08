@@ -1,0 +1,1209 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.17.0" xml:lang="en-US">
+  <compounddef id="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis" kind="class" language="Python" prot="public">
+    <compoundname>pvade::structure::ModalAnalysis::ModalAnalysis</compoundname>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1afd43a30871887b9dcad0f5979ef46f0a" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.structure.ModalAnalysis.ModalAnalysis::structural_analysis</definition>
+        <argsstring></argsstring>
+        <name>structural_analysis</name>
+        <qualifiedname>pvade.structure.ModalAnalysis.ModalAnalysis.structural_analysis</qualifiedname>
+        <initializer>=  structural_analysis</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/ModalAnalysis.py" line="86" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/ModalAnalysis.py" bodystart="86" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1ad098981d9f5ad6be7bf4d8d6a367d54c" prot="public" static="no" mutable="no">
+        <type>str</type>
+        <definition>str pvade.structure.ModalAnalysis.ModalAnalysis::name</definition>
+        <argsstring></argsstring>
+        <name>name</name>
+        <qualifiedname>pvade.structure.ModalAnalysis.ModalAnalysis.name</qualifiedname>
+        <initializer>=  &quot;structure&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/ModalAnalysis.py" line="87" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/ModalAnalysis.py" bodystart="87" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1a062b5e71b7efb23d692980c642e501be" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.structure.ModalAnalysis.ModalAnalysis::comm</definition>
+        <argsstring></argsstring>
+        <name>comm</name>
+        <qualifiedname>pvade.structure.ModalAnalysis.ModalAnalysis.comm</qualifiedname>
+        <initializer>=  domain.comm</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/ModalAnalysis.py" line="90" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/ModalAnalysis.py" bodystart="90" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1a6480e80912a9e98f683bb8b1c375bdd3" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>pvade.structure.ModalAnalysis.ModalAnalysis::rank</definition>
+        <argsstring></argsstring>
+        <name>rank</name>
+        <qualifiedname>pvade.structure.ModalAnalysis.ModalAnalysis.rank</qualifiedname>
+        <initializer>=  domain.rank</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/ModalAnalysis.py" line="91" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/ModalAnalysis.py" bodystart="91" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1aacfd20920357d37fdeb7d608a557a3bc" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.structure.ModalAnalysis.ModalAnalysis::num_procs</definition>
+        <argsstring></argsstring>
+        <name>num_procs</name>
+        <qualifiedname>pvade.structure.ModalAnalysis.ModalAnalysis.num_procs</qualifiedname>
+        <initializer>=  domain.num_procs</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/ModalAnalysis.py" line="92" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/ModalAnalysis.py" bodystart="92" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1a46c04b377058719dd7297c2d4e88fb8b" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.structure.ModalAnalysis.ModalAnalysis::V</definition>
+        <argsstring></argsstring>
+        <name>V</name>
+        <qualifiedname>pvade.structure.ModalAnalysis.ModalAnalysis.V</qualifiedname>
+        <initializer>=  dolfinx.fem.FunctionSpace(domain.structure.msh, P1)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/ModalAnalysis.py" line="98" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/ModalAnalysis.py" bodystart="98" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1adc5f00289140cd19748b9bfc518591b6" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool pvade.structure.ModalAnalysis.ModalAnalysis::first_call_to_solver</definition>
+        <argsstring></argsstring>
+        <name>first_call_to_solver</name>
+        <qualifiedname>pvade.structure.ModalAnalysis.ModalAnalysis.first_call_to_solver</qualifiedname>
+        <initializer>=  True</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/ModalAnalysis.py" line="104" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/ModalAnalysis.py" bodystart="104" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1a3813ee2d521cbd843f9159c0af51a573" prot="public" static="no" mutable="no">
+        <type>tuple</type>
+        <definition>tuple pvade.structure.ModalAnalysis.ModalAnalysis::num_V_dofs</definition>
+        <argsstring></argsstring>
+        <name>num_V_dofs</name>
+        <qualifiedname>pvade.structure.ModalAnalysis.ModalAnalysis.num_V_dofs</qualifiedname>
+        <initializer>=  (
+            self.V.dofmap.index_map_bs * self.V.dofmap.index_map.size_global
+        )</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/ModalAnalysis.py" line="106" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/ModalAnalysis.py" bodystart="106" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1a80fa3b1f2c62d8ec7b6ef00bebae3603" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int pvade.structure.ModalAnalysis.ModalAnalysis::ndim</definition>
+        <argsstring></argsstring>
+        <name>ndim</name>
+        <qualifiedname>pvade.structure.ModalAnalysis.ModalAnalysis.ndim</qualifiedname>
+        <initializer>=  domain.structure.msh.topology.dim</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/ModalAnalysis.py" line="111" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/ModalAnalysis.py" bodystart="111" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1ae000508c15c596e00fc16845cfafa7f9" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int pvade.structure.ModalAnalysis.ModalAnalysis::facet_dim</definition>
+        <argsstring></argsstring>
+        <name>facet_dim</name>
+        <qualifiedname>pvade.structure.ModalAnalysis.ModalAnalysis.facet_dim</qualifiedname>
+        <initializer>=  self.ndim - 1</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/ModalAnalysis.py" line="112" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/ModalAnalysis.py" bodystart="112" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1a39bffec207fd6b15512039c9b824b206" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.structure.ModalAnalysis.ModalAnalysis::hmin</definition>
+        <argsstring></argsstring>
+        <name>hmin</name>
+        <qualifiedname>pvade.structure.ModalAnalysis.ModalAnalysis.hmin</qualifiedname>
+        <initializer>=  np.zeros(1)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/ModalAnalysis.py" line="122" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/ModalAnalysis.py" bodystart="122" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1a2ee5445330f7e1e9991db2f24064ea55" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.structure.ModalAnalysis.ModalAnalysis::rho</definition>
+        <argsstring></argsstring>
+        <name>rho</name>
+        <qualifiedname>pvade.structure.ModalAnalysis.ModalAnalysis.rho</qualifiedname>
+        <initializer>=  dolfinx.fem.Constant(
+            domain.structure.msh, params.structure.rho
+        )</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/ModalAnalysis.py" line="130" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/ModalAnalysis.py" bodystart="130" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1a051e74dc54a5d137cf402ecc04fffe26" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.structure.ModalAnalysis.ModalAnalysis::eta_m</definition>
+        <argsstring></argsstring>
+        <name>eta_m</name>
+        <qualifiedname>pvade.structure.ModalAnalysis.ModalAnalysis.eta_m</qualifiedname>
+        <initializer>=  dolfinx.fem.Constant(domain.structure.msh, 0.0)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/ModalAnalysis.py" line="135" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/ModalAnalysis.py" bodystart="135" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1ab82b5ecc35eea5486fca39799251531f" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.structure.ModalAnalysis.ModalAnalysis::eta_k</definition>
+        <argsstring></argsstring>
+        <name>eta_k</name>
+        <qualifiedname>pvade.structure.ModalAnalysis.ModalAnalysis.eta_k</qualifiedname>
+        <initializer>=  dolfinx.fem.Constant(domain.structure.msh, 0.0)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/ModalAnalysis.py" line="136" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/ModalAnalysis.py" bodystart="136" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1afa8e16de18ad7e664d2ea97db67cc18b" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.structure.ModalAnalysis.ModalAnalysis::alpha_m</definition>
+        <argsstring></argsstring>
+        <name>alpha_m</name>
+        <qualifiedname>pvade.structure.ModalAnalysis.ModalAnalysis.alpha_m</qualifiedname>
+        <initializer>=  dolfinx.fem.Constant(domain.structure.msh, 0.2)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/ModalAnalysis.py" line="139" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/ModalAnalysis.py" bodystart="139" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1a47719453430f39117ee0fd70d06d77fe" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.structure.ModalAnalysis.ModalAnalysis::alpha_f</definition>
+        <argsstring></argsstring>
+        <name>alpha_f</name>
+        <qualifiedname>pvade.structure.ModalAnalysis.ModalAnalysis.alpha_f</qualifiedname>
+        <initializer>=  dolfinx.fem.Constant(domain.structure.msh, 0.4)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/ModalAnalysis.py" line="140" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/ModalAnalysis.py" bodystart="140" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1a8e69c5e38a8149b9c57a04959c562833" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>pvade.structure.ModalAnalysis.ModalAnalysis::gamma</definition>
+        <argsstring></argsstring>
+        <name>gamma</name>
+        <qualifiedname>pvade.structure.ModalAnalysis.ModalAnalysis.gamma</qualifiedname>
+        <initializer>=  0.5 + self.alpha_f - self.alpha_m</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/ModalAnalysis.py" line="141" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/ModalAnalysis.py" bodystart="141" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1a1d6265c13f8a9d712a7ee016c5ce3886" prot="public" static="no" mutable="no">
+        <type>tuple</type>
+        <definition>pvade.structure.ModalAnalysis.ModalAnalysis::beta</definition>
+        <argsstring></argsstring>
+        <name>beta</name>
+        <qualifiedname>pvade.structure.ModalAnalysis.ModalAnalysis.beta</qualifiedname>
+        <initializer>=  (self.gamma + 0.5) ** 2 / 4.0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/ModalAnalysis.py" line="142" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/ModalAnalysis.py" bodystart="142" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1a2473b183b796a68e013d376fd51ef669" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.structure.ModalAnalysis.ModalAnalysis::E</definition>
+        <argsstring></argsstring>
+        <name>E</name>
+        <qualifiedname>pvade.structure.ModalAnalysis.ModalAnalysis.E</qualifiedname>
+        <initializer>=  params.structure.elasticity_modulus</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/ModalAnalysis.py" line="145" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/ModalAnalysis.py" bodystart="145" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1a4129a01003c2f302ce921a29e034e1cd" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.structure.ModalAnalysis.ModalAnalysis::poissons_ratio</definition>
+        <argsstring></argsstring>
+        <name>poissons_ratio</name>
+        <qualifiedname>pvade.structure.ModalAnalysis.ModalAnalysis.poissons_ratio</qualifiedname>
+        <initializer>=  params.structure.poissons_ratio</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/ModalAnalysis.py" line="146" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/ModalAnalysis.py" bodystart="146" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1a5dfdd8f2ac2e0c61dfadd7dcc5703fe1" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.structure.ModalAnalysis.ModalAnalysis::lame_mu</definition>
+        <argsstring></argsstring>
+        <name>lame_mu</name>
+        <qualifiedname>pvade.structure.ModalAnalysis.ModalAnalysis.lame_mu</qualifiedname>
+        <initializer>=  self.E / (2.0 * (1.0 + self.poissons_ratio))</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/ModalAnalysis.py" line="147" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/ModalAnalysis.py" bodystart="147" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1a63ef88177de7e7ae3e8d1a25734bf72e" prot="public" static="no" mutable="no">
+        <type>tuple</type>
+        <definition>tuple pvade.structure.ModalAnalysis.ModalAnalysis::lame_lambda</definition>
+        <argsstring></argsstring>
+        <name>lame_lambda</name>
+        <qualifiedname>pvade.structure.ModalAnalysis.ModalAnalysis.lame_lambda</qualifiedname>
+        <initializer>=  (
+            self.E
+            * self.poissons_ratio
+            / ((1.0 + self.poissons_ratio) * (1.0 - 2.0 * self.poissons_ratio))
+        )</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/ModalAnalysis.py" line="148" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/ModalAnalysis.py" bodystart="148" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1a9b91cb3eaf0682f27712763b14492a9a" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.structure.ModalAnalysis.ModalAnalysis::dt_st</definition>
+        <argsstring></argsstring>
+        <name>dt_st</name>
+        <qualifiedname>pvade.structure.ModalAnalysis.ModalAnalysis.dt_st</qualifiedname>
+        <initializer>=  dolfinx.fem.Constant(domain.structure.msh, (params.structure.dt))</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/ModalAnalysis.py" line="161" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/ModalAnalysis.py" bodystart="161" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1a4787f85f484322e354305a9179462bd4" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.structure.ModalAnalysis.ModalAnalysis::north_east_corner_dofs</definition>
+        <argsstring></argsstring>
+        <name>north_east_corner_dofs</name>
+        <qualifiedname>pvade.structure.ModalAnalysis.ModalAnalysis.north_east_corner_dofs</qualifiedname>
+        <initializer>=  dolfinx.fem.locate_dofs_topological(
+            self.V, 0, north_east_corner_facets
+        )</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/ModalAnalysis.py" line="280" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/ModalAnalysis.py" bodystart="280" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1a05e072bd951abc2bc14fa65a0f52907a" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.structure.ModalAnalysis.ModalAnalysis::bc</definition>
+        <argsstring></argsstring>
+        <name>bc</name>
+        <qualifiedname>pvade.structure.ModalAnalysis.ModalAnalysis.bc</qualifiedname>
+        <initializer>=  build_structure_boundary_conditions(domain, params, self.V)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/ModalAnalysis.py" line="303" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/ModalAnalysis.py" bodystart="303" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1a3e2992f0f821d055df93ea6a6511c94e" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.structure.ModalAnalysis.ModalAnalysis::u_</definition>
+        <argsstring></argsstring>
+        <name>u_</name>
+        <qualifiedname>pvade.structure.ModalAnalysis.ModalAnalysis.u_</qualifiedname>
+        <initializer>=  ufl.TestFunction(self.V)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/ModalAnalysis.py" line="417" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/ModalAnalysis.py" bodystart="417" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1a410a81519da31e54a46fecd466da2d5c" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.structure.ModalAnalysis.ModalAnalysis::T</definition>
+        <argsstring></argsstring>
+        <name>T</name>
+        <qualifiedname>pvade.structure.ModalAnalysis.ModalAnalysis.T</qualifiedname>
+        <initializer>=  dolfinx.fem.FunctionSpace(domain.structure.msh, P3)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/ModalAnalysis.py" line="420" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/ModalAnalysis.py" bodystart="420" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1ae0af187bf9dbeccc523040c4075383ab" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.structure.ModalAnalysis.ModalAnalysis::stress</definition>
+        <argsstring></argsstring>
+        <name>stress</name>
+        <qualifiedname>pvade.structure.ModalAnalysis.ModalAnalysis.stress</qualifiedname>
+        <initializer>=  dolfinx.fem.Function(self.T, <ref refid="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1ad098981d9f5ad6be7bf4d8d6a367d54c" kindref="member">name</ref>=&quot;stress_fluid&quot;)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/ModalAnalysis.py" line="422" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/ModalAnalysis.py" bodystart="422" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1a59b36d2c3b4523af6275e1d64bcc402e" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.structure.ModalAnalysis.ModalAnalysis::stress_old</definition>
+        <argsstring></argsstring>
+        <name>stress_old</name>
+        <qualifiedname>pvade.structure.ModalAnalysis.ModalAnalysis.stress_old</qualifiedname>
+        <initializer>=  dolfinx.fem.Function(self.T, <ref refid="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1ad098981d9f5ad6be7bf4d8d6a367d54c" kindref="member">name</ref>=&quot;stress_fluid_old&quot;)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/ModalAnalysis.py" line="423" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/ModalAnalysis.py" bodystart="423" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1a8f9c8f2e45c40337ce9f323e75074fa2" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.structure.ModalAnalysis.ModalAnalysis::stress_predicted</definition>
+        <argsstring></argsstring>
+        <name>stress_predicted</name>
+        <qualifiedname>pvade.structure.ModalAnalysis.ModalAnalysis.stress_predicted</qualifiedname>
+        <initializer>=  dolfinx.fem.Function(
+            self.T, <ref refid="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1ad098981d9f5ad6be7bf4d8d6a367d54c" kindref="member">name</ref>=&quot;stress_fluid_predicted&quot;
+        )</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/ModalAnalysis.py" line="424" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/ModalAnalysis.py" bodystart="424" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1a6eaa2fd6ba7cb81e4a87a6dea9e55e6c" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.structure.ModalAnalysis.ModalAnalysis::sigma_vm_h</definition>
+        <argsstring></argsstring>
+        <name>sigma_vm_h</name>
+        <qualifiedname>pvade.structure.ModalAnalysis.ModalAnalysis.sigma_vm_h</qualifiedname>
+        <initializer>=  dolfinx.fem.Function(self.W, <ref refid="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1ad098981d9f5ad6be7bf4d8d6a367d54c" kindref="member">name</ref>=&quot;Stress&quot;)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/ModalAnalysis.py" line="428" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/ModalAnalysis.py" bodystart="428" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1a4183465e3f48c4e2ba932d223c8029d3" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.structure.ModalAnalysis.ModalAnalysis::u</definition>
+        <argsstring></argsstring>
+        <name>u</name>
+        <qualifiedname>pvade.structure.ModalAnalysis.ModalAnalysis.u</qualifiedname>
+        <initializer>=  dolfinx.fem.Function(self.V, <ref refid="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1ad098981d9f5ad6be7bf4d8d6a367d54c" kindref="member">name</ref>=&quot;Deformation&quot;)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/ModalAnalysis.py" line="431" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/ModalAnalysis.py" bodystart="431" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1add3dbcacbad19bdeb22477eeb0ca4058" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.structure.ModalAnalysis.ModalAnalysis::u_old</definition>
+        <argsstring></argsstring>
+        <name>u_old</name>
+        <qualifiedname>pvade.structure.ModalAnalysis.ModalAnalysis.u_old</qualifiedname>
+        <initializer>=  dolfinx.fem.Function(self.V, <ref refid="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1ad098981d9f5ad6be7bf4d8d6a367d54c" kindref="member">name</ref>=&quot;Deformation_old&quot;)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/ModalAnalysis.py" line="432" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/ModalAnalysis.py" bodystart="432" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1ad647ba07832a6541b79c724e82619336" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.structure.ModalAnalysis.ModalAnalysis::u_delta</definition>
+        <argsstring></argsstring>
+        <name>u_delta</name>
+        <qualifiedname>pvade.structure.ModalAnalysis.ModalAnalysis.u_delta</qualifiedname>
+        <initializer>=  dolfinx.fem.Function(self.V, <ref refid="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1ad098981d9f5ad6be7bf4d8d6a367d54c" kindref="member">name</ref>=&quot;Deformation_change&quot;)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/ModalAnalysis.py" line="433" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/ModalAnalysis.py" bodystart="433" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1a5b291d54c6bf1e7f8533ba0e03f14c16" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.structure.ModalAnalysis.ModalAnalysis::v</definition>
+        <argsstring></argsstring>
+        <name>v</name>
+        <qualifiedname>pvade.structure.ModalAnalysis.ModalAnalysis.v</qualifiedname>
+        <initializer>=  dolfinx.fem.Function(self.V, <ref refid="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1ad098981d9f5ad6be7bf4d8d6a367d54c" kindref="member">name</ref>=&quot;Velocity&quot;)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/ModalAnalysis.py" line="436" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/ModalAnalysis.py" bodystart="436" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1aef89e5618bcd1d23d1d91ba8a8c9b2fb" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.structure.ModalAnalysis.ModalAnalysis::v_old</definition>
+        <argsstring></argsstring>
+        <name>v_old</name>
+        <qualifiedname>pvade.structure.ModalAnalysis.ModalAnalysis.v_old</qualifiedname>
+        <initializer>=  dolfinx.fem.Function(self.V, <ref refid="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1ad098981d9f5ad6be7bf4d8d6a367d54c" kindref="member">name</ref>=&quot;Velocity_old&quot;)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/ModalAnalysis.py" line="437" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/ModalAnalysis.py" bodystart="437" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1a355b24e7d5d8b1571856d43a11089425" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.structure.ModalAnalysis.ModalAnalysis::a</definition>
+        <argsstring></argsstring>
+        <name>a</name>
+        <qualifiedname>pvade.structure.ModalAnalysis.ModalAnalysis.a</qualifiedname>
+        <initializer>=  dolfinx.fem.Function(self.V, <ref refid="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1ad098981d9f5ad6be7bf4d8d6a367d54c" kindref="member">name</ref>=&quot;acceleration&quot;)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/ModalAnalysis.py" line="440" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/ModalAnalysis.py" bodystart="440" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1aa0ee045a92a51256c9d49dd6854ad6be" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.structure.ModalAnalysis.ModalAnalysis::a_old</definition>
+        <argsstring></argsstring>
+        <name>a_old</name>
+        <qualifiedname>pvade.structure.ModalAnalysis.ModalAnalysis.a_old</qualifiedname>
+        <initializer>=  dolfinx.fem.Function(self.V, <ref refid="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1ad098981d9f5ad6be7bf4d8d6a367d54c" kindref="member">name</ref>=&quot;acceleration_old&quot;)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/ModalAnalysis.py" line="441" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/ModalAnalysis.py" bodystart="441" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1a439af299d2bbf877e8a71acb61e73674" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.structure.ModalAnalysis.ModalAnalysis::f</definition>
+        <argsstring></argsstring>
+        <name>f</name>
+        <qualifiedname>pvade.structure.ModalAnalysis.ModalAnalysis.f</qualifiedname>
+        <initializer>=  dolfinx.fem.Constant(
+            domain.structure.msh,
+            PETSc.ScalarType(
+                (
+                    params.structure.body_force_x,
+                    params.structure.body_force_y,
+                    params.structure.body_force_z,
+                )
+            ),
+        )</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/ModalAnalysis.py" line="547" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/ModalAnalysis.py" bodystart="547" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1a2229dc674b0e0db87e4b5ef73d7cacf1" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.structure.ModalAnalysis.ModalAnalysis::ds</definition>
+        <argsstring></argsstring>
+        <name>ds</name>
+        <qualifiedname>pvade.structure.ModalAnalysis.ModalAnalysis.ds</qualifiedname>
+        <initializer>=  ufl.Measure(&quot;ds&quot;, domain=domain.structure.msh)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/ModalAnalysis.py" line="557" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/ModalAnalysis.py" bodystart="557" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1a2c5fae9ee7f0cc20a9e407e0d7fffd84" prot="public" static="no" mutable="no">
+        <type>tuple</type>
+        <definition>tuple pvade.structure.ModalAnalysis.ModalAnalysis::res</definition>
+        <argsstring></argsstring>
+        <name>res</name>
+        <qualifiedname>pvade.structure.ModalAnalysis.ModalAnalysis.res</qualifiedname>
+        <initializer>=  (
+            m(self.avg(self.a_old, a_new, self.alpha_m), self.u_)
+            + c(self.avg(self.v_old, v_new, self.alpha_f), self.u_)
+            + k_nominal(self.avg(self.u_old, self.u, self.alpha_f), self.u_)
+            - self.rho * ufl.inner(self.f, self.u_) * ufl.dx
+            - ufl.dot(ufl.dot(self.stress_predicted * J * ufl.inv(F.T), n), self.u_)
+            * self.ds
+        )</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/ModalAnalysis.py" line="570" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/ModalAnalysis.py" bodystart="570" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1aa0bc6d26f4f471a1131f2586c91d0c98" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.structure.ModalAnalysis.ModalAnalysis::problem</definition>
+        <argsstring></argsstring>
+        <name>problem</name>
+        <qualifiedname>pvade.structure.ModalAnalysis.ModalAnalysis.problem</qualifiedname>
+        <initializer>=  dolfinx.fem.petsc.NonlinearProblem(self.res, self.u, self.bc)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/ModalAnalysis.py" line="612" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/ModalAnalysis.py" bodystart="612" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1a9752c8d88488d477f1cf5c73d67842f6" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.structure.ModalAnalysis.ModalAnalysis::solver</definition>
+        <argsstring></argsstring>
+        <name>solver</name>
+        <qualifiedname>pvade.structure.ModalAnalysis.ModalAnalysis.solver</qualifiedname>
+        <initializer>=  dolfinx.nls.petsc.NewtonSolver(self.comm, self.problem)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/ModalAnalysis.py" line="613" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/ModalAnalysis.py" bodystart="613" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1a000b25bfafb3f6e017128055cb938075" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>pvade.structure.ModalAnalysis.ModalAnalysis.__init__</definition>
+        <argsstring>(self, domain, structural_analysis, params)</argsstring>
+        <name>__init__</name>
+        <qualifiedname>pvade.structure.ModalAnalysis.ModalAnalysis.__init__</qualifiedname>
+        <param>
+          <type>self</type>
+          <defname>self</defname>
+        </param>
+        <param>
+          <type>domain</type>
+          <defname>domain</defname>
+        </param>
+        <param>
+          <type><ref refid="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1afd43a30871887b9dcad0f5979ef46f0a" kindref="member">structural_analysis</ref></type>
+          <defname>structural_analysis</defname>
+        </param>
+        <param>
+          <type>params</type>
+          <defname>params</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><verbatim>Initialize the fluid solver
+
+This method initialize the Flow object, namely, it creates all the
+necessary function spaces on the mesh, initializes key counting and
+boolean variables and records certain characteristic quantities like
+the minimum cell size and the number of degrees of freedom attributed
+to both the pressure and velocity function spaces.
+
+Args:
+    domain (:obj:`pvade.geometry.MeshManager.Domain`): A Domain object
+</verbatim> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/ModalAnalysis.py" line="73" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/ModalAnalysis.py" bodystart="73" bodyend="283"/>
+      </memberdef>
+      <memberdef kind="function" id="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1a92d67f461a2129cc4df089bfb61bd87f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>pvade.structure.ModalAnalysis.ModalAnalysis.build_boundary_conditions</definition>
+        <argsstring>(self, domain, params)</argsstring>
+        <name>build_boundary_conditions</name>
+        <qualifiedname>pvade.structure.ModalAnalysis.ModalAnalysis.build_boundary_conditions</qualifiedname>
+        <param>
+          <type>self</type>
+          <defname>self</defname>
+        </param>
+        <param>
+          <type>domain</type>
+          <defname>domain</defname>
+        </param>
+        <param>
+          <type>params</type>
+          <defname>params</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><verbatim>Build the boundary conditions
+
+A method to manage the building of boundary conditions, including the
+steps of identifying entities on the boundary, marking those degrees
+of freedom either by the identified facets or a gmsh marker function,
+and finally assembling a list of Boundary objects that enforce the
+correct value.
+
+Args:
+    domain (:obj:`pvade.geometry.MeshManager.Domain`): A Domain object
+    params (:obj:`pvade.Parameters.SimParams`): A SimParams object
+</verbatim> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/ModalAnalysis.py" line="284" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/ModalAnalysis.py" bodystart="284" bodyend="304"/>
+      </memberdef>
+      <memberdef kind="function" id="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1a624954bfc2ddcc4145c09417b4cf0cb8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>pvade.structure.ModalAnalysis.ModalAnalysis.update_a</definition>
+        <argsstring>(self, u, u_old, v_old, a_old, dt, beta, ufl=True)</argsstring>
+        <name>update_a</name>
+        <qualifiedname>pvade.structure.ModalAnalysis.ModalAnalysis.update_a</qualifiedname>
+        <param>
+          <type>self</type>
+          <defname>self</defname>
+        </param>
+        <param>
+          <type><ref refid="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1a4183465e3f48c4e2ba932d223c8029d3" kindref="member">u</ref></type>
+          <defname>u</defname>
+        </param>
+        <param>
+          <type><ref refid="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1add3dbcacbad19bdeb22477eeb0ca4058" kindref="member">u_old</ref></type>
+          <defname>u_old</defname>
+        </param>
+        <param>
+          <type><ref refid="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1aef89e5618bcd1d23d1d91ba8a8c9b2fb" kindref="member">v_old</ref></type>
+          <defname>v_old</defname>
+        </param>
+        <param>
+          <type><ref refid="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1aa0ee045a92a51256c9d49dd6854ad6be" kindref="member">a_old</ref></type>
+          <defname>a_old</defname>
+        </param>
+        <param>
+          <type>dt</type>
+          <defname>dt</defname>
+        </param>
+        <param>
+          <type><ref refid="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1a1d6265c13f8a9d712a7ee016c5ce3886" kindref="member">beta</ref></type>
+          <defname>beta</defname>
+        </param>
+        <param>
+          <type>ufl</type>
+          <defname>ufl</defname>
+          <defval>True</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><verbatim>Compute the new acceleration using the Newmark update formula.
+
+.. math::
+
+    a = \\frac{u - u_0 - v_0 \\, dt}{\\beta \\, dt^2}
+        - \\frac{1 - 2\\beta}{2\\beta} \\, a_0
+
+Args:
+    u: Current displacement field (UFL expression or NumPy array).
+    u_old: Displacement field at the previous time step.
+    v_old: Velocity field at the previous time step.
+    a_old: Acceleration field at the previous time step.
+    dt: Time step size (UFL constant or Python float).
+    beta: Newmark :math:`\\beta` parameter.
+    ufl (bool): If ``True``, operands are UFL objects; if ``False``,
+        Python floats are used for ``dt`` and ``beta``.
+
+Returns:
+    Updated acceleration field (UFL expression or NumPy array).
+</verbatim> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/ModalAnalysis.py" line="305" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/ModalAnalysis.py" bodystart="305" bodyend="337"/>
+      </memberdef>
+      <memberdef kind="function" id="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1a2c35e716ed4fbc8986169b327fd27919" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>pvade.structure.ModalAnalysis.ModalAnalysis.update_v</definition>
+        <argsstring>(self, a, u_old, v_old, a_old, dt, gamma, ufl=True)</argsstring>
+        <name>update_v</name>
+        <qualifiedname>pvade.structure.ModalAnalysis.ModalAnalysis.update_v</qualifiedname>
+        <param>
+          <type>self</type>
+          <defname>self</defname>
+        </param>
+        <param>
+          <type><ref refid="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1a355b24e7d5d8b1571856d43a11089425" kindref="member">a</ref></type>
+          <defname>a</defname>
+        </param>
+        <param>
+          <type><ref refid="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1add3dbcacbad19bdeb22477eeb0ca4058" kindref="member">u_old</ref></type>
+          <defname>u_old</defname>
+        </param>
+        <param>
+          <type><ref refid="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1aef89e5618bcd1d23d1d91ba8a8c9b2fb" kindref="member">v_old</ref></type>
+          <defname>v_old</defname>
+        </param>
+        <param>
+          <type><ref refid="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1aa0ee045a92a51256c9d49dd6854ad6be" kindref="member">a_old</ref></type>
+          <defname>a_old</defname>
+        </param>
+        <param>
+          <type>dt</type>
+          <defname>dt</defname>
+        </param>
+        <param>
+          <type><ref refid="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1a8e69c5e38a8149b9c57a04959c562833" kindref="member">gamma</ref></type>
+          <defname>gamma</defname>
+        </param>
+        <param>
+          <type>ufl</type>
+          <defname>ufl</defname>
+          <defval>True</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><verbatim>Compute the new velocity using the Newmark update formula.
+
+.. math::
+
+    v = v_0 + dt \\left[(1 - \\gamma) \\, a_0 + \\gamma \\, a \\right]
+
+Args:
+    a: Current acceleration field (UFL expression or NumPy array).
+    u_old: Displacement field at the previous time step (unused,
+        kept for API consistency).
+    v_old: Velocity field at the previous time step.
+    a_old: Acceleration field at the previous time step.
+    dt: Time step size (UFL constant or Python float).
+    gamma: Newmark :math:`\\gamma` parameter.
+    ufl (bool): If ``True``, operands are UFL objects; if ``False``,
+        Python floats are used for ``dt`` and ``gamma``.
+
+Returns:
+    Updated velocity field (UFL expression or NumPy array).
+</verbatim> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/ModalAnalysis.py" line="340" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/ModalAnalysis.py" bodystart="340" bodyend="368"/>
+      </memberdef>
+      <memberdef kind="function" id="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1ae6c8fad55a8707aee3b7f9866c079d6e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>pvade.structure.ModalAnalysis.ModalAnalysis.update_fields</definition>
+        <argsstring>(self, u, u_old, v_old, a_old, dt, beta, gamma)</argsstring>
+        <name>update_fields</name>
+        <qualifiedname>pvade.structure.ModalAnalysis.ModalAnalysis.update_fields</qualifiedname>
+        <param>
+          <type>self</type>
+          <defname>self</defname>
+        </param>
+        <param>
+          <type><ref refid="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1a4183465e3f48c4e2ba932d223c8029d3" kindref="member">u</ref></type>
+          <defname>u</defname>
+        </param>
+        <param>
+          <type><ref refid="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1add3dbcacbad19bdeb22477eeb0ca4058" kindref="member">u_old</ref></type>
+          <defname>u_old</defname>
+        </param>
+        <param>
+          <type><ref refid="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1aef89e5618bcd1d23d1d91ba8a8c9b2fb" kindref="member">v_old</ref></type>
+          <defname>v_old</defname>
+        </param>
+        <param>
+          <type><ref refid="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1aa0ee045a92a51256c9d49dd6854ad6be" kindref="member">a_old</ref></type>
+          <defname>a_old</defname>
+        </param>
+        <param>
+          <type>dt</type>
+          <defname>dt</defname>
+        </param>
+        <param>
+          <type><ref refid="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1a1d6265c13f8a9d712a7ee016c5ce3886" kindref="member">beta</ref></type>
+          <defname>beta</defname>
+        </param>
+        <param>
+          <type><ref refid="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1a8e69c5e38a8149b9c57a04959c562833" kindref="member">gamma</ref></type>
+          <defname>gamma</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><verbatim>Update fields at the end of each time step.</verbatim> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/ModalAnalysis.py" line="369" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/ModalAnalysis.py" bodystart="369" bodyend="380"/>
+      </memberdef>
+      <memberdef kind="function" id="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1a53ba9e02f9a57301739e79f032f64f20" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>pvade.structure.ModalAnalysis.ModalAnalysis.avg</definition>
+        <argsstring>(self, x_old, x_new, alpha)</argsstring>
+        <name>avg</name>
+        <qualifiedname>pvade.structure.ModalAnalysis.ModalAnalysis.avg</qualifiedname>
+        <param>
+          <type>self</type>
+          <defname>self</defname>
+        </param>
+        <param>
+          <type>x_old</type>
+          <defname>x_old</defname>
+        </param>
+        <param>
+          <type>x_new</type>
+          <defname>x_new</defname>
+        </param>
+        <param>
+          <type>alpha</type>
+          <defname>alpha</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><verbatim>Return the generalized-alpha weighted average of two fields.
+
+.. math::
+
+    x_{\\alpha} = \\alpha \\, x_{\\text{old}} + (1 - \\alpha) \\, x_{\\text{new}}
+
+Args:
+    x_old: Field value at the previous time step.
+    x_new: Field value at the current time step.
+    alpha: Weighting parameter.
+
+Returns:
+    Weighted average of ``x_old`` and ``x_new``.
+</verbatim> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/ModalAnalysis.py" line="381" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/ModalAnalysis.py" bodystart="381" bodyend="397"/>
+      </memberdef>
+      <memberdef kind="function" id="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1a22767b0826452306c881cea3e4c9f4f0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>pvade.structure.ModalAnalysis.ModalAnalysis.build_forms</definition>
+        <argsstring>(self, domain, params)</argsstring>
+        <name>build_forms</name>
+        <qualifiedname>pvade.structure.ModalAnalysis.ModalAnalysis.build_forms</qualifiedname>
+        <param>
+          <type>self</type>
+          <defname>self</defname>
+        </param>
+        <param>
+          <type>domain</type>
+          <defname>domain</defname>
+        </param>
+        <param>
+          <type>params</type>
+          <defname>params</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><verbatim>Builds all variational statements
+
+This method creates all the functions, expressions, and variational
+forms that will be needed for the numerical solution of Navier Stokes
+using a fractional step method. This includes the calculation of a
+tentative velocity, the calculation of the change in pressure
+required to correct the tentative velocity to enforce continuity, and
+the update to the velocity field to reflect this change in
+pressure.
+
+Args:
+    domain (:obj:`pvade.geometry.MeshManager.Domain`): A Domain object
+    params (:obj:`pvade.Parameters.SimParams`): A SimParams object
+</verbatim> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/ModalAnalysis.py" line="398" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/ModalAnalysis.py" bodystart="398" bodyend="587"/>
+      </memberdef>
+      <memberdef kind="function" id="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1a6d6d7f58de2514e86a1555c848e8895a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>pvade.structure.ModalAnalysis.ModalAnalysis.build_nullspace</definition>
+        <argsstring>(self, V)</argsstring>
+        <name>build_nullspace</name>
+        <qualifiedname>pvade.structure.ModalAnalysis.ModalAnalysis.build_nullspace</qualifiedname>
+        <param>
+          <type>self</type>
+          <defname>self</defname>
+        </param>
+        <param>
+          <type><ref refid="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1a46c04b377058719dd7297c2d4e88fb8b" kindref="member">V</ref></type>
+          <defname>V</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><verbatim>Build PETSc nullspace for 3D elasticity</verbatim> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/ModalAnalysis.py" line="661" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/ModalAnalysis.py" bodystart="661" bodyend="695"/>
+      </memberdef>
+      <memberdef kind="function" id="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1a2990c63b9db3906a6f174b87709fa319" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>pvade.structure.ModalAnalysis.ModalAnalysis.solve</definition>
+        <argsstring>(self, params, dataIO)</argsstring>
+        <name>solve</name>
+        <qualifiedname>pvade.structure.ModalAnalysis.ModalAnalysis.solve</qualifiedname>
+        <param>
+          <type>self</type>
+          <defname>self</defname>
+        </param>
+        <param>
+          <type>params</type>
+          <defname>params</defname>
+        </param>
+        <param>
+          <type>dataIO</type>
+          <defname>dataIO</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/ModalAnalysis.py" line="696" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/ModalAnalysis.py" bodystart="696" bodyend="781"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="protected-func">
+      <memberdef kind="function" id="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1a10ee0ecfa053ddd50e72c6a5cac611b9" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>pvade.structure.ModalAnalysis.ModalAnalysis._assemble_system</definition>
+        <argsstring>(self, params)</argsstring>
+        <name>_assemble_system</name>
+        <qualifiedname>pvade.structure.ModalAnalysis.ModalAnalysis._assemble_system</qualifiedname>
+        <param>
+          <type>self</type>
+          <defname>self</defname>
+        </param>
+        <param>
+          <type>params</type>
+          <defname>params</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><verbatim>Pre-assemble all LHS matrices and RHS vectors
+
+Here we pre-assemble all the forms corresponding to the left-hand side
+matrices and right-hand side vectors once outside the time loop. This
+will enable us to re-use certain features like the sparsity pattern
+during the timestepping without any modification of the function
+calls.
+
+Args:
+    params (:obj:`pvade.Parameters.SimParams`): A SimParams object
+</verbatim> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/ModalAnalysis.py" line="588" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/ModalAnalysis.py" bodystart="588" bodyend="660"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><verbatim>Modal (eigenvalue) analysis solver.
+
+Assembles the structural mass and stiffness matrices and solves the
+generalised eigenvalue problem to extract natural frequencies and mode
+shapes of the structure.  The class also exposes the same
+update-formula helpers as :class:`~pvade.structure.ElasticityAnalysis.Elasticity`
+so that it can be used as a drop-in replacement when only the linear
+structural response is of interest.
+
+Attributes:
+    comm: MPI communicator shared by all PVade objects.
+    rank (int): Rank of this MPI process.
+    num_procs (int): Total number of MPI processes.
+    structural_analysis (bool): Flag passed through from *params*.
+    name (str): Human-readable identifier (always ``&quot;structure&quot;``).
+    V (dolfinx.fem.FunctionSpace): Lagrange vector function space of
+        degree 2 on the structure mesh.
+    first_call_to_solver (bool): Flag indicating whether the solver has
+        been called for the first time.
+    num_V_dofs (int): Global number of degrees of freedom in ``V``.
+    ndim (int): Topological dimension of the structure mesh.
+    facet_dim (int): Facet dimension (``ndim - 1``).
+    hmin (float): Global minimum cell diameter across all MPI ranks.
+    rho (dolfinx.fem.Constant): Mass density :math:`\\rho`.
+    eta_m (dolfinx.fem.Constant): Rayleigh mass-proportional damping coefficient.
+    eta_k (dolfinx.fem.Constant): Rayleigh stiffness-proportional damping coefficient.
+    alpha_m (dolfinx.fem.Constant): Generalized-alpha parameter :math:`\\alpha_m`.
+    alpha_f (dolfinx.fem.Constant): Generalized-alpha parameter :math:`\\alpha_f`.
+    gamma (float): Generalized-alpha parameter :math:`\\gamma`.
+    beta (float): Generalized-alpha parameter :math:`\\beta`.
+    E (float): Young&apos;s modulus.
+    poissons_ratio (float): Poisson&apos;s ratio.
+    lame_mu (float): First Lamé parameter :math:`\\mu`.
+    lame_lambda (float): Second Lamé parameter :math:`\\lambda`.
+    dt_st (dolfinx.fem.Constant): Structural time step size.
+    north_east_corner_dofs (np.ndarray): DOF indices for the probe point
+        at the north-east corner of the structure.
+</verbatim> </para>
+    </detaileddescription>
+    <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/ModalAnalysis.py" line="33" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/ModalAnalysis.py" bodystart="33" bodyend="781"/>
+    <listofallmembers>
+      <member refid="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1a000b25bfafb3f6e017128055cb938075" prot="public" virt="non-virtual"><scope>pvade::structure::ModalAnalysis::ModalAnalysis</scope><name>__init__</name></member>
+      <member refid="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1a10ee0ecfa053ddd50e72c6a5cac611b9" prot="protected" virt="non-virtual"><scope>pvade::structure::ModalAnalysis::ModalAnalysis</scope><name>_assemble_system</name></member>
+      <member refid="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1a355b24e7d5d8b1571856d43a11089425" prot="public" virt="non-virtual"><scope>pvade::structure::ModalAnalysis::ModalAnalysis</scope><name>a</name></member>
+      <member refid="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1aa0ee045a92a51256c9d49dd6854ad6be" prot="public" virt="non-virtual"><scope>pvade::structure::ModalAnalysis::ModalAnalysis</scope><name>a_old</name></member>
+      <member refid="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1a47719453430f39117ee0fd70d06d77fe" prot="public" virt="non-virtual"><scope>pvade::structure::ModalAnalysis::ModalAnalysis</scope><name>alpha_f</name></member>
+      <member refid="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1afa8e16de18ad7e664d2ea97db67cc18b" prot="public" virt="non-virtual"><scope>pvade::structure::ModalAnalysis::ModalAnalysis</scope><name>alpha_m</name></member>
+      <member refid="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1a53ba9e02f9a57301739e79f032f64f20" prot="public" virt="non-virtual"><scope>pvade::structure::ModalAnalysis::ModalAnalysis</scope><name>avg</name></member>
+      <member refid="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1a05e072bd951abc2bc14fa65a0f52907a" prot="public" virt="non-virtual"><scope>pvade::structure::ModalAnalysis::ModalAnalysis</scope><name>bc</name></member>
+      <member refid="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1a1d6265c13f8a9d712a7ee016c5ce3886" prot="public" virt="non-virtual"><scope>pvade::structure::ModalAnalysis::ModalAnalysis</scope><name>beta</name></member>
+      <member refid="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1a92d67f461a2129cc4df089bfb61bd87f" prot="public" virt="non-virtual"><scope>pvade::structure::ModalAnalysis::ModalAnalysis</scope><name>build_boundary_conditions</name></member>
+      <member refid="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1a22767b0826452306c881cea3e4c9f4f0" prot="public" virt="non-virtual"><scope>pvade::structure::ModalAnalysis::ModalAnalysis</scope><name>build_forms</name></member>
+      <member refid="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1a6d6d7f58de2514e86a1555c848e8895a" prot="public" virt="non-virtual"><scope>pvade::structure::ModalAnalysis::ModalAnalysis</scope><name>build_nullspace</name></member>
+      <member refid="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1a062b5e71b7efb23d692980c642e501be" prot="public" virt="non-virtual"><scope>pvade::structure::ModalAnalysis::ModalAnalysis</scope><name>comm</name></member>
+      <member refid="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1a2229dc674b0e0db87e4b5ef73d7cacf1" prot="public" virt="non-virtual"><scope>pvade::structure::ModalAnalysis::ModalAnalysis</scope><name>ds</name></member>
+      <member refid="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1a9b91cb3eaf0682f27712763b14492a9a" prot="public" virt="non-virtual"><scope>pvade::structure::ModalAnalysis::ModalAnalysis</scope><name>dt_st</name></member>
+      <member refid="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1a2473b183b796a68e013d376fd51ef669" prot="public" virt="non-virtual"><scope>pvade::structure::ModalAnalysis::ModalAnalysis</scope><name>E</name></member>
+      <member refid="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1ab82b5ecc35eea5486fca39799251531f" prot="public" virt="non-virtual"><scope>pvade::structure::ModalAnalysis::ModalAnalysis</scope><name>eta_k</name></member>
+      <member refid="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1a051e74dc54a5d137cf402ecc04fffe26" prot="public" virt="non-virtual"><scope>pvade::structure::ModalAnalysis::ModalAnalysis</scope><name>eta_m</name></member>
+      <member refid="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1a439af299d2bbf877e8a71acb61e73674" prot="public" virt="non-virtual"><scope>pvade::structure::ModalAnalysis::ModalAnalysis</scope><name>f</name></member>
+      <member refid="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1ae000508c15c596e00fc16845cfafa7f9" prot="public" virt="non-virtual"><scope>pvade::structure::ModalAnalysis::ModalAnalysis</scope><name>facet_dim</name></member>
+      <member refid="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1adc5f00289140cd19748b9bfc518591b6" prot="public" virt="non-virtual"><scope>pvade::structure::ModalAnalysis::ModalAnalysis</scope><name>first_call_to_solver</name></member>
+      <member refid="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1a8e69c5e38a8149b9c57a04959c562833" prot="public" virt="non-virtual"><scope>pvade::structure::ModalAnalysis::ModalAnalysis</scope><name>gamma</name></member>
+      <member refid="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1a39bffec207fd6b15512039c9b824b206" prot="public" virt="non-virtual"><scope>pvade::structure::ModalAnalysis::ModalAnalysis</scope><name>hmin</name></member>
+      <member refid="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1a63ef88177de7e7ae3e8d1a25734bf72e" prot="public" virt="non-virtual"><scope>pvade::structure::ModalAnalysis::ModalAnalysis</scope><name>lame_lambda</name></member>
+      <member refid="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1a5dfdd8f2ac2e0c61dfadd7dcc5703fe1" prot="public" virt="non-virtual"><scope>pvade::structure::ModalAnalysis::ModalAnalysis</scope><name>lame_mu</name></member>
+      <member refid="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1ad098981d9f5ad6be7bf4d8d6a367d54c" prot="public" virt="non-virtual"><scope>pvade::structure::ModalAnalysis::ModalAnalysis</scope><name>name</name></member>
+      <member refid="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1a80fa3b1f2c62d8ec7b6ef00bebae3603" prot="public" virt="non-virtual"><scope>pvade::structure::ModalAnalysis::ModalAnalysis</scope><name>ndim</name></member>
+      <member refid="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1a4787f85f484322e354305a9179462bd4" prot="public" virt="non-virtual"><scope>pvade::structure::ModalAnalysis::ModalAnalysis</scope><name>north_east_corner_dofs</name></member>
+      <member refid="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1aacfd20920357d37fdeb7d608a557a3bc" prot="public" virt="non-virtual"><scope>pvade::structure::ModalAnalysis::ModalAnalysis</scope><name>num_procs</name></member>
+      <member refid="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1a3813ee2d521cbd843f9159c0af51a573" prot="public" virt="non-virtual"><scope>pvade::structure::ModalAnalysis::ModalAnalysis</scope><name>num_V_dofs</name></member>
+      <member refid="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1a4129a01003c2f302ce921a29e034e1cd" prot="public" virt="non-virtual"><scope>pvade::structure::ModalAnalysis::ModalAnalysis</scope><name>poissons_ratio</name></member>
+      <member refid="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1aa0bc6d26f4f471a1131f2586c91d0c98" prot="public" virt="non-virtual"><scope>pvade::structure::ModalAnalysis::ModalAnalysis</scope><name>problem</name></member>
+      <member refid="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1a6480e80912a9e98f683bb8b1c375bdd3" prot="public" virt="non-virtual"><scope>pvade::structure::ModalAnalysis::ModalAnalysis</scope><name>rank</name></member>
+      <member refid="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1a2c5fae9ee7f0cc20a9e407e0d7fffd84" prot="public" virt="non-virtual"><scope>pvade::structure::ModalAnalysis::ModalAnalysis</scope><name>res</name></member>
+      <member refid="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1a2ee5445330f7e1e9991db2f24064ea55" prot="public" virt="non-virtual"><scope>pvade::structure::ModalAnalysis::ModalAnalysis</scope><name>rho</name></member>
+      <member refid="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1a6eaa2fd6ba7cb81e4a87a6dea9e55e6c" prot="public" virt="non-virtual"><scope>pvade::structure::ModalAnalysis::ModalAnalysis</scope><name>sigma_vm_h</name></member>
+      <member refid="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1a2990c63b9db3906a6f174b87709fa319" prot="public" virt="non-virtual"><scope>pvade::structure::ModalAnalysis::ModalAnalysis</scope><name>solve</name></member>
+      <member refid="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1a9752c8d88488d477f1cf5c73d67842f6" prot="public" virt="non-virtual"><scope>pvade::structure::ModalAnalysis::ModalAnalysis</scope><name>solver</name></member>
+      <member refid="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1ae0af187bf9dbeccc523040c4075383ab" prot="public" virt="non-virtual"><scope>pvade::structure::ModalAnalysis::ModalAnalysis</scope><name>stress</name></member>
+      <member refid="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1a59b36d2c3b4523af6275e1d64bcc402e" prot="public" virt="non-virtual"><scope>pvade::structure::ModalAnalysis::ModalAnalysis</scope><name>stress_old</name></member>
+      <member refid="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1a8f9c8f2e45c40337ce9f323e75074fa2" prot="public" virt="non-virtual"><scope>pvade::structure::ModalAnalysis::ModalAnalysis</scope><name>stress_predicted</name></member>
+      <member refid="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1afd43a30871887b9dcad0f5979ef46f0a" prot="public" virt="non-virtual"><scope>pvade::structure::ModalAnalysis::ModalAnalysis</scope><name>structural_analysis</name></member>
+      <member refid="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1a410a81519da31e54a46fecd466da2d5c" prot="public" virt="non-virtual"><scope>pvade::structure::ModalAnalysis::ModalAnalysis</scope><name>T</name></member>
+      <member refid="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1a4183465e3f48c4e2ba932d223c8029d3" prot="public" virt="non-virtual"><scope>pvade::structure::ModalAnalysis::ModalAnalysis</scope><name>u</name></member>
+      <member refid="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1a3e2992f0f821d055df93ea6a6511c94e" prot="public" virt="non-virtual"><scope>pvade::structure::ModalAnalysis::ModalAnalysis</scope><name>u_</name></member>
+      <member refid="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1ad647ba07832a6541b79c724e82619336" prot="public" virt="non-virtual"><scope>pvade::structure::ModalAnalysis::ModalAnalysis</scope><name>u_delta</name></member>
+      <member refid="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1add3dbcacbad19bdeb22477eeb0ca4058" prot="public" virt="non-virtual"><scope>pvade::structure::ModalAnalysis::ModalAnalysis</scope><name>u_old</name></member>
+      <member refid="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1a624954bfc2ddcc4145c09417b4cf0cb8" prot="public" virt="non-virtual"><scope>pvade::structure::ModalAnalysis::ModalAnalysis</scope><name>update_a</name></member>
+      <member refid="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1ae6c8fad55a8707aee3b7f9866c079d6e" prot="public" virt="non-virtual"><scope>pvade::structure::ModalAnalysis::ModalAnalysis</scope><name>update_fields</name></member>
+      <member refid="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1a2c35e716ed4fbc8986169b327fd27919" prot="public" virt="non-virtual"><scope>pvade::structure::ModalAnalysis::ModalAnalysis</scope><name>update_v</name></member>
+      <member refid="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1a46c04b377058719dd7297c2d4e88fb8b" prot="public" virt="non-virtual"><scope>pvade::structure::ModalAnalysis::ModalAnalysis</scope><name>V</name></member>
+      <member refid="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1a5b291d54c6bf1e7f8533ba0e03f14c16" prot="public" virt="non-virtual"><scope>pvade::structure::ModalAnalysis::ModalAnalysis</scope><name>v</name></member>
+      <member refid="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1aef89e5618bcd1d23d1d91ba8a8c9b2fb" prot="public" virt="non-virtual"><scope>pvade::structure::ModalAnalysis::ModalAnalysis</scope><name>v_old</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

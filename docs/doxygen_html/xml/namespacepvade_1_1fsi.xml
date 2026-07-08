@@ -1,0 +1,14 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.17.0" xml:lang="en-US">
+  <compounddef id="namespacepvade_1_1fsi" kind="namespace" language="Python">
+    <compoundname>pvade::fsi</compoundname>
+    <innerclass refid="classpvade_1_1fsi_1_1_p_vade_error" prot="public">pvade::fsi::PVadeError</innerclass>
+    <innernamespace refid="namespacepvade_1_1fsi_1_1_f_s_i">pvade::fsi::FSI</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><verbatim>This is the base package for ``pvade``.</verbatim> </para>
+    </detaileddescription>
+    <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fsi/__init__.py" line="1" column="1"/>
+  </compounddef>
+</doxygen>

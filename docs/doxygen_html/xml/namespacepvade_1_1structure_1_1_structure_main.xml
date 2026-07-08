@@ -1,0 +1,51 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.17.0" xml:lang="en-US">
+  <compounddef id="namespacepvade_1_1structure_1_1_structure_main" kind="namespace" language="Python">
+    <compoundname>pvade::structure::StructureMain</compoundname>
+    <innerclass refid="classpvade_1_1structure_1_1_structure_main_1_1_structure" prot="public">pvade::structure::StructureMain::Structure</innerclass>
+    <sectiondef kind="func">
+      <memberdef kind="function" id="namespacepvade_1_1structure_1_1_structure_main_1a9539bb7cfd79da86137d9c228f6b4634" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>_vprint</definition>
+        <argsstring>(rank, message, level=1)</argsstring>
+        <name>_vprint</name>
+        <qualifiedname>pvade.structure.StructureMain._vprint</qualifiedname>
+        <param>
+          <type>rank</type>
+          <defname>rank</defname>
+        </param>
+        <param>
+          <type>message</type>
+          <defname>message</defname>
+        </param>
+        <param>
+          <type>level</type>
+          <defname>level</defname>
+          <defval>1</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><verbatim>Rank-0 verbosity-aware print helper for structure messages.</verbatim> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/StructureMain.py" line="30" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/StructureMain.py" bodystart="30" bodyend="35"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><verbatim>Top-level structural mechanics manager.
+
+This module provides the :class:`Structure` class, which acts as a facade
+that coordinates the structural analysis pipeline: it owns the
+:class:`~pvade.structure.ElasticityAnalysis.Elasticity` physics object,
+sets up function spaces and boundary conditions, delegates variational form
+assembly, and exposes a single :meth:`Structure.solve` entry point used
+by the FSI coupling loop.
+</verbatim> </para>
+    </detaileddescription>
+    <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/StructureMain.py" line="1" column="1"/>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,1048 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.17.0" xml:lang="en-US">
+  <compounddef id="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain" kind="class" language="Python" prot="public">
+    <compoundname>pvade::geometry::MeshManager::FSIDomain</compoundname>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1a7fe83760c27238f2220a4ab0ae1e0eba" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.geometry.MeshManager.FSIDomain::comm</definition>
+        <argsstring></argsstring>
+        <name>comm</name>
+        <qualifiedname>pvade.geometry.MeshManager.FSIDomain.comm</qualifiedname>
+        <initializer>=  params.comm</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/MeshManager.py" line="73" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/MeshManager.py" bodystart="73" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1a6316d0186127a5bbfc2d8ee5cca21d80" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>pvade.geometry.MeshManager.FSIDomain::rank</definition>
+        <argsstring></argsstring>
+        <name>rank</name>
+        <qualifiedname>pvade.geometry.MeshManager.FSIDomain.rank</qualifiedname>
+        <initializer>=  params.rank</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/MeshManager.py" line="74" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/MeshManager.py" bodystart="74" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1a17a3cbbeac4423c88c89e3e6efd52563" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.geometry.MeshManager.FSIDomain::num_procs</definition>
+        <argsstring></argsstring>
+        <name>num_procs</name>
+        <qualifiedname>pvade.geometry.MeshManager.FSIDomain.num_procs</qualifiedname>
+        <initializer>=  params.num_procs</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/MeshManager.py" line="75" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/MeshManager.py" bodystart="75" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1a5e0ccb0361663df70b1a3ded33a6231b" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool pvade.geometry.MeshManager.FSIDomain::first_move_mesh</definition>
+        <argsstring></argsstring>
+        <name>first_move_mesh</name>
+        <qualifiedname>pvade.geometry.MeshManager.FSIDomain.first_move_mesh</qualifiedname>
+        <initializer>=  True</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/MeshManager.py" line="77" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/MeshManager.py" bodystart="77" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1ac5d8679dbc88f4f97baab3aae9d7589b" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.geometry.MeshManager.FSIDomain::numpy_pt_total_array</definition>
+        <argsstring></argsstring>
+        <name>numpy_pt_total_array</name>
+        <qualifiedname>pvade.geometry.MeshManager.FSIDomain.numpy_pt_total_array</qualifiedname>
+        <initializer>=  None</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/MeshManager.py" line="83" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/MeshManager.py" bodystart="83" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1a2ea162371a28917af671ed3273df8e5f" prot="public" static="no" mutable="no">
+        <type>tuple</type>
+        <definition>pvade.geometry.MeshManager.FSIDomain::ndim</definition>
+        <argsstring></argsstring>
+        <name>ndim</name>
+        <qualifiedname>pvade.geometry.MeshManager.FSIDomain.ndim</qualifiedname>
+        <initializer>=  None</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/MeshManager.py" line="84" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/MeshManager.py" bodystart="84" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1aec5727eeca463face60130372d09c848" prot="public" static="no" mutable="no">
+        <type>dict</type>
+        <definition>pvade.geometry.MeshManager.FSIDomain::domain_markers</definition>
+        <argsstring></argsstring>
+        <name>domain_markers</name>
+        <qualifiedname>pvade.geometry.MeshManager.FSIDomain.domain_markers</qualifiedname>
+        <initializer>=  {}</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/MeshManager.py" line="99" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/MeshManager.py" bodystart="99" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1a5ad373d7a79298d9e2dc9464031d57b8" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.geometry.MeshManager.FSIDomain::geometry</definition>
+        <argsstring></argsstring>
+        <name>geometry</name>
+        <qualifiedname>pvade.geometry.MeshManager.FSIDomain.geometry</qualifiedname>
+        <initializer>=  dcm.DomainCreation(params)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/MeshManager.py" line="193" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/MeshManager.py" bodystart="193" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1ae61060991ba9c0d359a6280633dca381" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.geometry.MeshManager.FSIDomain::msh</definition>
+        <argsstring></argsstring>
+        <name>msh</name>
+        <qualifiedname>pvade.geometry.MeshManager.FSIDomain.msh</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/MeshManager.py" line="252" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/MeshManager.py" bodystart="252" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1a20aabf73b67f44c186704c6f3b8943db" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.geometry.MeshManager.FSIDomain::cell_tags</definition>
+        <argsstring></argsstring>
+        <name>cell_tags</name>
+        <qualifiedname>pvade.geometry.MeshManager.FSIDomain.cell_tags</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/MeshManager.py" line="252" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/MeshManager.py" bodystart="252" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1ac77865b1b085b3c724dfb7772ee03b35" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.geometry.MeshManager.FSIDomain::facet_tags</definition>
+        <argsstring></argsstring>
+        <name>facet_tags</name>
+        <qualifiedname>pvade.geometry.MeshManager.FSIDomain.facet_tags</qualifiedname>
+        <initializer>=  dolfinx.io.gmshio.model_to_mesh(
+            self.geometry.gmsh_model,
+            self.comm,
+            0,
+            partitioner=dolfinx.mesh.create_cell_partitioner(
+                dolfinx.mesh.GhostMode.shared_facet
+            ),
+            gdim=self.ndim,
+        )</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/MeshManager.py" line="252" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/MeshManager.py" bodystart="252" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1a5c0d3f03818ebc21bf28673b5ae842db" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.geometry.MeshManager.FSIDomain::V1</definition>
+        <argsstring></argsstring>
+        <name>V1</name>
+        <qualifiedname>pvade.geometry.MeshManager.FSIDomain.V1</qualifiedname>
+        <initializer>=  dolfinx.fem.FunctionSpace(self.fluid.msh, vec_el_1)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/MeshManager.py" line="286" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/MeshManager.py" bodystart="286" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1abc4ee08e9cd03d015fb2a811b7a2c893" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.geometry.MeshManager.FSIDomain::V1_undeformed</definition>
+        <argsstring></argsstring>
+        <name>V1_undeformed</name>
+        <qualifiedname>pvade.geometry.MeshManager.FSIDomain.V1_undeformed</qualifiedname>
+        <initializer>=  dolfinx.fem.FunctionSpace(
+                self.fluid_undeformed.msh, vec_el_1
+            )</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/MeshManager.py" line="289" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/MeshManager.py" bodystart="289" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1a374bed06258d49d734615073e4dcdbb7" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.geometry.MeshManager.FSIDomain::fluid_mesh_displacement</definition>
+        <argsstring></argsstring>
+        <name>fluid_mesh_displacement</name>
+        <qualifiedname>pvade.geometry.MeshManager.FSIDomain.fluid_mesh_displacement</qualifiedname>
+        <initializer>=  dolfinx.fem.Function(
+                self.V1, name=&quot;fluid_mesh_displacement&quot;
+            )</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/MeshManager.py" line="293" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/MeshManager.py" bodystart="293" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1a8c060e6609d78e6b0d839dc3cd359af2" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.geometry.MeshManager.FSIDomain::fluid_mesh_displacement_bc</definition>
+        <argsstring></argsstring>
+        <name>fluid_mesh_displacement_bc</name>
+        <qualifiedname>pvade.geometry.MeshManager.FSIDomain.fluid_mesh_displacement_bc</qualifiedname>
+        <initializer>=  dolfinx.fem.Function(
+                self.V1, name=&quot;fluid_mesh_displacement_bc&quot;
+            )</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/MeshManager.py" line="296" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/MeshManager.py" bodystart="296" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1a62444852ea3373a9081bf1c35963df6c" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.geometry.MeshManager.FSIDomain::fluid_mesh_displacement_bc_undeformed</definition>
+        <argsstring></argsstring>
+        <name>fluid_mesh_displacement_bc_undeformed</name>
+        <qualifiedname>pvade.geometry.MeshManager.FSIDomain.fluid_mesh_displacement_bc_undeformed</qualifiedname>
+        <initializer>=  dolfinx.fem.Function(
+                self.V1_undeformed, name=&quot;fluid_mesh_displacement_bc&quot;
+            )</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/MeshManager.py" line="299" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/MeshManager.py" bodystart="299" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1ab999bcbda5190fcc867f2a9c12459e3c" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.geometry.MeshManager.FSIDomain::total_mesh_displacement</definition>
+        <argsstring></argsstring>
+        <name>total_mesh_displacement</name>
+        <qualifiedname>pvade.geometry.MeshManager.FSIDomain.total_mesh_displacement</qualifiedname>
+        <initializer>=  dolfinx.fem.Function(
+                self.V1, name=&quot;total_mesh_disp&quot;
+            )</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/MeshManager.py" line="302" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/MeshManager.py" bodystart="302" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1a0ed33da66fab39e813b7dabd784e14ed" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.geometry.MeshManager.FSIDomain::results_filename_vtk</definition>
+        <argsstring></argsstring>
+        <name>results_filename_vtk</name>
+        <qualifiedname>pvade.geometry.MeshManager.FSIDomain.results_filename_vtk</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/MeshManager.py" line="875" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/MeshManager.py" bodystart="875" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1a57b86f7bc78cd0ac22f71a19f43c20ca" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.geometry.MeshManager.FSIDomain::Q1</definition>
+        <argsstring></argsstring>
+        <name>Q1</name>
+        <qualifiedname>pvade.geometry.MeshManager.FSIDomain.Q1</qualifiedname>
+        <initializer>=  dolfinx.fem.FunctionSpace(self.fluid.msh, scalar_el_1)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/MeshManager.py" line="927" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/MeshManager.py" bodystart="927" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1a987b06f792d406a4b7643aac12d0f59d" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.geometry.MeshManager.FSIDomain::distance</definition>
+        <argsstring></argsstring>
+        <name>distance</name>
+        <qualifiedname>pvade.geometry.MeshManager.FSIDomain.distance</qualifiedname>
+        <initializer>=  dolfinx.fem.Function(self.Q1)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/MeshManager.py" line="929" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/MeshManager.py" bodystart="929" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1af20bda5d268a3ca1ef688ee91c11e42f" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.geometry.MeshManager.FSIDomain::idx_vec</definition>
+        <argsstring></argsstring>
+        <name>idx_vec</name>
+        <qualifiedname>pvade.geometry.MeshManager.FSIDomain.idx_vec</qualifiedname>
+        <initializer>=  find_closest_structure_idx(
+                fluid_boundary_pts, global_structure_pts
+            )</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/MeshManager.py" line="988" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/MeshManager.py" bodystart="988" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1a6a85f221ceb5411299c9f55a70fe9d89" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.geometry.MeshManager.FSIDomain::all_interior_V_dofs</definition>
+        <argsstring></argsstring>
+        <name>all_interior_V_dofs</name>
+        <qualifiedname>pvade.geometry.MeshManager.FSIDomain.all_interior_V_dofs</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/MeshManager.py" line="1002" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/MeshManager.py" bodystart="1002" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1af7f9fec4841991a8a9d7126fa3d86e4a" prot="public" static="no" mutable="no">
+        <type>tuple</type>
+        <definition>tuple pvade.geometry.MeshManager.FSIDomain::facet_dim</definition>
+        <argsstring></argsstring>
+        <name>facet_dim</name>
+        <qualifiedname>pvade.geometry.MeshManager.FSIDomain.facet_dim</qualifiedname>
+        <initializer>=  self.ndim - 1</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/MeshManager.py" line="1148" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/MeshManager.py" bodystart="1148" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1a847c23d6c6a612342fef8a147fa64129" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.geometry.MeshManager.FSIDomain::all_exterior_V_dofs</definition>
+        <argsstring></argsstring>
+        <name>all_exterior_V_dofs</name>
+        <qualifiedname>pvade.geometry.MeshManager.FSIDomain.all_exterior_V_dofs</qualifiedname>
+        <initializer>=  dolfinx.fem.locate_dofs_topological(
+                self.V1, self.facet_dim, all_exterior_facets
+            )</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/MeshManager.py" line="1170" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/MeshManager.py" bodystart="1170" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1a2f0b9218488084bc27e7ff78ece0e35d" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.geometry.MeshManager.FSIDomain::all_xmin_xmax_V_dofs</definition>
+        <argsstring></argsstring>
+        <name>all_xmin_xmax_V_dofs</name>
+        <qualifiedname>pvade.geometry.MeshManager.FSIDomain.all_xmin_xmax_V_dofs</qualifiedname>
+        <initializer>=  dolfinx.fem.locate_dofs_topological(
+                self.V1.sub(0), self.facet_dim, all_xmin_xmax_facets
+            )</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/MeshManager.py" line="1174" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/MeshManager.py" bodystart="1174" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1ae8c08583b1a95d03ef515e536e6e3d2f" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.geometry.MeshManager.FSIDomain::all_ymin_ymax_V_dofs</definition>
+        <argsstring></argsstring>
+        <name>all_ymin_ymax_V_dofs</name>
+        <qualifiedname>pvade.geometry.MeshManager.FSIDomain.all_ymin_ymax_V_dofs</qualifiedname>
+        <initializer>=  dolfinx.fem.locate_dofs_topological(
+                self.V1.sub(1), self.facet_dim, all_ymin_ymax_facets
+            )</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/MeshManager.py" line="1178" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/MeshManager.py" bodystart="1178" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1a654b9b38832cb616a409789023574410" prot="public" static="no" mutable="no">
+        <type>list</type>
+        <definition>pvade.geometry.MeshManager.FSIDomain::bcx</definition>
+        <argsstring></argsstring>
+        <name>bcx</name>
+        <qualifiedname>pvade.geometry.MeshManager.FSIDomain.bcx</qualifiedname>
+        <initializer>=  []</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/MeshManager.py" line="1220" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/MeshManager.py" bodystart="1220" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1a25ee2bdada0ccb6a5c11f253eb9feacf" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.geometry.MeshManager.FSIDomain::a</definition>
+        <argsstring></argsstring>
+        <name>a</name>
+        <qualifiedname>pvade.geometry.MeshManager.FSIDomain.a</qualifiedname>
+        <initializer>=  dolfinx.fem.form(
+                1.0
+                / self.distance
+                * ufl.inner(ufl.grad(u), ufl.grad(v))
+                * ufl.dx
+                # ufl.inner(ufl.grad(u), ufl.grad(v)) * ufl.dx
+            )</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/MeshManager.py" line="1254" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/MeshManager.py" bodystart="1254" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1aeb832719496774fe60d2d1e17acdb29d" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.geometry.MeshManager.FSIDomain::L</definition>
+        <argsstring></argsstring>
+        <name>L</name>
+        <qualifiedname>pvade.geometry.MeshManager.FSIDomain.L</qualifiedname>
+        <initializer>=  dolfinx.fem.form(ufl.inner(zero_vec, v) * ufl.dx)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/MeshManager.py" line="1261" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/MeshManager.py" bodystart="1261" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1a1e133cb812bf0ece3248fe09f004a734" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.geometry.MeshManager.FSIDomain::A</definition>
+        <argsstring></argsstring>
+        <name>A</name>
+        <qualifiedname>pvade.geometry.MeshManager.FSIDomain.A</qualifiedname>
+        <initializer>=  dolfinx.fem.petsc.assemble_matrix(self.a, bcs=self.bcx)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/MeshManager.py" line="1263" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/MeshManager.py" bodystart="1263" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1ace477202853a3c6059c6f2bfbc5a145a" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.geometry.MeshManager.FSIDomain::b</definition>
+        <argsstring></argsstring>
+        <name>b</name>
+        <qualifiedname>pvade.geometry.MeshManager.FSIDomain.b</qualifiedname>
+        <initializer>=  dolfinx.fem.petsc.assemble_vector(self.L)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/MeshManager.py" line="1266" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/MeshManager.py" bodystart="1266" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1a88b9f01e998b1ec80d6023775f2bf5c9" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.geometry.MeshManager.FSIDomain::mesh_motion_solver</definition>
+        <argsstring></argsstring>
+        <name>mesh_motion_solver</name>
+        <qualifiedname>pvade.geometry.MeshManager.FSIDomain.mesh_motion_solver</qualifiedname>
+        <initializer>=  PETSc.KSP().create(self.comm)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/MeshManager.py" line="1268" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/MeshManager.py" bodystart="1268" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1a7cfa9b439d67c6045fad0a8289bf5c37" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>pvade.geometry.MeshManager.FSIDomain.__init__</definition>
+        <argsstring>(self, params)</argsstring>
+        <name>__init__</name>
+        <qualifiedname>pvade.geometry.MeshManager.FSIDomain.__init__</qualifiedname>
+        <param>
+          <type>self</type>
+          <defname>self</defname>
+        </param>
+        <param>
+          <type>params</type>
+          <defname>params</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><verbatim>The class is initialised here
+    Depending on the example we are solving, we import the corresponding DomainCrearion file
+    We define markers which will be used for boundary tag asignment
+
+Args:
+    params (input parameters): input parameters available in the input file
+</verbatim> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/MeshManager.py" line="63" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/MeshManager.py" bodystart="63" bodyend="85"/>
+      </memberdef>
+      <memberdef kind="function" id="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1ae32474d7ab3fc2ad4b08ab050fce2a8b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>pvade.geometry.MeshManager.FSIDomain.build</definition>
+        <argsstring>(self, params)</argsstring>
+        <name>build</name>
+        <qualifiedname>pvade.geometry.MeshManager.FSIDomain.build</qualifiedname>
+        <param>
+          <type>self</type>
+          <defname>self</defname>
+        </param>
+        <param>
+          <type>params</type>
+          <defname>params</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><verbatim>This function call builds the geometry, marks the boundaries and creates a mesh using Gmsh.</verbatim> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/MeshManager.py" line="181" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/MeshManager.py" bodystart="181" bodyend="305"/>
+      </memberdef>
+      <memberdef kind="function" id="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1a9ad2aa7438deffed483d514a6aa7d356" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>pvade.geometry.MeshManager.FSIDomain.write_mesh_files</definition>
+        <argsstring>(self, params)</argsstring>
+        <name>write_mesh_files</name>
+        <qualifiedname>pvade.geometry.MeshManager.FSIDomain.write_mesh_files</qualifiedname>
+        <param>
+          <type>self</type>
+          <defname>self</defname>
+        </param>
+        <param>
+          <type>params</type>
+          <defname>params</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><verbatim>Write the fluid and structure submesh files to disk.
+
+Saves each active submesh as an XDMF file (with cell and facet tag
+arrays) and as a native Gmsh ``.msh`` file.  Also writes the
+``domain_markers`` dictionary to a YAML file and the fixation-point
+array to a CSV file.
+
+Args:
+    params (:obj:`pvade.IO.Parameters.SimParams`): A SimParams object
+        providing the mesh output directory path.
+</verbatim> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/MeshManager.py" line="587" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/MeshManager.py" bodystart="587" bodyend="655"/>
+      </memberdef>
+      <memberdef kind="function" id="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1aaf393f71ea473483d23fe1e5a68ee17a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>pvade.geometry.MeshManager.FSIDomain.read_mesh_files</definition>
+        <argsstring>(self, read_mesh_dir, params)</argsstring>
+        <name>read_mesh_files</name>
+        <qualifiedname>pvade.geometry.MeshManager.FSIDomain.read_mesh_files</qualifiedname>
+        <param>
+          <type>self</type>
+          <defname>self</defname>
+        </param>
+        <param>
+          <type>read_mesh_dir</type>
+          <defname>read_mesh_dir</defname>
+        </param>
+        <param>
+          <type>params</type>
+          <defname>params</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><verbatim>Read the mesh from an external file.
+The User can load an existing mesh file (mesh.xdmf)
+and use it to solve the CFD/CSD problem
+</verbatim> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/MeshManager.py" line="656" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/MeshManager.py" bodystart="656" bodyend="791"/>
+      </memberdef>
+      <memberdef kind="function" id="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1a26fabdc3a2e58d2a1b1c079429bf3820" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>pvade.geometry.MeshManager.FSIDomain.test_mesh_functionspace</definition>
+        <argsstring>(self)</argsstring>
+        <name>test_mesh_functionspace</name>
+        <qualifiedname>pvade.geometry.MeshManager.FSIDomain.test_mesh_functionspace</qualifiedname>
+        <param>
+          <type>self</type>
+          <defname>self</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/MeshManager.py" line="792" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/MeshManager.py" bodystart="792" bodyend="821"/>
+      </memberdef>
+      <memberdef kind="function" id="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1acc4ac74ea8c15d94e8dc1c160d97bbf2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>pvade.geometry.MeshManager.FSIDomain.test_submesh_transfer</definition>
+        <argsstring>(self, params)</argsstring>
+        <name>test_submesh_transfer</name>
+        <qualifiedname>pvade.geometry.MeshManager.FSIDomain.test_submesh_transfer</qualifiedname>
+        <param>
+          <type>self</type>
+          <defname>self</defname>
+        </param>
+        <param>
+          <type>params</type>
+          <defname>params</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/MeshManager.py" line="822" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/MeshManager.py" bodystart="822" bodyend="878"/>
+      </memberdef>
+      <memberdef kind="function" id="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1a815bda42657bad98527e00dffac1b6ee" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>pvade.geometry.MeshManager.FSIDomain.move_mesh</definition>
+        <argsstring>(self, structure, params)</argsstring>
+        <name>move_mesh</name>
+        <qualifiedname>pvade.geometry.MeshManager.FSIDomain.move_mesh</qualifiedname>
+        <param>
+          <type>self</type>
+          <defname>self</defname>
+        </param>
+        <param>
+          <type><ref refid="namespacepvade_1_1structure" kindref="compound">structure</ref></type>
+          <defname>structure</defname>
+        </param>
+        <param>
+          <type>params</type>
+          <defname>params</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/MeshManager.py" line="1084" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/MeshManager.py" bodystart="1084" bodyend="1327"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="protected-func">
+      <memberdef kind="function" id="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1a7f141e543c18424870f494d6c4b43a5b" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>pvade.geometry.MeshManager.FSIDomain._get_domain_markers</definition>
+        <argsstring>(self, params)</argsstring>
+        <name>_get_domain_markers</name>
+        <qualifiedname>pvade.geometry.MeshManager.FSIDomain._get_domain_markers</qualifiedname>
+        <param>
+          <type>self</type>
+          <defname>self</defname>
+        </param>
+        <param>
+          <type>params</type>
+          <defname>params</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><verbatim>Initialise the ``domain_markers`` dictionary with default tags.
+
+Populates ``self.domain_markers`` with integer indices for the
+standard fluid facets (x_min, x_max, y_min, y_max, z_min, z_max,
+internal_surface), cell regions (fluid, structure), and per-panel
+facets (bottom, top, left, right, back, front) for panel and
+heliostat cases, or cylinder surface tags for cylinder cases.
+
+Args:
+    params (:obj:`pvade.IO.Parameters.SimParams`): A SimParams object
+        used to determine the geometry module and number of panels.
+</verbatim> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/MeshManager.py" line="86" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/MeshManager.py" bodystart="86" bodyend="180"/>
+      </memberdef>
+      <memberdef kind="function" id="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1a6259c09bd9ec935529f1e2c033823791" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>pvade.geometry.MeshManager.FSIDomain._save_submeshes_for_reload_hack</definition>
+        <argsstring>(self, params)</argsstring>
+        <name>_save_submeshes_for_reload_hack</name>
+        <qualifiedname>pvade.geometry.MeshManager.FSIDomain._save_submeshes_for_reload_hack</qualifiedname>
+        <param>
+          <type>self</type>
+          <defname>self</defname>
+        </param>
+        <param>
+          <type>params</type>
+          <defname>params</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><verbatim>Write and immediately re-read the submesh files.
+
+This round-trip write/read is a temporary workaround for DOLFINx mesh
+transfer issues in parallel.  It calls :meth:`write_mesh_files`
+followed by :meth:`read_mesh_files` to ensure each rank has a
+consistent view of the submesh data.
+
+Args:
+    params (:obj:`pvade.IO.Parameters.SimParams`): A SimParams object
+        providing the output directory path.
+</verbatim> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/MeshManager.py" line="306" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/MeshManager.py" bodystart="306" bodyend="320"/>
+      </memberdef>
+      <memberdef kind="function" id="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1a7344af636e0c4bb3ed18c144f3e9a98b" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>pvade.geometry.MeshManager.FSIDomain._create_submeshes_from_parent</definition>
+        <argsstring>(self, params)</argsstring>
+        <name>_create_submeshes_from_parent</name>
+        <qualifiedname>pvade.geometry.MeshManager.FSIDomain._create_submeshes_from_parent</qualifiedname>
+        <param>
+          <type>self</type>
+          <defname>self</defname>
+        </param>
+        <param>
+          <type>params</type>
+          <defname>params</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><verbatim>Create submeshes from a parent mesh by cell tags.
+
+This function uses the cell tags to identify meshes that
+are part of the structure or fluid domain and saves them
+as separate mesh entities inside a new object such that meshes
+are accessed like domain.fluid.msh or domain.structure.msh.
+</verbatim> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/MeshManager.py" line="321" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/MeshManager.py" bodystart="321" bodyend="364"/>
+      </memberdef>
+      <memberdef kind="function" id="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1a37881c921f7f2f63267f8511fd56f1e5" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>pvade.geometry.MeshManager.FSIDomain._transfer_mesh_tags_to_submeshes</definition>
+        <argsstring>(self, params)</argsstring>
+        <name>_transfer_mesh_tags_to_submeshes</name>
+        <qualifiedname>pvade.geometry.MeshManager.FSIDomain._transfer_mesh_tags_to_submeshes</qualifiedname>
+        <param>
+          <type>self</type>
+          <defname>self</defname>
+        </param>
+        <param>
+          <type>params</type>
+          <defname>params</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><verbatim>Transfer parent-mesh facet tags onto each submesh.
+
+Iterates over the active submeshes (fluid and/or structure), maps the
+parent facet tag values through the submesh entity map, and stores the
+result as ``sub_domain.facet_tags`` and ``sub_domain.cell_tags`` on
+each submesh object.
+
+Args:
+    params (:obj:`pvade.IO.Parameters.SimParams`): A SimParams object
+        indicating which analyses are active.
+</verbatim> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/MeshManager.py" line="365" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/MeshManager.py" bodystart="365" bodyend="454"/>
+      </memberdef>
+      <memberdef kind="function" id="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1ac4a2b6bd95af7a131a3db0b3517ad06a" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>pvade.geometry.MeshManager.FSIDomain._enforce_periodicity</definition>
+        <argsstring>(self)</argsstring>
+        <name>_enforce_periodicity</name>
+        <qualifiedname>pvade.geometry.MeshManager.FSIDomain._enforce_periodicity</qualifiedname>
+        <param>
+          <type>self</type>
+          <defname>self</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><verbatim>Apply periodic mesh constraints in Gmsh.
+
+Sets up front-back and left-right periodic mappings on the Gmsh model
+using affine translation vectors so that the mesh generator produces
+conforming periodic meshes.
+
+.. note::
+    This method is only valid for the ``panels3d`` and similar
+    geometry modules that define ``dom_tags`` and ``y_span`` /
+    ``x_span`` attributes on the geometry object.
+</verbatim> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/MeshManager.py" line="455" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/MeshManager.py" bodystart="455" bodyend="517"/>
+      </memberdef>
+      <memberdef kind="function" id="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1a87ec192e9d98f97ef727fb9e63270574" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>pvade.geometry.MeshManager.FSIDomain._generate_mesh</definition>
+        <argsstring>(self)</argsstring>
+        <name>_generate_mesh</name>
+        <qualifiedname>pvade.geometry.MeshManager.FSIDomain._generate_mesh</qualifiedname>
+        <param>
+          <type>self</type>
+          <defname>self</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><verbatim>This function call generates the mesh.</verbatim> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/MeshManager.py" line="518" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/MeshManager.py" bodystart="518" bodyend="534"/>
+      </memberdef>
+      <memberdef kind="function" id="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1ace1cc3a67f289931ad0fb3cb9c7f9fde" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>pvade.geometry.MeshManager.FSIDomain._generate_mesh_3d</definition>
+        <argsstring>(self)</argsstring>
+        <name>_generate_mesh_3d</name>
+        <qualifiedname>pvade.geometry.MeshManager.FSIDomain._generate_mesh_3d</qualifiedname>
+        <param>
+          <type>self</type>
+          <defname>self</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><verbatim>Generate a 3-D mesh using Gmsh.
+
+Applies Frontal-Delaunay 2-D and Delaunay 3-D meshing algorithms,
+sets second-order element order, runs the ``Relocate3D`` optimiser,
+and regenerates the mesh for improved element quality.
+</verbatim> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/MeshManager.py" line="535" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/MeshManager.py" bodystart="535" bodyend="565"/>
+      </memberdef>
+      <memberdef kind="function" id="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1a93c170d13ed61a0869ba0204da2f112d" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>pvade.geometry.MeshManager.FSIDomain._generate_mesh_2d</definition>
+        <argsstring>(self)</argsstring>
+        <name>_generate_mesh_2d</name>
+        <qualifiedname>pvade.geometry.MeshManager.FSIDomain._generate_mesh_2d</qualifiedname>
+        <param>
+          <type>self</type>
+          <defname>self</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><verbatim>Generate a 2-D mesh using Gmsh.
+
+Calls the Gmsh mesh generator for 2-D problems with default algorithm
+settings.
+</verbatim> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/MeshManager.py" line="566" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/MeshManager.py" bodystart="566" bodyend="586"/>
+      </memberdef>
+      <memberdef kind="function" id="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1a57d602137e1a94068a500b1d3a5394d4" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>pvade.geometry.MeshManager.FSIDomain._calc_distance_to_panel_surface</definition>
+        <argsstring>(self, params, min_dist_cutoff=1.0e-6)</argsstring>
+        <name>_calc_distance_to_panel_surface</name>
+        <qualifiedname>pvade.geometry.MeshManager.FSIDomain._calc_distance_to_panel_surface</qualifiedname>
+        <param>
+          <type>self</type>
+          <defname>self</defname>
+        </param>
+        <param>
+          <type>params</type>
+          <defname>params</defname>
+        </param>
+        <param>
+          <type>min_dist_cutoff</type>
+          <defname>min_dist_cutoff</defname>
+          <defval>1.0e-6</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/MeshManager.py" line="879" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/MeshManager.py" bodystart="879" bodyend="941"/>
+      </memberdef>
+      <memberdef kind="function" id="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1a6e146f3470d6d1a11cd8b5dec4d60e44" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>pvade.geometry.MeshManager.FSIDomain._force_interface_node_matching</definition>
+        <argsstring>(self)</argsstring>
+        <name>_force_interface_node_matching</name>
+        <qualifiedname>pvade.geometry.MeshManager.FSIDomain._force_interface_node_matching</qualifiedname>
+        <param>
+          <type>self</type>
+          <defname>self</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/MeshManager.py" line="942" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/MeshManager.py" bodystart="942" bodyend="1019"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><verbatim>Fluid–structure interaction computational domain.
+
+``FSIDomain`` creates and manages the complete computational domain for
+PVade simulations, including both the fluid mesh and the structure mesh.
+It delegates geometry creation to a problem-specific ``DomainCreation``
+module (e.g., ``pvade.geometry.panels3d.DomainCreation``) and provides
+methods for mesh generation, submesh extraction, and I/O.
+
+Attributes:
+    comm: MPI communicator shared by all PVade objects.
+    rank (int): Rank of this MPI process.
+    num_procs (int): Total number of MPI processes.
+    first_move_mesh (bool): Flag used by the ALE mesh-motion routines.
+    domain_markers (dict): Dictionary mapping boundary/cell region names to
+        their integer tag indices (``&quot;idx&quot;``), entity type (``&quot;facet&quot;`` or
+        ``&quot;cell&quot;``), and Gmsh tag lists.
+    numpy_pt_total_array (np.ndarray or None): Array of shape
+        ``(N_lines, 6)`` defining fixation line endpoints used to apply
+        torque-tube and motor-mount BCs.
+    ndim (int or None): Topological dimension of the mesh (set during
+        :meth:`build`).
+</verbatim> </para>
+    </detaileddescription>
+    <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/MeshManager.py" line="39" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/MeshManager.py" bodystart="39" bodyend="1327"/>
+    <listofallmembers>
+      <member refid="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1a7cfa9b439d67c6045fad0a8289bf5c37" prot="public" virt="non-virtual"><scope>pvade::geometry::MeshManager::FSIDomain</scope><name>__init__</name></member>
+      <member refid="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1a57d602137e1a94068a500b1d3a5394d4" prot="protected" virt="non-virtual"><scope>pvade::geometry::MeshManager::FSIDomain</scope><name>_calc_distance_to_panel_surface</name></member>
+      <member refid="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1a7344af636e0c4bb3ed18c144f3e9a98b" prot="protected" virt="non-virtual"><scope>pvade::geometry::MeshManager::FSIDomain</scope><name>_create_submeshes_from_parent</name></member>
+      <member refid="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1ac4a2b6bd95af7a131a3db0b3517ad06a" prot="protected" virt="non-virtual"><scope>pvade::geometry::MeshManager::FSIDomain</scope><name>_enforce_periodicity</name></member>
+      <member refid="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1a6e146f3470d6d1a11cd8b5dec4d60e44" prot="protected" virt="non-virtual"><scope>pvade::geometry::MeshManager::FSIDomain</scope><name>_force_interface_node_matching</name></member>
+      <member refid="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1a87ec192e9d98f97ef727fb9e63270574" prot="protected" virt="non-virtual"><scope>pvade::geometry::MeshManager::FSIDomain</scope><name>_generate_mesh</name></member>
+      <member refid="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1a93c170d13ed61a0869ba0204da2f112d" prot="protected" virt="non-virtual"><scope>pvade::geometry::MeshManager::FSIDomain</scope><name>_generate_mesh_2d</name></member>
+      <member refid="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1ace1cc3a67f289931ad0fb3cb9c7f9fde" prot="protected" virt="non-virtual"><scope>pvade::geometry::MeshManager::FSIDomain</scope><name>_generate_mesh_3d</name></member>
+      <member refid="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1a7f141e543c18424870f494d6c4b43a5b" prot="protected" virt="non-virtual"><scope>pvade::geometry::MeshManager::FSIDomain</scope><name>_get_domain_markers</name></member>
+      <member refid="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1a6259c09bd9ec935529f1e2c033823791" prot="protected" virt="non-virtual"><scope>pvade::geometry::MeshManager::FSIDomain</scope><name>_save_submeshes_for_reload_hack</name></member>
+      <member refid="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1a37881c921f7f2f63267f8511fd56f1e5" prot="protected" virt="non-virtual"><scope>pvade::geometry::MeshManager::FSIDomain</scope><name>_transfer_mesh_tags_to_submeshes</name></member>
+      <member refid="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1a1e133cb812bf0ece3248fe09f004a734" prot="public" virt="non-virtual"><scope>pvade::geometry::MeshManager::FSIDomain</scope><name>A</name></member>
+      <member refid="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1a25ee2bdada0ccb6a5c11f253eb9feacf" prot="public" virt="non-virtual"><scope>pvade::geometry::MeshManager::FSIDomain</scope><name>a</name></member>
+      <member refid="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1a847c23d6c6a612342fef8a147fa64129" prot="public" virt="non-virtual"><scope>pvade::geometry::MeshManager::FSIDomain</scope><name>all_exterior_V_dofs</name></member>
+      <member refid="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1a6a85f221ceb5411299c9f55a70fe9d89" prot="public" virt="non-virtual"><scope>pvade::geometry::MeshManager::FSIDomain</scope><name>all_interior_V_dofs</name></member>
+      <member refid="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1a2f0b9218488084bc27e7ff78ece0e35d" prot="public" virt="non-virtual"><scope>pvade::geometry::MeshManager::FSIDomain</scope><name>all_xmin_xmax_V_dofs</name></member>
+      <member refid="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1ae8c08583b1a95d03ef515e536e6e3d2f" prot="public" virt="non-virtual"><scope>pvade::geometry::MeshManager::FSIDomain</scope><name>all_ymin_ymax_V_dofs</name></member>
+      <member refid="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1ace477202853a3c6059c6f2bfbc5a145a" prot="public" virt="non-virtual"><scope>pvade::geometry::MeshManager::FSIDomain</scope><name>b</name></member>
+      <member refid="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1a654b9b38832cb616a409789023574410" prot="public" virt="non-virtual"><scope>pvade::geometry::MeshManager::FSIDomain</scope><name>bcx</name></member>
+      <member refid="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1ae32474d7ab3fc2ad4b08ab050fce2a8b" prot="public" virt="non-virtual"><scope>pvade::geometry::MeshManager::FSIDomain</scope><name>build</name></member>
+      <member refid="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1a20aabf73b67f44c186704c6f3b8943db" prot="public" virt="non-virtual"><scope>pvade::geometry::MeshManager::FSIDomain</scope><name>cell_tags</name></member>
+      <member refid="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1a7fe83760c27238f2220a4ab0ae1e0eba" prot="public" virt="non-virtual"><scope>pvade::geometry::MeshManager::FSIDomain</scope><name>comm</name></member>
+      <member refid="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1a987b06f792d406a4b7643aac12d0f59d" prot="public" virt="non-virtual"><scope>pvade::geometry::MeshManager::FSIDomain</scope><name>distance</name></member>
+      <member refid="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1aec5727eeca463face60130372d09c848" prot="public" virt="non-virtual"><scope>pvade::geometry::MeshManager::FSIDomain</scope><name>domain_markers</name></member>
+      <member refid="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1af7f9fec4841991a8a9d7126fa3d86e4a" prot="public" virt="non-virtual"><scope>pvade::geometry::MeshManager::FSIDomain</scope><name>facet_dim</name></member>
+      <member refid="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1ac77865b1b085b3c724dfb7772ee03b35" prot="public" virt="non-virtual"><scope>pvade::geometry::MeshManager::FSIDomain</scope><name>facet_tags</name></member>
+      <member refid="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1a5e0ccb0361663df70b1a3ded33a6231b" prot="public" virt="non-virtual"><scope>pvade::geometry::MeshManager::FSIDomain</scope><name>first_move_mesh</name></member>
+      <member refid="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1a374bed06258d49d734615073e4dcdbb7" prot="public" virt="non-virtual"><scope>pvade::geometry::MeshManager::FSIDomain</scope><name>fluid_mesh_displacement</name></member>
+      <member refid="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1a8c060e6609d78e6b0d839dc3cd359af2" prot="public" virt="non-virtual"><scope>pvade::geometry::MeshManager::FSIDomain</scope><name>fluid_mesh_displacement_bc</name></member>
+      <member refid="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1a62444852ea3373a9081bf1c35963df6c" prot="public" virt="non-virtual"><scope>pvade::geometry::MeshManager::FSIDomain</scope><name>fluid_mesh_displacement_bc_undeformed</name></member>
+      <member refid="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1a5ad373d7a79298d9e2dc9464031d57b8" prot="public" virt="non-virtual"><scope>pvade::geometry::MeshManager::FSIDomain</scope><name>geometry</name></member>
+      <member refid="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1af20bda5d268a3ca1ef688ee91c11e42f" prot="public" virt="non-virtual"><scope>pvade::geometry::MeshManager::FSIDomain</scope><name>idx_vec</name></member>
+      <member refid="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1aeb832719496774fe60d2d1e17acdb29d" prot="public" virt="non-virtual"><scope>pvade::geometry::MeshManager::FSIDomain</scope><name>L</name></member>
+      <member refid="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1a88b9f01e998b1ec80d6023775f2bf5c9" prot="public" virt="non-virtual"><scope>pvade::geometry::MeshManager::FSIDomain</scope><name>mesh_motion_solver</name></member>
+      <member refid="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1a815bda42657bad98527e00dffac1b6ee" prot="public" virt="non-virtual"><scope>pvade::geometry::MeshManager::FSIDomain</scope><name>move_mesh</name></member>
+      <member refid="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1ae61060991ba9c0d359a6280633dca381" prot="public" virt="non-virtual"><scope>pvade::geometry::MeshManager::FSIDomain</scope><name>msh</name></member>
+      <member refid="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1a2ea162371a28917af671ed3273df8e5f" prot="public" virt="non-virtual"><scope>pvade::geometry::MeshManager::FSIDomain</scope><name>ndim</name></member>
+      <member refid="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1a17a3cbbeac4423c88c89e3e6efd52563" prot="public" virt="non-virtual"><scope>pvade::geometry::MeshManager::FSIDomain</scope><name>num_procs</name></member>
+      <member refid="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1ac5d8679dbc88f4f97baab3aae9d7589b" prot="public" virt="non-virtual"><scope>pvade::geometry::MeshManager::FSIDomain</scope><name>numpy_pt_total_array</name></member>
+      <member refid="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1a57b86f7bc78cd0ac22f71a19f43c20ca" prot="public" virt="non-virtual"><scope>pvade::geometry::MeshManager::FSIDomain</scope><name>Q1</name></member>
+      <member refid="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1a6316d0186127a5bbfc2d8ee5cca21d80" prot="public" virt="non-virtual"><scope>pvade::geometry::MeshManager::FSIDomain</scope><name>rank</name></member>
+      <member refid="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1aaf393f71ea473483d23fe1e5a68ee17a" prot="public" virt="non-virtual"><scope>pvade::geometry::MeshManager::FSIDomain</scope><name>read_mesh_files</name></member>
+      <member refid="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1a0ed33da66fab39e813b7dabd784e14ed" prot="public" virt="non-virtual"><scope>pvade::geometry::MeshManager::FSIDomain</scope><name>results_filename_vtk</name></member>
+      <member refid="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1a26fabdc3a2e58d2a1b1c079429bf3820" prot="public" virt="non-virtual"><scope>pvade::geometry::MeshManager::FSIDomain</scope><name>test_mesh_functionspace</name></member>
+      <member refid="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1acc4ac74ea8c15d94e8dc1c160d97bbf2" prot="public" virt="non-virtual"><scope>pvade::geometry::MeshManager::FSIDomain</scope><name>test_submesh_transfer</name></member>
+      <member refid="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1ab999bcbda5190fcc867f2a9c12459e3c" prot="public" virt="non-virtual"><scope>pvade::geometry::MeshManager::FSIDomain</scope><name>total_mesh_displacement</name></member>
+      <member refid="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1a5c0d3f03818ebc21bf28673b5ae842db" prot="public" virt="non-virtual"><scope>pvade::geometry::MeshManager::FSIDomain</scope><name>V1</name></member>
+      <member refid="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1abc4ee08e9cd03d015fb2a811b7a2c893" prot="public" virt="non-virtual"><scope>pvade::geometry::MeshManager::FSIDomain</scope><name>V1_undeformed</name></member>
+      <member refid="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1a9ad2aa7438deffed483d514a6aa7d356" prot="public" virt="non-virtual"><scope>pvade::geometry::MeshManager::FSIDomain</scope><name>write_mesh_files</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

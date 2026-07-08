@@ -1,0 +1,70 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.17.0" xml:lang="en-US">
+  <compounddef id="namespacetest__fsi__mesh" kind="namespace" language="Python">
+    <compoundname>test_fsi_mesh</compoundname>
+    <sectiondef kind="var">
+      <memberdef kind="variable" id="namespacetest__fsi__mesh_1ab23c726b4cccaa96e0cf5d80d9c8cb3b" prot="public" static="no" mutable="no">
+        <type>str</type>
+        <definition>str test_fsi_mesh.input_path</definition>
+        <argsstring></argsstring>
+        <name>input_path</name>
+        <qualifiedname>test_fsi_mesh.input_path</qualifiedname>
+        <initializer>=  &quot;pvade/tests/input/yaml/&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/tests/test_fsi_mesh.py" line="13" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/tests/test_fsi_mesh.py" bodystart="13" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="func">
+      <memberdef kind="function" id="namespacetest__fsi__mesh_1aa866457f4efb88bfcd40286157ba7f37" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>test_meshing_3dpanels</definition>
+        <argsstring>()</argsstring>
+        <name>test_meshing_3dpanels</name>
+        <qualifiedname>test_fsi_mesh.test_meshing_3dpanels</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/tests/test_fsi_mesh.py" line="63" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/tests/test_fsi_mesh.py" bodystart="63" bodyend="95"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacetest__fsi__mesh_1a62993d86643a0452c9706795ae807da7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>test_meshing_3dpanels_rotations</definition>
+        <argsstring>(wind_direction, num_stream_rows, num_span_rows)</argsstring>
+        <name>test_meshing_3dpanels_rotations</name>
+        <qualifiedname>test_fsi_mesh.test_meshing_3dpanels_rotations</qualifiedname>
+        <param>
+          <type>wind_direction</type>
+          <defname>wind_direction</defname>
+        </param>
+        <param>
+          <type>num_stream_rows</type>
+          <defname>num_stream_rows</defname>
+        </param>
+        <param>
+          <type>num_span_rows</type>
+          <defname>num_span_rows</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/tests/test_fsi_mesh.py" line="96" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/tests/test_fsi_mesh.py" bodystart="96" bodyend="225"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/tests/test_fsi_mesh.py" line="1" column="1"/>
+  </compounddef>
+</doxygen>

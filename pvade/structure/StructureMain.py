@@ -23,7 +23,14 @@ from importlib import import_module
 
 from pvade.structure.boundary_conditions import build_structure_boundary_conditions
 from pvade.structure.ElasticityAnalysis import Elasticity
+from pvade.IO.verbosity import emit_verbosity_print
 from contextlib import ExitStack
+
+
+def _vprint(rank, message, level=1):
+    """Rank-0 verbosity-aware print helper for structure messages."""
+    if rank == 0:
+        emit_verbosity_print(message, level=level)
 
 
 class Structure:
@@ -98,7 +105,7 @@ class Structure:
         else:
             hmin_local = np.inf
 
-        print(hmin_local)
+        _vprint(self.rank, f"hmin_local={hmin_local:.6e}", level=2)
         self.hmin = np.zeros(1)
         self.hmin = self.comm.allreduce(hmin_local, op=MPI.MIN)
 
@@ -108,9 +115,8 @@ class Structure:
         # self.hmin = self.hmin[0]
 
         self.num_V_dofs = self.elasticity.num_V_dofs
-        if self.rank == 0:
-            print(f"hmin on structure = {self.hmin}")
-            print(f"Total num dofs on structure = {self.num_V_dofs}")
+        _vprint(self.rank, f"hmin on structure = {self.hmin}", level=1)
+        _vprint(self.rank, f"Total num dofs on structure = {self.num_V_dofs}", level=1)
 
         # Mass density
         self.rho = dolfinx.fem.Constant(
@@ -127,10 +133,11 @@ class Structure:
             / ((1.0 + self.poissons_ratio) * (1.0 - 2.0 * self.poissons_ratio))
         )
 
-        if self.rank == 0:
-            print(
-                f"mu = {self.lame_mu} lambda = {self.lame_lambda} E = {self.E} nu = {self.poissons_ratio} density = {self.rho.value}"
-            )
+        _vprint(
+            self.rank,
+            f"mu = {self.lame_mu} lambda = {self.lame_lambda} E = {self.E} nu = {self.poissons_ratio} density = {self.rho.value}",
+            level=1,
+        )
 
         def _north_east_corner(x):
             eps = 1.0e-6

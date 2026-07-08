@@ -1,0 +1,594 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.17.0" xml:lang="en-US">
+  <compounddef id="classpvade_1_1_i_o_1_1_parameters_1_1_sim_params" kind="class" language="Python" prot="public">
+    <compoundname>pvade::IO::Parameters::SimParams</compoundname>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="classpvade_1_1_i_o_1_1_parameters_1_1_sim_params_1a74f30fd8825a783c1cde15d8791b7df7" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.IO.Parameters.SimParams::comm</definition>
+        <argsstring></argsstring>
+        <name>comm</name>
+        <qualifiedname>pvade.IO.Parameters.SimParams.comm</qualifiedname>
+        <initializer>=  MPI.COMM_WORLD</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/IO/Parameters.py" line="43" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/IO/Parameters.py" bodystart="43" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1_i_o_1_1_parameters_1_1_sim_params_1a6d39976dbdb4dca1eadb2803c2dd9c73" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int pvade.IO.Parameters.SimParams::rank</definition>
+        <argsstring></argsstring>
+        <name>rank</name>
+        <qualifiedname>pvade.IO.Parameters.SimParams.rank</qualifiedname>
+        <initializer>=  self.comm.Get_rank()</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/IO/Parameters.py" line="44" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/IO/Parameters.py" bodystart="44" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1_i_o_1_1_parameters_1_1_sim_params_1a7f16f5aaa14321f7def171d6e17f8c1b" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.IO.Parameters.SimParams::num_procs</definition>
+        <argsstring></argsstring>
+        <name>num_procs</name>
+        <qualifiedname>pvade.IO.Parameters.SimParams.num_procs</qualifiedname>
+        <initializer>=  self.comm.Get_size()</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/IO/Parameters.py" line="45" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/IO/Parameters.py" bodystart="45" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1_i_o_1_1_parameters_1_1_sim_params_1ada3c5686556fbc3fb468657bd4fb0ff4" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.IO.Parameters.SimParams::verbosity_level</definition>
+        <argsstring></argsstring>
+        <name>verbosity_level</name>
+        <qualifiedname>pvade.IO.Parameters.SimParams.verbosity_level</qualifiedname>
+        <initializer>=  get_verbosity_level()</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/IO/Parameters.py" line="46" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/IO/Parameters.py" bodystart="46" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1_i_o_1_1_parameters_1_1_sim_params_1afd5e70ba06a7da0ea5d0afe552dc87c3" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.IO.Parameters.SimParams::schema_dict</definition>
+        <argsstring></argsstring>
+        <name>schema_dict</name>
+        <qualifiedname>pvade.IO.Parameters.SimParams.schema_dict</qualifiedname>
+        <initializer>=  yaml.safe_load(fp)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/IO/Parameters.py" line="51" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/IO/Parameters.py" bodystart="51" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1_i_o_1_1_parameters_1_1_sim_params_1a4a7249cf9c76ea7e801af35e3867de9b" prot="public" static="no" mutable="no">
+        <type>dict</type>
+        <definition>pvade.IO.Parameters.SimParams::input_dict</definition>
+        <argsstring></argsstring>
+        <name>input_dict</name>
+        <qualifiedname>pvade.IO.Parameters.SimParams.input_dict</qualifiedname>
+        <initializer>=  {}</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/IO/Parameters.py" line="57" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/IO/Parameters.py" bodystart="57" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1_i_o_1_1_parameters_1_1_sim_params_1a3fe5d31c9b9001a9bea925dbe8854bc6" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.IO.Parameters.SimParams::input_file_dict</definition>
+        <argsstring></argsstring>
+        <name>input_file_dict</name>
+        <qualifiedname>pvade.IO.Parameters.SimParams.input_file_dict</qualifiedname>
+        <initializer>=  yaml.safe_load(fp)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/IO/Parameters.py" line="71" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/IO/Parameters.py" bodystart="71" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1_i_o_1_1_parameters_1_1_sim_params_1adaf80c6914cc81579c38e6b2c03e8650" prot="public" static="no" mutable="no">
+        <type>dict</type>
+        <definition>dict pvade.IO.Parameters.SimParams::flat_schema_dict</definition>
+        <argsstring></argsstring>
+        <name>flat_schema_dict</name>
+        <qualifiedname>pvade.IO.Parameters.SimParams.flat_schema_dict</qualifiedname>
+        <initializer>=  {}</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/IO/Parameters.py" line="128" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/IO/Parameters.py" bodystart="128" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classpvade_1_1_i_o_1_1_parameters_1_1_sim_params_1a7fb030f8bb2d150c55c038906e75ada6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>pvade.IO.Parameters.SimParams.__init__</definition>
+        <argsstring>(self, input_file_path=None)</argsstring>
+        <name>__init__</name>
+        <qualifiedname>pvade.IO.Parameters.SimParams.__init__</qualifiedname>
+        <param>
+          <type>self</type>
+          <defname>self</defname>
+        </param>
+        <param>
+          <type>input_file_path</type>
+          <defname>input_file_path</defname>
+          <defval>None</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><verbatim>Create a SimParams object
+
+This method begins by reading both the schema file and the
+user-specified file into dictionaries. It overrides entries in the
+user-specified dictionary with command-line inputs and finally
+validates the complete dictionary against the schema file.
+
+Args:
+    input_file_path (str, optional): The complete path to the input yaml file defining the problem.
+</verbatim> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/IO/Parameters.py" line="31" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/IO/Parameters.py" bodystart="31" bodyend="102"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="protected-func">
+      <memberdef kind="function" id="classpvade_1_1_i_o_1_1_parameters_1_1_sim_params_1a2ce10c8be6903bcdd9ae459c28d13600" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>pvade.IO.Parameters.SimParams._flatten_schema_dict</definition>
+        <argsstring>(self)</argsstring>
+        <name>_flatten_schema_dict</name>
+        <qualifiedname>pvade.IO.Parameters.SimParams._flatten_schema_dict</qualifiedname>
+        <param>
+          <type>self</type>
+          <defname>self</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><verbatim>Flatten the schema dictionary
+
+This method returns a flattened version of the schema dictionary where
+nested dictionary key:val pairs are separated with dots (`.`). For
+example::
+
+    general:
+        name: test_sim
+        size:
+            x: 10
+            y: 20
+
+will be converted to::
+
+    general.name: test_sim
+    general.size.x: 10
+    general.size.y: 20
+
+Args:
+    None
+</verbatim> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/IO/Parameters.py" line="103" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/IO/Parameters.py" bodystart="103" bodyend="147"/>
+      </memberdef>
+      <memberdef kind="function" id="classpvade_1_1_i_o_1_1_parameters_1_1_sim_params_1a774eba3fc1bb85b552feeced2c8197ab" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>pvade.IO.Parameters.SimParams._set_user_params_from_file</definition>
+        <argsstring>(self)</argsstring>
+        <name>_set_user_params_from_file</name>
+        <qualifiedname>pvade.IO.Parameters.SimParams._set_user_params_from_file</qualifiedname>
+        <param>
+          <type>self</type>
+          <defname>self</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><verbatim>Store the input-file supplied values
+
+This method stores the parameters supplied via input yaml file in the
+aggregated input dictionary.
+
+Args:
+    None
+</verbatim> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/IO/Parameters.py" line="148" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/IO/Parameters.py" bodystart="148" bodyend="163"/>
+      </memberdef>
+      <memberdef kind="function" id="classpvade_1_1_i_o_1_1_parameters_1_1_sim_params_1ab9083fd64c5b6119969eb119c92a3643" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>pvade.IO.Parameters.SimParams._initialize_params_to_default</definition>
+        <argsstring>(self, override_existing=True)</argsstring>
+        <name>_initialize_params_to_default</name>
+        <qualifiedname>pvade.IO.Parameters.SimParams._initialize_params_to_default</qualifiedname>
+        <param>
+          <type>self</type>
+          <defname>self</defname>
+        </param>
+        <param>
+          <type>override_existing</type>
+          <defname>override_existing</defname>
+          <defval>True</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><verbatim>Initialize values to default
+
+This method uses the `default` entry associated with each parameter in
+the yaml schema to provide a sane value where none is supplied by the
+input yaml file.
+
+Args:
+    None
+</verbatim> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/IO/Parameters.py" line="164" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/IO/Parameters.py" bodystart="164" bodyend="183"/>
+      </memberdef>
+      <memberdef kind="function" id="classpvade_1_1_i_o_1_1_parameters_1_1_sim_params_1ad7815e9f43c85bb533b0943c850080be" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>pvade.IO.Parameters.SimParams._set_user_params_from_cli</definition>
+        <argsstring>(self)</argsstring>
+        <name>_set_user_params_from_cli</name>
+        <qualifiedname>pvade.IO.Parameters.SimParams._set_user_params_from_cli</qualifiedname>
+        <param>
+          <type>self</type>
+          <defname>self</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><verbatim>Store values from command line
+
+This method uses the flattened schema dictionary, where nested options
+are stored as a one-layer dictionary with keys separated by dots
+(`.`), to generate a set of valid command line inputs that can be
+used to override options that would otherwise be set by the input
+yaml file or defaults. For example::
+
+    python main.py --solver.dt 0.01
+
+will override whatever value of ``dt`` is present in the yaml file
+with the value 0.01. Note the double hyphen to set off an argument
+name, either with or without the assignment operator is allowed
+(e.g., both ``--solver.dt 0.01`` and ``--solver.dt=0.01`` are valid)
+
+Args:
+    None
+</verbatim> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/IO/Parameters.py" line="184" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/IO/Parameters.py" bodystart="184" bodyend="296"/>
+      </memberdef>
+      <memberdef kind="function" id="classpvade_1_1_i_o_1_1_parameters_1_1_sim_params_1aea671d49f6024783c80c3ed32305306b" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>pvade.IO.Parameters.SimParams._vprint</definition>
+        <argsstring>(self, message, level=1)</argsstring>
+        <name>_vprint</name>
+        <qualifiedname>pvade.IO.Parameters.SimParams._vprint</qualifiedname>
+        <param>
+          <type>self</type>
+          <defname>self</defname>
+        </param>
+        <param>
+          <type>message</type>
+          <defname>message</defname>
+        </param>
+        <param>
+          <type>level</type>
+          <defname>level</defname>
+          <defval>1</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><verbatim>Print from rank 0 only when current verbosity is high enough.</verbatim> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/IO/Parameters.py" line="297" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/IO/Parameters.py" bodystart="297" bodyend="301"/>
+      </memberdef>
+      <memberdef kind="function" id="classpvade_1_1_i_o_1_1_parameters_1_1_sim_params_1a44898e8275d9f62b4a0c087927b6795d" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>pvade.IO.Parameters.SimParams._validate_inputs</definition>
+        <argsstring>(self)</argsstring>
+        <name>_validate_inputs</name>
+        <qualifiedname>pvade.IO.Parameters.SimParams._validate_inputs</qualifiedname>
+        <param>
+          <type>self</type>
+          <defname>self</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><verbatim>Validate the input dictionary
+
+This method uses the validate function from the jsonschema package to
+validate the complete user-supplied parameter set. This checks that
+variables are the expected type, fall within prescribed ranges, and
+also ensure that dependencies between variables are satisfied
+(e.g., if variable ``a`` is specified, then variable ``b`` must also
+be specified.)
+
+Args:
+    None
+</verbatim> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/IO/Parameters.py" line="302" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/IO/Parameters.py" bodystart="302" bodyend="321"/>
+      </memberdef>
+      <memberdef kind="function" id="classpvade_1_1_i_o_1_1_parameters_1_1_sim_params_1a60263815196d32987d9dc65665bcc3e8" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>pvade.IO.Parameters.SimParams._store_dict_as_attrs</definition>
+        <argsstring>(self)</argsstring>
+        <name>_store_dict_as_attrs</name>
+        <qualifiedname>pvade.IO.Parameters.SimParams._store_dict_as_attrs</qualifiedname>
+        <param>
+          <type>self</type>
+          <defname>self</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><verbatim>Converts dictionary notation to nested object attributes
+
+This method re-structures the parameters dictionary into the slightly
+easier-to-navigate ``object.attribute`` format. For example, rather
+than having a parameters dictionary and accessing entries like
+``params[&apos;general&apos;][&apos;name&apos;]``, we create a parameters object with
+attributes accessed like ``params.general.name``.
+
+Args:
+    None
+</verbatim> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/IO/Parameters.py" line="322" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/IO/Parameters.py" bodystart="322" bodyend="340"/>
+      </memberdef>
+      <memberdef kind="function" id="classpvade_1_1_i_o_1_1_parameters_1_1_sim_params_1a1d4c9b53dcec14068d6e178668700810" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>pvade.IO.Parameters.SimParams._set_nested_dict_value</definition>
+        <argsstring>(self, parent_obj, path_to_input, value, error_on_missing_key=False, override_existing=True)</argsstring>
+        <name>_set_nested_dict_value</name>
+        <qualifiedname>pvade.IO.Parameters.SimParams._set_nested_dict_value</qualifiedname>
+        <param>
+          <type>self</type>
+          <defname>self</defname>
+        </param>
+        <param>
+          <type>parent_obj</type>
+          <defname>parent_obj</defname>
+        </param>
+        <param>
+          <type>path_to_input</type>
+          <defname>path_to_input</defname>
+        </param>
+        <param>
+          <type>value</type>
+          <defname>value</defname>
+        </param>
+        <param>
+          <type>error_on_missing_key</type>
+          <defname>error_on_missing_key</defname>
+          <defval>False</defval>
+        </param>
+        <param>
+          <type>override_existing</type>
+          <defname>override_existing</defname>
+          <defval>True</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><verbatim>Set a nested value in a dictionary
+
+This method uses the flattened path to a dictionary value to create
+the nested structure/path and then store the value.
+
+Args:
+    parent_obj (dict): The dictionary containing the value to be set
+    path_to_input (list, str): A list of strings containing the key names to be used at each level
+    value (int, float, object): The value to store at the final level of nesting
+    error_on_missing_key (bool, optional): A flag to raise an error if any of the keys or sub-keys is not already present
+</verbatim> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/IO/Parameters.py" line="341" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/IO/Parameters.py" bodystart="348" bodyend="381"/>
+      </memberdef>
+      <memberdef kind="function" id="classpvade_1_1_i_o_1_1_parameters_1_1_sim_params_1ad87ed0c0e135a7f5f7af619c090f73e6" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>pvade.IO.Parameters.SimParams._rec_settattr</definition>
+        <argsstring>(self, parent_obj, path_to_input, value, error_on_missing_key=True)</argsstring>
+        <name>_rec_settattr</name>
+        <qualifiedname>pvade.IO.Parameters.SimParams._rec_settattr</qualifiedname>
+        <param>
+          <type>self</type>
+          <defname>self</defname>
+        </param>
+        <param>
+          <type>parent_obj</type>
+          <defname>parent_obj</defname>
+        </param>
+        <param>
+          <type>path_to_input</type>
+          <defname>path_to_input</defname>
+        </param>
+        <param>
+          <type>value</type>
+          <defname>value</defname>
+        </param>
+        <param>
+          <type>error_on_missing_key</type>
+          <defname>error_on_missing_key</defname>
+          <defval>True</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><verbatim>Convert nested dictionary to object.attribute format
+
+This method recursively creates nested objects to hold attributes in the same manner as the nested dictionary.
+
+Args:
+    parent_obj (object): The parent object that will contain this value (self when first called)
+    path_to_input (list, str): A list of strings containing the attribute names to be used at each level
+    value (int, float, object): The value to store at the final level of nesting
+    error_on_missing_key (bool, optional): A flag to raise an error if any of the keys or sub-keys is not already present
+</verbatim> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/IO/Parameters.py" line="382" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/IO/Parameters.py" bodystart="384" bodyend="424"/>
+      </memberdef>
+      <memberdef kind="function" id="classpvade_1_1_i_o_1_1_parameters_1_1_sim_params_1aebf6c329e9fa19233925339a3eac1c3f" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>pvade.IO.Parameters.SimParams._pprint_dict</definition>
+        <argsstring>(self, d, indent=0)</argsstring>
+        <name>_pprint_dict</name>
+        <qualifiedname>pvade.IO.Parameters.SimParams._pprint_dict</qualifiedname>
+        <param>
+          <type>self</type>
+          <defname>self</defname>
+        </param>
+        <param>
+          <type>d</type>
+          <defname>d</defname>
+        </param>
+        <param>
+          <type>indent</type>
+          <defname>indent</defname>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><verbatim>Pretty print a dictionary
+
+Print a dictionary where nesting is visualized with indentation.
+Useful for validation and debugging.
+
+Args:
+    d (dict): The dictionary to print
+    indent (int, optional): The amount of indentation to use for this level, default=0
+</verbatim> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/IO/Parameters.py" line="425" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/IO/Parameters.py" bodystart="425" bodyend="447"/>
+      </memberdef>
+      <memberdef kind="function" id="classpvade_1_1_i_o_1_1_parameters_1_1_sim_params_1ac7e4cec980188de9bde7ab8c57e6dcc9" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>pvade.IO.Parameters.SimParams._add_derived_quantities</definition>
+        <argsstring>(self)</argsstring>
+        <name>_add_derived_quantities</name>
+        <qualifiedname>pvade.IO.Parameters.SimParams._add_derived_quantities</qualifiedname>
+        <param>
+          <type>self</type>
+          <defname>self</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><verbatim>Add derived quantities for convenience
+
+For convenience, it is helpful to store certain derived quantities in
+the SimParams object that are not explicitly provided by the user.
+For example, ``params.solver.t_steps`` is the integer number of steps
+implied by the user-provided entries for ``t_final`` and ``dt``. Such
+derived and/or convenience quantities are accumulated here. Note that
+no error checking is performed on these values since they do not
+appear in the yaml schema file, the expectation being that valid
+quantities up till this point will result in valid derived values.
+
+Args:
+    None
+</verbatim> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/IO/Parameters.py" line="448" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/IO/Parameters.py" bodystart="448" bodyend="483"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><verbatim>Manages and validates all simulation parameters
+
+``SimParams`` provides a set of methods to obtain user-input values from
+both input files and the command line. It also provides input validation
+via a yaml schema file. All parameters can later be access from PVade
+objects like ``params.parent_group.option`` for example,
+``params.solver.dt``.
+
+
+Attributes:
+    comm (MPI Communicator): An MPI communicator that will be shared by all PVade objects.
+    flat_schema_dict (dict): A flattened dictionary version of the yaml schema file used to set default values and provide valid command-line options.
+    input_dict (dict): The aggregated input dictionary containing all command-line updated values and input-file values.
+    input_file_dict (dict): The dictionary representing the input file.
+    num_procs (int): The total number of processors being used to solve the problem
+    rank (int): A unique ID for each process in the range `[0, 1, ..., num_procs-1]`
+    schema_dict (dict): The unflattened (nested) representation of the yaml schema dictionary.
+</verbatim> </para>
+    </detaileddescription>
+    <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/IO/Parameters.py" line="11" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/IO/Parameters.py" bodystart="11" bodyend="483"/>
+    <listofallmembers>
+      <member refid="classpvade_1_1_i_o_1_1_parameters_1_1_sim_params_1a7fb030f8bb2d150c55c038906e75ada6" prot="public" virt="non-virtual"><scope>pvade::IO::Parameters::SimParams</scope><name>__init__</name></member>
+      <member refid="classpvade_1_1_i_o_1_1_parameters_1_1_sim_params_1ac7e4cec980188de9bde7ab8c57e6dcc9" prot="protected" virt="non-virtual"><scope>pvade::IO::Parameters::SimParams</scope><name>_add_derived_quantities</name></member>
+      <member refid="classpvade_1_1_i_o_1_1_parameters_1_1_sim_params_1a2ce10c8be6903bcdd9ae459c28d13600" prot="protected" virt="non-virtual"><scope>pvade::IO::Parameters::SimParams</scope><name>_flatten_schema_dict</name></member>
+      <member refid="classpvade_1_1_i_o_1_1_parameters_1_1_sim_params_1ab9083fd64c5b6119969eb119c92a3643" prot="protected" virt="non-virtual"><scope>pvade::IO::Parameters::SimParams</scope><name>_initialize_params_to_default</name></member>
+      <member refid="classpvade_1_1_i_o_1_1_parameters_1_1_sim_params_1aebf6c329e9fa19233925339a3eac1c3f" prot="protected" virt="non-virtual"><scope>pvade::IO::Parameters::SimParams</scope><name>_pprint_dict</name></member>
+      <member refid="classpvade_1_1_i_o_1_1_parameters_1_1_sim_params_1ad87ed0c0e135a7f5f7af619c090f73e6" prot="protected" virt="non-virtual"><scope>pvade::IO::Parameters::SimParams</scope><name>_rec_settattr</name></member>
+      <member refid="classpvade_1_1_i_o_1_1_parameters_1_1_sim_params_1a1d4c9b53dcec14068d6e178668700810" prot="protected" virt="non-virtual"><scope>pvade::IO::Parameters::SimParams</scope><name>_set_nested_dict_value</name></member>
+      <member refid="classpvade_1_1_i_o_1_1_parameters_1_1_sim_params_1ad7815e9f43c85bb533b0943c850080be" prot="protected" virt="non-virtual"><scope>pvade::IO::Parameters::SimParams</scope><name>_set_user_params_from_cli</name></member>
+      <member refid="classpvade_1_1_i_o_1_1_parameters_1_1_sim_params_1a774eba3fc1bb85b552feeced2c8197ab" prot="protected" virt="non-virtual"><scope>pvade::IO::Parameters::SimParams</scope><name>_set_user_params_from_file</name></member>
+      <member refid="classpvade_1_1_i_o_1_1_parameters_1_1_sim_params_1a60263815196d32987d9dc65665bcc3e8" prot="protected" virt="non-virtual"><scope>pvade::IO::Parameters::SimParams</scope><name>_store_dict_as_attrs</name></member>
+      <member refid="classpvade_1_1_i_o_1_1_parameters_1_1_sim_params_1a44898e8275d9f62b4a0c087927b6795d" prot="protected" virt="non-virtual"><scope>pvade::IO::Parameters::SimParams</scope><name>_validate_inputs</name></member>
+      <member refid="classpvade_1_1_i_o_1_1_parameters_1_1_sim_params_1aea671d49f6024783c80c3ed32305306b" prot="protected" virt="non-virtual"><scope>pvade::IO::Parameters::SimParams</scope><name>_vprint</name></member>
+      <member refid="classpvade_1_1_i_o_1_1_parameters_1_1_sim_params_1a74f30fd8825a783c1cde15d8791b7df7" prot="public" virt="non-virtual"><scope>pvade::IO::Parameters::SimParams</scope><name>comm</name></member>
+      <member refid="classpvade_1_1_i_o_1_1_parameters_1_1_sim_params_1adaf80c6914cc81579c38e6b2c03e8650" prot="public" virt="non-virtual"><scope>pvade::IO::Parameters::SimParams</scope><name>flat_schema_dict</name></member>
+      <member refid="classpvade_1_1_i_o_1_1_parameters_1_1_sim_params_1a4a7249cf9c76ea7e801af35e3867de9b" prot="public" virt="non-virtual"><scope>pvade::IO::Parameters::SimParams</scope><name>input_dict</name></member>
+      <member refid="classpvade_1_1_i_o_1_1_parameters_1_1_sim_params_1a3fe5d31c9b9001a9bea925dbe8854bc6" prot="public" virt="non-virtual"><scope>pvade::IO::Parameters::SimParams</scope><name>input_file_dict</name></member>
+      <member refid="classpvade_1_1_i_o_1_1_parameters_1_1_sim_params_1a7f16f5aaa14321f7def171d6e17f8c1b" prot="public" virt="non-virtual"><scope>pvade::IO::Parameters::SimParams</scope><name>num_procs</name></member>
+      <member refid="classpvade_1_1_i_o_1_1_parameters_1_1_sim_params_1a6d39976dbdb4dca1eadb2803c2dd9c73" prot="public" virt="non-virtual"><scope>pvade::IO::Parameters::SimParams</scope><name>rank</name></member>
+      <member refid="classpvade_1_1_i_o_1_1_parameters_1_1_sim_params_1afd5e70ba06a7da0ea5d0afe552dc87c3" prot="public" virt="non-virtual"><scope>pvade::IO::Parameters::SimParams</scope><name>schema_dict</name></member>
+      <member refid="classpvade_1_1_i_o_1_1_parameters_1_1_sim_params_1ada3c5686556fbc3fb468657bd4fb0ff4" prot="public" virt="non-virtual"><scope>pvade::IO::Parameters::SimParams</scope><name>verbosity_level</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,19 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.17.0" xml:lang="en-US">
+  <compounddef id="namespacepvade_1_1fsi_1_1_f_s_i" kind="namespace" language="Python">
+    <compoundname>pvade::fsi::FSI</compoundname>
+    <innerclass refid="classpvade_1_1fsi_1_1_f_s_i_1_1_f_s_i" prot="public">pvade::fsi::FSI::FSI</innerclass>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><verbatim>Fluid-structure coupling utilities.
+
+This module defines the :class:`FSI` class used to transfer fluid traction
+loads to the structure solver.  The main coupling operation is implemented
+in :meth:`FSI.fluid_struct`, where panel stress fields computed by the fluid
+solver are relaxed and written into the structural solver state.
+</verbatim> </para>
+    </detaileddescription>
+    <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fsi/FSI.py" line="1" column="1"/>
+  </compounddef>
+</doxygen>

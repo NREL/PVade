@@ -1,0 +1,271 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.17.0" xml:lang="en-US">
+  <compounddef id="namespacepvade_1_1structure_1_1boundary__conditions" kind="namespace" language="Python">
+    <compoundname>pvade::structure::boundary_conditions</compoundname>
+    <innerclass refid="classpvade_1_1structure_1_1boundary__conditions_1_1_inflow_velocity" prot="public">pvade::structure::boundary_conditions::InflowVelocity</innerclass>
+    <sectiondef kind="func">
+      <memberdef kind="function" id="namespacepvade_1_1structure_1_1boundary__conditions_1a9539bb7cfd79da86137d9c228f6b4634" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>_vprint</definition>
+        <argsstring>(rank, message, level=1)</argsstring>
+        <name>_vprint</name>
+        <qualifiedname>pvade.structure.boundary_conditions._vprint</qualifiedname>
+        <param>
+          <type>rank</type>
+          <defname>rank</defname>
+        </param>
+        <param>
+          <type>message</type>
+          <defname>message</defname>
+        </param>
+        <param>
+          <type>level</type>
+          <defname>level</defname>
+          <defval>1</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><verbatim>Rank-0 verbosity-aware print helper for structure BC messages.</verbatim> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/boundary_conditions.py" line="18" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/boundary_conditions.py" bodystart="18" bodyend="23"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacepvade_1_1structure_1_1boundary__conditions_1a564af8b53fc7c85edb8f4b100b147dd7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>get_facet_dofs_by_gmsh_tag</definition>
+        <argsstring>(domain, functionspace, location)</argsstring>
+        <name>get_facet_dofs_by_gmsh_tag</name>
+        <qualifiedname>pvade.structure.boundary_conditions.get_facet_dofs_by_gmsh_tag</qualifiedname>
+        <param>
+          <type>domain</type>
+          <defname>domain</defname>
+        </param>
+        <param>
+          <type>functionspace</type>
+          <defname>functionspace</defname>
+        </param>
+        <param>
+          <type>location</type>
+          <defname>location</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><verbatim>Associate degrees of freedom with marker functions
+
+This function uses the marker information in the gmsh specification to
+find the corresponding degrees of freedom for use in the actual
+boundary condition specification. Note that this method does not
+require access to the facet information computed with
+``_locate_boundary_entities``.
+
+Args:
+    domain (:obj:`pvade.geometry.MeshManager.Domain`): A Domain object
+    functionspace (dolfinx.fem.FunctionSpace): The dolfinx function space on which the boundary condition will be applied
+    location (str, int): A string identifier of the boundary condition location, e.g., &quot;x_min&quot; or the equivalent integer tag, e.g., 1
+
+Returns:
+    list: A list of the degrees of freedom associated with this tag and functionspace
+</verbatim> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/boundary_conditions.py" line="24" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/boundary_conditions.py" bodystart="24" bodyend="59"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacepvade_1_1structure_1_1boundary__conditions_1a588b091db900dbb2121dec159ce5ad48" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>build_vel_bc_by_type</definition>
+        <argsstring>(bc_type, domain, functionspace, bc_location)</argsstring>
+        <name>build_vel_bc_by_type</name>
+        <qualifiedname>pvade.structure.boundary_conditions.build_vel_bc_by_type</qualifiedname>
+        <param>
+          <type>bc_type</type>
+          <defname>bc_type</defname>
+        </param>
+        <param>
+          <type>domain</type>
+          <defname>domain</defname>
+        </param>
+        <param>
+          <type>functionspace</type>
+          <defname>functionspace</defname>
+        </param>
+        <param>
+          <type>bc_location</type>
+          <defname>bc_location</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><verbatim>Build a dirichlet bc
+
+Args:
+    bc_type (str): The type of simple boundary condition to apply, &quot;slip&quot; or &quot;noslip&quot;
+    domain (:obj:`pvade.geometry.MeshManager.Domain`): A Domain object
+    functionspace (dolfinx.fem.FunctionSpace): The dolfinx function space on which the boundary condition will be applied
+    bc_location (str, int): A string identifier of the boundary condition location, e.g., &quot;x_min&quot; or the equivalent integer tag, e.g., 1
+
+Returns:
+    dolfinx.fem.dirichletbc: A dolfinx dirichlet boundary condition
+</verbatim> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/boundary_conditions.py" line="60" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/boundary_conditions.py" bodystart="60" bodyend="106"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacepvade_1_1structure_1_1boundary__conditions_1af7e0dd8d6e1994c2dc89cd47656632f5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>get_inflow_profile_function</definition>
+        <argsstring>(domain, params, functionspace)</argsstring>
+        <name>get_inflow_profile_function</name>
+        <qualifiedname>pvade.structure.boundary_conditions.get_inflow_profile_function</qualifiedname>
+        <param>
+          <type>domain</type>
+          <defname>domain</defname>
+        </param>
+        <param>
+          <type>params</type>
+          <defname>params</defname>
+        </param>
+        <param>
+          <type>functionspace</type>
+          <defname>functionspace</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/boundary_conditions.py" line="165" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/boundary_conditions.py" bodystart="165" bodyend="210"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacepvade_1_1structure_1_1boundary__conditions_1a6352b7006ba86de232e3bcfaf559e598" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>build_velocity_boundary_conditions</definition>
+        <argsstring>(domain, params, functionspace)</argsstring>
+        <name>build_velocity_boundary_conditions</name>
+        <qualifiedname>pvade.structure.boundary_conditions.build_velocity_boundary_conditions</qualifiedname>
+        <param>
+          <type>domain</type>
+          <defname>domain</defname>
+        </param>
+        <param>
+          <type>params</type>
+          <defname>params</defname>
+        </param>
+        <param>
+          <type>functionspace</type>
+          <defname>functionspace</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><verbatim>Build all boundary conditions on velocity
+
+This method builds all the boundary conditions associated with velocity and stores in a list, ``bcu``.
+
+Args:
+    domain (:obj:`pvade.geometry.MeshManager.Domain`): A Domain object
+    params (:obj:`pvade.Parameters.SimParams`): A SimParams object
+</verbatim> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/boundary_conditions.py" line="211" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/boundary_conditions.py" bodystart="211" bodyend="253"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacepvade_1_1structure_1_1boundary__conditions_1a173fe6f5aa2a50cbdba1f49e878b9c0b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>build_pressure_boundary_conditions</definition>
+        <argsstring>(domain, params, functionspace)</argsstring>
+        <name>build_pressure_boundary_conditions</name>
+        <qualifiedname>pvade.structure.boundary_conditions.build_pressure_boundary_conditions</qualifiedname>
+        <param>
+          <type>domain</type>
+          <defname>domain</defname>
+        </param>
+        <param>
+          <type>params</type>
+          <defname>params</defname>
+        </param>
+        <param>
+          <type>functionspace</type>
+          <defname>functionspace</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><verbatim>Build all boundary conditions on pressure
+
+This method builds all the boundary conditions associated with pressure and stores in a list, ``bcp``.
+
+Args:
+    domain (:obj:`pvade.geometry.MeshManager.Domain`): A Domain object
+    params (:obj:`pvade.Parameters.SimParams`): A SimParams object
+</verbatim> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/boundary_conditions.py" line="254" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/boundary_conditions.py" bodystart="254" bodyend="273"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacepvade_1_1structure_1_1boundary__conditions_1addd1d8fdf7b79e8c794038a098cf6497" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>build_structure_boundary_conditions</definition>
+        <argsstring>(domain, params, functionspace)</argsstring>
+        <name>build_structure_boundary_conditions</name>
+        <qualifiedname>pvade.structure.boundary_conditions.build_structure_boundary_conditions</qualifiedname>
+        <param>
+          <type>domain</type>
+          <defname>domain</defname>
+        </param>
+        <param>
+          <type>params</type>
+          <defname>params</defname>
+        </param>
+        <param>
+          <type>functionspace</type>
+          <defname>functionspace</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><verbatim>Build all Dirichlet boundary conditions for the structure.
+
+Applies zero-displacement constraints on all panel surface faces listed
+in ``params.structure.bc_list``.  Optionally pins nodes along the torque
+tube line (``params.structure.tube_connection``) and along motor-mount
+lines (``params.structure.motor_connection``) using a collinearity test.
+
+Args:
+    domain (:obj:`pvade.geometry.MeshManager.FSIDomain`): A Domain object
+        that holds the structure submesh and facet tags.
+    params (:obj:`pvade.IO.Parameters.SimParams`): A SimParams object
+        containing boundary condition settings and panel geometry.
+    functionspace (dolfinx.fem.FunctionSpace): The vector displacement
+        function space on which boundary conditions are applied.
+
+Returns:
+    list[dolfinx.fem.DirichletBC]: A list of assembled Dirichlet boundary
+    condition objects ready to be passed to the nonlinear solver.
+</verbatim> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/boundary_conditions.py" line="274" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/boundary_conditions.py" bodystart="274" bodyend="420"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><verbatim>Boundary condition utilities for the structural mechanics solver.
+
+This module provides helper functions for identifying structural boundary
+entities and assembling Dirichlet boundary conditions on the structure mesh,
+including both surface-based BCs (fixed edges/faces) and line-based BCs
+(torque-tube and motor-mount connections along 1-D fixation lines).
+</verbatim> </para>
+    </detaileddescription>
+    <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/boundary_conditions.py" line="1" column="1"/>
+  </compounddef>
+</doxygen>

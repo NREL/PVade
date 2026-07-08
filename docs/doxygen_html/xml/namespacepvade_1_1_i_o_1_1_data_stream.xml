@@ -1,0 +1,135 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.17.0" xml:lang="en-US">
+  <compounddef id="namespacepvade_1_1_i_o_1_1_data_stream" kind="namespace" language="Python">
+    <compoundname>pvade::IO::DataStream</compoundname>
+    <innerclass refid="classpvade_1_1_i_o_1_1_data_stream_1_1_data_stream" prot="public">pvade::IO::DataStream::DataStream</innerclass>
+    <sectiondef kind="var">
+      <memberdef kind="variable" id="namespacepvade_1_1_i_o_1_1_data_stream_1a09149bba83b883eade9baeb760bf8768" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade::IO::DataStream.logfile_name</definition>
+        <argsstring></argsstring>
+        <name>logfile_name</name>
+        <qualifiedname>pvade.IO.DataStream.logfile_name</qualifiedname>
+        <initializer>=  logfile_name</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/IO/DataStream.py" line="50" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/IO/DataStream.py" bodystart="50" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="namespacepvade_1_1_i_o_1_1_data_stream_1ad0d87705dd71a580c40154000fb42a15" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade::IO::DataStream.rank</definition>
+        <argsstring></argsstring>
+        <name>rank</name>
+        <qualifiedname>pvade.IO.DataStream.rank</qualifiedname>
+        <initializer>=  rank</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/IO/DataStream.py" line="51" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/IO/DataStream.py" bodystart="51" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="namespacepvade_1_1_i_o_1_1_data_stream_1ab48e31a8a1bb2487f8ff033bf9071da4" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade::IO::DataStream.message_type</definition>
+        <argsstring></argsstring>
+        <name>message_type</name>
+        <qualifiedname>pvade.IO.DataStream.message_type</qualifiedname>
+        <initializer>=  message_type</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/IO/DataStream.py" line="52" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/IO/DataStream.py" bodystart="52" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="namespacepvade_1_1_i_o_1_1_data_stream_1af630a866b00ccebb5f89b2575bf716ec" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade::IO::DataStream.verbosity_level</definition>
+        <argsstring></argsstring>
+        <name>verbosity_level</name>
+        <qualifiedname>pvade.IO.DataStream.verbosity_level</qualifiedname>
+        <initializer>=  get_verbosity_level()</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/IO/DataStream.py" line="53" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/IO/DataStream.py" bodystart="53" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="namespacepvade_1_1_i_o_1_1_data_stream_1a8f73924c5e07959d329fa71e6eab3d16" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade::IO::DataStream.terminal</definition>
+        <argsstring></argsstring>
+        <name>terminal</name>
+        <qualifiedname>pvade.IO.DataStream.terminal</qualifiedname>
+        <initializer>=  sys.__stdout__</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/IO/DataStream.py" line="56" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/IO/DataStream.py" bodystart="56" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="func">
+      <memberdef kind="function" id="namespacepvade_1_1_i_o_1_1_data_stream_1a582216c53558e501e9a1142a57871b58" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>start_print_and_log</definition>
+        <argsstring>(rank, logfile_name)</argsstring>
+        <name>start_print_and_log</name>
+        <qualifiedname>pvade.IO.DataStream.start_print_and_log</qualifiedname>
+        <param>
+          <type><ref refid="namespacepvade_1_1_i_o_1_1_data_stream_1ad0d87705dd71a580c40154000fb42a15" kindref="member">rank</ref></type>
+          <defname>rank</defname>
+        </param>
+        <param>
+          <type><ref refid="namespacepvade_1_1_i_o_1_1_data_stream_1a09149bba83b883eade9baeb760bf8768" kindref="member">logfile_name</ref></type>
+          <defname>logfile_name</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><verbatim>Redirect ``stdout`` and ``stderr`` to a timestamped log file.
+
+Replaces the process ``sys.stdout`` and ``sys.stderr`` with
+:class:`PrintAndLog` instances that tee output to both the terminal and
+the file *logfile_name*.  The log file is initialised as an empty file
+before redirection begins.
+
+Args:
+    rank (int): MPI rank of the calling process.
+    logfile_name (str): Full path to the log file that will be created (or
+        overwritten if it already exists).
+</verbatim> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/IO/DataStream.py" line="29" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/IO/DataStream.py" bodystart="29" bodyend="108"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><verbatim>Input/output utilities for PVade simulations.
+
+This module provides:
+
+* :func:`start_print_and_log` – redirect ``stdout`` and ``stderr`` to a log
+    file while still echoing output to the terminal.
+* :class:`DataStream` – manages XDMF solution files, writing initial and
+    per-timestep snapshots of velocity, pressure, displacement, stress, and
+    optional temperature fields.
+</verbatim> </para>
+    </detaileddescription>
+    <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/IO/DataStream.py" line="1" column="1"/>
+  </compounddef>
+</doxygen>

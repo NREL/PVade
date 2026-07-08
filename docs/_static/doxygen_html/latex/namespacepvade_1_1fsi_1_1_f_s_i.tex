@@ -1,0 +1,18 @@
+\doxysection{pvade.\+fsi.\+FSI Namespace Reference}
+\hypertarget{namespacepvade_1_1fsi_1_1_f_s_i}{}\label{namespacepvade_1_1fsi_1_1_f_s_i}\index{pvade.fsi.FSI@{pvade.fsi.FSI}}
+\doxysubsubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \doxymbox{\hyperlink{classpvade_1_1fsi_1_1_f_s_i_1_1_f_s_i}{FSI}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\begin{DoxyVerb}Fluid-structure coupling utilities.
+
+This module defines the :class:`FSI` class used to transfer fluid traction
+loads to the structure solver.  The main coupling operation is implemented
+in :meth:`FSI.fluid_struct`, where panel stress fields computed by the fluid
+solver are relaxed and written into the structural solver state.
+\end{DoxyVerb}
+ 

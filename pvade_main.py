@@ -13,6 +13,7 @@ from pvade.IO.DataStream import DataStream, start_print_and_log
 from pvade.fsi.FSI import FSI
 from pvade.IO.Parameters import SimParams
 from pvade.IO.Utilities import get_input_file, write_metrics
+from pvade.IO.verbosity import get_verbosity_level
 from pvade.geometry.MeshManager import FSIDomain
 
 from dolfinx.common import TimingType, list_timings
@@ -27,8 +28,15 @@ import os
 from mpi4py import MPI
 
 
+def _print_rank0(rank, message):
+    """Print only from MPI rank 0 to avoid duplicated terminal output."""
+    if rank == 0:
+        print(message)
+
+
 def main(input_file=None):
     logging.disable(logging.CRITICAL)
+    verbosity = get_verbosity_level()
     # Get the path to the input file from the command line
     if input_file is None:
         input_file = get_input_file()
@@ -121,27 +129,30 @@ def main(input_file=None):
         if (k + 1) % params.solver.save_xdmf_interval_n == 0:
             if fluid_analysis:
                 if domain.rank == 0 and not params.general.debug_mesh_motion_only:
-                    print(
-                        f"Time {current_time:.2f} of {params.solver.t_final:.2f} (step {k+1} of {params.solver.t_steps}, {100.0*(k+1)/params.solver.t_steps:.1f}%)"
-                    )
-                    print(f"| CFL = {flow.cfl_max:.4f}")
+                    pct_done = 100.0 * (k + 1) / params.solver.t_steps
+                    summary_tokens = [
+                        f"t={current_time:.2f}/{params.solver.t_final:.2f}",
+                        f"step={k+1}/{params.solver.t_steps}",
+                        f"{pct_done:.1f}%",
+                        f"CFL={flow.cfl_max:.4f}",
+                    ]
 
                     if params.pv_array.num_panels == 1:
                         fx = flow.integrated_force_x[0]
                         fy = flow.integrated_force_y[0]
-
-                        print(f"| f_x (drag) = {fx:.4f}")
-                        print(f"| f_y (lift) = {fy:.4f}")
+                        summary_tokens.append(f"drag={fx:.4f}")
+                        summary_tokens.append(f"lift={fy:.4f}")
                     else:
                         if structure is not None:
                             # still print info, but just for first row
                             fx = flow.integrated_force_x[0]
                             fy = flow.integrated_force_y[0]
-
-                            print(f"| f_x (drag) of 1st row = {fx:.4f}")
-                            print(f"| f_y (lift) of 1st row = {fy:.4f}")
+                            summary_tokens.append(f"drag_row1={fx:.4f}")
+                            summary_tokens.append(f"lift_row1={fy:.4f}")
                     if thermal_analysis:
-                        print(f"| T = {flow.theta_max:.4f}")
+                        summary_tokens.append(f"T={flow.theta_max:.4f}")
+
+                    _print_rank0(domain.rank, " | ".join(summary_tokens))
 
                 dataIO.save_XDMF_files(flow, domain, current_time)
 
@@ -159,9 +170,10 @@ def main(input_file=None):
                     local_def_max = np.amax(np.sum(u_reshaped**2, axis=1))
                 else:
                     local_def_max = -np.inf  # So it doesn't interfere in max
-                print(
-                    f"Rank {domain.comm.rank}: u_vec.size = {u_local.size}, local_def_max = {local_def_max}"
-                )
+                if verbosity >= 2:
+                    print(
+                        f"Rank {domain.comm.rank}: u_vec.size={u_local.size}, local_def_max={local_def_max:.6e}"
+                    )
 
                 # Wrap scalar in NumPy array (required for Gather)
                 sendbuf = np.array([local_def_max], dtype=np.float64)
@@ -177,14 +189,16 @@ def main(input_file=None):
 
                 # Handle on root
                 if params.comm.rank == 0:
-                    print("Per-rank def max values:", global_def_max_list)
-                    print("Global def max:", np.max(global_def_max_list))
+                    if verbosity >= 2:
+                        print("Per-rank def max values:", global_def_max_list)
+                        print("Global def max:", np.max(global_def_max_list))
 
                 if domain.rank == 0:
                     # print("Structural time is : ", current_time)
                     # print("deformation norm =", {elasticity.unorm})
-                    print(
-                        f"| Max Deformation = {np.sqrt(np.amax(global_def_max_list)):.2e}"
+                    _print_rank0(
+                        domain.rank,
+                        f"Max deformation={np.sqrt(np.amax(global_def_max_list)):.2e}",
                     )
                 dataIO.save_XDMF_files(structure, domain, current_time)
 

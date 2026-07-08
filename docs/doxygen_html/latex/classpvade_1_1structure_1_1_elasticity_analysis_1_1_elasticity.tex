@@ -1,0 +1,612 @@
+\doxysection{pvade.\+structure.\+Elasticity\+Analysis.\+Elasticity Class Reference}
+\hypertarget{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity}{}\label{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity}\index{pvade.structure.ElasticityAnalysis.Elasticity@{pvade.structure.ElasticityAnalysis.Elasticity}}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\doxymbox{\hyperlink{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_a25fef720299683fb3203520be2f26938}{\+\_\+\+\_\+init\+\_\+\+\_\+}} (self, domain, structural\+\_\+analysis, params)
+\item 
+\doxymbox{\hyperlink{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_a1df3ca0fa9029ede29395181173945ca}{build\+\_\+boundary\+\_\+conditions}} (self, domain, params)
+\item 
+\doxymbox{\hyperlink{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_ae859f045d6bfd91299964bf5e02cde99}{update\+\_\+a}} (self, u, u\+\_\+old, v\+\_\+old, a\+\_\+old, dt, beta, ufl=True)
+\item 
+\doxymbox{\hyperlink{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_ad91ee0ce917023cf183f7a7663e76c1b}{update\+\_\+v}} (self, a, u\+\_\+old, v\+\_\+old, a\+\_\+old, dt, gamma, ufl=True)
+\item 
+\doxymbox{\hyperlink{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_a49a101e34786b3280cde021c89ccbd79}{update\+\_\+fields}} (self, u, u\+\_\+old, v\+\_\+old, a\+\_\+old, dt, beta, gamma)
+\item 
+\doxymbox{\hyperlink{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_a80ddd851fd3eeef7d9d700e5efe67287}{avg}} (self, x\+\_\+old, x\+\_\+new, alpha)
+\item 
+\doxymbox{\hyperlink{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_a8a524c73b5421d177a7717ffcb4966c4}{build\+\_\+forms}} (self, domain, params, structure)
+\item 
+\doxymbox{\hyperlink{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_a183995e9763994d7ec70ee18cb5197af}{build\+\_\+nullspace}} (self, V)
+\item 
+\doxymbox{\hyperlink{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_af3759148a0aa1a35d11ba911ad0074c6}{solve}} (self, params, data\+IO, structure)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\doxymbox{\hyperlink{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_a601b8257d3040df8248cefcbd55b2bfd}{comm}} = domain.\+comm
+\item 
+int \doxymbox{\hyperlink{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_aca752b82e70c563f7778433ab6634e3e}{rank}} = domain.\+rank
+\item 
+\doxymbox{\hyperlink{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_ac162c7dffdb991cbd7c50f14c9598647}{num\+\_\+procs}} = domain.\+num\+\_\+procs
+\item 
+\doxymbox{\hyperlink{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_a86c2a9fe2e74d26a94af9258e1daab9a}{V}} = dolfinx.\+fem.\+Function\+Space(domain.\+structure.\+msh, P1)
+\item 
+\doxymbox{\hyperlink{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_ab59d9dc0397edc8ebf1f367553f02bc6}{W}}
+\item 
+bool \doxymbox{\hyperlink{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_a41cc9ac596d5aef4223332791b52d7e1}{first\+\_\+call\+\_\+to\+\_\+solver}} = True
+\item 
+tuple \doxymbox{\hyperlink{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_aaa8fbed411493e494056f8c22d56ac6a}{num\+\_\+\+V\+\_\+dofs}}
+\item 
+\doxymbox{\hyperlink{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_af21436d2428ab66c7edc680f8164d789}{eta\+\_\+m}} = dolfinx.\+fem.\+Constant(domain.\+structure.\+msh, 0.\+0)
+\item 
+\doxymbox{\hyperlink{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_aaef498cb90b989caff84ca6a3c2aa34c}{eta\+\_\+k}} = dolfinx.\+fem.\+Constant(domain.\+structure.\+msh, 0.\+0)
+\item 
+\doxymbox{\hyperlink{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_a99e045065c01c2ffdcd4bf7ba343d36a}{alpha\+\_\+m}} = dolfinx.\+fem.\+Constant(domain.\+structure.\+msh, 0.\+2)
+\item 
+\doxymbox{\hyperlink{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_ade5db988f81280faba5688e1e0a8aa13}{alpha\+\_\+f}} = dolfinx.\+fem.\+Constant(domain.\+structure.\+msh, 0.\+4)
+\item 
+float \doxymbox{\hyperlink{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_aef84ab4df838eea9d7be5000862f8f91}{gamma}} = 0.\+5 + self.\+alpha\+\_\+f -\/ self.\+alpha\+\_\+m
+\item 
+tuple \doxymbox{\hyperlink{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_a4994cb13b92cee4fa8e29e1bb77130d9}{beta}} = (self.\+gamma + 0.\+5) \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*} 2 /\+ 4.\+0
+\item 
+\doxymbox{\hyperlink{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_a276f725ef0b58f86607111a68a1a9d88}{dt\+\_\+st}} = dolfinx.\+fem.\+Constant(domain.\+structure.\+msh, (params.\+structure.\+dt))
+\item 
+\doxymbox{\hyperlink{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_af20d8531eeaf1b327aee1c604e56a306}{bc}} = build\+\_\+structure\+\_\+boundary\+\_\+conditions(domain, params, self.\+V)
+\item 
+\doxymbox{\hyperlink{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_aecd501363586ea8563e825c7bf09ef35}{u\+\_\+}} = ufl.\+Test\+Function(self.\+V)
+\item 
+\doxymbox{\hyperlink{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_a71f4306215f0f080b7ef4269c486920d}{T}} = dolfinx.\+fem.\+Function\+Space(domain.\+structure.\+msh, P3)
+\item 
+\doxymbox{\hyperlink{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_a6e7eb962729583f164dcdf3ccb63db08}{trial\+\_\+tensor}} = ufl.\+Trial\+Function(self.\+T)
+\item 
+\doxymbox{\hyperlink{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_a1e4a10ba98734084823cf30bc42bdcbc}{test\+\_\+tensor}} = ufl.\+Test\+Function(self.\+T)
+\item 
+\doxymbox{\hyperlink{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_af1b16155bf3e2e1d422ca2e1fc142574}{internal\+\_\+stress}} = dolfinx.\+fem.\+Function(self.\+T, name="{}stress\+\_\+structure"{})
+\item 
+\doxymbox{\hyperlink{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_a5ee3a749dd20648e6bf726b75f4143a0}{stress}} = dolfinx.\+fem.\+Function(self.\+T, name="{}stress\+\_\+fluid"{})
+\item 
+\doxymbox{\hyperlink{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_a6e8676355b9c21570afee6272c102da8}{stress\+\_\+old}} = dolfinx.\+fem.\+Function(self.\+T, name="{}stress\+\_\+fluid\+\_\+old"{})
+\item 
+\doxymbox{\hyperlink{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_a0e51c1ec95f911598a4d427aea8fbc87}{stress\+\_\+predicted}}
+\item 
+\doxymbox{\hyperlink{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_a99abed187c9352693f3263681011c0bb}{u}} = dolfinx.\+fem.\+Function(self.\+V, name="{}deformation"{})
+\item 
+\doxymbox{\hyperlink{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_a3c49f0b92e8eccb6f1b76a901a2aa8bc}{u\+\_\+old}} = dolfinx.\+fem.\+Function(self.\+V, name="{}deformation\+\_\+old"{})
+\item 
+\doxymbox{\hyperlink{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_a4666a39e7b0346fd231ba5e6956762f8}{u\+\_\+delta}} = dolfinx.\+fem.\+Function(self.\+V, name="{}deformation\+\_\+change"{})
+\item 
+\doxymbox{\hyperlink{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_a196c1fc8bd1509d439b895de12496b03}{v}} = dolfinx.\+fem.\+Function(self.\+V)
+\item 
+\doxymbox{\hyperlink{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_a5d8b059ddb971ceb52445ed6197b0a62}{v\+\_\+old}} = dolfinx.\+fem.\+Function(self.\+V, name="{}velocity"{})
+\item 
+\doxymbox{\hyperlink{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_ad5ddd27fb870b9c528f69a853a0e95f0}{a}} = dolfinx.\+fem.\+Function(self.\+V)
+\item 
+\doxymbox{\hyperlink{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_a899cc8ac3708e18a39b03af3db84a798}{a\+\_\+old}} = dolfinx.\+fem.\+Function(self.\+V, name="{}acceleration"{})
+\item 
+\doxymbox{\hyperlink{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_a037b72fdb5daf9349f14474a6c4f1567}{f}}
+\item 
+\doxymbox{\hyperlink{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_a5840faf157a86e34dafb1b1c0e28905f}{ds}} = ufl.\+Measure("{}ds"{}, domain=domain.\+structure.\+msh)
+\item 
+tuple \doxymbox{\hyperlink{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_aa2aa899db0e01e8ee1f5ebcced35531f}{res}}
+\item 
+\doxymbox{\hyperlink{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_a9143978c5fb0f0d42fd6ff4ac645784b}{k\+\_\+nominal\+\_\+proj}} = F\+\_\+k\+\_\+nominal\+\_\+proj
+\item 
+\doxymbox{\hyperlink{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_a5f11ae5dc586600d721b5afd51ea9caf}{problem}} = dolfinx.\+fem.\+petsc.\+Nonlinear\+Problem(self.\+res, self.\+u, self.\+bc)
+\item 
+\doxymbox{\hyperlink{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_a8a5d7daaaadea02c1a183687aca6857d}{solver}} = dolfinx.\+nls.\+petsc.\+Newton\+Solver(self.\+comm, self.\+problem)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Protected Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\doxymbox{\hyperlink{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_a756b22e512222dd38a24a5457b7260c0}{\+\_\+assemble\+\_\+system}} (self, params)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\begin{DoxyVerb}Nonlinear structural elasticity solver.
+
+Assembles and solves the structural deformation problem using the
+Saint Venant–Kirchhoff constitutive model and the generalized-alpha
+time integration scheme.  The class provides methods to build boundary
+conditions, assemble variational forms, and advance the solution in time.
+
+Attributes:
+    comm: MPI communicator shared by all PVade objects.
+    rank (int): Rank of this MPI process.
+    num_procs (int): Total number of MPI processes.
+    V (dolfinx.fem.FunctionSpace): Lagrange vector function space of degree 2
+        defined on the structure mesh.
+    W (dolfinx.fem.FunctionSpace): Discontinuous Lagrange scalar function space
+        of degree 0 defined on the structure mesh.
+    first_call_to_solver (bool): Flag indicating whether the solver has been
+        called for the first time.
+    num_V_dofs (int): Global number of degrees of freedom in ``V``.
+    eta_m (dolfinx.fem.Constant): Rayleigh mass-proportional damping coefficient.
+    eta_k (dolfinx.fem.Constant): Rayleigh stiffness-proportional damping coefficient.
+    alpha_m (dolfinx.fem.Constant): Generalized-alpha parameter :math:`\\alpha_m`.
+    alpha_f (dolfinx.fem.Constant): Generalized-alpha parameter :math:`\\alpha_f`.
+    gamma (float): Generalized-alpha parameter :math:`\\gamma`.
+    beta (float): Generalized-alpha parameter :math:`\\beta`.
+    dt_st (dolfinx.fem.Constant): Structural time step size.
+\end{DoxyVerb}
+ 
+
+\label{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_doc-constructors}
+\Hypertarget{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_doc-constructors}
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_a25fef720299683fb3203520be2f26938}\index{pvade.structure.ElasticityAnalysis.Elasticity@{pvade.structure.ElasticityAnalysis.Elasticity}!\_\_init\_\_@{\_\_init\_\_}}
+\index{\_\_init\_\_@{\_\_init\_\_}!pvade.structure.ElasticityAnalysis.Elasticity@{pvade.structure.ElasticityAnalysis.Elasticity}}
+\doxysubsubsection{\texorpdfstring{\_\_init\_\_()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily \label{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_a25fef720299683fb3203520be2f26938} 
+pvade.\+structure.\+Elasticity\+Analysis.\+Elasticity.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self}{, }\item[{}]{domain}{, }\item[{}]{structural\+\_\+analysis}{, }\item[{}]{params}{}\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Initialize the Elasticity class.
+
+Sets up the FEniCSx function spaces, Rayleigh damping constants, and
+generalized-alpha time integration parameters on the structure submesh.
+
+Args:
+    domain (:obj:`pvade.geometry.MeshManager.FSIDomain`): A Domain object
+        that holds the fluid and structure submeshes.
+    structural_analysis (bool): Flag indicating whether a structural
+        analysis is being performed.
+    params (:obj:`pvade.IO.Parameters.SimParams`): A SimParams object
+        containing all user-specified simulation parameters.
+\end{DoxyVerb}
+ 
+
+\label{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_doc-func-members}
+\Hypertarget{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_a756b22e512222dd38a24a5457b7260c0}\index{pvade.structure.ElasticityAnalysis.Elasticity@{pvade.structure.ElasticityAnalysis.Elasticity}!\_assemble\_system@{\_assemble\_system}}
+\index{\_assemble\_system@{\_assemble\_system}!pvade.structure.ElasticityAnalysis.Elasticity@{pvade.structure.ElasticityAnalysis.Elasticity}}
+\doxysubsubsection{\texorpdfstring{\_assemble\_system()}{\_assemble\_system()}}
+{\footnotesize\ttfamily \label{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_a756b22e512222dd38a24a5457b7260c0} 
+pvade.\+structure.\+Elasticity\+Analysis.\+Elasticity.\+\_\+assemble\+\_\+system (\begin{DoxyParamCaption}\item[{}]{self}{, }\item[{}]{params}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [protected]}}
+
+\begin{DoxyVerb}Pre-assemble all LHS matrices and RHS vectors
+
+Here we pre-assemble all the forms corresponding to the left-hand side
+matrices and right-hand side vectors once outside the time loop. This
+will enable us to re-use certain features like the sparsity pattern
+during the timestepping without any modification of the function
+calls.
+
+Args:
+    params (:obj:`pvade.Parameters.SimParams`): A SimParams object
+\end{DoxyVerb}
+ \Hypertarget{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_a80ddd851fd3eeef7d9d700e5efe67287}\index{pvade.structure.ElasticityAnalysis.Elasticity@{pvade.structure.ElasticityAnalysis.Elasticity}!avg@{avg}}
+\index{avg@{avg}!pvade.structure.ElasticityAnalysis.Elasticity@{pvade.structure.ElasticityAnalysis.Elasticity}}
+\doxysubsubsection{\texorpdfstring{avg()}{avg()}}
+{\footnotesize\ttfamily \label{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_a80ddd851fd3eeef7d9d700e5efe67287} 
+pvade.\+structure.\+Elasticity\+Analysis.\+Elasticity.\+avg (\begin{DoxyParamCaption}\item[{}]{self}{, }\item[{}]{x\+\_\+old}{, }\item[{}]{x\+\_\+new}{, }\item[{}]{alpha}{}\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Return the generalized-alpha weighted average of two fields.
+
+.. math::
+
+    x_{\\alpha} = \\alpha \\, x_{\\text{old}} + (1 - \\alpha) \\, x_{\\text{new}}
+
+Args:
+    x_old: Field value at the previous time step.
+    x_new: Field value at the current time step.
+    alpha: Weighting parameter (typically ``alpha_m`` or ``alpha_f``).
+
+Returns:
+    Weighted average of ``x_old`` and ``x_new``.
+\end{DoxyVerb}
+ \Hypertarget{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_a1df3ca0fa9029ede29395181173945ca}\index{pvade.structure.ElasticityAnalysis.Elasticity@{pvade.structure.ElasticityAnalysis.Elasticity}!build\_boundary\_conditions@{build\_boundary\_conditions}}
+\index{build\_boundary\_conditions@{build\_boundary\_conditions}!pvade.structure.ElasticityAnalysis.Elasticity@{pvade.structure.ElasticityAnalysis.Elasticity}}
+\doxysubsubsection{\texorpdfstring{build\_boundary\_conditions()}{build\_boundary\_conditions()}}
+{\footnotesize\ttfamily \label{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_a1df3ca0fa9029ede29395181173945ca} 
+pvade.\+structure.\+Elasticity\+Analysis.\+Elasticity.\+build\+\_\+boundary\+\_\+conditions (\begin{DoxyParamCaption}\item[{}]{self}{, }\item[{}]{domain}{, }\item[{}]{params}{}\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Build the boundary conditions
+
+A method to manage the building of boundary conditions, including the
+steps of identifying entities on the boundary, marking those degrees
+of freedom either by the identified facets or a gmsh marker function,
+and finally assembling a list of Boundary objects that enforce the
+correct value.
+
+Args:
+    domain (:obj:`pvade.geometry.MeshManager.Domain`): A Domain object
+    params (:obj:`pvade.Parameters.SimParams`): A SimParams object
+\end{DoxyVerb}
+ \Hypertarget{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_a8a524c73b5421d177a7717ffcb4966c4}\index{pvade.structure.ElasticityAnalysis.Elasticity@{pvade.structure.ElasticityAnalysis.Elasticity}!build\_forms@{build\_forms}}
+\index{build\_forms@{build\_forms}!pvade.structure.ElasticityAnalysis.Elasticity@{pvade.structure.ElasticityAnalysis.Elasticity}}
+\doxysubsubsection{\texorpdfstring{build\_forms()}{build\_forms()}}
+{\footnotesize\ttfamily \label{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_a8a524c73b5421d177a7717ffcb4966c4} 
+pvade.\+structure.\+Elasticity\+Analysis.\+Elasticity.\+build\+\_\+forms (\begin{DoxyParamCaption}\item[{}]{self}{, }\item[{}]{domain}{, }\item[{}]{params}{, }\item[{}]{structure}{}\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Builds all variational statements
+
+This method creates all the functions, expressions, and variational
+forms that will be needed for the numerical solution of Navier Stokes
+using a fractional step method. This includes the calculation of a
+tentative velocity, the calculation of the change in pressure
+required to correct the tentative velocity to enforce continuity, and
+the update to the velocity field to reflect this change in
+pressure.
+
+Args:
+    domain (:obj:`pvade.geometry.MeshManager.Domain`): A Domain object
+    params (:obj:`pvade.Parameters.SimParams`): A SimParams object
+\end{DoxyVerb}
+ \Hypertarget{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_a183995e9763994d7ec70ee18cb5197af}\index{pvade.structure.ElasticityAnalysis.Elasticity@{pvade.structure.ElasticityAnalysis.Elasticity}!build\_nullspace@{build\_nullspace}}
+\index{build\_nullspace@{build\_nullspace}!pvade.structure.ElasticityAnalysis.Elasticity@{pvade.structure.ElasticityAnalysis.Elasticity}}
+\doxysubsubsection{\texorpdfstring{build\_nullspace()}{build\_nullspace()}}
+{\footnotesize\ttfamily \label{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_a183995e9763994d7ec70ee18cb5197af} 
+pvade.\+structure.\+Elasticity\+Analysis.\+Elasticity.\+build\+\_\+nullspace (\begin{DoxyParamCaption}\item[{}]{self}{, }\item[{}]{V}{}\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Build the PETSc rigid-body nullspace for 3-D elasticity.
+
+Constructs six orthonormal vectors corresponding to the three
+translational and three rotational rigid-body modes and assembles
+them into a PETSc :class:`NullSpace` object.  This nullspace is
+required by certain iterative solvers (e.g., AMG) to avoid
+near-singular behaviour.
+
+Args:
+    V (dolfinx.fem.FunctionSpace): The vector function space for which
+        the nullspace is constructed.  Must have exactly three
+        sub-spaces (x, y, z displacement components).
+
+Returns:
+    :class:`petsc4py.PETSc.NullSpace`: A PETSc nullspace object
+    containing the six rigid-body modes.
+\end{DoxyVerb}
+ \Hypertarget{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_af3759148a0aa1a35d11ba911ad0074c6}\index{pvade.structure.ElasticityAnalysis.Elasticity@{pvade.structure.ElasticityAnalysis.Elasticity}!solve@{solve}}
+\index{solve@{solve}!pvade.structure.ElasticityAnalysis.Elasticity@{pvade.structure.ElasticityAnalysis.Elasticity}}
+\doxysubsubsection{\texorpdfstring{solve()}{solve()}}
+{\footnotesize\ttfamily \label{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_af3759148a0aa1a35d11ba911ad0074c6} 
+pvade.\+structure.\+Elasticity\+Analysis.\+Elasticity.\+solve (\begin{DoxyParamCaption}\item[{}]{self}{, }\item[{}]{params}{, }\item[{}]{data\+IO}{, }\item[{}]{structure}{}\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Advance the structural solution by one time step.
+
+On the first call this method assembles the nonlinear problem and
+creates the Newton solver with LU factorisation. On every call it
+solves the nonlinear system, scatters the solution, computes the
+displacement increment ``u_delta``, updates the old fields, and
+appends the corner displacement to ``accel_pos.csv``.
+
+Args:
+    params (:obj:`pvade.IO.Parameters.SimParams`): A SimParams object.
+    dataIO: The DataStream I/O object (currently unused inside this
+        method but kept for API consistency).
+    structure (:obj:`pvade.structure.StructureMain.Structure`): The
+        parent Structure object, used to access
+        ``north_east_corner_dofs`` and ``ndim``.
+\end{DoxyVerb}
+ \Hypertarget{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_ae859f045d6bfd91299964bf5e02cde99}\index{pvade.structure.ElasticityAnalysis.Elasticity@{pvade.structure.ElasticityAnalysis.Elasticity}!update\_a@{update\_a}}
+\index{update\_a@{update\_a}!pvade.structure.ElasticityAnalysis.Elasticity@{pvade.structure.ElasticityAnalysis.Elasticity}}
+\doxysubsubsection{\texorpdfstring{update\_a()}{update\_a()}}
+{\footnotesize\ttfamily \label{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_ae859f045d6bfd91299964bf5e02cde99} 
+pvade.\+structure.\+Elasticity\+Analysis.\+Elasticity.\+update\+\_\+a (\begin{DoxyParamCaption}\item[{}]{self}{, }\item[{}]{u}{, }\item[{}]{u\+\_\+old}{, }\item[{}]{v\+\_\+old}{, }\item[{}]{a\+\_\+old}{, }\item[{}]{dt}{, }\item[{}]{beta}{, }\item[{}]{ufl}{ = {\ttfamily True}}\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Compute the new acceleration using the Newmark update formula.
+
+.. math::
+
+    a = \\frac{u - u_0 - v_0 \\, dt}{\\beta \\, dt^2}
+        - \\frac{1 - 2\\beta}{2\\beta} \\, a_0
+
+Args:
+    u: Current displacement field (UFL expression or NumPy array).
+    u_old: Displacement field at the previous time step.
+    v_old: Velocity field at the previous time step.
+    a_old: Acceleration field at the previous time step.
+    dt: Time step size (UFL constant or Python float).
+    beta: Newmark :math:`\\beta` parameter.
+    ufl (bool): If ``True``, operands are UFL objects; if ``False``,
+        Python floats are used for ``dt`` and ``beta``.
+
+Returns:
+    Updated acceleration field (UFL expression or NumPy array).
+\end{DoxyVerb}
+ \Hypertarget{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_a49a101e34786b3280cde021c89ccbd79}\index{pvade.structure.ElasticityAnalysis.Elasticity@{pvade.structure.ElasticityAnalysis.Elasticity}!update\_fields@{update\_fields}}
+\index{update\_fields@{update\_fields}!pvade.structure.ElasticityAnalysis.Elasticity@{pvade.structure.ElasticityAnalysis.Elasticity}}
+\doxysubsubsection{\texorpdfstring{update\_fields()}{update\_fields()}}
+{\footnotesize\ttfamily \label{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_a49a101e34786b3280cde021c89ccbd79} 
+pvade.\+structure.\+Elasticity\+Analysis.\+Elasticity.\+update\+\_\+fields (\begin{DoxyParamCaption}\item[{}]{self}{, }\item[{}]{u}{, }\item[{}]{u\+\_\+old}{, }\item[{}]{v\+\_\+old}{, }\item[{}]{a\+\_\+old}{, }\item[{}]{dt}{, }\item[{}]{beta}{, }\item[{}]{gamma}{}\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Update fields at the end of each time step.\end{DoxyVerb}
+ \Hypertarget{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_ad91ee0ce917023cf183f7a7663e76c1b}\index{pvade.structure.ElasticityAnalysis.Elasticity@{pvade.structure.ElasticityAnalysis.Elasticity}!update\_v@{update\_v}}
+\index{update\_v@{update\_v}!pvade.structure.ElasticityAnalysis.Elasticity@{pvade.structure.ElasticityAnalysis.Elasticity}}
+\doxysubsubsection{\texorpdfstring{update\_v()}{update\_v()}}
+{\footnotesize\ttfamily \label{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_ad91ee0ce917023cf183f7a7663e76c1b} 
+pvade.\+structure.\+Elasticity\+Analysis.\+Elasticity.\+update\+\_\+v (\begin{DoxyParamCaption}\item[{}]{self}{, }\item[{}]{a}{, }\item[{}]{u\+\_\+old}{, }\item[{}]{v\+\_\+old}{, }\item[{}]{a\+\_\+old}{, }\item[{}]{dt}{, }\item[{}]{gamma}{, }\item[{}]{ufl}{ = {\ttfamily True}}\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Compute the new velocity using the Newmark update formula.
+
+.. math::
+
+    v = v_0 + dt \\left[(1 - \\gamma) \\, a_0 + \\gamma \\, a \\right]
+
+Args:
+    a: Current acceleration field (UFL expression or NumPy array).
+    u_old: Displacement field at the previous time step (unused, kept
+        for API consistency).
+    v_old: Velocity field at the previous time step.
+    a_old: Acceleration field at the previous time step.
+    dt: Time step size (UFL constant or Python float).
+    gamma: Newmark :math:`\\gamma` parameter.
+    ufl (bool): If ``True``, operands are UFL objects; if ``False``,
+        Python floats are used for ``dt`` and ``gamma``.
+
+Returns:
+    Updated velocity field (UFL expression or NumPy array).
+\end{DoxyVerb}
+ 
+
+\label{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_doc-variable-members}
+\Hypertarget{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_doc-variable-members}
+\doxysubsection{Member Data Documentation}
+\Hypertarget{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_ad5ddd27fb870b9c528f69a853a0e95f0}\index{pvade.structure.ElasticityAnalysis.Elasticity@{pvade.structure.ElasticityAnalysis.Elasticity}!a@{a}}
+\index{a@{a}!pvade.structure.ElasticityAnalysis.Elasticity@{pvade.structure.ElasticityAnalysis.Elasticity}}
+\doxysubsubsection{\texorpdfstring{a}{a}}
+{\footnotesize\ttfamily \label{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_ad5ddd27fb870b9c528f69a853a0e95f0} 
+pvade.\+structure.\+Elasticity\+Analysis.\+Elasticity.\+a = dolfinx.\+fem.\+Function(self.\+V)}
+
+\Hypertarget{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_a899cc8ac3708e18a39b03af3db84a798}\index{pvade.structure.ElasticityAnalysis.Elasticity@{pvade.structure.ElasticityAnalysis.Elasticity}!a\_old@{a\_old}}
+\index{a\_old@{a\_old}!pvade.structure.ElasticityAnalysis.Elasticity@{pvade.structure.ElasticityAnalysis.Elasticity}}
+\doxysubsubsection{\texorpdfstring{a\_old}{a\_old}}
+{\footnotesize\ttfamily \label{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_a899cc8ac3708e18a39b03af3db84a798} 
+pvade.\+structure.\+Elasticity\+Analysis.\+Elasticity.\+a\+\_\+old = dolfinx.\+fem.\+Function(self.\+V, name="{}acceleration"{})}
+
+\Hypertarget{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_ade5db988f81280faba5688e1e0a8aa13}\index{pvade.structure.ElasticityAnalysis.Elasticity@{pvade.structure.ElasticityAnalysis.Elasticity}!alpha\_f@{alpha\_f}}
+\index{alpha\_f@{alpha\_f}!pvade.structure.ElasticityAnalysis.Elasticity@{pvade.structure.ElasticityAnalysis.Elasticity}}
+\doxysubsubsection{\texorpdfstring{alpha\_f}{alpha\_f}}
+{\footnotesize\ttfamily \label{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_ade5db988f81280faba5688e1e0a8aa13} 
+pvade.\+structure.\+Elasticity\+Analysis.\+Elasticity.\+alpha\+\_\+f = dolfinx.\+fem.\+Constant(domain.\+structure.\+msh, 0.\+4)}
+
+\Hypertarget{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_a99e045065c01c2ffdcd4bf7ba343d36a}\index{pvade.structure.ElasticityAnalysis.Elasticity@{pvade.structure.ElasticityAnalysis.Elasticity}!alpha\_m@{alpha\_m}}
+\index{alpha\_m@{alpha\_m}!pvade.structure.ElasticityAnalysis.Elasticity@{pvade.structure.ElasticityAnalysis.Elasticity}}
+\doxysubsubsection{\texorpdfstring{alpha\_m}{alpha\_m}}
+{\footnotesize\ttfamily \label{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_a99e045065c01c2ffdcd4bf7ba343d36a} 
+pvade.\+structure.\+Elasticity\+Analysis.\+Elasticity.\+alpha\+\_\+m = dolfinx.\+fem.\+Constant(domain.\+structure.\+msh, 0.\+2)}
+
+\Hypertarget{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_af20d8531eeaf1b327aee1c604e56a306}\index{pvade.structure.ElasticityAnalysis.Elasticity@{pvade.structure.ElasticityAnalysis.Elasticity}!bc@{bc}}
+\index{bc@{bc}!pvade.structure.ElasticityAnalysis.Elasticity@{pvade.structure.ElasticityAnalysis.Elasticity}}
+\doxysubsubsection{\texorpdfstring{bc}{bc}}
+{\footnotesize\ttfamily \label{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_af20d8531eeaf1b327aee1c604e56a306} 
+pvade.\+structure.\+Elasticity\+Analysis.\+Elasticity.\+bc = build\+\_\+structure\+\_\+boundary\+\_\+conditions(domain, params, self.\+V)}
+
+\Hypertarget{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_a4994cb13b92cee4fa8e29e1bb77130d9}\index{pvade.structure.ElasticityAnalysis.Elasticity@{pvade.structure.ElasticityAnalysis.Elasticity}!beta@{beta}}
+\index{beta@{beta}!pvade.structure.ElasticityAnalysis.Elasticity@{pvade.structure.ElasticityAnalysis.Elasticity}}
+\doxysubsubsection{\texorpdfstring{beta}{beta}}
+{\footnotesize\ttfamily \label{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_a4994cb13b92cee4fa8e29e1bb77130d9} 
+pvade.\+structure.\+Elasticity\+Analysis.\+Elasticity.\+beta = (self.\+gamma + 0.\+5) \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*} 2 /\+ 4.\+0}
+
+\Hypertarget{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_a601b8257d3040df8248cefcbd55b2bfd}\index{pvade.structure.ElasticityAnalysis.Elasticity@{pvade.structure.ElasticityAnalysis.Elasticity}!comm@{comm}}
+\index{comm@{comm}!pvade.structure.ElasticityAnalysis.Elasticity@{pvade.structure.ElasticityAnalysis.Elasticity}}
+\doxysubsubsection{\texorpdfstring{comm}{comm}}
+{\footnotesize\ttfamily \label{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_a601b8257d3040df8248cefcbd55b2bfd} 
+pvade.\+structure.\+Elasticity\+Analysis.\+Elasticity.\+comm = domain.\+comm}
+
+\Hypertarget{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_a5840faf157a86e34dafb1b1c0e28905f}\index{pvade.structure.ElasticityAnalysis.Elasticity@{pvade.structure.ElasticityAnalysis.Elasticity}!ds@{ds}}
+\index{ds@{ds}!pvade.structure.ElasticityAnalysis.Elasticity@{pvade.structure.ElasticityAnalysis.Elasticity}}
+\doxysubsubsection{\texorpdfstring{ds}{ds}}
+{\footnotesize\ttfamily \label{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_a5840faf157a86e34dafb1b1c0e28905f} 
+pvade.\+structure.\+Elasticity\+Analysis.\+Elasticity.\+ds = ufl.\+Measure("{}ds"{}, domain=domain.\+structure.\+msh)}
+
+\Hypertarget{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_a276f725ef0b58f86607111a68a1a9d88}\index{pvade.structure.ElasticityAnalysis.Elasticity@{pvade.structure.ElasticityAnalysis.Elasticity}!dt\_st@{dt\_st}}
+\index{dt\_st@{dt\_st}!pvade.structure.ElasticityAnalysis.Elasticity@{pvade.structure.ElasticityAnalysis.Elasticity}}
+\doxysubsubsection{\texorpdfstring{dt\_st}{dt\_st}}
+{\footnotesize\ttfamily \label{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_a276f725ef0b58f86607111a68a1a9d88} 
+pvade.\+structure.\+Elasticity\+Analysis.\+Elasticity.\+dt\+\_\+st = dolfinx.\+fem.\+Constant(domain.\+structure.\+msh, (params.\+structure.\+dt))}
+
+\Hypertarget{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_aaef498cb90b989caff84ca6a3c2aa34c}\index{pvade.structure.ElasticityAnalysis.Elasticity@{pvade.structure.ElasticityAnalysis.Elasticity}!eta\_k@{eta\_k}}
+\index{eta\_k@{eta\_k}!pvade.structure.ElasticityAnalysis.Elasticity@{pvade.structure.ElasticityAnalysis.Elasticity}}
+\doxysubsubsection{\texorpdfstring{eta\_k}{eta\_k}}
+{\footnotesize\ttfamily \label{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_aaef498cb90b989caff84ca6a3c2aa34c} 
+pvade.\+structure.\+Elasticity\+Analysis.\+Elasticity.\+eta\+\_\+k = dolfinx.\+fem.\+Constant(domain.\+structure.\+msh, 0.\+0)}
+
+\Hypertarget{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_af21436d2428ab66c7edc680f8164d789}\index{pvade.structure.ElasticityAnalysis.Elasticity@{pvade.structure.ElasticityAnalysis.Elasticity}!eta\_m@{eta\_m}}
+\index{eta\_m@{eta\_m}!pvade.structure.ElasticityAnalysis.Elasticity@{pvade.structure.ElasticityAnalysis.Elasticity}}
+\doxysubsubsection{\texorpdfstring{eta\_m}{eta\_m}}
+{\footnotesize\ttfamily \label{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_af21436d2428ab66c7edc680f8164d789} 
+pvade.\+structure.\+Elasticity\+Analysis.\+Elasticity.\+eta\+\_\+m = dolfinx.\+fem.\+Constant(domain.\+structure.\+msh, 0.\+0)}
+
+\Hypertarget{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_a037b72fdb5daf9349f14474a6c4f1567}\index{pvade.structure.ElasticityAnalysis.Elasticity@{pvade.structure.ElasticityAnalysis.Elasticity}!f@{f}}
+\index{f@{f}!pvade.structure.ElasticityAnalysis.Elasticity@{pvade.structure.ElasticityAnalysis.Elasticity}}
+\doxysubsubsection{\texorpdfstring{f}{f}}
+{\footnotesize\ttfamily \label{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_a037b72fdb5daf9349f14474a6c4f1567} 
+pvade.\+structure.\+Elasticity\+Analysis.\+Elasticity.\+f}
+
+{\bfseries Initial value:\+}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{=\ \ dolfinx.fem.Constant(}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ domain.structure.msh,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ PETSc.ScalarType(}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ params.structure.body\_force\_x,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ params.structure.body\_force\_y,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ )}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ),}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ )}
+
+\end{DoxyCode}
+\Hypertarget{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_a41cc9ac596d5aef4223332791b52d7e1}\index{pvade.structure.ElasticityAnalysis.Elasticity@{pvade.structure.ElasticityAnalysis.Elasticity}!first\_call\_to\_solver@{first\_call\_to\_solver}}
+\index{first\_call\_to\_solver@{first\_call\_to\_solver}!pvade.structure.ElasticityAnalysis.Elasticity@{pvade.structure.ElasticityAnalysis.Elasticity}}
+\doxysubsubsection{\texorpdfstring{first\_call\_to\_solver}{first\_call\_to\_solver}}
+{\footnotesize\ttfamily \label{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_a41cc9ac596d5aef4223332791b52d7e1} 
+bool pvade.\+structure.\+Elasticity\+Analysis.\+Elasticity.\+first\+\_\+call\+\_\+to\+\_\+solver = True}
+
+\Hypertarget{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_aef84ab4df838eea9d7be5000862f8f91}\index{pvade.structure.ElasticityAnalysis.Elasticity@{pvade.structure.ElasticityAnalysis.Elasticity}!gamma@{gamma}}
+\index{gamma@{gamma}!pvade.structure.ElasticityAnalysis.Elasticity@{pvade.structure.ElasticityAnalysis.Elasticity}}
+\doxysubsubsection{\texorpdfstring{gamma}{gamma}}
+{\footnotesize\ttfamily \label{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_aef84ab4df838eea9d7be5000862f8f91} 
+pvade.\+structure.\+Elasticity\+Analysis.\+Elasticity.\+gamma = 0.\+5 + self.\+alpha\+\_\+f -\/ self.\+alpha\+\_\+m}
+
+\Hypertarget{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_af1b16155bf3e2e1d422ca2e1fc142574}\index{pvade.structure.ElasticityAnalysis.Elasticity@{pvade.structure.ElasticityAnalysis.Elasticity}!internal\_stress@{internal\_stress}}
+\index{internal\_stress@{internal\_stress}!pvade.structure.ElasticityAnalysis.Elasticity@{pvade.structure.ElasticityAnalysis.Elasticity}}
+\doxysubsubsection{\texorpdfstring{internal\_stress}{internal\_stress}}
+{\footnotesize\ttfamily \label{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_af1b16155bf3e2e1d422ca2e1fc142574} 
+pvade.\+structure.\+Elasticity\+Analysis.\+Elasticity.\+internal\+\_\+stress = dolfinx.\+fem.\+Function(self.\+T, name="{}stress\+\_\+structure"{})}
+
+\Hypertarget{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_a9143978c5fb0f0d42fd6ff4ac645784b}\index{pvade.structure.ElasticityAnalysis.Elasticity@{pvade.structure.ElasticityAnalysis.Elasticity}!k\_nominal\_proj@{k\_nominal\_proj}}
+\index{k\_nominal\_proj@{k\_nominal\_proj}!pvade.structure.ElasticityAnalysis.Elasticity@{pvade.structure.ElasticityAnalysis.Elasticity}}
+\doxysubsubsection{\texorpdfstring{k\_nominal\_proj}{k\_nominal\_proj}}
+{\footnotesize\ttfamily \label{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_a9143978c5fb0f0d42fd6ff4ac645784b} 
+pvade.\+structure.\+Elasticity\+Analysis.\+Elasticity.\+k\+\_\+nominal\+\_\+proj = F\+\_\+k\+\_\+nominal\+\_\+proj}
+
+\Hypertarget{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_ac162c7dffdb991cbd7c50f14c9598647}\index{pvade.structure.ElasticityAnalysis.Elasticity@{pvade.structure.ElasticityAnalysis.Elasticity}!num\_procs@{num\_procs}}
+\index{num\_procs@{num\_procs}!pvade.structure.ElasticityAnalysis.Elasticity@{pvade.structure.ElasticityAnalysis.Elasticity}}
+\doxysubsubsection{\texorpdfstring{num\_procs}{num\_procs}}
+{\footnotesize\ttfamily \label{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_ac162c7dffdb991cbd7c50f14c9598647} 
+pvade.\+structure.\+Elasticity\+Analysis.\+Elasticity.\+num\+\_\+procs = domain.\+num\+\_\+procs}
+
+\Hypertarget{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_aaa8fbed411493e494056f8c22d56ac6a}\index{pvade.structure.ElasticityAnalysis.Elasticity@{pvade.structure.ElasticityAnalysis.Elasticity}!num\_V\_dofs@{num\_V\_dofs}}
+\index{num\_V\_dofs@{num\_V\_dofs}!pvade.structure.ElasticityAnalysis.Elasticity@{pvade.structure.ElasticityAnalysis.Elasticity}}
+\doxysubsubsection{\texorpdfstring{num\_V\_dofs}{num\_V\_dofs}}
+{\footnotesize\ttfamily \label{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_aaa8fbed411493e494056f8c22d56ac6a} 
+tuple pvade.\+structure.\+Elasticity\+Analysis.\+Elasticity.\+num\+\_\+\+V\+\_\+dofs}
+
+{\bfseries Initial value:\+}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{=\ \ (}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ self.V.dofmap.index\_map\_bs\ *\ self.V.dofmap.index\_map.size\_global}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ )}
+
+\end{DoxyCode}
+\Hypertarget{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_a5f11ae5dc586600d721b5afd51ea9caf}\index{pvade.structure.ElasticityAnalysis.Elasticity@{pvade.structure.ElasticityAnalysis.Elasticity}!problem@{problem}}
+\index{problem@{problem}!pvade.structure.ElasticityAnalysis.Elasticity@{pvade.structure.ElasticityAnalysis.Elasticity}}
+\doxysubsubsection{\texorpdfstring{problem}{problem}}
+{\footnotesize\ttfamily \label{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_a5f11ae5dc586600d721b5afd51ea9caf} 
+pvade.\+structure.\+Elasticity\+Analysis.\+Elasticity.\+problem = dolfinx.\+fem.\+petsc.\+Nonlinear\+Problem(self.\+res, self.\+u, self.\+bc)}
+
+\Hypertarget{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_aca752b82e70c563f7778433ab6634e3e}\index{pvade.structure.ElasticityAnalysis.Elasticity@{pvade.structure.ElasticityAnalysis.Elasticity}!rank@{rank}}
+\index{rank@{rank}!pvade.structure.ElasticityAnalysis.Elasticity@{pvade.structure.ElasticityAnalysis.Elasticity}}
+\doxysubsubsection{\texorpdfstring{rank}{rank}}
+{\footnotesize\ttfamily \label{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_aca752b82e70c563f7778433ab6634e3e} 
+pvade.\+structure.\+Elasticity\+Analysis.\+Elasticity.\+rank = domain.\+rank}
+
+\Hypertarget{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_aa2aa899db0e01e8ee1f5ebcced35531f}\index{pvade.structure.ElasticityAnalysis.Elasticity@{pvade.structure.ElasticityAnalysis.Elasticity}!res@{res}}
+\index{res@{res}!pvade.structure.ElasticityAnalysis.Elasticity@{pvade.structure.ElasticityAnalysis.Elasticity}}
+\doxysubsubsection{\texorpdfstring{res}{res}}
+{\footnotesize\ttfamily \label{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_aa2aa899db0e01e8ee1f5ebcced35531f} 
+tuple pvade.\+structure.\+Elasticity\+Analysis.\+Elasticity.\+res}
+
+{\bfseries Initial value:\+}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{=\ \ (}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ m(self.avg(self.a\_old,\ a\_new,\ self.alpha\_m),\ self.u\_)\ *\ ufl.dx}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ +\ c(self.avg(self.v\_old,\ v\_new,\ self.alpha\_f),\ self.u\_)\ *\ ufl.dx}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ +\ k\_nominal(self.avg(self.u\_old,\ self.u,\ self.alpha\_f),\ self.u\_)\ *\ ufl.dx}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ -\/\ structure.rho\ *\ ufl.inner(self.f,\ self.u\_)\ *\ ufl.dx}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ -\/\ ufl.dot(ufl.dot(self.stress\_predicted\ *\ J\ *\ ufl.inv(F.T),\ n),\ self.u\_)}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ *\ self.ds}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ )}
+
+\end{DoxyCode}
+\Hypertarget{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_a8a5d7daaaadea02c1a183687aca6857d}\index{pvade.structure.ElasticityAnalysis.Elasticity@{pvade.structure.ElasticityAnalysis.Elasticity}!solver@{solver}}
+\index{solver@{solver}!pvade.structure.ElasticityAnalysis.Elasticity@{pvade.structure.ElasticityAnalysis.Elasticity}}
+\doxysubsubsection{\texorpdfstring{solver}{solver}}
+{\footnotesize\ttfamily \label{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_a8a5d7daaaadea02c1a183687aca6857d} 
+pvade.\+structure.\+Elasticity\+Analysis.\+Elasticity.\+solver = dolfinx.\+nls.\+petsc.\+Newton\+Solver(self.\+comm, self.\+problem)}
+
+\Hypertarget{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_a5ee3a749dd20648e6bf726b75f4143a0}\index{pvade.structure.ElasticityAnalysis.Elasticity@{pvade.structure.ElasticityAnalysis.Elasticity}!stress@{stress}}
+\index{stress@{stress}!pvade.structure.ElasticityAnalysis.Elasticity@{pvade.structure.ElasticityAnalysis.Elasticity}}
+\doxysubsubsection{\texorpdfstring{stress}{stress}}
+{\footnotesize\ttfamily \label{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_a5ee3a749dd20648e6bf726b75f4143a0} 
+pvade.\+structure.\+Elasticity\+Analysis.\+Elasticity.\+stress = dolfinx.\+fem.\+Function(self.\+T, name="{}stress\+\_\+fluid"{})}
+
+\Hypertarget{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_a6e8676355b9c21570afee6272c102da8}\index{pvade.structure.ElasticityAnalysis.Elasticity@{pvade.structure.ElasticityAnalysis.Elasticity}!stress\_old@{stress\_old}}
+\index{stress\_old@{stress\_old}!pvade.structure.ElasticityAnalysis.Elasticity@{pvade.structure.ElasticityAnalysis.Elasticity}}
+\doxysubsubsection{\texorpdfstring{stress\_old}{stress\_old}}
+{\footnotesize\ttfamily \label{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_a6e8676355b9c21570afee6272c102da8} 
+pvade.\+structure.\+Elasticity\+Analysis.\+Elasticity.\+stress\+\_\+old = dolfinx.\+fem.\+Function(self.\+T, name="{}stress\+\_\+fluid\+\_\+old"{})}
+
+\Hypertarget{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_a0e51c1ec95f911598a4d427aea8fbc87}\index{pvade.structure.ElasticityAnalysis.Elasticity@{pvade.structure.ElasticityAnalysis.Elasticity}!stress\_predicted@{stress\_predicted}}
+\index{stress\_predicted@{stress\_predicted}!pvade.structure.ElasticityAnalysis.Elasticity@{pvade.structure.ElasticityAnalysis.Elasticity}}
+\doxysubsubsection{\texorpdfstring{stress\_predicted}{stress\_predicted}}
+{\footnotesize\ttfamily \label{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_a0e51c1ec95f911598a4d427aea8fbc87} 
+pvade.\+structure.\+Elasticity\+Analysis.\+Elasticity.\+stress\+\_\+predicted}
+
+{\bfseries Initial value:\+}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{=\ \ dolfinx.fem.Function(}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ self.T,\ name=\textcolor{stringliteral}{"{}stress\_fluid\_predicted"{}}}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ )}
+
+\end{DoxyCode}
+\Hypertarget{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_a71f4306215f0f080b7ef4269c486920d}\index{pvade.structure.ElasticityAnalysis.Elasticity@{pvade.structure.ElasticityAnalysis.Elasticity}!T@{T}}
+\index{T@{T}!pvade.structure.ElasticityAnalysis.Elasticity@{pvade.structure.ElasticityAnalysis.Elasticity}}
+\doxysubsubsection{\texorpdfstring{T}{T}}
+{\footnotesize\ttfamily \label{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_a71f4306215f0f080b7ef4269c486920d} 
+pvade.\+structure.\+Elasticity\+Analysis.\+Elasticity.\+T = dolfinx.\+fem.\+Function\+Space(domain.\+structure.\+msh, P3)}
+
+\Hypertarget{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_a1e4a10ba98734084823cf30bc42bdcbc}\index{pvade.structure.ElasticityAnalysis.Elasticity@{pvade.structure.ElasticityAnalysis.Elasticity}!test\_tensor@{test\_tensor}}
+\index{test\_tensor@{test\_tensor}!pvade.structure.ElasticityAnalysis.Elasticity@{pvade.structure.ElasticityAnalysis.Elasticity}}
+\doxysubsubsection{\texorpdfstring{test\_tensor}{test\_tensor}}
+{\footnotesize\ttfamily \label{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_a1e4a10ba98734084823cf30bc42bdcbc} 
+pvade.\+structure.\+Elasticity\+Analysis.\+Elasticity.\+test\+\_\+tensor = ufl.\+Test\+Function(self.\+T)}
+
+\Hypertarget{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_a6e7eb962729583f164dcdf3ccb63db08}\index{pvade.structure.ElasticityAnalysis.Elasticity@{pvade.structure.ElasticityAnalysis.Elasticity}!trial\_tensor@{trial\_tensor}}
+\index{trial\_tensor@{trial\_tensor}!pvade.structure.ElasticityAnalysis.Elasticity@{pvade.structure.ElasticityAnalysis.Elasticity}}
+\doxysubsubsection{\texorpdfstring{trial\_tensor}{trial\_tensor}}
+{\footnotesize\ttfamily \label{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_a6e7eb962729583f164dcdf3ccb63db08} 
+pvade.\+structure.\+Elasticity\+Analysis.\+Elasticity.\+trial\+\_\+tensor = ufl.\+Trial\+Function(self.\+T)}
+
+\Hypertarget{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_a99abed187c9352693f3263681011c0bb}\index{pvade.structure.ElasticityAnalysis.Elasticity@{pvade.structure.ElasticityAnalysis.Elasticity}!u@{u}}
+\index{u@{u}!pvade.structure.ElasticityAnalysis.Elasticity@{pvade.structure.ElasticityAnalysis.Elasticity}}
+\doxysubsubsection{\texorpdfstring{u}{u}}
+{\footnotesize\ttfamily \label{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_a99abed187c9352693f3263681011c0bb} 
+pvade.\+structure.\+Elasticity\+Analysis.\+Elasticity.\+u = dolfinx.\+fem.\+Function(self.\+V, name="{}deformation"{})}
+
+\Hypertarget{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_aecd501363586ea8563e825c7bf09ef35}\index{pvade.structure.ElasticityAnalysis.Elasticity@{pvade.structure.ElasticityAnalysis.Elasticity}!u\_@{u\_}}
+\index{u\_@{u\_}!pvade.structure.ElasticityAnalysis.Elasticity@{pvade.structure.ElasticityAnalysis.Elasticity}}
+\doxysubsubsection{\texorpdfstring{u\_}{u\_}}
+{\footnotesize\ttfamily \label{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_aecd501363586ea8563e825c7bf09ef35} 
+pvade.\+structure.\+Elasticity\+Analysis.\+Elasticity.\+u\+\_\+ = ufl.\+Test\+Function(self.\+V)}
+
+\Hypertarget{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_a4666a39e7b0346fd231ba5e6956762f8}\index{pvade.structure.ElasticityAnalysis.Elasticity@{pvade.structure.ElasticityAnalysis.Elasticity}!u\_delta@{u\_delta}}
+\index{u\_delta@{u\_delta}!pvade.structure.ElasticityAnalysis.Elasticity@{pvade.structure.ElasticityAnalysis.Elasticity}}
+\doxysubsubsection{\texorpdfstring{u\_delta}{u\_delta}}
+{\footnotesize\ttfamily \label{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_a4666a39e7b0346fd231ba5e6956762f8} 
+pvade.\+structure.\+Elasticity\+Analysis.\+Elasticity.\+u\+\_\+delta = dolfinx.\+fem.\+Function(self.\+V, name="{}deformation\+\_\+change"{})}
+
+\Hypertarget{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_a3c49f0b92e8eccb6f1b76a901a2aa8bc}\index{pvade.structure.ElasticityAnalysis.Elasticity@{pvade.structure.ElasticityAnalysis.Elasticity}!u\_old@{u\_old}}
+\index{u\_old@{u\_old}!pvade.structure.ElasticityAnalysis.Elasticity@{pvade.structure.ElasticityAnalysis.Elasticity}}
+\doxysubsubsection{\texorpdfstring{u\_old}{u\_old}}
+{\footnotesize\ttfamily \label{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_a3c49f0b92e8eccb6f1b76a901a2aa8bc} 
+pvade.\+structure.\+Elasticity\+Analysis.\+Elasticity.\+u\+\_\+old = dolfinx.\+fem.\+Function(self.\+V, name="{}deformation\+\_\+old"{})}
+
+\Hypertarget{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_a86c2a9fe2e74d26a94af9258e1daab9a}\index{pvade.structure.ElasticityAnalysis.Elasticity@{pvade.structure.ElasticityAnalysis.Elasticity}!V@{V}}
+\index{V@{V}!pvade.structure.ElasticityAnalysis.Elasticity@{pvade.structure.ElasticityAnalysis.Elasticity}}
+\doxysubsubsection{\texorpdfstring{V}{V}}
+{\footnotesize\ttfamily \label{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_a86c2a9fe2e74d26a94af9258e1daab9a} 
+pvade.\+structure.\+Elasticity\+Analysis.\+Elasticity.\+V = dolfinx.\+fem.\+Function\+Space(domain.\+structure.\+msh, P1)}
+
+\Hypertarget{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_a196c1fc8bd1509d439b895de12496b03}\index{pvade.structure.ElasticityAnalysis.Elasticity@{pvade.structure.ElasticityAnalysis.Elasticity}!v@{v}}
+\index{v@{v}!pvade.structure.ElasticityAnalysis.Elasticity@{pvade.structure.ElasticityAnalysis.Elasticity}}
+\doxysubsubsection{\texorpdfstring{v}{v}}
+{\footnotesize\ttfamily \label{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_a196c1fc8bd1509d439b895de12496b03} 
+pvade.\+structure.\+Elasticity\+Analysis.\+Elasticity.\+v = dolfinx.\+fem.\+Function(self.\+V)}
+
+\Hypertarget{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_a5d8b059ddb971ceb52445ed6197b0a62}\index{pvade.structure.ElasticityAnalysis.Elasticity@{pvade.structure.ElasticityAnalysis.Elasticity}!v\_old@{v\_old}}
+\index{v\_old@{v\_old}!pvade.structure.ElasticityAnalysis.Elasticity@{pvade.structure.ElasticityAnalysis.Elasticity}}
+\doxysubsubsection{\texorpdfstring{v\_old}{v\_old}}
+{\footnotesize\ttfamily \label{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_a5d8b059ddb971ceb52445ed6197b0a62} 
+pvade.\+structure.\+Elasticity\+Analysis.\+Elasticity.\+v\+\_\+old = dolfinx.\+fem.\+Function(self.\+V, name="{}velocity"{})}
+
+\Hypertarget{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_ab59d9dc0397edc8ebf1f367553f02bc6}\index{pvade.structure.ElasticityAnalysis.Elasticity@{pvade.structure.ElasticityAnalysis.Elasticity}!W@{W}}
+\index{W@{W}!pvade.structure.ElasticityAnalysis.Elasticity@{pvade.structure.ElasticityAnalysis.Elasticity}}
+\doxysubsubsection{\texorpdfstring{W}{W}}
+{\footnotesize\ttfamily \label{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_ab59d9dc0397edc8ebf1f367553f02bc6} 
+pvade.\+structure.\+Elasticity\+Analysis.\+Elasticity.\+W}
+
+{\bfseries Initial value:\+}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{=\ \ dolfinx.fem.FunctionSpace(}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ domain.structure.msh,\ (\textcolor{stringliteral}{"{}Discontinuous\ Lagrange"{}},\ 0)}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ )}
+
+\end{DoxyCode}
+
+
+The documentation for this class was generated from the following file:\+\begin{DoxyCompactItemize}
+\item 
+/\+\+Users/\+warsalan/\+work/\+pvade/\+main\+\_\+branch/\+\+PVade/\+pvade/\+structure/\+\doxymbox{\hyperlink{_elasticity_analysis_8py}{Elasticity\+Analysis.\+py}}\end{DoxyCompactItemize}

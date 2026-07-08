@@ -1,0 +1,36 @@
+\doxysection{pvade.\+fluid.\+Flow\+Manager Namespace Reference}
+\hypertarget{namespacepvade_1_1fluid_1_1_flow_manager}{}\label{namespacepvade_1_1fluid_1_1_flow_manager}\index{pvade.fluid.FlowManager@{pvade.fluid.FlowManager}}
+\doxysubsubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \doxymbox{\hyperlink{classpvade_1_1fluid_1_1_flow_manager_1_1_flow}{Flow}}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\doxymbox{\hyperlink{namespacepvade_1_1fluid_1_1_flow_manager_a9539bb7cfd79da86137d9c228f6b4634}{\+\_\+vprint}} (rank, message, level=1)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\begin{DoxyVerb}Incompressible Navier–Stokes fluid solver (fractional-step / IPCS method).
+
+This module provides the :class:`Flow` class, which assembles and solves the
+incompressible Navier–Stokes equations on an ALE (Arbitrary Lagrangian–Eulerian)
+mesh using the three-step Incremental Pressure Correction Scheme (IPCS).  An
+optional energy equation (advection–diffusion with SUPG stabilisation) handles
+buoyancy-driven or thermally-stratified flows.
+\end{DoxyVerb}
+ 
+
+\label{namespacepvade_1_1fluid_1_1_flow_manager_doc-func-members}
+\Hypertarget{namespacepvade_1_1fluid_1_1_flow_manager_doc-func-members}
+\doxysubsection{Function Documentation}
+\Hypertarget{namespacepvade_1_1fluid_1_1_flow_manager_a9539bb7cfd79da86137d9c228f6b4634}\index{pvade.fluid.FlowManager@{pvade.fluid.FlowManager}!\_vprint@{\_vprint}}
+\index{\_vprint@{\_vprint}!pvade.fluid.FlowManager@{pvade.fluid.FlowManager}}
+\doxysubsubsection{\texorpdfstring{\_vprint()}{\_vprint()}}
+{\footnotesize\ttfamily \label{namespacepvade_1_1fluid_1_1_flow_manager_a9539bb7cfd79da86137d9c228f6b4634} 
+\+\_\+vprint (\begin{DoxyParamCaption}\item[{}]{rank}{, }\item[{}]{message}{, }\item[{}]{level}{ = {\ttfamily 1}}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [protected]}}
+
+\begin{DoxyVerb}Rank-0 verbosity-aware print helper for fluid solver messages.\end{DoxyVerb}
+ 

@@ -15,6 +15,13 @@ import h5py
 import scipy.interpolate as interp
 
 import warnings
+from pvade.IO.verbosity import emit_verbosity_print
+
+
+def _vprint(rank, message, level=1):
+    """Rank-0 verbosity-aware print helper for boundary-condition messages."""
+    if rank == 0:
+        emit_verbosity_print(message, level=level)
 
 
 def get_facet_dofs_by_gmsh_tag(domain, functionspace, location):
@@ -53,7 +60,7 @@ def get_facet_dofs_by_gmsh_tag(domain, functionspace, location):
         if domain.rank == 0:
             flattened = np.hstack(global_found_entities)
             nnn = np.size(flattened)
-            print(f"{location}, global_entities = ", nnn)
+            _vprint(domain.rank, f"{location}, global_entities = {nnn}", level=2)
 
     # if len(found_entities) == 0:
     #     warnings.warn(f"Found no facets using location = {location}.")
@@ -76,8 +83,7 @@ def build_vel_bc_by_type(bc_type, domain, functionspace, bc_location):
         dolfinx.fem.dirichletbc: A dolfinx dirichlet boundary condition
     """
 
-    if domain.rank == 0:
-        print(f"Setting '{bc_type}' BC on {bc_location}")
+    _vprint(domain.rank, f"Setting '{bc_type}' BC on {bc_location}", level=1)
 
     if bc_type == "noslip":
         if domain.ndim == 2:
@@ -390,18 +396,15 @@ def get_inflow_profile_function(domain, params, functionspace, current_time):
     upper_cells = None
 
     if params.fluid.velocity_profile_type == "parabolic":
-        if domain.rank == 0:
-            print("setting parabolic profile")
+        _vprint(domain.rank, "setting parabolic profile", level=1)
         inflow_function.interpolate(inflow_velocity)
 
     elif params.fluid.velocity_profile_type == "uniform":
-        if domain.rank == 0:
-            print("setting uniform profile")
+        _vprint(domain.rank, "setting uniform profile", level=1)
         inflow_function.interpolate(inflow_velocity)
 
     elif params.fluid.velocity_profile_type == "loglaw":
-        if domain.rank == 0:
-            print("setting loglaw profile")
+        _vprint(domain.rank, "setting loglaw profile", level=1)
         z0 = params.fluid.z0
         d0 = params.fluid.d0
         if ndim == 3:
@@ -425,27 +428,38 @@ def get_inflow_profile_function(domain, params, functionspace, current_time):
         )
 
         if len(upper_cells) == 0:
-            print(
-                "Warning: z0 and d0 may be outside the size of the domain"
+            _vprint(
+                domain.rank,
+                "Warning: z0 and d0 may be outside the size of the domain",
+                level=1,
             )  # just a bandaid for now
 
         inflow_function.interpolate(inflow_velocity, upper_cells)
 
     elif params.fluid.velocity_profile_type == "specified_from_file":
-        if domain.rank == 0:
-            print("Setting inflow velocity from {}".format(params.fluid.h5_filename))
-            if params.general.debug_flag:
-                print("eff u_ref = {} m/s".format(inflow_velocity.u_ref))
+        _vprint(
+            domain.rank,
+            "Setting inflow velocity from {}".format(params.fluid.h5_filename),
+            level=1,
+        )
+        if params.general.debug_flag:
+            _vprint(
+                domain.rank,
+                "eff u_ref = {} m/s".format(inflow_velocity.u_ref),
+                level=2,
+            )
         inflow_function.interpolate(inflow_velocity)
 
         if params.solver.t_final > inflow_velocity.inflow_t_final:
-            if domain.rank == 0:
-                print(
-                    "WARNING: t_final ({:.2f} s) exceeds the final time in input inflow velocity file ({:.2f} s). "
-                    "Simulation will fail at that point.".format(
-                        params.solver.t_final, inflow_velocity.inflow_t_final
-                    )
+            _vprint(
+                domain.rank,
+                "WARNING: t_final ({:.2f} s) exceeds the final time in input inflow velocity file ({:.2f} s). "
+                "Simulation will fail at that point.".format(
+                    params.solver.t_final, inflow_velocity.inflow_t_final
                 )
+                ,
+                level=1,
+            )
 
     return inflow_function, inflow_velocity, upper_cells
 

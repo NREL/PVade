@@ -1,0 +1,16 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.17.0" xml:lang="en-US">
+  <compounddef id="structure_2____init_____8py" kind="file" language="Python">
+    <compoundname>__init__.py</compoundname>
+    <innernamespace refid="namespacepvade">pvade</innernamespace>
+    <innernamespace refid="namespacepvade_1_1structure">pvade::structure</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1" refid="namespacepvade_1_1structure" refkind="compound"><highlight class="comment">#<sp/>Init<sp/>file<sp/>for<sp/>geometry</highlight><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/__init__.py"/>
+  </compounddef>
+</doxygen>

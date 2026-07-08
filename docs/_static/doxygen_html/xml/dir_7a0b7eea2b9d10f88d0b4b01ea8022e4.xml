@@ -1,0 +1,18 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.17.0" xml:lang="en-US">
+  <compounddef id="dir_7a0b7eea2b9d10f88d0b4b01ea8022e4" kind="dir">
+    <compoundname>/Users/warsalan/work/pvade/main_branch/PVade/pvade</compoundname>
+    <innerdir refid="dir_76cc9be3ca5cf32eae416fa9b1005878">/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid</innerdir>
+    <innerdir refid="dir_1904ecd647a60b9b3a99ef4f4d0b1935">/Users/warsalan/work/pvade/main_branch/PVade/pvade/fsi</innerdir>
+    <innerdir refid="dir_8097fd8c8761df837f55bfaec7fd90f1">/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry</innerdir>
+    <innerdir refid="dir_6adeff2deadc2a333db79d885ff82ef0">/Users/warsalan/work/pvade/main_branch/PVade/pvade/IO</innerdir>
+    <innerdir refid="dir_ac52a288030165f20214d6bcf5a78283">/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure</innerdir>
+    <innerdir refid="dir_69889a3b4d034d4ba79be7ad77915246">/Users/warsalan/work/pvade/main_branch/PVade/pvade/tests</innerdir>
+    <innerfile refid="____init_____8py">__init__.py</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/"/>
+  </compounddef>
+</doxygen>

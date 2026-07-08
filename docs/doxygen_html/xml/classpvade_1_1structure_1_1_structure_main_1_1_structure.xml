@@ -1,0 +1,806 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.17.0" xml:lang="en-US">
+  <compounddef id="classpvade_1_1structure_1_1_structure_main_1_1_structure" kind="class" language="Python" prot="public">
+    <compoundname>pvade::structure::StructureMain::Structure</compoundname>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="classpvade_1_1structure_1_1_structure_main_1_1_structure_1aa668e2e0d37154411d5f867b1ca1eeaa" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.structure.StructureMain.Structure::structural_analysis</definition>
+        <argsstring></argsstring>
+        <name>structural_analysis</name>
+        <qualifiedname>pvade.structure.StructureMain.Structure.structural_analysis</qualifiedname>
+        <initializer>=  params.general.structural_analysis</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/StructureMain.py" line="81" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/StructureMain.py" bodystart="81" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1structure_1_1_structure_main_1_1_structure_1a75613a8148115a9cba5f63b6960e47bd" prot="public" static="no" mutable="no">
+        <type>str</type>
+        <definition>str pvade.structure.StructureMain.Structure::name</definition>
+        <argsstring></argsstring>
+        <name>name</name>
+        <qualifiedname>pvade.structure.StructureMain.Structure.name</qualifiedname>
+        <initializer>=  &quot;structure&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/StructureMain.py" line="82" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/StructureMain.py" bodystart="82" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1structure_1_1_structure_main_1_1_structure_1acde0a39d1c21ecf73d9d07b57f28f0dd" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.structure.StructureMain.Structure::comm</definition>
+        <argsstring></argsstring>
+        <name>comm</name>
+        <qualifiedname>pvade.structure.StructureMain.Structure.comm</qualifiedname>
+        <initializer>=  domain.comm</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/StructureMain.py" line="85" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/StructureMain.py" bodystart="85" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1structure_1_1_structure_main_1_1_structure_1a016c5a1aa5349c5adecee9ec1ee219d8" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.structure.StructureMain.Structure::rank</definition>
+        <argsstring></argsstring>
+        <name>rank</name>
+        <qualifiedname>pvade.structure.StructureMain.Structure.rank</qualifiedname>
+        <initializer>=  domain.rank</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/StructureMain.py" line="86" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/StructureMain.py" bodystart="86" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1structure_1_1_structure_main_1_1_structure_1a3e6709136a3c6c72edd7d3faa5cd4673" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.structure.StructureMain.Structure::num_procs</definition>
+        <argsstring></argsstring>
+        <name>num_procs</name>
+        <qualifiedname>pvade.structure.StructureMain.Structure.num_procs</qualifiedname>
+        <initializer>=  domain.num_procs</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/StructureMain.py" line="87" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/StructureMain.py" bodystart="87" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1structure_1_1_structure_main_1_1_structure_1aa863d8acc310443bb81ebbe00029821b" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.structure.StructureMain.Structure::elasticity</definition>
+        <argsstring></argsstring>
+        <name>elasticity</name>
+        <qualifiedname>pvade.structure.StructureMain.Structure.elasticity</qualifiedname>
+        <initializer>=  <ref refid="classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity" kindref="compound">Elasticity</ref>(domain, self.structural_analysis, params)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/StructureMain.py" line="90" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/StructureMain.py" bodystart="90" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1structure_1_1_structure_main_1_1_structure_1aba6f155f898656c145ec2f40706bced2" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.structure.StructureMain.Structure::ndim</definition>
+        <argsstring></argsstring>
+        <name>ndim</name>
+        <qualifiedname>pvade.structure.StructureMain.Structure.ndim</qualifiedname>
+        <initializer>=  domain.structure.msh.topology.dim</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/StructureMain.py" line="93" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/StructureMain.py" bodystart="93" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1structure_1_1_structure_main_1_1_structure_1ac3689bd218b9b0817b4901525ab3c95f" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int pvade.structure.StructureMain.Structure::facet_dim</definition>
+        <argsstring></argsstring>
+        <name>facet_dim</name>
+        <qualifiedname>pvade.structure.StructureMain.Structure.facet_dim</qualifiedname>
+        <initializer>=  self.ndim - 1</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/StructureMain.py" line="94" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/StructureMain.py" bodystart="94" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1structure_1_1_structure_main_1_1_structure_1ab523de80238563ccdf264a62b2dcbf7d" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.structure.StructureMain.Structure::hmin</definition>
+        <argsstring></argsstring>
+        <name>hmin</name>
+        <qualifiedname>pvade.structure.StructureMain.Structure.hmin</qualifiedname>
+        <initializer>=  np.zeros(1)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/StructureMain.py" line="109" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/StructureMain.py" bodystart="109" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1structure_1_1_structure_main_1_1_structure_1a3bf3e69f3b79d3979e7f1a3d67feab40" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.structure.StructureMain.Structure::num_V_dofs</definition>
+        <argsstring></argsstring>
+        <name>num_V_dofs</name>
+        <qualifiedname>pvade.structure.StructureMain.Structure.num_V_dofs</qualifiedname>
+        <initializer>=  self.elasticity.num_V_dofs</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/StructureMain.py" line="117" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/StructureMain.py" bodystart="117" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1structure_1_1_structure_main_1_1_structure_1a9558f1923fcceef8432dd779ef0e57a0" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.structure.StructureMain.Structure::rho</definition>
+        <argsstring></argsstring>
+        <name>rho</name>
+        <qualifiedname>pvade.structure.StructureMain.Structure.rho</qualifiedname>
+        <initializer>=  dolfinx.fem.Constant(
+            domain.structure.msh, params.structure.rho
+        )</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/StructureMain.py" line="122" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/StructureMain.py" bodystart="122" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1structure_1_1_structure_main_1_1_structure_1a4ebfe6b812b70fec226239fa9d082d1d" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.structure.StructureMain.Structure::E</definition>
+        <argsstring></argsstring>
+        <name>E</name>
+        <qualifiedname>pvade.structure.StructureMain.Structure.E</qualifiedname>
+        <initializer>=  params.structure.elasticity_modulus</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/StructureMain.py" line="127" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/StructureMain.py" bodystart="127" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1structure_1_1_structure_main_1_1_structure_1a21e515353253042e206126d46abd1b64" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.structure.StructureMain.Structure::poissons_ratio</definition>
+        <argsstring></argsstring>
+        <name>poissons_ratio</name>
+        <qualifiedname>pvade.structure.StructureMain.Structure.poissons_ratio</qualifiedname>
+        <initializer>=  params.structure.poissons_ratio</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/StructureMain.py" line="128" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/StructureMain.py" bodystart="128" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1structure_1_1_structure_main_1_1_structure_1aa29b033b9ca3f2a82d3ef3e50d9974d3" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.structure.StructureMain.Structure::lame_mu</definition>
+        <argsstring></argsstring>
+        <name>lame_mu</name>
+        <qualifiedname>pvade.structure.StructureMain.Structure.lame_mu</qualifiedname>
+        <initializer>=  self.E / (2.0 * (1.0 + self.poissons_ratio))</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/StructureMain.py" line="129" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/StructureMain.py" bodystart="129" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1structure_1_1_structure_main_1_1_structure_1a575b004ce9ac563ab613f6376bd86b56" prot="public" static="no" mutable="no">
+        <type>tuple</type>
+        <definition>tuple pvade.structure.StructureMain.Structure::lame_lambda</definition>
+        <argsstring></argsstring>
+        <name>lame_lambda</name>
+        <qualifiedname>pvade.structure.StructureMain.Structure.lame_lambda</qualifiedname>
+        <initializer>=  (
+            self.E
+            * self.poissons_ratio
+            / ((1.0 + self.poissons_ratio) * (1.0 - 2.0 * self.poissons_ratio))
+        )</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/StructureMain.py" line="130" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/StructureMain.py" bodystart="130" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1structure_1_1_structure_main_1_1_structure_1a53b08e5b8de5e4f2f6fc1ede11850ce8" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.structure.StructureMain.Structure::north_east_corner_dofs</definition>
+        <argsstring></argsstring>
+        <name>north_east_corner_dofs</name>
+        <qualifiedname>pvade.structure.StructureMain.Structure.north_east_corner_dofs</qualifiedname>
+        <initializer>=  dolfinx.fem.locate_dofs_topological(
+            self.elasticity.V, 0, north_east_corner_facets
+        )</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/StructureMain.py" line="172" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/StructureMain.py" bodystart="172" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1structure_1_1_structure_main_1_1_structure_1a8ae6a59528011c683c3fdbeeb410b960" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.structure.StructureMain.Structure::bc</definition>
+        <argsstring></argsstring>
+        <name>bc</name>
+        <qualifiedname>pvade.structure.StructureMain.Structure.bc</qualifiedname>
+        <initializer>=  self.elasticity.build_boundary_conditions(domain, params)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/StructureMain.py" line="195" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/StructureMain.py" bodystart="195" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1structure_1_1_structure_main_1_1_structure_1a171250f40ec838fe5db6a459f2165887" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.structure.StructureMain.Structure::first_call_to_solver</definition>
+        <argsstring></argsstring>
+        <name>first_call_to_solver</name>
+        <qualifiedname>pvade.structure.StructureMain.Structure.first_call_to_solver</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/StructureMain.py" line="321" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/StructureMain.py" bodystart="321" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1structure_1_1_structure_main_1_1_structure_1a06b47fe9bdc70b88b0f2df16063b40f7" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.structure.StructureMain.Structure::problem</definition>
+        <argsstring></argsstring>
+        <name>problem</name>
+        <qualifiedname>pvade.structure.StructureMain.Structure.problem</qualifiedname>
+        <initializer>=  dolfinx.fem.petsc.NonlinearProblem(self.res, self.u, self.bc)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/StructureMain.py" line="322" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/StructureMain.py" bodystart="322" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1structure_1_1_structure_main_1_1_structure_1a474cddb35cb5f563db19778c606fe924" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.structure.StructureMain.Structure::solver</definition>
+        <argsstring></argsstring>
+        <name>solver</name>
+        <qualifiedname>pvade.structure.StructureMain.Structure.solver</qualifiedname>
+        <initializer>=  dolfinx.nls.petsc.NewtonSolver(self.comm, self.problem)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/StructureMain.py" line="323" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/StructureMain.py" bodystart="323" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classpvade_1_1structure_1_1_structure_main_1_1_structure_1ad53c5f9221ec153abe804a4ec07c57bf" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>pvade.structure.StructureMain.Structure.__init__</definition>
+        <argsstring>(self, domain, params)</argsstring>
+        <name>__init__</name>
+        <qualifiedname>pvade.structure.StructureMain.Structure.__init__</qualifiedname>
+        <param>
+          <type>self</type>
+          <defname>self</defname>
+        </param>
+        <param>
+          <type>domain</type>
+          <defname>domain</defname>
+        </param>
+        <param>
+          <type>params</type>
+          <defname>params</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><verbatim>Initialize the fluid solver
+
+This method initialize the Flow object, namely, it creates all the
+necessary function spaces on the mesh, initializes key counting and
+boolean variables and records certain characteristic quantities like
+the minimum cell size and the number of degrees of freedom attributed
+to both the pressure and velocity function spaces.
+
+Args:
+    domain (:obj:`pvade.geometry.MeshManager.Domain`): A Domain object
+</verbatim> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/StructureMain.py" line="68" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/StructureMain.py" bodystart="68" bodyend="175"/>
+      </memberdef>
+      <memberdef kind="function" id="classpvade_1_1structure_1_1_structure_main_1_1_structure_1a953d987d5da67bea424afd188db01b74" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>pvade.structure.StructureMain.Structure.build_boundary_conditions</definition>
+        <argsstring>(self, domain, params)</argsstring>
+        <name>build_boundary_conditions</name>
+        <qualifiedname>pvade.structure.StructureMain.Structure.build_boundary_conditions</qualifiedname>
+        <param>
+          <type>self</type>
+          <defname>self</defname>
+        </param>
+        <param>
+          <type>domain</type>
+          <defname>domain</defname>
+        </param>
+        <param>
+          <type>params</type>
+          <defname>params</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><verbatim>Build the boundary conditions
+
+A method to manage the building of boundary conditions, including the
+steps of identifying entities on the boundary, marking those degrees
+of freedom either by the identified facets or a gmsh marker function,
+and finally assembling a list of Boundary objects that enforce the
+correct value.
+
+Args:
+    domain (:obj:`pvade.geometry.MeshManager.Domain`): A Domain object
+    params (:obj:`pvade.Parameters.SimParams`): A SimParams object
+</verbatim> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/StructureMain.py" line="176" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/StructureMain.py" bodystart="176" bodyend="196"/>
+      </memberdef>
+      <memberdef kind="function" id="classpvade_1_1structure_1_1_structure_main_1_1_structure_1a41260c0c1bd9b07b6eb59556aab01038" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>pvade.structure.StructureMain.Structure.update_a</definition>
+        <argsstring>(self, u, u_old, v_old, a_old, dt, beta, ufl=True)</argsstring>
+        <name>update_a</name>
+        <qualifiedname>pvade.structure.StructureMain.Structure.update_a</qualifiedname>
+        <param>
+          <type>self</type>
+          <defname>self</defname>
+        </param>
+        <param>
+          <type>u</type>
+          <defname>u</defname>
+        </param>
+        <param>
+          <type>u_old</type>
+          <defname>u_old</defname>
+        </param>
+        <param>
+          <type>v_old</type>
+          <defname>v_old</defname>
+        </param>
+        <param>
+          <type>a_old</type>
+          <defname>a_old</defname>
+        </param>
+        <param>
+          <type>dt</type>
+          <defname>dt</defname>
+        </param>
+        <param>
+          <type>beta</type>
+          <defname>beta</defname>
+        </param>
+        <param>
+          <type>ufl</type>
+          <defname>ufl</defname>
+          <defval>True</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><verbatim>Compute the new acceleration using the Newmark update formula.
+
+Delegates to :meth:`pvade.structure.ElasticityAnalysis.Elasticity.update_a`.
+
+Args:
+    u: Current displacement field (UFL expression or NumPy array).
+    u_old: Displacement at the previous time step.
+    v_old: Velocity at the previous time step.
+    a_old: Acceleration at the previous time step.
+    dt: Time step size (UFL constant or Python float).
+    beta: Newmark :math:`\\beta` parameter.
+    ufl (bool): ``True`` for UFL objects, ``False`` for plain floats.
+
+Returns:
+    Updated acceleration field.
+</verbatim> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/StructureMain.py" line="197" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/StructureMain.py" bodystart="197" bodyend="225"/>
+      </memberdef>
+      <memberdef kind="function" id="classpvade_1_1structure_1_1_structure_main_1_1_structure_1ab5a8711b75642992ee99a3b3423364b2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>pvade.structure.StructureMain.Structure.update_v</definition>
+        <argsstring>(self, a, u_old, v_old, a_old, dt, gamma, ufl=True)</argsstring>
+        <name>update_v</name>
+        <qualifiedname>pvade.structure.StructureMain.Structure.update_v</qualifiedname>
+        <param>
+          <type>self</type>
+          <defname>self</defname>
+        </param>
+        <param>
+          <type>a</type>
+          <defname>a</defname>
+        </param>
+        <param>
+          <type>u_old</type>
+          <defname>u_old</defname>
+        </param>
+        <param>
+          <type>v_old</type>
+          <defname>v_old</defname>
+        </param>
+        <param>
+          <type>a_old</type>
+          <defname>a_old</defname>
+        </param>
+        <param>
+          <type>dt</type>
+          <defname>dt</defname>
+        </param>
+        <param>
+          <type>gamma</type>
+          <defname>gamma</defname>
+        </param>
+        <param>
+          <type>ufl</type>
+          <defname>ufl</defname>
+          <defval>True</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><verbatim>Compute the new velocity using the Newmark update formula.
+
+        Delegates to :meth:`pvade.structure.ElasticityAnalysis.Elasticity.update_v`.
+
+        Args:
+            a: Current acceleration field (UFL expression or NumPy array).
+            u_old: Displacement at the previous time step (unused, kept for
+                API consistency).
+            v_old: Velocity at the previous time step.
+            a_old: Acceleration at the previous time step.
+            dt: Time step size (UFL constant or Python float).
+            gamma: Newmark :math:`\\gamma` parameter.
+            ufl (bool): ``True`` for UFL objects, ``False`` for plain floats.
+
+        Returns:
+            Updated velocity field.
+</verbatim> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/StructureMain.py" line="228" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/StructureMain.py" bodystart="228" bodyend="254"/>
+      </memberdef>
+      <memberdef kind="function" id="classpvade_1_1structure_1_1_structure_main_1_1_structure_1a651969606b881e92aec0fee6878f6300" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>pvade.structure.StructureMain.Structure.update_fields</definition>
+        <argsstring>(self, u, u_old, v_old, a_old, dt, beta, gamma)</argsstring>
+        <name>update_fields</name>
+        <qualifiedname>pvade.structure.StructureMain.Structure.update_fields</qualifiedname>
+        <param>
+          <type>self</type>
+          <defname>self</defname>
+        </param>
+        <param>
+          <type>u</type>
+          <defname>u</defname>
+        </param>
+        <param>
+          <type>u_old</type>
+          <defname>u_old</defname>
+        </param>
+        <param>
+          <type>v_old</type>
+          <defname>v_old</defname>
+        </param>
+        <param>
+          <type>a_old</type>
+          <defname>a_old</defname>
+        </param>
+        <param>
+          <type>dt</type>
+          <defname>dt</defname>
+        </param>
+        <param>
+          <type>beta</type>
+          <defname>beta</defname>
+        </param>
+        <param>
+          <type>gamma</type>
+          <defname>gamma</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><verbatim>Update fields at the end of each time step.</verbatim> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/StructureMain.py" line="255" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/StructureMain.py" bodystart="255" bodyend="266"/>
+      </memberdef>
+      <memberdef kind="function" id="classpvade_1_1structure_1_1_structure_main_1_1_structure_1a61265f699a59dcaca4f5f6f3bbc2ac75" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>pvade.structure.StructureMain.Structure.avg</definition>
+        <argsstring>(self, x_old, x_new, alpha)</argsstring>
+        <name>avg</name>
+        <qualifiedname>pvade.structure.StructureMain.Structure.avg</qualifiedname>
+        <param>
+          <type>self</type>
+          <defname>self</defname>
+        </param>
+        <param>
+          <type>x_old</type>
+          <defname>x_old</defname>
+        </param>
+        <param>
+          <type>x_new</type>
+          <defname>x_new</defname>
+        </param>
+        <param>
+          <type>alpha</type>
+          <defname>alpha</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><verbatim>Return the generalized-alpha weighted average of two fields.
+
+Args:
+    x_old: Field value at the previous time step.
+    x_new: Field value at the current time step.
+    alpha: Weighting parameter.
+
+Returns:
+    Weighted average of ``x_old`` and ``x_new``.
+</verbatim> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/StructureMain.py" line="267" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/StructureMain.py" bodystart="267" bodyend="279"/>
+      </memberdef>
+      <memberdef kind="function" id="classpvade_1_1structure_1_1_structure_main_1_1_structure_1ab72c7f582f6303ceb2d0b946d663b55a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>pvade.structure.StructureMain.Structure.build_forms</definition>
+        <argsstring>(self, domain, params)</argsstring>
+        <name>build_forms</name>
+        <qualifiedname>pvade.structure.StructureMain.Structure.build_forms</qualifiedname>
+        <param>
+          <type>self</type>
+          <defname>self</defname>
+        </param>
+        <param>
+          <type>domain</type>
+          <defname>domain</defname>
+        </param>
+        <param>
+          <type>params</type>
+          <defname>params</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><verbatim>Builds all variational statements
+
+This method creates all the functions, expressions, and variational
+forms that will be needed for the numerical solution of Navier Stokes
+using a fractional step method. This includes the calculation of a
+tentative velocity, the calculation of the change in pressure
+required to correct the tentative velocity to enforce continuity, and
+the update to the velocity field to reflect this change in
+pressure.
+
+Args:
+    domain (:obj:`pvade.geometry.MeshManager.Domain`): A Domain object
+    params (:obj:`pvade.Parameters.SimParams`): A SimParams object
+</verbatim> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/StructureMain.py" line="280" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/StructureMain.py" bodystart="280" bodyend="297"/>
+      </memberdef>
+      <memberdef kind="function" id="classpvade_1_1structure_1_1_structure_main_1_1_structure_1a9d81ac7cd7484eabff7a9c4ba1a47a51" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>pvade.structure.StructureMain.Structure.build_nullspace</definition>
+        <argsstring>(self, V)</argsstring>
+        <name>build_nullspace</name>
+        <qualifiedname>pvade.structure.StructureMain.Structure.build_nullspace</qualifiedname>
+        <param>
+          <type>self</type>
+          <defname>self</defname>
+        </param>
+        <param>
+          <type>V</type>
+          <defname>V</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><verbatim>Build PETSc nullspace for 3D elasticity</verbatim> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/StructureMain.py" line="371" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/StructureMain.py" bodystart="371" bodyend="405"/>
+      </memberdef>
+      <memberdef kind="function" id="classpvade_1_1structure_1_1_structure_main_1_1_structure_1a39b78a7464556f9edcb4a5906e8002ed" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>pvade.structure.StructureMain.Structure.solve</definition>
+        <argsstring>(self, params, dataIO)</argsstring>
+        <name>solve</name>
+        <qualifiedname>pvade.structure.StructureMain.Structure.solve</qualifiedname>
+        <param>
+          <type>self</type>
+          <defname>self</defname>
+        </param>
+        <param>
+          <type>params</type>
+          <defname>params</defname>
+        </param>
+        <param>
+          <type>dataIO</type>
+          <defname>dataIO</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><verbatim>Advance the structural solution by one time step.
+
+Delegates to :meth:`pvade.structure.ElasticityAnalysis.Elasticity.solve`.
+
+Args:
+    params (:obj:`pvade.IO.Parameters.SimParams`): A SimParams object.
+    dataIO (:obj:`pvade.IO.DataStream.DataStream`): The DataStream
+        I/O object.
+</verbatim> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/StructureMain.py" line="406" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/StructureMain.py" bodystart="406" bodyend="418"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="protected-func">
+      <memberdef kind="function" id="classpvade_1_1structure_1_1_structure_main_1_1_structure_1aa28a000ca9ddfa217d9954b520ff270e" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>pvade.structure.StructureMain.Structure._assemble_system</definition>
+        <argsstring>(self, params)</argsstring>
+        <name>_assemble_system</name>
+        <qualifiedname>pvade.structure.StructureMain.Structure._assemble_system</qualifiedname>
+        <param>
+          <type>self</type>
+          <defname>self</defname>
+        </param>
+        <param>
+          <type>params</type>
+          <defname>params</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><verbatim>Pre-assemble all LHS matrices and RHS vectors
+
+Here we pre-assemble all the forms corresponding to the left-hand side
+matrices and right-hand side vectors once outside the time loop. This
+will enable us to re-use certain features like the sparsity pattern
+during the timestepping without any modification of the function
+calls.
+
+Args:
+    params (:obj:`pvade.Parameters.SimParams`): A SimParams object
+</verbatim> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/StructureMain.py" line="298" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/StructureMain.py" bodystart="298" bodyend="370"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><verbatim>Top-level structural mechanics coordinator.
+
+``Structure`` wraps the lower-level
+:class:`~pvade.structure.ElasticityAnalysis.Elasticity` solver and adds
+mesh-topology bookkeeping (minimum cell size, dimension information) and
+material property storage.  It is the object that the FSI loop interacts
+with directly.
+
+Attributes:
+    comm: MPI communicator shared by all PVade objects.
+    rank (int): Rank of this MPI process.
+    num_procs (int): Total number of MPI processes.
+    structural_analysis (bool): Flag indicating whether a structural
+        analysis is being performed (read from *params*).
+    name (str): Human-readable identifier (always ``&quot;structure&quot;``).
+    elasticity (:obj:`pvade.structure.ElasticityAnalysis.Elasticity`):
+        The underlying nonlinear elasticity physics object.
+    ndim (int): Topological dimension of the structure mesh.
+    facet_dim (int): Facet dimension (``ndim - 1``).
+    hmin (float): Global minimum cell diameter across all MPI ranks.
+    num_V_dofs (int): Global number of displacement DOFs (delegated from
+        ``elasticity``).
+    rho (dolfinx.fem.Constant): Mass density :math:`\\rho`.
+    E (float): Young&apos;s modulus.
+    poissons_ratio (float): Poisson&apos;s ratio.
+    lame_mu (float): Lamé shear modulus :math:`\\mu`.
+    lame_lambda (float): Lamé first parameter :math:`\\lambda`.
+    north_east_corner_dofs (np.ndarray): DOF indices for the probe point
+        at the north-east corner of the first panel.
+</verbatim> </para>
+    </detaileddescription>
+    <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/StructureMain.py" line="36" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/StructureMain.py" bodystart="36" bodyend="418"/>
+    <listofallmembers>
+      <member refid="classpvade_1_1structure_1_1_structure_main_1_1_structure_1ad53c5f9221ec153abe804a4ec07c57bf" prot="public" virt="non-virtual"><scope>pvade::structure::StructureMain::Structure</scope><name>__init__</name></member>
+      <member refid="classpvade_1_1structure_1_1_structure_main_1_1_structure_1aa28a000ca9ddfa217d9954b520ff270e" prot="protected" virt="non-virtual"><scope>pvade::structure::StructureMain::Structure</scope><name>_assemble_system</name></member>
+      <member refid="classpvade_1_1structure_1_1_structure_main_1_1_structure_1a61265f699a59dcaca4f5f6f3bbc2ac75" prot="public" virt="non-virtual"><scope>pvade::structure::StructureMain::Structure</scope><name>avg</name></member>
+      <member refid="classpvade_1_1structure_1_1_structure_main_1_1_structure_1a8ae6a59528011c683c3fdbeeb410b960" prot="public" virt="non-virtual"><scope>pvade::structure::StructureMain::Structure</scope><name>bc</name></member>
+      <member refid="classpvade_1_1structure_1_1_structure_main_1_1_structure_1a953d987d5da67bea424afd188db01b74" prot="public" virt="non-virtual"><scope>pvade::structure::StructureMain::Structure</scope><name>build_boundary_conditions</name></member>
+      <member refid="classpvade_1_1structure_1_1_structure_main_1_1_structure_1ab72c7f582f6303ceb2d0b946d663b55a" prot="public" virt="non-virtual"><scope>pvade::structure::StructureMain::Structure</scope><name>build_forms</name></member>
+      <member refid="classpvade_1_1structure_1_1_structure_main_1_1_structure_1a9d81ac7cd7484eabff7a9c4ba1a47a51" prot="public" virt="non-virtual"><scope>pvade::structure::StructureMain::Structure</scope><name>build_nullspace</name></member>
+      <member refid="classpvade_1_1structure_1_1_structure_main_1_1_structure_1acde0a39d1c21ecf73d9d07b57f28f0dd" prot="public" virt="non-virtual"><scope>pvade::structure::StructureMain::Structure</scope><name>comm</name></member>
+      <member refid="classpvade_1_1structure_1_1_structure_main_1_1_structure_1a4ebfe6b812b70fec226239fa9d082d1d" prot="public" virt="non-virtual"><scope>pvade::structure::StructureMain::Structure</scope><name>E</name></member>
+      <member refid="classpvade_1_1structure_1_1_structure_main_1_1_structure_1aa863d8acc310443bb81ebbe00029821b" prot="public" virt="non-virtual"><scope>pvade::structure::StructureMain::Structure</scope><name>elasticity</name></member>
+      <member refid="classpvade_1_1structure_1_1_structure_main_1_1_structure_1ac3689bd218b9b0817b4901525ab3c95f" prot="public" virt="non-virtual"><scope>pvade::structure::StructureMain::Structure</scope><name>facet_dim</name></member>
+      <member refid="classpvade_1_1structure_1_1_structure_main_1_1_structure_1a171250f40ec838fe5db6a459f2165887" prot="public" virt="non-virtual"><scope>pvade::structure::StructureMain::Structure</scope><name>first_call_to_solver</name></member>
+      <member refid="classpvade_1_1structure_1_1_structure_main_1_1_structure_1ab523de80238563ccdf264a62b2dcbf7d" prot="public" virt="non-virtual"><scope>pvade::structure::StructureMain::Structure</scope><name>hmin</name></member>
+      <member refid="classpvade_1_1structure_1_1_structure_main_1_1_structure_1a575b004ce9ac563ab613f6376bd86b56" prot="public" virt="non-virtual"><scope>pvade::structure::StructureMain::Structure</scope><name>lame_lambda</name></member>
+      <member refid="classpvade_1_1structure_1_1_structure_main_1_1_structure_1aa29b033b9ca3f2a82d3ef3e50d9974d3" prot="public" virt="non-virtual"><scope>pvade::structure::StructureMain::Structure</scope><name>lame_mu</name></member>
+      <member refid="classpvade_1_1structure_1_1_structure_main_1_1_structure_1a75613a8148115a9cba5f63b6960e47bd" prot="public" virt="non-virtual"><scope>pvade::structure::StructureMain::Structure</scope><name>name</name></member>
+      <member refid="classpvade_1_1structure_1_1_structure_main_1_1_structure_1aba6f155f898656c145ec2f40706bced2" prot="public" virt="non-virtual"><scope>pvade::structure::StructureMain::Structure</scope><name>ndim</name></member>
+      <member refid="classpvade_1_1structure_1_1_structure_main_1_1_structure_1a53b08e5b8de5e4f2f6fc1ede11850ce8" prot="public" virt="non-virtual"><scope>pvade::structure::StructureMain::Structure</scope><name>north_east_corner_dofs</name></member>
+      <member refid="classpvade_1_1structure_1_1_structure_main_1_1_structure_1a3e6709136a3c6c72edd7d3faa5cd4673" prot="public" virt="non-virtual"><scope>pvade::structure::StructureMain::Structure</scope><name>num_procs</name></member>
+      <member refid="classpvade_1_1structure_1_1_structure_main_1_1_structure_1a3bf3e69f3b79d3979e7f1a3d67feab40" prot="public" virt="non-virtual"><scope>pvade::structure::StructureMain::Structure</scope><name>num_V_dofs</name></member>
+      <member refid="classpvade_1_1structure_1_1_structure_main_1_1_structure_1a21e515353253042e206126d46abd1b64" prot="public" virt="non-virtual"><scope>pvade::structure::StructureMain::Structure</scope><name>poissons_ratio</name></member>
+      <member refid="classpvade_1_1structure_1_1_structure_main_1_1_structure_1a06b47fe9bdc70b88b0f2df16063b40f7" prot="public" virt="non-virtual"><scope>pvade::structure::StructureMain::Structure</scope><name>problem</name></member>
+      <member refid="classpvade_1_1structure_1_1_structure_main_1_1_structure_1a016c5a1aa5349c5adecee9ec1ee219d8" prot="public" virt="non-virtual"><scope>pvade::structure::StructureMain::Structure</scope><name>rank</name></member>
+      <member refid="classpvade_1_1structure_1_1_structure_main_1_1_structure_1a9558f1923fcceef8432dd779ef0e57a0" prot="public" virt="non-virtual"><scope>pvade::structure::StructureMain::Structure</scope><name>rho</name></member>
+      <member refid="classpvade_1_1structure_1_1_structure_main_1_1_structure_1a39b78a7464556f9edcb4a5906e8002ed" prot="public" virt="non-virtual"><scope>pvade::structure::StructureMain::Structure</scope><name>solve</name></member>
+      <member refid="classpvade_1_1structure_1_1_structure_main_1_1_structure_1a474cddb35cb5f563db19778c606fe924" prot="public" virt="non-virtual"><scope>pvade::structure::StructureMain::Structure</scope><name>solver</name></member>
+      <member refid="classpvade_1_1structure_1_1_structure_main_1_1_structure_1aa668e2e0d37154411d5f867b1ca1eeaa" prot="public" virt="non-virtual"><scope>pvade::structure::StructureMain::Structure</scope><name>structural_analysis</name></member>
+      <member refid="classpvade_1_1structure_1_1_structure_main_1_1_structure_1a41260c0c1bd9b07b6eb59556aab01038" prot="public" virt="non-virtual"><scope>pvade::structure::StructureMain::Structure</scope><name>update_a</name></member>
+      <member refid="classpvade_1_1structure_1_1_structure_main_1_1_structure_1a651969606b881e92aec0fee6878f6300" prot="public" virt="non-virtual"><scope>pvade::structure::StructureMain::Structure</scope><name>update_fields</name></member>
+      <member refid="classpvade_1_1structure_1_1_structure_main_1_1_structure_1ab5a8711b75642992ee99a3b3423364b2" prot="public" virt="non-virtual"><scope>pvade::structure::StructureMain::Structure</scope><name>update_v</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

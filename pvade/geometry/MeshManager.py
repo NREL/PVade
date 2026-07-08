@@ -24,8 +24,15 @@ import yaml
 from petsc4py import PETSc
 
 from importlib import import_module
+from pvade.IO.verbosity import emit_verbosity_print
 
 from numba import jit
+
+
+def _vprint(rank, message, level=1):
+    """Rank-0 verbosity-aware print helper for mesh manager messages."""
+    if rank == 0:
+        emit_verbosity_print(message, level=level)
 
 
 # from pvade.geometry.panels.DomainCreation   import *
@@ -328,8 +335,7 @@ class FSIDomain:
             submesh_list.append("structure")
 
         for sub_domain_name in submesh_list:
-            if self.rank == 0:
-                print(f"Creating {sub_domain_name} submesh")
+            _vprint(self.rank, f"Creating {sub_domain_name} submesh", level=1)
 
             # Get the idx associated with either "fluid" or "structure"
             marker_id = self.domain_markers[sub_domain_name]["idx"]
@@ -511,7 +517,7 @@ class FSIDomain:
 
     def _generate_mesh(self):
         """This function call generates the mesh."""
-        print("Starting mesh generation... ", end="")
+        _vprint(self.rank, "Starting mesh generation...", level=1)
 
         # Generate the mesh
         tic = time.time()
@@ -523,9 +529,8 @@ class FSIDomain:
 
         toc = time.time()
 
-        if self.rank == 0:
-            print("Finished.")
-            print(f"Total meshing time = {toc-tic:.1f} s")
+        _vprint(self.rank, "Finished.", level=1)
+        _vprint(self.rank, f"Total meshing time = {toc-tic:.1f} s", level=1)
 
     def _generate_mesh_3d(self):
         """Generate a 3-D mesh using Gmsh.
@@ -596,17 +601,17 @@ class FSIDomain:
 
         for sub_domain_name in sub_domain_list:
             try:
-                if self.rank == 0:
-                    print(f"Beginning write of {sub_domain_name} mesh.")
+                _vprint(self.rank, f"Beginning write of {sub_domain_name} mesh.", level=1)
 
                 # Get the fluid or structure object from self
                 sub_domain = getattr(self, sub_domain_name)
 
             except:
-                if self.rank == 0:
-                    print(
-                        f"Could not find subdomain {sub_domain_name}, not writing this mesh."
-                    )
+                _vprint(
+                    self.rank,
+                    f"Could not find subdomain {sub_domain_name}, not writing this mesh.",
+                    level=1,
+                )
 
             else:
                 # Write this subdomain mesh to a file
@@ -630,8 +635,7 @@ class FSIDomain:
                 )
                 gmsh.write(gmsh_mesh_filename)
 
-                if self.rank == 0:
-                    print(f"Finished writing {sub_domain_name} mesh.")
+                _vprint(self.rank, f"Finished writing {sub_domain_name} mesh.", level=1)
 
         # Finally, dump a yaml file of the domain_markers
         # necessary for setting BCs in case this mesh directory is read for a new run
@@ -668,8 +672,7 @@ class FSIDomain:
                 and sub_domain_name == "structure"
             ):
                 try:
-                    if self.rank == 0:
-                        print(f"Reading {sub_domain_name} mesh.")
+                    _vprint(self.rank, f"Reading {sub_domain_name} mesh.", level=1)
 
                     # Read the subdomain mesh
                     with dolfinx.io.XDMFFile(self.comm, mesh_filename, "r") as xdmf:
@@ -680,10 +683,11 @@ class FSIDomain:
                         facet_tags = xdmf.read_meshtags(submesh, name="facet_tags")
 
                 except:
-                    if self.rank == 0:
-                        print(
-                            f"Could not find subdomain {sub_domain_name} mesh file, not reading this mesh."
-                        )
+                    _vprint(
+                        self.rank,
+                        f"Could not find subdomain {sub_domain_name} mesh file, not reading this mesh.",
+                        level=1,
+                    )
 
                 else:
 
@@ -745,8 +749,7 @@ class FSIDomain:
                         # assert np.all(self.fluid.msh.geometry.x[:] == self.fluid_undeformed.msh.geometry.x[:])
                         # assert np.shape(self.fluid.msh.geometry.x[:]) == np.shape(self.fluid_undeformed.msh.geometry.x[:])
 
-                if self.rank == 0:
-                    print(f"Finished read {sub_domain_name} mesh.")
+                _vprint(self.rank, f"Finished read {sub_domain_name} mesh.", level=1)
 
         self.ndim = submesh.topology.dim
 
@@ -811,7 +814,10 @@ class FSIDomain:
 
         coords = points[:]
 
-        print(f"Rank {self.rank} owns {num_nodes_owned_by_proc} nodes\n{coords}")
+        emit_verbosity_print(
+            f"Rank {self.rank} owns {num_nodes_owned_by_proc} nodes\n{coords}",
+            level=2,
+        )
 
     def test_submesh_transfer(self, params):
         P2 = ufl.VectorElement("Lagrange", self.msh.ufl_cell(), 2)

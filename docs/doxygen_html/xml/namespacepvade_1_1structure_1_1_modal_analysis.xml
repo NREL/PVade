@@ -1,0 +1,50 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.17.0" xml:lang="en-US">
+  <compounddef id="namespacepvade_1_1structure_1_1_modal_analysis" kind="namespace" language="Python">
+    <compoundname>pvade::structure::ModalAnalysis</compoundname>
+    <innerclass refid="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis" prot="public">pvade::structure::ModalAnalysis::ModalAnalysis</innerclass>
+    <sectiondef kind="func">
+      <memberdef kind="function" id="namespacepvade_1_1structure_1_1_modal_analysis_1a9539bb7cfd79da86137d9c228f6b4634" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>_vprint</definition>
+        <argsstring>(rank, message, level=1)</argsstring>
+        <name>_vprint</name>
+        <qualifiedname>pvade.structure.ModalAnalysis._vprint</qualifiedname>
+        <param>
+          <type>rank</type>
+          <defname>rank</defname>
+        </param>
+        <param>
+          <type>message</type>
+          <defname>message</defname>
+        </param>
+        <param>
+          <type>level</type>
+          <defname>level</defname>
+          <defval>1</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><verbatim>Rank-0 verbosity-aware print helper for modal analysis messages.</verbatim> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/ModalAnalysis.py" line="27" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/ModalAnalysis.py" bodystart="27" bodyend="32"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><verbatim>Modal (eigenvalue) analysis for structural mechanics.
+
+This module provides the :class:`ModalAnalysis` class, which assembles the
+structural mass and stiffness matrices and solves the generalised eigenvalue
+problem to obtain natural frequencies and mode shapes.  It shares the same
+time-integration infrastructure as :class:`~pvade.structure.ElasticityAnalysis.Elasticity`
+but is intended for free-vibration studies rather than time-domain forcing.
+</verbatim> </para>
+    </detaileddescription>
+    <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/ModalAnalysis.py" line="1" column="1"/>
+  </compounddef>
+</doxygen>

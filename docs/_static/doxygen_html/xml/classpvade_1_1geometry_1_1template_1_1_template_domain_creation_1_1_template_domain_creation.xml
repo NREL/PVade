@@ -1,0 +1,274 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.17.0" xml:lang="en-US">
+  <compounddef id="classpvade_1_1geometry_1_1template_1_1_template_domain_creation_1_1_template_domain_creation" kind="class" language="Python" prot="public">
+    <compoundname>pvade::geometry::template::TemplateDomainCreation::TemplateDomainCreation</compoundname>
+    <derivedcompoundref refid="classpvade_1_1geometry_1_1cylinder2d_1_1_domain_creation_1_1_domain_creation" prot="public" virt="non-virtual">pvade.geometry.cylinder2d.DomainCreation.DomainCreation</derivedcompoundref>
+    <derivedcompoundref refid="classpvade_1_1geometry_1_1cylinder3d_1_1_domain_creation_1_1_domain_creation" prot="public" virt="non-virtual">pvade.geometry.cylinder3d.DomainCreation.DomainCreation</derivedcompoundref>
+    <derivedcompoundref refid="classpvade_1_1geometry_1_1flag2d_1_1_domain_creation_1_1_domain_creation" prot="public" virt="non-virtual">pvade.geometry.flag2d.DomainCreation.DomainCreation</derivedcompoundref>
+    <derivedcompoundref refid="classpvade_1_1geometry_1_1heliostats3d_1_1_domain_creation_1_1_domain_creation" prot="public" virt="non-virtual">pvade.geometry.heliostats3d.DomainCreation.DomainCreation</derivedcompoundref>
+    <derivedcompoundref refid="classpvade_1_1geometry_1_1panels2d_1_1_domain_creation_1_1_domain_creation" prot="public" virt="non-virtual">pvade.geometry.panels2d.DomainCreation.DomainCreation</derivedcompoundref>
+    <derivedcompoundref refid="classpvade_1_1geometry_1_1panels3d_1_1_domain_creation_1_1_domain_creation" prot="public" virt="non-virtual">pvade.geometry.panels3d.DomainCreation.DomainCreation</derivedcompoundref>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="classpvade_1_1geometry_1_1template_1_1_template_domain_creation_1_1_template_domain_creation_1a7b6de9bf6c9803709fa1fc5faa5fbc21" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.geometry.template.TemplateDomainCreation.TemplateDomainCreation::comm</definition>
+        <argsstring></argsstring>
+        <name>comm</name>
+        <qualifiedname>pvade.geometry.template.TemplateDomainCreation.TemplateDomainCreation.comm</qualifiedname>
+        <initializer>=  params.comm</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/template/TemplateDomainCreation.py" line="19" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/template/TemplateDomainCreation.py" bodystart="19" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1geometry_1_1template_1_1_template_domain_creation_1_1_template_domain_creation_1abbad1c751ef372db73981f16e4582fa5" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int pvade.geometry.template.TemplateDomainCreation.TemplateDomainCreation::rank</definition>
+        <argsstring></argsstring>
+        <name>rank</name>
+        <qualifiedname>pvade.geometry.template.TemplateDomainCreation.TemplateDomainCreation.rank</qualifiedname>
+        <initializer>=  params.rank</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/template/TemplateDomainCreation.py" line="20" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/template/TemplateDomainCreation.py" bodystart="20" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1geometry_1_1template_1_1_template_domain_creation_1_1_template_domain_creation_1a8079a964a183b0bed265e9a3af12c54f" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.geometry.template.TemplateDomainCreation.TemplateDomainCreation::num_procs</definition>
+        <argsstring></argsstring>
+        <name>num_procs</name>
+        <qualifiedname>pvade.geometry.template.TemplateDomainCreation.TemplateDomainCreation.num_procs</qualifiedname>
+        <initializer>=  params.num_procs</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/template/TemplateDomainCreation.py" line="21" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/template/TemplateDomainCreation.py" bodystart="21" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1geometry_1_1template_1_1_template_domain_creation_1_1_template_domain_creation_1a8de79a9660dd37d1c970021aabb17fe5" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.geometry.template.TemplateDomainCreation.TemplateDomainCreation::gmsh_model</definition>
+        <argsstring></argsstring>
+        <name>gmsh_model</name>
+        <qualifiedname>pvade.geometry.template.TemplateDomainCreation.TemplateDomainCreation.gmsh_model</qualifiedname>
+        <initializer>=  gmsh.model()</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/template/TemplateDomainCreation.py" line="29" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/template/TemplateDomainCreation.py" bodystart="29" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1geometry_1_1template_1_1_template_domain_creation_1_1_template_domain_creation_1a4f950dc8dc9bea748d5326f0a29ef30d" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>pvade.geometry.template.TemplateDomainCreation.TemplateDomainCreation::ndim</definition>
+        <argsstring></argsstring>
+        <name>ndim</name>
+        <qualifiedname>pvade.geometry.template.TemplateDomainCreation.TemplateDomainCreation.ndim</qualifiedname>
+        <initializer>=  self.gmsh_model.get_dimension()</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/template/TemplateDomainCreation.py" line="60" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/template/TemplateDomainCreation.py" bodystart="60" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classpvade_1_1geometry_1_1template_1_1_template_domain_creation_1_1_template_domain_creation_1a0cb2e12c55e48701e2f927ab240bbbfd" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>pvade.geometry.template.TemplateDomainCreation.TemplateDomainCreation.__init__</definition>
+        <argsstring>(self, params)</argsstring>
+        <name>__init__</name>
+        <qualifiedname>pvade.geometry.template.TemplateDomainCreation.TemplateDomainCreation.__init__</qualifiedname>
+        <param>
+          <type>self</type>
+          <defname>self</defname>
+        </param>
+        <param>
+          <type>params</type>
+          <defname>params</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><verbatim>The class is initialised here
+
+Args:
+    params (_type_): _description_
+</verbatim> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/template/TemplateDomainCreation.py" line="11" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/template/TemplateDomainCreation.py" bodystart="11" bodyend="32"/>
+      </memberdef>
+      <memberdef kind="function" id="classpvade_1_1geometry_1_1template_1_1_template_domain_creation_1_1_template_domain_creation_1a8128156e3993544dc2852aafb6f28106" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>pvade.geometry.template.TemplateDomainCreation.TemplateDomainCreation.build</definition>
+        <argsstring>(self, params)</argsstring>
+        <name>build</name>
+        <qualifiedname>pvade.geometry.template.TemplateDomainCreation.TemplateDomainCreation.build</qualifiedname>
+        <param>
+          <type>self</type>
+          <defname>self</defname>
+        </param>
+        <param>
+          <type>params</type>
+          <defname>params</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><verbatim>    panels: This function creates the computational domain for a 3d simulation involving N panels.
+    The panels are set at a distance apart, rotated at an angle theta and are elevated with a distance H from the ground.
+    panels2d: This function creates the computational domain for a 2d simulation involving N panels.
+    The panels are set at a distance apart, rotated at an angle theta and are elevated with a distance H from the ground.
+    cylinder3d: This function creates the computational domain for a flow around a 3D cylinder.
+    cylinder2d: This function creates the computational domain for a flow around a 2D cylinder.
+Returns:
+    The function returns gmsh.model which contains the geometric description of the computational domain
+</verbatim> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/template/TemplateDomainCreation.py" line="33" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/template/TemplateDomainCreation.py" bodystart="33" bodyend="45"/>
+      </memberdef>
+      <memberdef kind="function" id="classpvade_1_1geometry_1_1template_1_1_template_domain_creation_1_1_template_domain_creation_1a23633a446558be6fb861b69d58317eff" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>pvade.geometry.template.TemplateDomainCreation.TemplateDomainCreation.set_length_scales</definition>
+        <argsstring>(self, params, domain_markers)</argsstring>
+        <name>set_length_scales</name>
+        <qualifiedname>pvade.geometry.template.TemplateDomainCreation.TemplateDomainCreation.set_length_scales</qualifiedname>
+        <reimplementedby refid="classpvade_1_1geometry_1_1cylinder3d_1_1_domain_creation_1_1_domain_creation_1a24ac9da5dd909970dc12feb2b5190cc0">set_length_scales</reimplementedby>
+        <reimplementedby refid="classpvade_1_1geometry_1_1flag2d_1_1_domain_creation_1_1_domain_creation_1a38d4e5277c0997e9f602ac7bc4a4b155">set_length_scales</reimplementedby>
+        <reimplementedby refid="classpvade_1_1geometry_1_1heliostats3d_1_1_domain_creation_1_1_domain_creation_1a6932c7dc6d60b46952e3804b5d84b013">set_length_scales</reimplementedby>
+        <reimplementedby refid="classpvade_1_1geometry_1_1panels2d_1_1_domain_creation_1_1_domain_creation_1a469fa37b1750abba57a69523722a7439">set_length_scales</reimplementedby>
+        <reimplementedby refid="classpvade_1_1geometry_1_1panels3d_1_1_domain_creation_1_1_domain_creation_1a20de5dee69ae9ea4c310b861029b53a2">set_length_scales</reimplementedby>
+        <param>
+          <type>self</type>
+          <defname>self</defname>
+        </param>
+        <param>
+          <type>params</type>
+          <defname>params</defname>
+        </param>
+        <param>
+          <type>domain_markers</type>
+          <defname>domain_markers</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><verbatim>This function call defines the characteristic length for the mesh in locations of interst
+LcMin,LcMax,DistMin and DistMax are used to create a refined mesh in specific locations
+which results in a high fidelity mesh without using a uniform element size in the whole mesh.
+</verbatim> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/template/TemplateDomainCreation.py" line="46" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/template/TemplateDomainCreation.py" bodystart="46" bodyend="54"/>
+      </memberdef>
+      <memberdef kind="function" id="classpvade_1_1geometry_1_1template_1_1_template_domain_creation_1_1_template_domain_creation_1a477bd7662d834780ade08b72cd34cb5d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>pvade.geometry.template.TemplateDomainCreation.TemplateDomainCreation.mark_surfaces</definition>
+        <argsstring>(self, params, domain_markers)</argsstring>
+        <name>mark_surfaces</name>
+        <qualifiedname>pvade.geometry.template.TemplateDomainCreation.TemplateDomainCreation.mark_surfaces</qualifiedname>
+        <param>
+          <type>self</type>
+          <defname>self</defname>
+        </param>
+        <param>
+          <type>params</type>
+          <defname>params</defname>
+        </param>
+        <param>
+          <type>domain_markers</type>
+          <defname>domain_markers</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><verbatim>This function call iterates over all boundaries and assigns tags for each boundary.
+The Tags are being used when appying boundary condition.
+</verbatim> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/template/TemplateDomainCreation.py" line="55" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/template/TemplateDomainCreation.py" bodystart="55" bodyend="237"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><verbatim>This class creates the geometry used for a given example.
+Gmsh is used to create the computational domain
+</verbatim> </para>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="1">
+        <label>pvade.geometry.template.TemplateDomainCreation.TemplateDomainCreation</label>
+        <link refid="classpvade_1_1geometry_1_1template_1_1_template_domain_creation_1_1_template_domain_creation"/>
+      </node>
+      <node id="2">
+        <label>pvade.geometry.cylinder2d.DomainCreation.DomainCreation</label>
+        <link refid="classpvade_1_1geometry_1_1cylinder2d_1_1_domain_creation_1_1_domain_creation"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>pvade.geometry.cylinder3d.DomainCreation.DomainCreation</label>
+        <link refid="classpvade_1_1geometry_1_1cylinder3d_1_1_domain_creation_1_1_domain_creation"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>pvade.geometry.flag2d.DomainCreation.DomainCreation</label>
+        <link refid="classpvade_1_1geometry_1_1flag2d_1_1_domain_creation_1_1_domain_creation"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>pvade.geometry.heliostats3d.DomainCreation.DomainCreation</label>
+        <link refid="classpvade_1_1geometry_1_1heliostats3d_1_1_domain_creation_1_1_domain_creation"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="6">
+        <label>pvade.geometry.panels2d.DomainCreation.DomainCreation</label>
+        <link refid="classpvade_1_1geometry_1_1panels2d_1_1_domain_creation_1_1_domain_creation"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="7">
+        <label>pvade.geometry.panels3d.DomainCreation.DomainCreation</label>
+        <link refid="classpvade_1_1geometry_1_1panels3d_1_1_domain_creation_1_1_domain_creation"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/template/TemplateDomainCreation.py" line="5" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/template/TemplateDomainCreation.py" bodystart="5" bodyend="237"/>
+    <listofallmembers>
+      <member refid="classpvade_1_1geometry_1_1template_1_1_template_domain_creation_1_1_template_domain_creation_1a0cb2e12c55e48701e2f927ab240bbbfd" prot="public" virt="non-virtual"><scope>pvade::geometry::template::TemplateDomainCreation::TemplateDomainCreation</scope><name>__init__</name></member>
+      <member refid="classpvade_1_1geometry_1_1template_1_1_template_domain_creation_1_1_template_domain_creation_1a8128156e3993544dc2852aafb6f28106" prot="public" virt="non-virtual"><scope>pvade::geometry::template::TemplateDomainCreation::TemplateDomainCreation</scope><name>build</name></member>
+      <member refid="classpvade_1_1geometry_1_1template_1_1_template_domain_creation_1_1_template_domain_creation_1a7b6de9bf6c9803709fa1fc5faa5fbc21" prot="public" virt="non-virtual"><scope>pvade::geometry::template::TemplateDomainCreation::TemplateDomainCreation</scope><name>comm</name></member>
+      <member refid="classpvade_1_1geometry_1_1template_1_1_template_domain_creation_1_1_template_domain_creation_1a8de79a9660dd37d1c970021aabb17fe5" prot="public" virt="non-virtual"><scope>pvade::geometry::template::TemplateDomainCreation::TemplateDomainCreation</scope><name>gmsh_model</name></member>
+      <member refid="classpvade_1_1geometry_1_1template_1_1_template_domain_creation_1_1_template_domain_creation_1a477bd7662d834780ade08b72cd34cb5d" prot="public" virt="non-virtual"><scope>pvade::geometry::template::TemplateDomainCreation::TemplateDomainCreation</scope><name>mark_surfaces</name></member>
+      <member refid="classpvade_1_1geometry_1_1template_1_1_template_domain_creation_1_1_template_domain_creation_1a4f950dc8dc9bea748d5326f0a29ef30d" prot="public" virt="non-virtual"><scope>pvade::geometry::template::TemplateDomainCreation::TemplateDomainCreation</scope><name>ndim</name></member>
+      <member refid="classpvade_1_1geometry_1_1template_1_1_template_domain_creation_1_1_template_domain_creation_1a8079a964a183b0bed265e9a3af12c54f" prot="public" virt="non-virtual"><scope>pvade::geometry::template::TemplateDomainCreation::TemplateDomainCreation</scope><name>num_procs</name></member>
+      <member refid="classpvade_1_1geometry_1_1template_1_1_template_domain_creation_1_1_template_domain_creation_1abbad1c751ef372db73981f16e4582fa5" prot="public" virt="non-virtual"><scope>pvade::geometry::template::TemplateDomainCreation::TemplateDomainCreation</scope><name>rank</name></member>
+      <member refid="classpvade_1_1geometry_1_1template_1_1_template_domain_creation_1_1_template_domain_creation_1a23633a446558be6fb861b69d58317eff" prot="public" virt="non-virtual"><scope>pvade::geometry::template::TemplateDomainCreation::TemplateDomainCreation</scope><name>set_length_scales</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

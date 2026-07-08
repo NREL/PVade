@@ -1,0 +1,41 @@
+\doxysection{pvade.\+geometry.\+Mesh\+Manager Namespace Reference}
+\hypertarget{namespacepvade_1_1geometry_1_1_mesh_manager}{}\label{namespacepvade_1_1geometry_1_1_mesh_manager}\index{pvade.geometry.MeshManager@{pvade.geometry.MeshManager}}
+\doxysubsubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \doxymbox{\hyperlink{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain}{FSIDomain}}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\doxymbox{\hyperlink{namespacepvade_1_1geometry_1_1_mesh_manager_a9539bb7cfd79da86137d9c228f6b4634}{\+\_\+vprint}} (rank, message, level=1)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\begin{DoxyVerb}Computational domain construction and mesh management.
+
+This module provides the :class:`FSIDomain` class, which orchestrates the
+entire geometry-to-mesh pipeline:
+
+1. Builds the CAD geometry by delegating to a problem-specific
+    ``DomainCreation`` module selected at runtime.
+2. Marks fluid and structural surface/volume regions with integer tags.
+3. Generates the mesh with Gmsh.
+4. Distributes the mesh across MPI ranks via DOLFINx.
+5. Extracts fluid and structure submeshes from the parent mesh using cell tags.
+6. Transfers facet tags to each submesh for boundary-condition assignment.
+\end{DoxyVerb}
+ 
+
+\label{namespacepvade_1_1geometry_1_1_mesh_manager_doc-func-members}
+\Hypertarget{namespacepvade_1_1geometry_1_1_mesh_manager_doc-func-members}
+\doxysubsection{Function Documentation}
+\Hypertarget{namespacepvade_1_1geometry_1_1_mesh_manager_a9539bb7cfd79da86137d9c228f6b4634}\index{pvade.geometry.MeshManager@{pvade.geometry.MeshManager}!\_vprint@{\_vprint}}
+\index{\_vprint@{\_vprint}!pvade.geometry.MeshManager@{pvade.geometry.MeshManager}}
+\doxysubsubsection{\texorpdfstring{\_vprint()}{\_vprint()}}
+{\footnotesize\ttfamily \label{namespacepvade_1_1geometry_1_1_mesh_manager_a9539bb7cfd79da86137d9c228f6b4634} 
+\+\_\+vprint (\begin{DoxyParamCaption}\item[{}]{rank}{, }\item[{}]{message}{, }\item[{}]{level}{ = {\ttfamily 1}}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [protected]}}
+
+\begin{DoxyVerb}Rank-0 verbosity-aware print helper for mesh manager messages.\end{DoxyVerb}
+ 

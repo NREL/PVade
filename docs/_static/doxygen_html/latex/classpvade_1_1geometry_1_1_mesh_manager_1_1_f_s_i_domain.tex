@@ -1,0 +1,622 @@
+\doxysection{pvade.\+geometry.\+Mesh\+Manager.\+FSIDomain Class Reference}
+\hypertarget{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain}{}\label{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain}\index{pvade.geometry.MeshManager.FSIDomain@{pvade.geometry.MeshManager.FSIDomain}}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\doxymbox{\hyperlink{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_a7cfa9b439d67c6045fad0a8289bf5c37}{\+\_\+\+\_\+init\+\_\+\+\_\+}} (self, params)
+\item 
+\doxymbox{\hyperlink{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_ae32474d7ab3fc2ad4b08ab050fce2a8b}{build}} (self, params)
+\item 
+\doxymbox{\hyperlink{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_a9ad2aa7438deffed483d514a6aa7d356}{write\+\_\+mesh\+\_\+files}} (self, params)
+\item 
+\doxymbox{\hyperlink{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_aaf393f71ea473483d23fe1e5a68ee17a}{read\+\_\+mesh\+\_\+files}} (self, read\+\_\+mesh\+\_\+dir, params)
+\item 
+\doxymbox{\hyperlink{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_a26fabdc3a2e58d2a1b1c079429bf3820}{test\+\_\+mesh\+\_\+functionspace}} (self)
+\item 
+\doxymbox{\hyperlink{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_acc4ac74ea8c15d94e8dc1c160d97bbf2}{test\+\_\+submesh\+\_\+transfer}} (self, params)
+\item 
+\doxymbox{\hyperlink{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_a815bda42657bad98527e00dffac1b6ee}{move\+\_\+mesh}} (self, structure, params)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\doxymbox{\hyperlink{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_a7fe83760c27238f2220a4ab0ae1e0eba}{comm}} = params.\+comm
+\item 
+int \doxymbox{\hyperlink{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_a6316d0186127a5bbfc2d8ee5cca21d80}{rank}} = params.\+rank
+\item 
+\doxymbox{\hyperlink{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_a17a3cbbeac4423c88c89e3e6efd52563}{num\+\_\+procs}} = params.\+num\+\_\+procs
+\item 
+bool \doxymbox{\hyperlink{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_a5e0ccb0361663df70b1a3ded33a6231b}{first\+\_\+move\+\_\+mesh}} = True
+\item 
+\doxymbox{\hyperlink{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_ac5d8679dbc88f4f97baab3aae9d7589b}{numpy\+\_\+pt\+\_\+total\+\_\+array}} = None
+\item 
+tuple \doxymbox{\hyperlink{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_a2ea162371a28917af671ed3273df8e5f}{ndim}} = None
+\item 
+dict \doxymbox{\hyperlink{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_aec5727eeca463face60130372d09c848}{domain\+\_\+markers}} = \{\}
+\item 
+\doxymbox{\hyperlink{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_a5ad373d7a79298d9e2dc9464031d57b8}{geometry}} = dcm.\+Domain\+Creation(params)
+\item 
+\doxymbox{\hyperlink{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_ae61060991ba9c0d359a6280633dca381}{msh}}
+\item 
+\doxymbox{\hyperlink{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_a20aabf73b67f44c186704c6f3b8943db}{cell\+\_\+tags}}
+\item 
+\doxymbox{\hyperlink{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_ac77865b1b085b3c724dfb7772ee03b35}{facet\+\_\+tags}}
+\item 
+\doxymbox{\hyperlink{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_a5c0d3f03818ebc21bf28673b5ae842db}{V1}} = dolfinx.\+fem.\+Function\+Space(self.\+fluid.\+msh, vec\+\_\+el\+\_\+1)
+\item 
+\doxymbox{\hyperlink{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_abc4ee08e9cd03d015fb2a811b7a2c893}{V1\+\_\+undeformed}}
+\item 
+\doxymbox{\hyperlink{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_a374bed06258d49d734615073e4dcdbb7}{fluid\+\_\+mesh\+\_\+displacement}}
+\item 
+\doxymbox{\hyperlink{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_a8c060e6609d78e6b0d839dc3cd359af2}{fluid\+\_\+mesh\+\_\+displacement\+\_\+bc}}
+\item 
+\doxymbox{\hyperlink{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_a62444852ea3373a9081bf1c35963df6c}{fluid\+\_\+mesh\+\_\+displacement\+\_\+bc\+\_\+undeformed}}
+\item 
+\doxymbox{\hyperlink{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_ab999bcbda5190fcc867f2a9c12459e3c}{total\+\_\+mesh\+\_\+displacement}}
+\item 
+\doxymbox{\hyperlink{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_a0ed33da66fab39e813b7dabd784e14ed}{results\+\_\+filename\+\_\+vtk}}
+\item 
+\doxymbox{\hyperlink{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_a57b86f7bc78cd0ac22f71a19f43c20ca}{Q1}} = dolfinx.\+fem.\+Function\+Space(self.\+fluid.\+msh, scalar\+\_\+el\+\_\+1)
+\item 
+\doxymbox{\hyperlink{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_a987b06f792d406a4b7643aac12d0f59d}{distance}} = dolfinx.\+fem.\+Function(self.\+Q1)
+\item 
+\doxymbox{\hyperlink{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_af20bda5d268a3ca1ef688ee91c11e42f}{idx\+\_\+vec}}
+\item 
+\doxymbox{\hyperlink{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_a6a85f221ceb5411299c9f55a70fe9d89}{all\+\_\+interior\+\_\+\+V\+\_\+dofs}}
+\item 
+tuple \doxymbox{\hyperlink{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_af7f9fec4841991a8a9d7126fa3d86e4a}{facet\+\_\+dim}} = self.\+ndim -\/ 1
+\item 
+\doxymbox{\hyperlink{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_a847c23d6c6a612342fef8a147fa64129}{all\+\_\+exterior\+\_\+\+V\+\_\+dofs}}
+\item 
+\doxymbox{\hyperlink{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_a2f0b9218488084bc27e7ff78ece0e35d}{all\+\_\+xmin\+\_\+xmax\+\_\+\+V\+\_\+dofs}}
+\item 
+\doxymbox{\hyperlink{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_ae8c08583b1a95d03ef515e536e6e3d2f}{all\+\_\+ymin\+\_\+ymax\+\_\+\+V\+\_\+dofs}}
+\item 
+list \doxymbox{\hyperlink{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_a654b9b38832cb616a409789023574410}{bcx}} = \+[$\,$]\+
+\item 
+\doxymbox{\hyperlink{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_a25ee2bdada0ccb6a5c11f253eb9feacf}{a}}
+\item 
+\doxymbox{\hyperlink{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_aeb832719496774fe60d2d1e17acdb29d}{L}} = dolfinx.\+fem.\+form(ufl.\+inner(zero\+\_\+vec, v) \texorpdfstring{$\ast$}{*} ufl.\+dx)
+\item 
+\doxymbox{\hyperlink{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_a1e133cb812bf0ece3248fe09f004a734}{A}} = dolfinx.\+fem.\+petsc.\+assemble\+\_\+matrix(self.\+a, bcs=self.\+bcx)
+\item 
+\doxymbox{\hyperlink{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_ace477202853a3c6059c6f2bfbc5a145a}{b}} = dolfinx.\+fem.\+petsc.\+assemble\+\_\+vector(self.\+L)
+\item 
+\doxymbox{\hyperlink{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_a88b9f01e998b1ec80d6023775f2bf5c9}{mesh\+\_\+motion\+\_\+solver}} = PETSc.\+KSP().create(self.\+comm)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Protected Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\doxymbox{\hyperlink{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_a7f141e543c18424870f494d6c4b43a5b}{\+\_\+get\+\_\+domain\+\_\+markers}} (self, params)
+\item 
+\doxymbox{\hyperlink{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_a6259c09bd9ec935529f1e2c033823791}{\+\_\+save\+\_\+submeshes\+\_\+for\+\_\+reload\+\_\+hack}} (self, params)
+\item 
+\doxymbox{\hyperlink{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_a7344af636e0c4bb3ed18c144f3e9a98b}{\+\_\+create\+\_\+submeshes\+\_\+from\+\_\+parent}} (self, params)
+\item 
+\doxymbox{\hyperlink{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_a37881c921f7f2f63267f8511fd56f1e5}{\+\_\+transfer\+\_\+mesh\+\_\+tags\+\_\+to\+\_\+submeshes}} (self, params)
+\item 
+\doxymbox{\hyperlink{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_ac4a2b6bd95af7a131a3db0b3517ad06a}{\+\_\+enforce\+\_\+periodicity}} (self)
+\item 
+\doxymbox{\hyperlink{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_a87ec192e9d98f97ef727fb9e63270574}{\+\_\+generate\+\_\+mesh}} (self)
+\item 
+\doxymbox{\hyperlink{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_ace1cc3a67f289931ad0fb3cb9c7f9fde}{\+\_\+generate\+\_\+mesh\+\_\+3d}} (self)
+\item 
+\doxymbox{\hyperlink{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_a93c170d13ed61a0869ba0204da2f112d}{\+\_\+generate\+\_\+mesh\+\_\+2d}} (self)
+\item 
+\doxymbox{\hyperlink{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_a57d602137e1a94068a500b1d3a5394d4}{\+\_\+calc\+\_\+distance\+\_\+to\+\_\+panel\+\_\+surface}} (self, params, min\+\_\+dist\+\_\+cutoff=1.\+0e-\/6)
+\item 
+\doxymbox{\hyperlink{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_a6e146f3470d6d1a11cd8b5dec4d60e44}{\+\_\+force\+\_\+interface\+\_\+node\+\_\+matching}} (self)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\begin{DoxyVerb}Fluid–structure interaction computational domain.
+
+``FSIDomain`` creates and manages the complete computational domain for
+PVade simulations, including both the fluid mesh and the structure mesh.
+It delegates geometry creation to a problem-specific ``DomainCreation``
+module (e.g., ``pvade.geometry.panels3d.DomainCreation``) and provides
+methods for mesh generation, submesh extraction, and I/O.
+
+Attributes:
+    comm: MPI communicator shared by all PVade objects.
+    rank (int): Rank of this MPI process.
+    num_procs (int): Total number of MPI processes.
+    first_move_mesh (bool): Flag used by the ALE mesh-motion routines.
+    domain_markers (dict): Dictionary mapping boundary/cell region names to
+        their integer tag indices (``"idx"``), entity type (``"facet"`` or
+        ``"cell"``), and Gmsh tag lists.
+    numpy_pt_total_array (np.ndarray or None): Array of shape
+        ``(N_lines, 6)`` defining fixation line endpoints used to apply
+        torque-tube and motor-mount BCs.
+    ndim (int or None): Topological dimension of the mesh (set during
+        :meth:`build`).
+\end{DoxyVerb}
+ 
+
+\label{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_doc-constructors}
+\Hypertarget{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_doc-constructors}
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_a7cfa9b439d67c6045fad0a8289bf5c37}\index{pvade.geometry.MeshManager.FSIDomain@{pvade.geometry.MeshManager.FSIDomain}!\_\_init\_\_@{\_\_init\_\_}}
+\index{\_\_init\_\_@{\_\_init\_\_}!pvade.geometry.MeshManager.FSIDomain@{pvade.geometry.MeshManager.FSIDomain}}
+\doxysubsubsection{\texorpdfstring{\_\_init\_\_()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily \label{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_a7cfa9b439d67c6045fad0a8289bf5c37} 
+pvade.\+geometry.\+Mesh\+Manager.\+FSIDomain.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self}{, }\item[{}]{params}{}\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}The class is initialised here
+    Depending on the example we are solving, we import the corresponding DomainCrearion file
+    We define markers which will be used for boundary tag asignment
+
+Args:
+    params (input parameters): input parameters available in the input file
+\end{DoxyVerb}
+ 
+
+\label{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_doc-func-members}
+\Hypertarget{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_a57d602137e1a94068a500b1d3a5394d4}\index{pvade.geometry.MeshManager.FSIDomain@{pvade.geometry.MeshManager.FSIDomain}!\_calc\_distance\_to\_panel\_surface@{\_calc\_distance\_to\_panel\_surface}}
+\index{\_calc\_distance\_to\_panel\_surface@{\_calc\_distance\_to\_panel\_surface}!pvade.geometry.MeshManager.FSIDomain@{pvade.geometry.MeshManager.FSIDomain}}
+\doxysubsubsection{\texorpdfstring{\_calc\_distance\_to\_panel\_surface()}{\_calc\_distance\_to\_panel\_surface()}}
+{\footnotesize\ttfamily \label{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_a57d602137e1a94068a500b1d3a5394d4} 
+pvade.\+geometry.\+Mesh\+Manager.\+FSIDomain.\+\_\+calc\+\_\+distance\+\_\+to\+\_\+panel\+\_\+surface (\begin{DoxyParamCaption}\item[{}]{self}{, }\item[{}]{params}{, }\item[{}]{min\+\_\+dist\+\_\+cutoff}{ = {\ttfamily 1.0e-\/6}}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [protected]}}
+
+\Hypertarget{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_a7344af636e0c4bb3ed18c144f3e9a98b}\index{pvade.geometry.MeshManager.FSIDomain@{pvade.geometry.MeshManager.FSIDomain}!\_create\_submeshes\_from\_parent@{\_create\_submeshes\_from\_parent}}
+\index{\_create\_submeshes\_from\_parent@{\_create\_submeshes\_from\_parent}!pvade.geometry.MeshManager.FSIDomain@{pvade.geometry.MeshManager.FSIDomain}}
+\doxysubsubsection{\texorpdfstring{\_create\_submeshes\_from\_parent()}{\_create\_submeshes\_from\_parent()}}
+{\footnotesize\ttfamily \label{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_a7344af636e0c4bb3ed18c144f3e9a98b} 
+pvade.\+geometry.\+Mesh\+Manager.\+FSIDomain.\+\_\+create\+\_\+submeshes\+\_\+from\+\_\+parent (\begin{DoxyParamCaption}\item[{}]{self}{, }\item[{}]{params}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [protected]}}
+
+\begin{DoxyVerb}Create submeshes from a parent mesh by cell tags.
+
+This function uses the cell tags to identify meshes that
+are part of the structure or fluid domain and saves them
+as separate mesh entities inside a new object such that meshes
+are accessed like domain.fluid.msh or domain.structure.msh.
+\end{DoxyVerb}
+ \Hypertarget{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_ac4a2b6bd95af7a131a3db0b3517ad06a}\index{pvade.geometry.MeshManager.FSIDomain@{pvade.geometry.MeshManager.FSIDomain}!\_enforce\_periodicity@{\_enforce\_periodicity}}
+\index{\_enforce\_periodicity@{\_enforce\_periodicity}!pvade.geometry.MeshManager.FSIDomain@{pvade.geometry.MeshManager.FSIDomain}}
+\doxysubsubsection{\texorpdfstring{\_enforce\_periodicity()}{\_enforce\_periodicity()}}
+{\footnotesize\ttfamily \label{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_ac4a2b6bd95af7a131a3db0b3517ad06a} 
+pvade.\+geometry.\+Mesh\+Manager.\+FSIDomain.\+\_\+enforce\+\_\+periodicity (\begin{DoxyParamCaption}\item[{}]{self}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [protected]}}
+
+\begin{DoxyVerb}Apply periodic mesh constraints in Gmsh.
+
+Sets up front-back and left-right periodic mappings on the Gmsh model
+using affine translation vectors so that the mesh generator produces
+conforming periodic meshes.
+
+.. note::
+    This method is only valid for the ``panels3d`` and similar
+    geometry modules that define ``dom_tags`` and ``y_span`` /
+    ``x_span`` attributes on the geometry object.
+\end{DoxyVerb}
+ \Hypertarget{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_a6e146f3470d6d1a11cd8b5dec4d60e44}\index{pvade.geometry.MeshManager.FSIDomain@{pvade.geometry.MeshManager.FSIDomain}!\_force\_interface\_node\_matching@{\_force\_interface\_node\_matching}}
+\index{\_force\_interface\_node\_matching@{\_force\_interface\_node\_matching}!pvade.geometry.MeshManager.FSIDomain@{pvade.geometry.MeshManager.FSIDomain}}
+\doxysubsubsection{\texorpdfstring{\_force\_interface\_node\_matching()}{\_force\_interface\_node\_matching()}}
+{\footnotesize\ttfamily \label{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_a6e146f3470d6d1a11cd8b5dec4d60e44} 
+pvade.\+geometry.\+Mesh\+Manager.\+FSIDomain.\+\_\+force\+\_\+interface\+\_\+node\+\_\+matching (\begin{DoxyParamCaption}\item[{}]{self}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [protected]}}
+
+\Hypertarget{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_a87ec192e9d98f97ef727fb9e63270574}\index{pvade.geometry.MeshManager.FSIDomain@{pvade.geometry.MeshManager.FSIDomain}!\_generate\_mesh@{\_generate\_mesh}}
+\index{\_generate\_mesh@{\_generate\_mesh}!pvade.geometry.MeshManager.FSIDomain@{pvade.geometry.MeshManager.FSIDomain}}
+\doxysubsubsection{\texorpdfstring{\_generate\_mesh()}{\_generate\_mesh()}}
+{\footnotesize\ttfamily \label{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_a87ec192e9d98f97ef727fb9e63270574} 
+pvade.\+geometry.\+Mesh\+Manager.\+FSIDomain.\+\_\+generate\+\_\+mesh (\begin{DoxyParamCaption}\item[{}]{self}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [protected]}}
+
+\begin{DoxyVerb}This function call generates the mesh.\end{DoxyVerb}
+ \Hypertarget{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_a93c170d13ed61a0869ba0204da2f112d}\index{pvade.geometry.MeshManager.FSIDomain@{pvade.geometry.MeshManager.FSIDomain}!\_generate\_mesh\_2d@{\_generate\_mesh\_2d}}
+\index{\_generate\_mesh\_2d@{\_generate\_mesh\_2d}!pvade.geometry.MeshManager.FSIDomain@{pvade.geometry.MeshManager.FSIDomain}}
+\doxysubsubsection{\texorpdfstring{\_generate\_mesh\_2d()}{\_generate\_mesh\_2d()}}
+{\footnotesize\ttfamily \label{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_a93c170d13ed61a0869ba0204da2f112d} 
+pvade.\+geometry.\+Mesh\+Manager.\+FSIDomain.\+\_\+generate\+\_\+mesh\+\_\+2d (\begin{DoxyParamCaption}\item[{}]{self}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [protected]}}
+
+\begin{DoxyVerb}Generate a 2-D mesh using Gmsh.
+
+Calls the Gmsh mesh generator for 2-D problems with default algorithm
+settings.
+\end{DoxyVerb}
+ \Hypertarget{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_ace1cc3a67f289931ad0fb3cb9c7f9fde}\index{pvade.geometry.MeshManager.FSIDomain@{pvade.geometry.MeshManager.FSIDomain}!\_generate\_mesh\_3d@{\_generate\_mesh\_3d}}
+\index{\_generate\_mesh\_3d@{\_generate\_mesh\_3d}!pvade.geometry.MeshManager.FSIDomain@{pvade.geometry.MeshManager.FSIDomain}}
+\doxysubsubsection{\texorpdfstring{\_generate\_mesh\_3d()}{\_generate\_mesh\_3d()}}
+{\footnotesize\ttfamily \label{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_ace1cc3a67f289931ad0fb3cb9c7f9fde} 
+pvade.\+geometry.\+Mesh\+Manager.\+FSIDomain.\+\_\+generate\+\_\+mesh\+\_\+3d (\begin{DoxyParamCaption}\item[{}]{self}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [protected]}}
+
+\begin{DoxyVerb}Generate a 3-D mesh using Gmsh.
+
+Applies Frontal-Delaunay 2-D and Delaunay 3-D meshing algorithms,
+sets second-order element order, runs the ``Relocate3D`` optimiser,
+and regenerates the mesh for improved element quality.
+\end{DoxyVerb}
+ \Hypertarget{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_a7f141e543c18424870f494d6c4b43a5b}\index{pvade.geometry.MeshManager.FSIDomain@{pvade.geometry.MeshManager.FSIDomain}!\_get\_domain\_markers@{\_get\_domain\_markers}}
+\index{\_get\_domain\_markers@{\_get\_domain\_markers}!pvade.geometry.MeshManager.FSIDomain@{pvade.geometry.MeshManager.FSIDomain}}
+\doxysubsubsection{\texorpdfstring{\_get\_domain\_markers()}{\_get\_domain\_markers()}}
+{\footnotesize\ttfamily \label{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_a7f141e543c18424870f494d6c4b43a5b} 
+pvade.\+geometry.\+Mesh\+Manager.\+FSIDomain.\+\_\+get\+\_\+domain\+\_\+markers (\begin{DoxyParamCaption}\item[{}]{self}{, }\item[{}]{params}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [protected]}}
+
+\begin{DoxyVerb}Initialise the ``domain_markers`` dictionary with default tags.
+
+Populates ``self.domain_markers`` with integer indices for the
+standard fluid facets (x_min, x_max, y_min, y_max, z_min, z_max,
+internal_surface), cell regions (fluid, structure), and per-panel
+facets (bottom, top, left, right, back, front) for panel and
+heliostat cases, or cylinder surface tags for cylinder cases.
+
+Args:
+    params (:obj:`pvade.IO.Parameters.SimParams`): A SimParams object
+        used to determine the geometry module and number of panels.
+\end{DoxyVerb}
+ \Hypertarget{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_a6259c09bd9ec935529f1e2c033823791}\index{pvade.geometry.MeshManager.FSIDomain@{pvade.geometry.MeshManager.FSIDomain}!\_save\_submeshes\_for\_reload\_hack@{\_save\_submeshes\_for\_reload\_hack}}
+\index{\_save\_submeshes\_for\_reload\_hack@{\_save\_submeshes\_for\_reload\_hack}!pvade.geometry.MeshManager.FSIDomain@{pvade.geometry.MeshManager.FSIDomain}}
+\doxysubsubsection{\texorpdfstring{\_save\_submeshes\_for\_reload\_hack()}{\_save\_submeshes\_for\_reload\_hack()}}
+{\footnotesize\ttfamily \label{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_a6259c09bd9ec935529f1e2c033823791} 
+pvade.\+geometry.\+Mesh\+Manager.\+FSIDomain.\+\_\+save\+\_\+submeshes\+\_\+for\+\_\+reload\+\_\+hack (\begin{DoxyParamCaption}\item[{}]{self}{, }\item[{}]{params}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [protected]}}
+
+\begin{DoxyVerb}Write and immediately re-read the submesh files.
+
+This round-trip write/read is a temporary workaround for DOLFINx mesh
+transfer issues in parallel.  It calls :meth:`write_mesh_files`
+followed by :meth:`read_mesh_files` to ensure each rank has a
+consistent view of the submesh data.
+
+Args:
+    params (:obj:`pvade.IO.Parameters.SimParams`): A SimParams object
+        providing the output directory path.
+\end{DoxyVerb}
+ \Hypertarget{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_a37881c921f7f2f63267f8511fd56f1e5}\index{pvade.geometry.MeshManager.FSIDomain@{pvade.geometry.MeshManager.FSIDomain}!\_transfer\_mesh\_tags\_to\_submeshes@{\_transfer\_mesh\_tags\_to\_submeshes}}
+\index{\_transfer\_mesh\_tags\_to\_submeshes@{\_transfer\_mesh\_tags\_to\_submeshes}!pvade.geometry.MeshManager.FSIDomain@{pvade.geometry.MeshManager.FSIDomain}}
+\doxysubsubsection{\texorpdfstring{\_transfer\_mesh\_tags\_to\_submeshes()}{\_transfer\_mesh\_tags\_to\_submeshes()}}
+{\footnotesize\ttfamily \label{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_a37881c921f7f2f63267f8511fd56f1e5} 
+pvade.\+geometry.\+Mesh\+Manager.\+FSIDomain.\+\_\+transfer\+\_\+mesh\+\_\+tags\+\_\+to\+\_\+submeshes (\begin{DoxyParamCaption}\item[{}]{self}{, }\item[{}]{params}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [protected]}}
+
+\begin{DoxyVerb}Transfer parent-mesh facet tags onto each submesh.
+
+Iterates over the active submeshes (fluid and/or structure), maps the
+parent facet tag values through the submesh entity map, and stores the
+result as ``sub_domain.facet_tags`` and ``sub_domain.cell_tags`` on
+each submesh object.
+
+Args:
+    params (:obj:`pvade.IO.Parameters.SimParams`): A SimParams object
+        indicating which analyses are active.
+\end{DoxyVerb}
+ \Hypertarget{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_ae32474d7ab3fc2ad4b08ab050fce2a8b}\index{pvade.geometry.MeshManager.FSIDomain@{pvade.geometry.MeshManager.FSIDomain}!build@{build}}
+\index{build@{build}!pvade.geometry.MeshManager.FSIDomain@{pvade.geometry.MeshManager.FSIDomain}}
+\doxysubsubsection{\texorpdfstring{build()}{build()}}
+{\footnotesize\ttfamily \label{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_ae32474d7ab3fc2ad4b08ab050fce2a8b} 
+pvade.\+geometry.\+Mesh\+Manager.\+FSIDomain.\+build (\begin{DoxyParamCaption}\item[{}]{self}{, }\item[{}]{params}{}\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}This function call builds the geometry, marks the boundaries and creates a mesh using Gmsh.\end{DoxyVerb}
+ \Hypertarget{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_a815bda42657bad98527e00dffac1b6ee}\index{pvade.geometry.MeshManager.FSIDomain@{pvade.geometry.MeshManager.FSIDomain}!move\_mesh@{move\_mesh}}
+\index{move\_mesh@{move\_mesh}!pvade.geometry.MeshManager.FSIDomain@{pvade.geometry.MeshManager.FSIDomain}}
+\doxysubsubsection{\texorpdfstring{move\_mesh()}{move\_mesh()}}
+{\footnotesize\ttfamily \label{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_a815bda42657bad98527e00dffac1b6ee} 
+pvade.\+geometry.\+Mesh\+Manager.\+FSIDomain.\+move\+\_\+mesh (\begin{DoxyParamCaption}\item[{}]{self}{, }\item[{}]{structure}{, }\item[{}]{params}{}\end{DoxyParamCaption})}
+
+\Hypertarget{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_aaf393f71ea473483d23fe1e5a68ee17a}\index{pvade.geometry.MeshManager.FSIDomain@{pvade.geometry.MeshManager.FSIDomain}!read\_mesh\_files@{read\_mesh\_files}}
+\index{read\_mesh\_files@{read\_mesh\_files}!pvade.geometry.MeshManager.FSIDomain@{pvade.geometry.MeshManager.FSIDomain}}
+\doxysubsubsection{\texorpdfstring{read\_mesh\_files()}{read\_mesh\_files()}}
+{\footnotesize\ttfamily \label{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_aaf393f71ea473483d23fe1e5a68ee17a} 
+pvade.\+geometry.\+Mesh\+Manager.\+FSIDomain.\+read\+\_\+mesh\+\_\+files (\begin{DoxyParamCaption}\item[{}]{self}{, }\item[{}]{read\+\_\+mesh\+\_\+dir}{, }\item[{}]{params}{}\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Read the mesh from an external file.
+The User can load an existing mesh file (mesh.xdmf)
+and use it to solve the CFD/CSD problem
+\end{DoxyVerb}
+ \Hypertarget{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_a26fabdc3a2e58d2a1b1c079429bf3820}\index{pvade.geometry.MeshManager.FSIDomain@{pvade.geometry.MeshManager.FSIDomain}!test\_mesh\_functionspace@{test\_mesh\_functionspace}}
+\index{test\_mesh\_functionspace@{test\_mesh\_functionspace}!pvade.geometry.MeshManager.FSIDomain@{pvade.geometry.MeshManager.FSIDomain}}
+\doxysubsubsection{\texorpdfstring{test\_mesh\_functionspace()}{test\_mesh\_functionspace()}}
+{\footnotesize\ttfamily \label{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_a26fabdc3a2e58d2a1b1c079429bf3820} 
+pvade.\+geometry.\+Mesh\+Manager.\+FSIDomain.\+test\+\_\+mesh\+\_\+functionspace (\begin{DoxyParamCaption}\item[{}]{self}{}\end{DoxyParamCaption})}
+
+\Hypertarget{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_acc4ac74ea8c15d94e8dc1c160d97bbf2}\index{pvade.geometry.MeshManager.FSIDomain@{pvade.geometry.MeshManager.FSIDomain}!test\_submesh\_transfer@{test\_submesh\_transfer}}
+\index{test\_submesh\_transfer@{test\_submesh\_transfer}!pvade.geometry.MeshManager.FSIDomain@{pvade.geometry.MeshManager.FSIDomain}}
+\doxysubsubsection{\texorpdfstring{test\_submesh\_transfer()}{test\_submesh\_transfer()}}
+{\footnotesize\ttfamily \label{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_acc4ac74ea8c15d94e8dc1c160d97bbf2} 
+pvade.\+geometry.\+Mesh\+Manager.\+FSIDomain.\+test\+\_\+submesh\+\_\+transfer (\begin{DoxyParamCaption}\item[{}]{self}{, }\item[{}]{params}{}\end{DoxyParamCaption})}
+
+\Hypertarget{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_a9ad2aa7438deffed483d514a6aa7d356}\index{pvade.geometry.MeshManager.FSIDomain@{pvade.geometry.MeshManager.FSIDomain}!write\_mesh\_files@{write\_mesh\_files}}
+\index{write\_mesh\_files@{write\_mesh\_files}!pvade.geometry.MeshManager.FSIDomain@{pvade.geometry.MeshManager.FSIDomain}}
+\doxysubsubsection{\texorpdfstring{write\_mesh\_files()}{write\_mesh\_files()}}
+{\footnotesize\ttfamily \label{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_a9ad2aa7438deffed483d514a6aa7d356} 
+pvade.\+geometry.\+Mesh\+Manager.\+FSIDomain.\+write\+\_\+mesh\+\_\+files (\begin{DoxyParamCaption}\item[{}]{self}{, }\item[{}]{params}{}\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Write the fluid and structure submesh files to disk.
+
+Saves each active submesh as an XDMF file (with cell and facet tag
+arrays) and as a native Gmsh ``.msh`` file.  Also writes the
+``domain_markers`` dictionary to a YAML file and the fixation-point
+array to a CSV file.
+
+Args:
+    params (:obj:`pvade.IO.Parameters.SimParams`): A SimParams object
+        providing the mesh output directory path.
+\end{DoxyVerb}
+ 
+
+\label{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_doc-variable-members}
+\Hypertarget{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_doc-variable-members}
+\doxysubsection{Member Data Documentation}
+\Hypertarget{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_a1e133cb812bf0ece3248fe09f004a734}\index{pvade.geometry.MeshManager.FSIDomain@{pvade.geometry.MeshManager.FSIDomain}!A@{A}}
+\index{A@{A}!pvade.geometry.MeshManager.FSIDomain@{pvade.geometry.MeshManager.FSIDomain}}
+\doxysubsubsection{\texorpdfstring{A}{A}}
+{\footnotesize\ttfamily \label{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_a1e133cb812bf0ece3248fe09f004a734} 
+pvade.\+geometry.\+Mesh\+Manager.\+FSIDomain.\+A = dolfinx.\+fem.\+petsc.\+assemble\+\_\+matrix(self.\+a, bcs=self.\+bcx)}
+
+\Hypertarget{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_a25ee2bdada0ccb6a5c11f253eb9feacf}\index{pvade.geometry.MeshManager.FSIDomain@{pvade.geometry.MeshManager.FSIDomain}!a@{a}}
+\index{a@{a}!pvade.geometry.MeshManager.FSIDomain@{pvade.geometry.MeshManager.FSIDomain}}
+\doxysubsubsection{\texorpdfstring{a}{a}}
+{\footnotesize\ttfamily \label{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_a25ee2bdada0ccb6a5c11f253eb9feacf} 
+pvade.\+geometry.\+Mesh\+Manager.\+FSIDomain.\+a}
+
+{\bfseries Initial value:\+}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{=\ \ dolfinx.fem.form(}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 1.0}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ /\ self.distance}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *\ ufl.inner(ufl.grad(u),\ ufl.grad(v))}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *\ ufl.dx}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{\#\ ufl.inner(ufl.grad(u),\ ufl.grad(v))\ *\ ufl.dx}}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ )}
+
+\end{DoxyCode}
+\Hypertarget{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_a847c23d6c6a612342fef8a147fa64129}\index{pvade.geometry.MeshManager.FSIDomain@{pvade.geometry.MeshManager.FSIDomain}!all\_exterior\_V\_dofs@{all\_exterior\_V\_dofs}}
+\index{all\_exterior\_V\_dofs@{all\_exterior\_V\_dofs}!pvade.geometry.MeshManager.FSIDomain@{pvade.geometry.MeshManager.FSIDomain}}
+\doxysubsubsection{\texorpdfstring{all\_exterior\_V\_dofs}{all\_exterior\_V\_dofs}}
+{\footnotesize\ttfamily \label{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_a847c23d6c6a612342fef8a147fa64129} 
+pvade.\+geometry.\+Mesh\+Manager.\+FSIDomain.\+all\+\_\+exterior\+\_\+\+V\+\_\+dofs}
+
+{\bfseries Initial value:\+}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{=\ \ dolfinx.fem.locate\_dofs\_topological(}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ self.V1,\ self.facet\_dim,\ all\_exterior\_facets}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ )}
+
+\end{DoxyCode}
+\Hypertarget{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_a6a85f221ceb5411299c9f55a70fe9d89}\index{pvade.geometry.MeshManager.FSIDomain@{pvade.geometry.MeshManager.FSIDomain}!all\_interior\_V\_dofs@{all\_interior\_V\_dofs}}
+\index{all\_interior\_V\_dofs@{all\_interior\_V\_dofs}!pvade.geometry.MeshManager.FSIDomain@{pvade.geometry.MeshManager.FSIDomain}}
+\doxysubsubsection{\texorpdfstring{all\_interior\_V\_dofs}{all\_interior\_V\_dofs}}
+{\footnotesize\ttfamily \label{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_a6a85f221ceb5411299c9f55a70fe9d89} 
+pvade.\+geometry.\+Mesh\+Manager.\+FSIDomain.\+all\+\_\+interior\+\_\+\+V\+\_\+dofs}
+
+\Hypertarget{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_a2f0b9218488084bc27e7ff78ece0e35d}\index{pvade.geometry.MeshManager.FSIDomain@{pvade.geometry.MeshManager.FSIDomain}!all\_xmin\_xmax\_V\_dofs@{all\_xmin\_xmax\_V\_dofs}}
+\index{all\_xmin\_xmax\_V\_dofs@{all\_xmin\_xmax\_V\_dofs}!pvade.geometry.MeshManager.FSIDomain@{pvade.geometry.MeshManager.FSIDomain}}
+\doxysubsubsection{\texorpdfstring{all\_xmin\_xmax\_V\_dofs}{all\_xmin\_xmax\_V\_dofs}}
+{\footnotesize\ttfamily \label{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_a2f0b9218488084bc27e7ff78ece0e35d} 
+pvade.\+geometry.\+Mesh\+Manager.\+FSIDomain.\+all\+\_\+xmin\+\_\+xmax\+\_\+\+V\+\_\+dofs}
+
+{\bfseries Initial value:\+}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{=\ \ dolfinx.fem.locate\_dofs\_topological(}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ self.V1.sub(0),\ self.facet\_dim,\ all\_xmin\_xmax\_facets}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ )}
+
+\end{DoxyCode}
+\Hypertarget{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_ae8c08583b1a95d03ef515e536e6e3d2f}\index{pvade.geometry.MeshManager.FSIDomain@{pvade.geometry.MeshManager.FSIDomain}!all\_ymin\_ymax\_V\_dofs@{all\_ymin\_ymax\_V\_dofs}}
+\index{all\_ymin\_ymax\_V\_dofs@{all\_ymin\_ymax\_V\_dofs}!pvade.geometry.MeshManager.FSIDomain@{pvade.geometry.MeshManager.FSIDomain}}
+\doxysubsubsection{\texorpdfstring{all\_ymin\_ymax\_V\_dofs}{all\_ymin\_ymax\_V\_dofs}}
+{\footnotesize\ttfamily \label{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_ae8c08583b1a95d03ef515e536e6e3d2f} 
+pvade.\+geometry.\+Mesh\+Manager.\+FSIDomain.\+all\+\_\+ymin\+\_\+ymax\+\_\+\+V\+\_\+dofs}
+
+{\bfseries Initial value:\+}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{=\ \ dolfinx.fem.locate\_dofs\_topological(}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ self.V1.sub(1),\ self.facet\_dim,\ all\_ymin\_ymax\_facets}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ )}
+
+\end{DoxyCode}
+\Hypertarget{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_ace477202853a3c6059c6f2bfbc5a145a}\index{pvade.geometry.MeshManager.FSIDomain@{pvade.geometry.MeshManager.FSIDomain}!b@{b}}
+\index{b@{b}!pvade.geometry.MeshManager.FSIDomain@{pvade.geometry.MeshManager.FSIDomain}}
+\doxysubsubsection{\texorpdfstring{b}{b}}
+{\footnotesize\ttfamily \label{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_ace477202853a3c6059c6f2bfbc5a145a} 
+pvade.\+geometry.\+Mesh\+Manager.\+FSIDomain.\+b = dolfinx.\+fem.\+petsc.\+assemble\+\_\+vector(self.\+L)}
+
+\Hypertarget{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_a654b9b38832cb616a409789023574410}\index{pvade.geometry.MeshManager.FSIDomain@{pvade.geometry.MeshManager.FSIDomain}!bcx@{bcx}}
+\index{bcx@{bcx}!pvade.geometry.MeshManager.FSIDomain@{pvade.geometry.MeshManager.FSIDomain}}
+\doxysubsubsection{\texorpdfstring{bcx}{bcx}}
+{\footnotesize\ttfamily \label{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_a654b9b38832cb616a409789023574410} 
+pvade.\+geometry.\+Mesh\+Manager.\+FSIDomain.\+bcx = \+[$\,$]\+}
+
+\Hypertarget{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_a20aabf73b67f44c186704c6f3b8943db}\index{pvade.geometry.MeshManager.FSIDomain@{pvade.geometry.MeshManager.FSIDomain}!cell\_tags@{cell\_tags}}
+\index{cell\_tags@{cell\_tags}!pvade.geometry.MeshManager.FSIDomain@{pvade.geometry.MeshManager.FSIDomain}}
+\doxysubsubsection{\texorpdfstring{cell\_tags}{cell\_tags}}
+{\footnotesize\ttfamily \label{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_a20aabf73b67f44c186704c6f3b8943db} 
+pvade.\+geometry.\+Mesh\+Manager.\+FSIDomain.\+cell\+\_\+tags}
+
+\Hypertarget{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_a7fe83760c27238f2220a4ab0ae1e0eba}\index{pvade.geometry.MeshManager.FSIDomain@{pvade.geometry.MeshManager.FSIDomain}!comm@{comm}}
+\index{comm@{comm}!pvade.geometry.MeshManager.FSIDomain@{pvade.geometry.MeshManager.FSIDomain}}
+\doxysubsubsection{\texorpdfstring{comm}{comm}}
+{\footnotesize\ttfamily \label{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_a7fe83760c27238f2220a4ab0ae1e0eba} 
+pvade.\+geometry.\+Mesh\+Manager.\+FSIDomain.\+comm = params.\+comm}
+
+\Hypertarget{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_a987b06f792d406a4b7643aac12d0f59d}\index{pvade.geometry.MeshManager.FSIDomain@{pvade.geometry.MeshManager.FSIDomain}!distance@{distance}}
+\index{distance@{distance}!pvade.geometry.MeshManager.FSIDomain@{pvade.geometry.MeshManager.FSIDomain}}
+\doxysubsubsection{\texorpdfstring{distance}{distance}}
+{\footnotesize\ttfamily \label{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_a987b06f792d406a4b7643aac12d0f59d} 
+pvade.\+geometry.\+Mesh\+Manager.\+FSIDomain.\+distance = dolfinx.\+fem.\+Function(self.\+Q1)}
+
+\Hypertarget{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_aec5727eeca463face60130372d09c848}\index{pvade.geometry.MeshManager.FSIDomain@{pvade.geometry.MeshManager.FSIDomain}!domain\_markers@{domain\_markers}}
+\index{domain\_markers@{domain\_markers}!pvade.geometry.MeshManager.FSIDomain@{pvade.geometry.MeshManager.FSIDomain}}
+\doxysubsubsection{\texorpdfstring{domain\_markers}{domain\_markers}}
+{\footnotesize\ttfamily \label{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_aec5727eeca463face60130372d09c848} 
+pvade.\+geometry.\+Mesh\+Manager.\+FSIDomain.\+domain\+\_\+markers = \{\}}
+
+\Hypertarget{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_af7f9fec4841991a8a9d7126fa3d86e4a}\index{pvade.geometry.MeshManager.FSIDomain@{pvade.geometry.MeshManager.FSIDomain}!facet\_dim@{facet\_dim}}
+\index{facet\_dim@{facet\_dim}!pvade.geometry.MeshManager.FSIDomain@{pvade.geometry.MeshManager.FSIDomain}}
+\doxysubsubsection{\texorpdfstring{facet\_dim}{facet\_dim}}
+{\footnotesize\ttfamily \label{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_af7f9fec4841991a8a9d7126fa3d86e4a} 
+tuple pvade.\+geometry.\+Mesh\+Manager.\+FSIDomain.\+facet\+\_\+dim = self.\+ndim -\/ 1}
+
+\Hypertarget{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_ac77865b1b085b3c724dfb7772ee03b35}\index{pvade.geometry.MeshManager.FSIDomain@{pvade.geometry.MeshManager.FSIDomain}!facet\_tags@{facet\_tags}}
+\index{facet\_tags@{facet\_tags}!pvade.geometry.MeshManager.FSIDomain@{pvade.geometry.MeshManager.FSIDomain}}
+\doxysubsubsection{\texorpdfstring{facet\_tags}{facet\_tags}}
+{\footnotesize\ttfamily \label{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_ac77865b1b085b3c724dfb7772ee03b35} 
+pvade.\+geometry.\+Mesh\+Manager.\+FSIDomain.\+facet\+\_\+tags}
+
+{\bfseries Initial value:\+}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{=\ \ dolfinx.io.gmshio.model\_to\_mesh(}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ self.geometry.gmsh\_model,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ self.comm,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ 0,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ partitioner=dolfinx.mesh.create\_cell\_partitioner(}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ dolfinx.mesh.GhostMode.shared\_facet}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ ),}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ gdim=self.ndim,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ )}
+
+\end{DoxyCode}
+\Hypertarget{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_a5e0ccb0361663df70b1a3ded33a6231b}\index{pvade.geometry.MeshManager.FSIDomain@{pvade.geometry.MeshManager.FSIDomain}!first\_move\_mesh@{first\_move\_mesh}}
+\index{first\_move\_mesh@{first\_move\_mesh}!pvade.geometry.MeshManager.FSIDomain@{pvade.geometry.MeshManager.FSIDomain}}
+\doxysubsubsection{\texorpdfstring{first\_move\_mesh}{first\_move\_mesh}}
+{\footnotesize\ttfamily \label{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_a5e0ccb0361663df70b1a3ded33a6231b} 
+bool pvade.\+geometry.\+Mesh\+Manager.\+FSIDomain.\+first\+\_\+move\+\_\+mesh = True}
+
+\Hypertarget{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_a374bed06258d49d734615073e4dcdbb7}\index{pvade.geometry.MeshManager.FSIDomain@{pvade.geometry.MeshManager.FSIDomain}!fluid\_mesh\_displacement@{fluid\_mesh\_displacement}}
+\index{fluid\_mesh\_displacement@{fluid\_mesh\_displacement}!pvade.geometry.MeshManager.FSIDomain@{pvade.geometry.MeshManager.FSIDomain}}
+\doxysubsubsection{\texorpdfstring{fluid\_mesh\_displacement}{fluid\_mesh\_displacement}}
+{\footnotesize\ttfamily \label{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_a374bed06258d49d734615073e4dcdbb7} 
+pvade.\+geometry.\+Mesh\+Manager.\+FSIDomain.\+fluid\+\_\+mesh\+\_\+displacement}
+
+{\bfseries Initial value:\+}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{=\ \ dolfinx.fem.Function(}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ self.V1,\ name=\textcolor{stringliteral}{"{}fluid\_mesh\_displacement"{}}}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ )}
+
+\end{DoxyCode}
+\Hypertarget{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_a8c060e6609d78e6b0d839dc3cd359af2}\index{pvade.geometry.MeshManager.FSIDomain@{pvade.geometry.MeshManager.FSIDomain}!fluid\_mesh\_displacement\_bc@{fluid\_mesh\_displacement\_bc}}
+\index{fluid\_mesh\_displacement\_bc@{fluid\_mesh\_displacement\_bc}!pvade.geometry.MeshManager.FSIDomain@{pvade.geometry.MeshManager.FSIDomain}}
+\doxysubsubsection{\texorpdfstring{fluid\_mesh\_displacement\_bc}{fluid\_mesh\_displacement\_bc}}
+{\footnotesize\ttfamily \label{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_a8c060e6609d78e6b0d839dc3cd359af2} 
+pvade.\+geometry.\+Mesh\+Manager.\+FSIDomain.\+fluid\+\_\+mesh\+\_\+displacement\+\_\+bc}
+
+{\bfseries Initial value:\+}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{=\ \ dolfinx.fem.Function(}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ self.V1,\ name=\textcolor{stringliteral}{"{}fluid\_mesh\_displacement\_bc"{}}}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ )}
+
+\end{DoxyCode}
+\Hypertarget{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_a62444852ea3373a9081bf1c35963df6c}\index{pvade.geometry.MeshManager.FSIDomain@{pvade.geometry.MeshManager.FSIDomain}!fluid\_mesh\_displacement\_bc\_undeformed@{fluid\_mesh\_displacement\_bc\_undeformed}}
+\index{fluid\_mesh\_displacement\_bc\_undeformed@{fluid\_mesh\_displacement\_bc\_undeformed}!pvade.geometry.MeshManager.FSIDomain@{pvade.geometry.MeshManager.FSIDomain}}
+\doxysubsubsection{\texorpdfstring{fluid\_mesh\_displacement\_bc\_undeformed}{fluid\_mesh\_displacement\_bc\_undeformed}}
+{\footnotesize\ttfamily \label{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_a62444852ea3373a9081bf1c35963df6c} 
+pvade.\+geometry.\+Mesh\+Manager.\+FSIDomain.\+fluid\+\_\+mesh\+\_\+displacement\+\_\+bc\+\_\+undeformed}
+
+{\bfseries Initial value:\+}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{=\ \ dolfinx.fem.Function(}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ self.V1\_undeformed,\ name=\textcolor{stringliteral}{"{}fluid\_mesh\_displacement\_bc"{}}}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ )}
+
+\end{DoxyCode}
+\Hypertarget{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_a5ad373d7a79298d9e2dc9464031d57b8}\index{pvade.geometry.MeshManager.FSIDomain@{pvade.geometry.MeshManager.FSIDomain}!geometry@{geometry}}
+\index{geometry@{geometry}!pvade.geometry.MeshManager.FSIDomain@{pvade.geometry.MeshManager.FSIDomain}}
+\doxysubsubsection{\texorpdfstring{geometry}{geometry}}
+{\footnotesize\ttfamily \label{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_a5ad373d7a79298d9e2dc9464031d57b8} 
+pvade.\+geometry.\+Mesh\+Manager.\+FSIDomain.\+geometry = dcm.\+Domain\+Creation(params)}
+
+\Hypertarget{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_af20bda5d268a3ca1ef688ee91c11e42f}\index{pvade.geometry.MeshManager.FSIDomain@{pvade.geometry.MeshManager.FSIDomain}!idx\_vec@{idx\_vec}}
+\index{idx\_vec@{idx\_vec}!pvade.geometry.MeshManager.FSIDomain@{pvade.geometry.MeshManager.FSIDomain}}
+\doxysubsubsection{\texorpdfstring{idx\_vec}{idx\_vec}}
+{\footnotesize\ttfamily \label{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_af20bda5d268a3ca1ef688ee91c11e42f} 
+pvade.\+geometry.\+Mesh\+Manager.\+FSIDomain.\+idx\+\_\+vec}
+
+{\bfseries Initial value:\+}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{=\ \ find\_closest\_structure\_idx(}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ fluid\_boundary\_pts,\ global\_structure\_pts}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ )}
+
+\end{DoxyCode}
+\Hypertarget{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_aeb832719496774fe60d2d1e17acdb29d}\index{pvade.geometry.MeshManager.FSIDomain@{pvade.geometry.MeshManager.FSIDomain}!L@{L}}
+\index{L@{L}!pvade.geometry.MeshManager.FSIDomain@{pvade.geometry.MeshManager.FSIDomain}}
+\doxysubsubsection{\texorpdfstring{L}{L}}
+{\footnotesize\ttfamily \label{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_aeb832719496774fe60d2d1e17acdb29d} 
+pvade.\+geometry.\+Mesh\+Manager.\+FSIDomain.\+L = dolfinx.\+fem.\+form(ufl.\+inner(zero\+\_\+vec, v) \texorpdfstring{$\ast$}{*} ufl.\+dx)}
+
+\Hypertarget{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_a88b9f01e998b1ec80d6023775f2bf5c9}\index{pvade.geometry.MeshManager.FSIDomain@{pvade.geometry.MeshManager.FSIDomain}!mesh\_motion\_solver@{mesh\_motion\_solver}}
+\index{mesh\_motion\_solver@{mesh\_motion\_solver}!pvade.geometry.MeshManager.FSIDomain@{pvade.geometry.MeshManager.FSIDomain}}
+\doxysubsubsection{\texorpdfstring{mesh\_motion\_solver}{mesh\_motion\_solver}}
+{\footnotesize\ttfamily \label{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_a88b9f01e998b1ec80d6023775f2bf5c9} 
+pvade.\+geometry.\+Mesh\+Manager.\+FSIDomain.\+mesh\+\_\+motion\+\_\+solver = PETSc.\+KSP().create(self.\+comm)}
+
+\Hypertarget{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_ae61060991ba9c0d359a6280633dca381}\index{pvade.geometry.MeshManager.FSIDomain@{pvade.geometry.MeshManager.FSIDomain}!msh@{msh}}
+\index{msh@{msh}!pvade.geometry.MeshManager.FSIDomain@{pvade.geometry.MeshManager.FSIDomain}}
+\doxysubsubsection{\texorpdfstring{msh}{msh}}
+{\footnotesize\ttfamily \label{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_ae61060991ba9c0d359a6280633dca381} 
+pvade.\+geometry.\+Mesh\+Manager.\+FSIDomain.\+msh}
+
+\Hypertarget{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_a2ea162371a28917af671ed3273df8e5f}\index{pvade.geometry.MeshManager.FSIDomain@{pvade.geometry.MeshManager.FSIDomain}!ndim@{ndim}}
+\index{ndim@{ndim}!pvade.geometry.MeshManager.FSIDomain@{pvade.geometry.MeshManager.FSIDomain}}
+\doxysubsubsection{\texorpdfstring{ndim}{ndim}}
+{\footnotesize\ttfamily \label{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_a2ea162371a28917af671ed3273df8e5f} 
+pvade.\+geometry.\+Mesh\+Manager.\+FSIDomain.\+ndim = None}
+
+\Hypertarget{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_a17a3cbbeac4423c88c89e3e6efd52563}\index{pvade.geometry.MeshManager.FSIDomain@{pvade.geometry.MeshManager.FSIDomain}!num\_procs@{num\_procs}}
+\index{num\_procs@{num\_procs}!pvade.geometry.MeshManager.FSIDomain@{pvade.geometry.MeshManager.FSIDomain}}
+\doxysubsubsection{\texorpdfstring{num\_procs}{num\_procs}}
+{\footnotesize\ttfamily \label{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_a17a3cbbeac4423c88c89e3e6efd52563} 
+pvade.\+geometry.\+Mesh\+Manager.\+FSIDomain.\+num\+\_\+procs = params.\+num\+\_\+procs}
+
+\Hypertarget{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_ac5d8679dbc88f4f97baab3aae9d7589b}\index{pvade.geometry.MeshManager.FSIDomain@{pvade.geometry.MeshManager.FSIDomain}!numpy\_pt\_total\_array@{numpy\_pt\_total\_array}}
+\index{numpy\_pt\_total\_array@{numpy\_pt\_total\_array}!pvade.geometry.MeshManager.FSIDomain@{pvade.geometry.MeshManager.FSIDomain}}
+\doxysubsubsection{\texorpdfstring{numpy\_pt\_total\_array}{numpy\_pt\_total\_array}}
+{\footnotesize\ttfamily \label{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_ac5d8679dbc88f4f97baab3aae9d7589b} 
+pvade.\+geometry.\+Mesh\+Manager.\+FSIDomain.\+numpy\+\_\+pt\+\_\+total\+\_\+array = None}
+
+\Hypertarget{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_a57b86f7bc78cd0ac22f71a19f43c20ca}\index{pvade.geometry.MeshManager.FSIDomain@{pvade.geometry.MeshManager.FSIDomain}!Q1@{Q1}}
+\index{Q1@{Q1}!pvade.geometry.MeshManager.FSIDomain@{pvade.geometry.MeshManager.FSIDomain}}
+\doxysubsubsection{\texorpdfstring{Q1}{Q1}}
+{\footnotesize\ttfamily \label{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_a57b86f7bc78cd0ac22f71a19f43c20ca} 
+pvade.\+geometry.\+Mesh\+Manager.\+FSIDomain.\+Q1 = dolfinx.\+fem.\+Function\+Space(self.\+fluid.\+msh, scalar\+\_\+el\+\_\+1)}
+
+\Hypertarget{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_a6316d0186127a5bbfc2d8ee5cca21d80}\index{pvade.geometry.MeshManager.FSIDomain@{pvade.geometry.MeshManager.FSIDomain}!rank@{rank}}
+\index{rank@{rank}!pvade.geometry.MeshManager.FSIDomain@{pvade.geometry.MeshManager.FSIDomain}}
+\doxysubsubsection{\texorpdfstring{rank}{rank}}
+{\footnotesize\ttfamily \label{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_a6316d0186127a5bbfc2d8ee5cca21d80} 
+pvade.\+geometry.\+Mesh\+Manager.\+FSIDomain.\+rank = params.\+rank}
+
+\Hypertarget{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_a0ed33da66fab39e813b7dabd784e14ed}\index{pvade.geometry.MeshManager.FSIDomain@{pvade.geometry.MeshManager.FSIDomain}!results\_filename\_vtk@{results\_filename\_vtk}}
+\index{results\_filename\_vtk@{results\_filename\_vtk}!pvade.geometry.MeshManager.FSIDomain@{pvade.geometry.MeshManager.FSIDomain}}
+\doxysubsubsection{\texorpdfstring{results\_filename\_vtk}{results\_filename\_vtk}}
+{\footnotesize\ttfamily \label{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_a0ed33da66fab39e813b7dabd784e14ed} 
+pvade.\+geometry.\+Mesh\+Manager.\+FSIDomain.\+results\+\_\+filename\+\_\+vtk}
+
+\Hypertarget{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_ab999bcbda5190fcc867f2a9c12459e3c}\index{pvade.geometry.MeshManager.FSIDomain@{pvade.geometry.MeshManager.FSIDomain}!total\_mesh\_displacement@{total\_mesh\_displacement}}
+\index{total\_mesh\_displacement@{total\_mesh\_displacement}!pvade.geometry.MeshManager.FSIDomain@{pvade.geometry.MeshManager.FSIDomain}}
+\doxysubsubsection{\texorpdfstring{total\_mesh\_displacement}{total\_mesh\_displacement}}
+{\footnotesize\ttfamily \label{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_ab999bcbda5190fcc867f2a9c12459e3c} 
+pvade.\+geometry.\+Mesh\+Manager.\+FSIDomain.\+total\+\_\+mesh\+\_\+displacement}
+
+{\bfseries Initial value:\+}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{=\ \ dolfinx.fem.Function(}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ self.V1,\ name=\textcolor{stringliteral}{"{}total\_mesh\_disp"{}}}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ )}
+
+\end{DoxyCode}
+\Hypertarget{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_a5c0d3f03818ebc21bf28673b5ae842db}\index{pvade.geometry.MeshManager.FSIDomain@{pvade.geometry.MeshManager.FSIDomain}!V1@{V1}}
+\index{V1@{V1}!pvade.geometry.MeshManager.FSIDomain@{pvade.geometry.MeshManager.FSIDomain}}
+\doxysubsubsection{\texorpdfstring{V1}{V1}}
+{\footnotesize\ttfamily \label{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_a5c0d3f03818ebc21bf28673b5ae842db} 
+pvade.\+geometry.\+Mesh\+Manager.\+FSIDomain.\+V1 = dolfinx.\+fem.\+Function\+Space(self.\+fluid.\+msh, vec\+\_\+el\+\_\+1)}
+
+\Hypertarget{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_abc4ee08e9cd03d015fb2a811b7a2c893}\index{pvade.geometry.MeshManager.FSIDomain@{pvade.geometry.MeshManager.FSIDomain}!V1\_undeformed@{V1\_undeformed}}
+\index{V1\_undeformed@{V1\_undeformed}!pvade.geometry.MeshManager.FSIDomain@{pvade.geometry.MeshManager.FSIDomain}}
+\doxysubsubsection{\texorpdfstring{V1\_undeformed}{V1\_undeformed}}
+{\footnotesize\ttfamily \label{classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_abc4ee08e9cd03d015fb2a811b7a2c893} 
+pvade.\+geometry.\+Mesh\+Manager.\+FSIDomain.\+V1\+\_\+undeformed}
+
+{\bfseries Initial value:\+}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{=\ \ dolfinx.fem.FunctionSpace(}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ self.fluid\_undeformed.msh,\ vec\_el\_1}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ )}
+
+\end{DoxyCode}
+
+
+The documentation for this class was generated from the following file:\+\begin{DoxyCompactItemize}
+\item 
+/\+\+Users/\+warsalan/\+work/\+pvade/\+main\+\_\+branch/\+\+PVade/\+pvade/\+geometry/\+\doxymbox{\hyperlink{_mesh_manager_8py}{Mesh\+Manager.\+py}}\end{DoxyCompactItemize}

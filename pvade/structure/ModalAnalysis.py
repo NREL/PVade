@@ -18,9 +18,16 @@ import scipy.interpolate as interp
 
 import warnings
 import os
+from pvade.IO.verbosity import emit_verbosity_print
 
 from pvade.structure.boundary_conditions import build_structure_boundary_conditions
 from contextlib import ExitStack
+
+
+def _vprint(rank, message, level=1):
+    """Rank-0 verbosity-aware print helper for modal analysis messages."""
+    if rank == 0:
+        emit_verbosity_print(message, level=level)
 
 
 class ModalAnalysis:
@@ -116,9 +123,8 @@ class ModalAnalysis:
         self.comm.Allreduce(hmin_local, self.hmin, op=MPI.MIN)
         self.hmin = self.hmin[0]
 
-        if self.rank == 0:
-            print(f"hmin on structure = {self.hmin}")
-            print(f"Total num dofs on structure = {self.num_V_dofs}")
+        _vprint(self.rank, f"hmin on structure = {self.hmin}", level=1)
+        _vprint(self.rank, f"Total num dofs on structure = {self.num_V_dofs}", level=1)
 
         # Mass density
         self.rho = dolfinx.fem.Constant(
@@ -145,10 +151,11 @@ class ModalAnalysis:
             / ((1.0 + self.poissons_ratio) * (1.0 - 2.0 * self.poissons_ratio))
         )
 
-        if self.rank == 0:
-            print(
-                f"mu = {self.lame_mu} lambda = {self.lame_lambda} E = {self.E} nu = {self.poissons_ratio} density = {self.rho.value}"
-            )
+        _vprint(
+            self.rank,
+            f"mu = {self.lame_mu} lambda = {self.lame_lambda} E = {self.E} nu = {self.poissons_ratio} density = {self.rho.value}",
+            level=1,
+        )
 
         # time step
         self.dt_st = dolfinx.fem.Constant(domain.structure.msh, (params.structure.dt))
@@ -243,10 +250,11 @@ class ModalAnalysis:
                         [0.0, 0.0, params.pv_array.elevation]
                     )
 
-                    if params.rank == 0:
-                        print(
-                            f"Measuring panel deformation at (x, y, z) position {final_position}"
-                        )
+                    _vprint(
+                        params.rank,
+                        f"Measuring panel deformation at (x, y, z) position {final_position}",
+                        level=2,
+                    )
 
                     eps = 1.0e-4
                     near_x = np.logical_and(
@@ -693,8 +701,7 @@ class ModalAnalysis:
         #     ) * ufl.Identity(len(v))
 
         if self.first_call_to_solver:
-            if self.rank == 0:
-                print("Starting Strutural Solution")
+            _vprint(self.rank, "Starting Strutural Solution", level=1)
 
             self._assemble_system(params)
 
@@ -734,7 +741,7 @@ class ModalAnalysis:
             nw_corner_accel = self.u.vector.array[3 * idx : 3 * idx + 3].astype(
                 np.float64
             )
-            print(nw_corner_accel)
+            _vprint(self.rank, str(nw_corner_accel), level=2)
         except:
             nw_corner_accel = np.zeros(3, dtype=np.float64)
 

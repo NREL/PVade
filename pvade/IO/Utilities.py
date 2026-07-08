@@ -6,6 +6,7 @@ timing metrics from a profiling output file (:func:`write_metrics`).
 """
 
 import argparse
+from pvade.IO.verbosity import get_verbosity_level
 
 
 def get_input_file():
@@ -57,11 +58,17 @@ def write_metrics(flow, prof_filename="profiling.txt"):
         prof_filename (str, optional): Path to the profiling output file.
             Defaults to ``"profiling.txt"``.
     """
+    verbosity_level = get_verbosity_level()
+
+    if verbosity_level <= 0:
+        return
+
     with open(prof_filename, "r") as output_file:
         if flow.fluid_analysis == True:
             # solver_line = [line for line in output_file if "(solve)" in line]
             solver_line = [line for line in output_file if "(solve)" in line]
-            print(solver_line)
+            if verbosity_level >= 2:
+                print(solver_line)
             solver_line = solver_line[0].split()
             print(
                 "solve: total time = ",
@@ -76,7 +83,8 @@ def write_metrics(flow, prof_filename="profiling.txt"):
         if flow.fluid_analysis == True:
             # solver_line = [line for line in output_file if "(solve)" in line]
             solver1_line = [line for line in output_file_1 if "_solver_step_1" in line]
-            print(solver1_line)
+            if verbosity_level >= 2:
+                print(solver1_line)
             solver1_line = solver1_line[0].split()
             print(
                 "solver 1: total time = ",
@@ -90,7 +98,8 @@ def write_metrics(flow, prof_filename="profiling.txt"):
     with open(prof_filename, "r") as output_file:
         if flow.fluid_analysis == True:
             solver2_line = [line for line in output_file if "_solver_step_2" in line]
-            print(solver2_line)
+            if verbosity_level >= 2:
+                print(solver2_line)
             solver2_line = solver2_line[0].split()
             print(
                 "solver 2: total time = ",
@@ -104,7 +113,8 @@ def write_metrics(flow, prof_filename="profiling.txt"):
     with open(prof_filename, "r") as output_file:
         if flow.fluid_analysis == True:
             solver3_line = [line for line in output_file if "_solver_step_3" in line]
-            print(solver3_line)
+            if verbosity_level >= 2:
+                print(solver3_line)
             solver3_line = solver3_line[0].split()
             print(
                 "solver 3: total time = ",

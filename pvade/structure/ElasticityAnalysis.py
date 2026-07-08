@@ -16,9 +16,16 @@ import scipy.interpolate as interp
 
 import warnings
 import os
+from pvade.IO.verbosity import emit_verbosity_print
 
 from pvade.structure.boundary_conditions import build_structure_boundary_conditions
 from contextlib import ExitStack
+
+
+def _vprint(rank, message, level=1):
+    """Rank-0 verbosity-aware print helper for elasticity messages."""
+    if rank == 0:
+        emit_verbosity_print(message, level=level)
 
 
 class Elasticity:
@@ -563,8 +570,7 @@ class Elasticity:
         #     ) * ufl.Identity(len(v))
 
         if self.first_call_to_solver:
-            if self.rank == 0:
-                print("Starting Strutural Solution")
+            _vprint(self.rank, "Starting Strutural Solution", level=1)
 
             self._assemble_system(params)
 
@@ -605,7 +611,7 @@ class Elasticity:
             nw_corner_accel = self.u.x.array[
                 structure.ndim * idx : structure.ndim * idx + structure.ndim
             ].astype(np.float64)
-            print(nw_corner_accel)
+            _vprint(self.rank, str(nw_corner_accel), level=2)
         except:
             nw_corner_accel = np.zeros(structure.ndim, dtype=np.float64)
 

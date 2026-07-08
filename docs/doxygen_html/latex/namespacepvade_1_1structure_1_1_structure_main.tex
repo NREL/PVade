@@ -1,0 +1,37 @@
+\doxysection{pvade.\+structure.\+Structure\+Main Namespace Reference}
+\hypertarget{namespacepvade_1_1structure_1_1_structure_main}{}\label{namespacepvade_1_1structure_1_1_structure_main}\index{pvade.structure.StructureMain@{pvade.structure.StructureMain}}
+\doxysubsubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \doxymbox{\hyperlink{classpvade_1_1structure_1_1_structure_main_1_1_structure}{Structure}}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\doxymbox{\hyperlink{namespacepvade_1_1structure_1_1_structure_main_a9539bb7cfd79da86137d9c228f6b4634}{\+\_\+vprint}} (rank, message, level=1)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\begin{DoxyVerb}Top-level structural mechanics manager.
+
+This module provides the :class:`Structure` class, which acts as a facade
+that coordinates the structural analysis pipeline: it owns the
+:class:`~pvade.structure.ElasticityAnalysis.Elasticity` physics object,
+sets up function spaces and boundary conditions, delegates variational form
+assembly, and exposes a single :meth:`Structure.solve` entry point used
+by the FSI coupling loop.
+\end{DoxyVerb}
+ 
+
+\label{namespacepvade_1_1structure_1_1_structure_main_doc-func-members}
+\Hypertarget{namespacepvade_1_1structure_1_1_structure_main_doc-func-members}
+\doxysubsection{Function Documentation}
+\Hypertarget{namespacepvade_1_1structure_1_1_structure_main_a9539bb7cfd79da86137d9c228f6b4634}\index{pvade.structure.StructureMain@{pvade.structure.StructureMain}!\_vprint@{\_vprint}}
+\index{\_vprint@{\_vprint}!pvade.structure.StructureMain@{pvade.structure.StructureMain}}
+\doxysubsubsection{\texorpdfstring{\_vprint()}{\_vprint()}}
+{\footnotesize\ttfamily \label{namespacepvade_1_1structure_1_1_structure_main_a9539bb7cfd79da86137d9c228f6b4634} 
+\+\_\+vprint (\begin{DoxyParamCaption}\item[{}]{rank}{, }\item[{}]{message}{, }\item[{}]{level}{ = {\ttfamily 1}}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [protected]}}
+
+\begin{DoxyVerb}Rank-0 verbosity-aware print helper for structure messages.\end{DoxyVerb}
+ 

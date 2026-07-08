@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.17.0" xml:lang="en-US">
+  <compounddef id="namespacepvade_1_1fluid" kind="namespace" language="Python">
+    <compoundname>pvade::fluid</compoundname>
+    <innernamespace refid="namespacepvade_1_1fluid_1_1boundary__conditions">pvade::fluid::boundary_conditions</innernamespace>
+    <innernamespace refid="namespacepvade_1_1fluid_1_1_flow_manager">pvade::fluid::FlowManager</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/__init__.py" line="1" column="1"/>
+  </compounddef>
+</doxygen>

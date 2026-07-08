@@ -1,0 +1,19 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.17.0" xml:lang="en-US">
+  <compounddef id="namespacepvade_1_1geometry" kind="namespace" language="Python">
+    <compoundname>pvade::geometry</compoundname>
+    <innernamespace refid="namespacepvade_1_1geometry_1_1cylinder2d">pvade::geometry::cylinder2d</innernamespace>
+    <innernamespace refid="namespacepvade_1_1geometry_1_1cylinder3d">pvade::geometry::cylinder3d</innernamespace>
+    <innernamespace refid="namespacepvade_1_1geometry_1_1flag2d">pvade::geometry::flag2d</innernamespace>
+    <innernamespace refid="namespacepvade_1_1geometry_1_1heliostats3d">pvade::geometry::heliostats3d</innernamespace>
+    <innernamespace refid="namespacepvade_1_1geometry_1_1_mesh_manager">pvade::geometry::MeshManager</innernamespace>
+    <innernamespace refid="namespacepvade_1_1geometry_1_1panels2d">pvade::geometry::panels2d</innernamespace>
+    <innernamespace refid="namespacepvade_1_1geometry_1_1panels3d">pvade::geometry::panels3d</innernamespace>
+    <innernamespace refid="namespacepvade_1_1geometry_1_1template">pvade::geometry::template</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/__init__.py" line="1" column="1"/>
+  </compounddef>
+</doxygen>

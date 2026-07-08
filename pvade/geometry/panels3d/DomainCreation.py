@@ -2,6 +2,13 @@ import gmsh
 import numpy as np
 
 from pvade.geometry.template.TemplateDomainCreation import TemplateDomainCreation
+from pvade.IO.verbosity import emit_verbosity_print
+
+
+def _vprint(rank, message, level=1):
+    """Rank-0 verbosity-aware print helper for geometry debug messages."""
+    if rank == 0:
+        emit_verbosity_print(message, level=level)
 
 
 class DomainCreation(TemplateDomainCreation):
@@ -794,26 +801,26 @@ class DomainCreation(TemplateDomainCreation):
                     + (params.pv_array.elevation - params.domain.z_min)
                     + params.pv_array.panel_thickness / 2
                 )
-                print("top", top_coord)
+                _vprint(self.rank, f"top {top_coord}", level=2)
                 bottom_coord = (
                     params.domain.z_min
                     + (params.pv_array.elevation - params.domain.z_min)
                     - params.pv_array.panel_thickness / 2
                 )
-                print("bottom", bottom_coord)
+                _vprint(self.rank, f"bottom {bottom_coord}", level=2)
                 left_coord = -params.pv_array.panel_chord / 2 + panel_id_x * (
                     params.pv_array.stream_spacing
                 )
-                print("left", left_coord)
+                _vprint(self.rank, f"left {left_coord}", level=2)
                 right_coord = +params.pv_array.panel_chord / 2 + panel_id_x * (
                     params.pv_array.stream_spacing
                 )
-                print("right", right_coord)
+                _vprint(self.rank, f"right {right_coord}", level=2)
 
                 front_coord = -params.pv_array.panel_span / 2 + yy
-                print("front", front_coord)
+                _vprint(self.rank, f"front {front_coord}", level=2)
                 back_coord = +params.pv_array.panel_span / 2 + yy
-                print("back", back_coord)
+                _vprint(self.rank, f"back {back_coord}", level=2)
 
                 surf_tag_list_total = self.gmsh_model.occ.getEntities(self.ndim - 1)
 
@@ -827,47 +834,47 @@ class DomainCreation(TemplateDomainCreation):
                 for surf_tag in surf_tag_list:
                     surf_id = surf_tag[1]
                     com = self.gmsh_model.occ.getCenterOfMass(self.ndim - 1, surf_id)
-                    print(com)
+                    _vprint(self.rank, f"center_of_mass {com}", level=2)
                     # sturctures tagging
                     if np.isclose(com[2], bottom_coord):
                         self._add_to_domain_markers(
                             f"bottom_{panel_ct:.0f}", [surf_id], "facet"
                         )
-                        print("bottom found")
+                        _vprint(self.rank, "bottom found", level=2)
                         # self._add_to_domain_markers("x_min", [surf_id], "facet")
 
                     elif np.allclose(com[2], top_coord):
                         self._add_to_domain_markers(
                             f"top_{panel_ct:.0f}", [surf_id], "facet"
                         )
-                        print("top found")
+                        _vprint(self.rank, "top found", level=2)
                         # self._add_to_domain_markers("x_max", [surf_id], "facet")
 
                     elif np.allclose(com[0], left_coord):
                         self._add_to_domain_markers(
                             f"left_{panel_ct:.0f}", [surf_id], "facet"
                         )
-                        print("left found")
+                        _vprint(self.rank, "left found", level=2)
                         # self._add_to_domain_markers("y_min", [surf_id], "facet")
 
                     elif np.allclose(com[0], right_coord):
                         self._add_to_domain_markers(
                             f"right_{panel_ct:.0f}", [surf_id], "facet"
                         )
-                        print("right found")
+                        _vprint(self.rank, "right found", level=2)
 
                     elif np.allclose(com[1], front_coord):
                         self._add_to_domain_markers(
                             f"front_{panel_ct:.0f}", [surf_id], "facet"
                         )
-                        print("front found")
+                        _vprint(self.rank, "front found", level=2)
                         # self._add_to_domain_markers("y_min", [surf_id], "facet")
 
                     elif np.allclose(com[1], back_coord):
                         self._add_to_domain_markers(
                             f"back_{panel_ct:.0f}", [surf_id], "facet"
                         )
-                        print("back found")
+                        _vprint(self.rank, "back found", level=2)
                         # self._add_to_domain_markers("y_max", [surf_id], "facet")
 
                 panel_ct += 1

@@ -1,0 +1,436 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.17.0" xml:lang="en-US">
+  <compounddef id="structure_2boundary__conditions_8py" kind="file" language="Python">
+    <compoundname>boundary_conditions.py</compoundname>
+    <innerclass refid="classpvade_1_1structure_1_1boundary__conditions_1_1_inflow_velocity" prot="public">pvade::structure::boundary_conditions::InflowVelocity</innerclass>
+    <innernamespace refid="namespacepvade">pvade</innernamespace>
+    <innernamespace refid="namespacepvade_1_1structure">pvade::structure</innernamespace>
+    <innernamespace refid="namespacepvade_1_1structure_1_1boundary__conditions">pvade::structure::boundary_conditions</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1" refid="namespacepvade_1_1structure_1_1boundary__conditions" refkind="compound"><highlight class="stringliteral">&quot;&quot;&quot;Boundary<sp/>condition<sp/>utilities<sp/>for<sp/>the<sp/>structural<sp/>mechanics<sp/>solver.</highlight></codeline>
+<codeline lineno="2"><highlight class="stringliteral"></highlight></codeline>
+<codeline lineno="3"><highlight class="stringliteral">This<sp/>module<sp/>provides<sp/>helper<sp/>functions<sp/>for<sp/>identifying<sp/>structural<sp/>boundary</highlight></codeline>
+<codeline lineno="4"><highlight class="stringliteral">entities<sp/>and<sp/>assembling<sp/>Dirichlet<sp/>boundary<sp/>conditions<sp/>on<sp/>the<sp/>structure<sp/>mesh,</highlight></codeline>
+<codeline lineno="5"><highlight class="stringliteral">including<sp/>both<sp/>surface-based<sp/>BCs<sp/>(fixed<sp/>edges/faces)<sp/>and<sp/>line-based<sp/>BCs</highlight></codeline>
+<codeline lineno="6"><highlight class="stringliteral">(torque-tube<sp/>and<sp/>motor-mount<sp/>connections<sp/>along<sp/>1-D<sp/>fixation<sp/>lines).</highlight></codeline>
+<codeline lineno="7"><highlight class="stringliteral">&quot;&quot;&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight><highlight class="keyword">import</highlight><highlight class="normal"><sp/>dolfinx</highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="keyword">from</highlight><highlight class="normal"><sp/>petsc4py<sp/></highlight><highlight class="keyword">import</highlight><highlight class="normal"><sp/>PETSc</highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight><highlight class="keyword">import</highlight><highlight class="normal"><sp/>numpy<sp/></highlight><highlight class="keyword">as</highlight><highlight class="normal"><sp/>np</highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="keyword">import</highlight><highlight class="normal"><sp/>warnings</highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="keyword">from</highlight><highlight class="normal"><sp/><ref refid="namespacepvade_1_1_i_o_1_1verbosity" kindref="compound">pvade.IO.verbosity</ref><sp/></highlight><highlight class="keyword">import</highlight><highlight class="normal"><sp/>emit_verbosity_print</highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="keyword">def<sp/></highlight><highlight class="normal"><ref refid="namespacepvade_1_1structure_1_1boundary__conditions_1a9539bb7cfd79da86137d9c228f6b4634" kindref="member">_vprint</ref>(rank,<sp/>message,<sp/>level=1):</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;&quot;&quot;Rank-0<sp/>verbosity-aware<sp/>print<sp/>helper<sp/>for<sp/>structure<sp/>BC<sp/>messages.&quot;&quot;&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>rank<sp/>==<sp/>0:</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>emit_verbosity_print(message,<sp/>level=level)</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight></codeline>
+<codeline lineno="24"><highlight class="normal"></highlight><highlight class="keyword">def<sp/></highlight><highlight class="normal"><ref refid="namespacepvade_1_1structure_1_1boundary__conditions_1a564af8b53fc7c85edb8f4b100b147dd7" kindref="member">get_facet_dofs_by_gmsh_tag</ref>(domain,<sp/>functionspace,<sp/>location):</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;&quot;&quot;Associate<sp/>degrees<sp/>of<sp/>freedom<sp/>with<sp/>marker<sp/>functions</highlight></codeline>
+<codeline lineno="26"><highlight class="stringliteral"></highlight></codeline>
+<codeline lineno="27"><highlight class="stringliteral"><sp/><sp/><sp/><sp/>This<sp/>function<sp/>uses<sp/>the<sp/>marker<sp/>information<sp/>in<sp/>the<sp/>gmsh<sp/>specification<sp/>to</highlight></codeline>
+<codeline lineno="28"><highlight class="stringliteral"><sp/><sp/><sp/><sp/>find<sp/>the<sp/>corresponding<sp/>degrees<sp/>of<sp/>freedom<sp/>for<sp/>use<sp/>in<sp/>the<sp/>actual</highlight></codeline>
+<codeline lineno="29"><highlight class="stringliteral"><sp/><sp/><sp/><sp/>boundary<sp/>condition<sp/>specification.<sp/>Note<sp/>that<sp/>this<sp/>method<sp/>does<sp/>not</highlight></codeline>
+<codeline lineno="30"><highlight class="stringliteral"><sp/><sp/><sp/><sp/>require<sp/>access<sp/>to<sp/>the<sp/>facet<sp/>information<sp/>computed<sp/>with</highlight></codeline>
+<codeline lineno="31"><highlight class="stringliteral"><sp/><sp/><sp/><sp/>``_locate_boundary_entities``.</highlight></codeline>
+<codeline lineno="32"><highlight class="stringliteral"></highlight></codeline>
+<codeline lineno="33"><highlight class="stringliteral"><sp/><sp/><sp/><sp/>Args:</highlight></codeline>
+<codeline lineno="34"><highlight class="stringliteral"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>domain<sp/>(:obj:`pvade.geometry.MeshManager.Domain`):<sp/>A<sp/>Domain<sp/>object</highlight></codeline>
+<codeline lineno="35"><highlight class="stringliteral"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>functionspace<sp/>(dolfinx.fem.FunctionSpace):<sp/>The<sp/>dolfinx<sp/>function<sp/>space<sp/>on<sp/>which<sp/>the<sp/>boundary<sp/>condition<sp/>will<sp/>be<sp/>applied</highlight></codeline>
+<codeline lineno="36"><highlight class="stringliteral"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>location<sp/>(str,<sp/>int):<sp/>A<sp/>string<sp/>identifier<sp/>of<sp/>the<sp/>boundary<sp/>condition<sp/>location,<sp/>e.g.,<sp/>&quot;x_min&quot;<sp/>or<sp/>the<sp/>equivalent<sp/>integer<sp/>tag,<sp/>e.g.,<sp/>1</highlight></codeline>
+<codeline lineno="37"><highlight class="stringliteral"></highlight></codeline>
+<codeline lineno="38"><highlight class="stringliteral"><sp/><sp/><sp/><sp/>Returns:</highlight></codeline>
+<codeline lineno="39"><highlight class="stringliteral"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>list:<sp/>A<sp/>list<sp/>of<sp/>the<sp/>degrees<sp/>of<sp/>freedom<sp/>associated<sp/>with<sp/>this<sp/>tag<sp/>and<sp/>functionspace</highlight></codeline>
+<codeline lineno="40"><highlight class="stringliteral"></highlight></codeline>
+<codeline lineno="41"><highlight class="stringliteral"><sp/><sp/><sp/><sp/>&quot;&quot;&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="42"><highlight class="normal"></highlight></codeline>
+<codeline lineno="43"><highlight class="normal"><sp/><sp/><sp/><sp/>facet_dim<sp/>=<sp/>domain.ndim<sp/>-<sp/>1</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"></highlight></codeline>
+<codeline lineno="45"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>isinstance(location,<sp/>str):</highlight></codeline>
+<codeline lineno="46"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>found_entities<sp/>=<sp/>domain.structure.facet_tags.find(</highlight></codeline>
+<codeline lineno="47"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>domain.domain_markers[location][</highlight><highlight class="stringliteral">&quot;idx&quot;</highlight><highlight class="normal">]</highlight></codeline>
+<codeline lineno="48"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>)</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">elif</highlight><highlight class="normal"><sp/>isinstance(location,<sp/>int):</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>found_entities<sp/>=<sp/>domain.structure.facet_tags.find(location)</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"></highlight></codeline>
+<codeline lineno="52"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">#<sp/>if<sp/>len(found_entities)<sp/>==<sp/>0:</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">#<sp/><sp/><sp/><sp/><sp/>warnings.warn(f&quot;Found<sp/>no<sp/>facets<sp/>using<sp/>location<sp/>=<sp/>{location}.&quot;)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="54"><highlight class="normal"></highlight></codeline>
+<codeline lineno="55"><highlight class="normal"><sp/><sp/><sp/><sp/>dofs<sp/>=<sp/>dolfinx.fem.locate_dofs_topological(functionspace,<sp/>facet_dim,<sp/>found_entities)</highlight></codeline>
+<codeline lineno="56"><highlight class="normal"></highlight></codeline>
+<codeline lineno="57"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>dofs</highlight></codeline>
+<codeline lineno="58"><highlight class="normal"></highlight></codeline>
+<codeline lineno="59"><highlight class="normal"></highlight></codeline>
+<codeline lineno="60"><highlight class="normal"></highlight><highlight class="keyword">def<sp/></highlight><highlight class="normal"><ref refid="namespacepvade_1_1structure_1_1boundary__conditions_1a588b091db900dbb2121dec159ce5ad48" kindref="member">build_vel_bc_by_type</ref>(bc_type,<sp/>domain,<sp/>functionspace,<sp/>bc_location):</highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;&quot;&quot;Build<sp/>a<sp/>dirichlet<sp/>bc</highlight></codeline>
+<codeline lineno="62"><highlight class="stringliteral"></highlight></codeline>
+<codeline lineno="63"><highlight class="stringliteral"><sp/><sp/><sp/><sp/>Args:</highlight></codeline>
+<codeline lineno="64"><highlight class="stringliteral"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>bc_type<sp/>(str):<sp/>The<sp/>type<sp/>of<sp/>simple<sp/>boundary<sp/>condition<sp/>to<sp/>apply,<sp/>&quot;slip&quot;<sp/>or<sp/>&quot;noslip&quot;</highlight></codeline>
+<codeline lineno="65"><highlight class="stringliteral"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>domain<sp/>(:obj:`pvade.geometry.MeshManager.Domain`):<sp/>A<sp/>Domain<sp/>object</highlight></codeline>
+<codeline lineno="66"><highlight class="stringliteral"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>functionspace<sp/>(dolfinx.fem.FunctionSpace):<sp/>The<sp/>dolfinx<sp/>function<sp/>space<sp/>on<sp/>which<sp/>the<sp/>boundary<sp/>condition<sp/>will<sp/>be<sp/>applied</highlight></codeline>
+<codeline lineno="67"><highlight class="stringliteral"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>bc_location<sp/>(str,<sp/>int):<sp/>A<sp/>string<sp/>identifier<sp/>of<sp/>the<sp/>boundary<sp/>condition<sp/>location,<sp/>e.g.,<sp/>&quot;x_min&quot;<sp/>or<sp/>the<sp/>equivalent<sp/>integer<sp/>tag,<sp/>e.g.,<sp/>1</highlight></codeline>
+<codeline lineno="68"><highlight class="stringliteral"></highlight></codeline>
+<codeline lineno="69"><highlight class="stringliteral"><sp/><sp/><sp/><sp/>Returns:</highlight></codeline>
+<codeline lineno="70"><highlight class="stringliteral"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>dolfinx.fem.dirichletbc:<sp/>A<sp/>dolfinx<sp/>dirichlet<sp/>boundary<sp/>condition</highlight></codeline>
+<codeline lineno="71"><highlight class="stringliteral"><sp/><sp/><sp/><sp/>&quot;&quot;&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="72"><highlight class="normal"></highlight></codeline>
+<codeline lineno="73"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacepvade_1_1structure_1_1boundary__conditions_1a9539bb7cfd79da86137d9c228f6b4634" kindref="member">_vprint</ref>(domain.rank,<sp/>f</highlight><highlight class="stringliteral">&quot;Setting<sp/>&apos;{bc_type}&apos;<sp/>BC<sp/>on<sp/>{bc_location}&quot;</highlight><highlight class="normal">,<sp/>level=1)</highlight></codeline>
+<codeline lineno="74"><highlight class="normal"></highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>bc_type<sp/>==<sp/></highlight><highlight class="stringliteral">&quot;noslip&quot;</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>zero_vec<sp/>=<sp/>dolfinx.fem.Constant(</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>domain.fluid.msh,<sp/>PETSc.ScalarType((0.0,<sp/>0.0,<sp/>0.0))</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>)</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"></highlight></codeline>
+<codeline lineno="80"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>dofs<sp/>=<sp/><ref refid="namespacepvade_1_1structure_1_1boundary__conditions_1a564af8b53fc7c85edb8f4b100b147dd7" kindref="member">get_facet_dofs_by_gmsh_tag</ref>(domain,<sp/>functionspace,<sp/>bc_location)</highlight></codeline>
+<codeline lineno="81"><highlight class="normal"></highlight></codeline>
+<codeline lineno="82"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>bc<sp/>=<sp/>dolfinx.fem.dirichletbc(zero_vec,<sp/>dofs,<sp/>functionspace)</highlight></codeline>
+<codeline lineno="83"><highlight class="normal"></highlight></codeline>
+<codeline lineno="84"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">elif</highlight><highlight class="normal"><sp/>bc_type<sp/>==<sp/></highlight><highlight class="stringliteral">&quot;slip&quot;</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="85"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>zero_scalar<sp/>=<sp/>dolfinx.fem.Constant(domain.fluid.msh,<sp/>PETSc.ScalarType(0.0))</highlight></codeline>
+<codeline lineno="86"><highlight class="normal"></highlight></codeline>
+<codeline lineno="87"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>bc_location<sp/></highlight><highlight class="keywordflow">in</highlight><highlight class="normal"><sp/>[</highlight><highlight class="stringliteral">&quot;x_min&quot;</highlight><highlight class="normal">,<sp/></highlight><highlight class="stringliteral">&quot;x_max&quot;</highlight><highlight class="normal">]:</highlight></codeline>
+<codeline lineno="88"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>sub_id<sp/>=<sp/>0</highlight></codeline>
+<codeline lineno="89"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">elif</highlight><highlight class="normal"><sp/>bc_location<sp/></highlight><highlight class="keywordflow">in</highlight><highlight class="normal"><sp/>[</highlight><highlight class="stringliteral">&quot;y_min&quot;</highlight><highlight class="normal">,<sp/></highlight><highlight class="stringliteral">&quot;y_max&quot;</highlight><highlight class="normal">]:</highlight></codeline>
+<codeline lineno="90"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>sub_id<sp/>=<sp/>1</highlight></codeline>
+<codeline lineno="91"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">elif</highlight><highlight class="normal"><sp/>bc_location<sp/></highlight><highlight class="keywordflow">in</highlight><highlight class="normal"><sp/>[</highlight><highlight class="stringliteral">&quot;z_min&quot;</highlight><highlight class="normal">,<sp/></highlight><highlight class="stringliteral">&quot;z_max&quot;</highlight><highlight class="normal">]:</highlight></codeline>
+<codeline lineno="92"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>sub_id<sp/>=<sp/>2</highlight></codeline>
+<codeline lineno="93"><highlight class="normal"></highlight></codeline>
+<codeline lineno="94"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>dofs<sp/>=<sp/><ref refid="namespacepvade_1_1structure_1_1boundary__conditions_1a564af8b53fc7c85edb8f4b100b147dd7" kindref="member">get_facet_dofs_by_gmsh_tag</ref>(</highlight></codeline>
+<codeline lineno="95"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>domain,<sp/>functionspace.sub(sub_id),<sp/>bc_location</highlight></codeline>
+<codeline lineno="96"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>)</highlight></codeline>
+<codeline lineno="97"><highlight class="normal"></highlight></codeline>
+<codeline lineno="98"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>bc<sp/>=<sp/>dolfinx.fem.dirichletbc(zero_scalar,<sp/>dofs,<sp/>functionspace.sub(sub_id))</highlight></codeline>
+<codeline lineno="99"><highlight class="normal"></highlight></codeline>
+<codeline lineno="100"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="101"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>domain.rank<sp/>==<sp/>0:</highlight></codeline>
+<codeline lineno="102"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">raise</highlight><highlight class="normal"><sp/>ValueError(f</highlight><highlight class="stringliteral">&quot;{bc_type}<sp/>BC<sp/>not<sp/>recognized&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="103"><highlight class="normal"></highlight></codeline>
+<codeline lineno="104"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>bc</highlight></codeline>
+<codeline lineno="105"><highlight class="normal"></highlight></codeline>
+<codeline lineno="106"><highlight class="normal"></highlight></codeline>
+<codeline lineno="107" refid="classpvade_1_1structure_1_1boundary__conditions_1_1_inflow_velocity" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classpvade_1_1structure_1_1boundary__conditions_1_1_inflow_velocity" kindref="compound">InflowVelocity</ref>:</highlight></codeline>
+<codeline lineno="108"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">def<sp/></highlight><highlight class="normal"><ref refid="classpvade_1_1structure_1_1boundary__conditions_1_1_inflow_velocity_1a35a504641fbf4d994d120c1b958d8c1a" kindref="member">__init__</ref>(self,<sp/>geom_dim,<sp/>params):</highlight></codeline>
+<codeline lineno="109"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;&quot;&quot;Inflow<sp/>velocity<sp/>object</highlight></codeline>
+<codeline lineno="110"><highlight class="stringliteral"></highlight></codeline>
+<codeline lineno="111"><highlight class="stringliteral"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Args:</highlight></codeline>
+<codeline lineno="112"><highlight class="stringliteral"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>geom_dim<sp/>(int):<sp/>The<sp/>geometric<sp/>dimension<sp/>(as<sp/>opposed<sp/>to<sp/>the<sp/>topological<sp/>dimension,<sp/>usually<sp/>this<sp/>is<sp/>3)</highlight></codeline>
+<codeline lineno="113"><highlight class="stringliteral"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>params<sp/>(:obj:`pvade.Parameters.SimParams`):<sp/>A<sp/>SimParams<sp/>object</highlight></codeline>
+<codeline lineno="114"><highlight class="stringliteral"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;&quot;&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="115"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>self.<ref refid="classpvade_1_1structure_1_1boundary__conditions_1_1_inflow_velocity_1abfbf5ce48da81542e2e214326763754b" kindref="member">geom_dim</ref><sp/>=<sp/>geom_dim</highlight></codeline>
+<codeline lineno="116"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>self.<ref refid="classpvade_1_1structure_1_1boundary__conditions_1_1_inflow_velocity_1ac0ead32c07617e3c37b4706b66d586aa" kindref="member">params</ref><sp/>=<sp/>params</highlight></codeline>
+<codeline lineno="117"><highlight class="normal"></highlight></codeline>
+<codeline lineno="118"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">def<sp/></highlight><highlight class="normal"><ref refid="classpvade_1_1structure_1_1boundary__conditions_1_1_inflow_velocity_1a290c3533a25770fc07abf2e1b8b41a1d" kindref="member">__call__</ref>(self,<sp/>x):</highlight></codeline>
+<codeline lineno="119"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;&quot;&quot;Define<sp/>an<sp/>inflow<sp/>expression<sp/>for<sp/>use<sp/>as<sp/>boundary<sp/>condition</highlight></codeline>
+<codeline lineno="120"><highlight class="stringliteral"></highlight></codeline>
+<codeline lineno="121"><highlight class="stringliteral"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Args:</highlight></codeline>
+<codeline lineno="122"><highlight class="stringliteral"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>x<sp/>(np.ndarray):<sp/>Array<sp/>of<sp/>coordinates</highlight></codeline>
+<codeline lineno="123"><highlight class="stringliteral"></highlight></codeline>
+<codeline lineno="124"><highlight class="stringliteral"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Returns:</highlight></codeline>
+<codeline lineno="125"><highlight class="stringliteral"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>np.ndarray:<sp/>Value<sp/>of<sp/>velocity<sp/>at<sp/>each<sp/>coordinate<sp/>in<sp/>input<sp/>array</highlight></codeline>
+<codeline lineno="126"><highlight class="stringliteral"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;&quot;&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="127"><highlight class="normal"></highlight></codeline>
+<codeline lineno="128"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>z0<sp/>=<sp/>0.05</highlight></codeline>
+<codeline lineno="129"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>d0<sp/>=<sp/>0.5</highlight></codeline>
+<codeline lineno="130"><highlight class="normal"></highlight></codeline>
+<codeline lineno="131"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>inflow_values<sp/>=<sp/>np.zeros((3,<sp/>x.shape[1]),<sp/>dtype=PETSc.ScalarType)</highlight></codeline>
+<codeline lineno="132"><highlight class="normal"></highlight></codeline>
+<codeline lineno="133"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>H<sp/>=<sp/>0.41</highlight></codeline>
+<codeline lineno="134"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>inflow_dy<sp/>=<sp/>H<sp/>-<sp/>x[1]</highlight></codeline>
+<codeline lineno="135"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>inflow_dz<sp/>=<sp/>H<sp/>-<sp/>x[2]</highlight></codeline>
+<codeline lineno="136"><highlight class="normal"></highlight></codeline>
+<codeline lineno="137"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>self.<ref refid="classpvade_1_1structure_1_1boundary__conditions_1_1_inflow_velocity_1ac0ead32c07617e3c37b4706b66d586aa" kindref="member">params</ref>.fluid.velocity_profile_type<sp/>==<sp/></highlight><highlight class="stringliteral">&quot;specified_from_file&quot;</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="138"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>u_hub<sp/>=<sp/>self.u_ref</highlight></codeline>
+<codeline lineno="139"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="140"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>u_hub<sp/>=<sp/>self.<ref refid="classpvade_1_1structure_1_1boundary__conditions_1_1_inflow_velocity_1ac0ead32c07617e3c37b4706b66d586aa" kindref="member">params</ref>.fluid.u_ref</highlight></codeline>
+<codeline lineno="141"><highlight class="normal"></highlight></codeline>
+<codeline lineno="142"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>z_hub<sp/>=<sp/>self.<ref refid="classpvade_1_1structure_1_1boundary__conditions_1_1_inflow_velocity_1ac0ead32c07617e3c37b4706b66d586aa" kindref="member">params</ref>.pv_array.elevation</highlight></codeline>
+<codeline lineno="143"><highlight class="normal"></highlight></codeline>
+<codeline lineno="144"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>self.<ref refid="classpvade_1_1structure_1_1boundary__conditions_1_1_inflow_velocity_1ac0ead32c07617e3c37b4706b66d586aa" kindref="member">params</ref>.general.example<sp/>==<sp/></highlight><highlight class="stringliteral">&quot;cylinder3d&quot;</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="145"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>inflow_values[0]<sp/>=<sp/>16.0<sp/>*<sp/>u_hub<sp/>*<sp/>x[1]<sp/>*<sp/>x[2]<sp/>*<sp/>inflow_dy<sp/>*<sp/>inflow_dz<sp/>/<sp/>H**4</highlight></codeline>
+<codeline lineno="146"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">elif</highlight><highlight class="normal"><sp/>self.<ref refid="classpvade_1_1structure_1_1boundary__conditions_1_1_inflow_velocity_1ac0ead32c07617e3c37b4706b66d586aa" kindref="member">params</ref>.general.example<sp/>==<sp/></highlight><highlight class="stringliteral">&quot;cylinder2d&quot;</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="147"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>inflow_values[0]<sp/>=<sp/>(</highlight></codeline>
+<codeline lineno="148"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>4<sp/>*<sp/>(u_hub)<sp/>*<sp/>np.sin(np.pi<sp/>/<sp/>8)<sp/>*<sp/>x[1]<sp/>*<sp/>(0.41<sp/>-<sp/>x[1])<sp/>/<sp/>(0.41**2)</highlight></codeline>
+<codeline lineno="149"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>)</highlight></codeline>
+<codeline lineno="150"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">elif</highlight><highlight class="normal"><sp/>(</highlight></codeline>
+<codeline lineno="151"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>self.<ref refid="classpvade_1_1structure_1_1boundary__conditions_1_1_inflow_velocity_1ac0ead32c07617e3c37b4706b66d586aa" kindref="member">params</ref>.general.example<sp/>==<sp/></highlight><highlight class="stringliteral">&quot;panels3d&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="152"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">or</highlight><highlight class="normal"><sp/>self.<ref refid="classpvade_1_1structure_1_1boundary__conditions_1_1_inflow_velocity_1ac0ead32c07617e3c37b4706b66d586aa" kindref="member">params</ref>.general.example<sp/>==<sp/></highlight><highlight class="stringliteral">&quot;heliostats3d&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="153"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>):</highlight></codeline>
+<codeline lineno="154"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>inflow_values[0]<sp/>=<sp/>(</highlight></codeline>
+<codeline lineno="155"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(u_hub)<sp/>*<sp/>np.log(((x[2])<sp/>-<sp/>d0)<sp/>/<sp/>z0)<sp/>/<sp/>(np.log((z_hub<sp/>-<sp/>d0)<sp/>/<sp/>z0))</highlight></codeline>
+<codeline lineno="156"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>)</highlight></codeline>
+<codeline lineno="157"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">elif</highlight><highlight class="normal"><sp/>self.<ref refid="classpvade_1_1structure_1_1boundary__conditions_1_1_inflow_velocity_1ac0ead32c07617e3c37b4706b66d586aa" kindref="member">params</ref>.general.example<sp/>==<sp/></highlight><highlight class="stringliteral">&quot;panels2d&quot;</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="158"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>inflow_values[0]<sp/>=<sp/>(</highlight></codeline>
+<codeline lineno="159"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(u_hub)<sp/>*<sp/>np.log(((x[1])<sp/>-<sp/>d0)<sp/>/<sp/>z0)<sp/>/<sp/>(np.log((z_hub<sp/>-<sp/>d0)<sp/>/<sp/>z0))</highlight></codeline>
+<codeline lineno="160"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>)</highlight></codeline>
+<codeline lineno="161"><highlight class="normal"></highlight></codeline>
+<codeline lineno="162"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>inflow_values</highlight></codeline>
+<codeline lineno="163"><highlight class="normal"></highlight></codeline>
+<codeline lineno="164"><highlight class="normal"></highlight></codeline>
+<codeline lineno="165"><highlight class="normal"></highlight><highlight class="keyword">def<sp/></highlight><highlight class="normal"><ref refid="namespacepvade_1_1structure_1_1boundary__conditions_1af7e0dd8d6e1994c2dc89cd47656632f5" kindref="member">get_inflow_profile_function</ref>(domain,<sp/>params,<sp/>functionspace):</highlight></codeline>
+<codeline lineno="166"><highlight class="normal"><sp/><sp/><sp/><sp/>ndim<sp/>=<sp/>domain.ndim</highlight></codeline>
+<codeline lineno="167"><highlight class="normal"></highlight></codeline>
+<codeline lineno="168"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">#<sp/>IMPORTANT:<sp/>this<sp/>is<sp/>distinct<sp/>from<sp/>ndim<sp/>because<sp/>a<sp/>mesh<sp/>can</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="169"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">#<sp/>be<sp/>2D<sp/>but<sp/>have<sp/>3<sp/>componenets<sp/>of<sp/>position,<sp/>e.g.,<sp/>a<sp/>mesh</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="170"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">#<sp/>with<sp/>triangular<sp/>elements<sp/>can<sp/>still<sp/>have<sp/>a<sp/>z<sp/>dimension<sp/>=<sp/>0.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="171"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">#<sp/>This<sp/>only<sp/>gets<sp/>used<sp/>in<sp/>making<sp/>sure<sp/>the<sp/>inflow<sp/>value</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="172"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">#<sp/>numpy<sp/>array<sp/>has<sp/>the<sp/>correct<sp/>size,<sp/>e.g.:</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="173"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">#</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="174"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">#<sp/>np.zeros((geom_dim,<sp/>x.shape[1]).<sp/>dtype=...)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="175"><highlight class="normal"><sp/><sp/><sp/><sp/>geom_dim<sp/>=<sp/>domain.fluid.msh.geometry.dim</highlight></codeline>
+<codeline lineno="176"><highlight class="normal"></highlight></codeline>
+<codeline lineno="177"><highlight class="normal"><sp/><sp/><sp/><sp/>inflow_function<sp/>=<sp/>dolfinx.fem.Function(functionspace)</highlight></codeline>
+<codeline lineno="178"><highlight class="normal"></highlight></codeline>
+<codeline lineno="179"><highlight class="normal"><sp/><sp/><sp/><sp/>inflow_velocity<sp/>=<sp/><ref refid="classpvade_1_1structure_1_1boundary__conditions_1_1_inflow_velocity" kindref="compound">InflowVelocity</ref>(geom_dim,<sp/>params)</highlight></codeline>
+<codeline lineno="180"><highlight class="normal"></highlight></codeline>
+<codeline lineno="181"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>params.general.example<sp/></highlight><highlight class="keywordflow">in</highlight><highlight class="normal"><sp/>[</highlight><highlight class="stringliteral">&quot;cylinder3d&quot;</highlight><highlight class="normal">,<sp/></highlight><highlight class="stringliteral">&quot;cylinder2d&quot;</highlight><highlight class="normal">]:</highlight></codeline>
+<codeline lineno="182"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>inflow_function.interpolate(inflow_velocity)</highlight></codeline>
+<codeline lineno="183"><highlight class="normal"></highlight></codeline>
+<codeline lineno="184"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="185"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>z0<sp/>=<sp/>0.05</highlight></codeline>
+<codeline lineno="186"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>d0<sp/>=<sp/>0.5</highlight></codeline>
+<codeline lineno="187"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>ndim<sp/>==<sp/>3:</highlight></codeline>
+<codeline lineno="188"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>upper_cells<sp/>=<sp/>dolfinx.mesh.locate_entities(</highlight></codeline>
+<codeline lineno="189"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>domain.fluid.msh,<sp/>ndim,<sp/></highlight><highlight class="keyword">lambda</highlight><highlight class="normal"><sp/>x:<sp/>x[2]<sp/>&gt;<sp/>d0<sp/>+<sp/>z0</highlight></codeline>
+<codeline lineno="190"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>)</highlight></codeline>
+<codeline lineno="191"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>lower_cells<sp/>=<sp/>dolfinx.mesh.locate_entities(</highlight></codeline>
+<codeline lineno="192"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>domain.fluid.msh,<sp/>ndim,<sp/></highlight><highlight class="keyword">lambda</highlight><highlight class="normal"><sp/>x:<sp/>x[2]<sp/>&lt;=<sp/>d0<sp/>+<sp/>z0</highlight></codeline>
+<codeline lineno="193"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>)</highlight></codeline>
+<codeline lineno="194"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">elif</highlight><highlight class="normal"><sp/>ndim<sp/>==<sp/>2:</highlight></codeline>
+<codeline lineno="195"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>upper_cells<sp/>=<sp/>dolfinx.mesh.locate_entities(</highlight></codeline>
+<codeline lineno="196"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>domain.fluid.msh,<sp/>ndim,<sp/></highlight><highlight class="keyword">lambda</highlight><highlight class="normal"><sp/>x:<sp/>x[1]<sp/>&gt;<sp/>d0<sp/>+<sp/>z0</highlight></codeline>
+<codeline lineno="197"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>)</highlight></codeline>
+<codeline lineno="198"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>lower_cells<sp/>=<sp/>dolfinx.mesh.locate_entities(</highlight></codeline>
+<codeline lineno="199"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>domain.fluid.msh,<sp/>ndim,<sp/></highlight><highlight class="keyword">lambda</highlight><highlight class="normal"><sp/>x:<sp/>x[1]<sp/>&lt;=<sp/>d0<sp/>+<sp/>z0</highlight></codeline>
+<codeline lineno="200"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>)</highlight></codeline>
+<codeline lineno="201"><highlight class="normal"></highlight></codeline>
+<codeline lineno="202"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>inflow_function.interpolate(</highlight></codeline>
+<codeline lineno="203"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">lambda</highlight><highlight class="normal"><sp/>x:<sp/>np.zeros((geom_dim,<sp/>x.shape[1]),<sp/>dtype=PETSc.ScalarType)</highlight></codeline>
+<codeline lineno="204"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>)</highlight></codeline>
+<codeline lineno="205"><highlight class="normal"></highlight></codeline>
+<codeline lineno="206"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>inflow_function.interpolate(inflow_velocity,<sp/>upper_cells)</highlight></codeline>
+<codeline lineno="207"><highlight class="normal"></highlight></codeline>
+<codeline lineno="208"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>inflow_function</highlight></codeline>
+<codeline lineno="209"><highlight class="normal"></highlight></codeline>
+<codeline lineno="210"><highlight class="normal"></highlight></codeline>
+<codeline lineno="211"><highlight class="normal"></highlight><highlight class="keyword">def<sp/></highlight><highlight class="normal"><ref refid="namespacepvade_1_1structure_1_1boundary__conditions_1a6352b7006ba86de232e3bcfaf559e598" kindref="member">build_velocity_boundary_conditions</ref>(domain,<sp/>params,<sp/>functionspace):</highlight></codeline>
+<codeline lineno="212"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;&quot;&quot;Build<sp/>all<sp/>boundary<sp/>conditions<sp/>on<sp/>velocity</highlight></codeline>
+<codeline lineno="213"><highlight class="stringliteral"></highlight></codeline>
+<codeline lineno="214"><highlight class="stringliteral"><sp/><sp/><sp/><sp/>This<sp/>method<sp/>builds<sp/>all<sp/>the<sp/>boundary<sp/>conditions<sp/>associated<sp/>with<sp/>velocity<sp/>and<sp/>stores<sp/>in<sp/>a<sp/>list,<sp/>``bcu``.</highlight></codeline>
+<codeline lineno="215"><highlight class="stringliteral"></highlight></codeline>
+<codeline lineno="216"><highlight class="stringliteral"><sp/><sp/><sp/><sp/>Args:</highlight></codeline>
+<codeline lineno="217"><highlight class="stringliteral"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>domain<sp/>(:obj:`pvade.geometry.MeshManager.Domain`):<sp/>A<sp/>Domain<sp/>object</highlight></codeline>
+<codeline lineno="218"><highlight class="stringliteral"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>params<sp/>(:obj:`pvade.Parameters.SimParams`):<sp/>A<sp/>SimParams<sp/>object</highlight></codeline>
+<codeline lineno="219"><highlight class="stringliteral"></highlight></codeline>
+<codeline lineno="220"><highlight class="stringliteral"><sp/><sp/><sp/><sp/>&quot;&quot;&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="221"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">#<sp/>Define<sp/>velocity<sp/>boundary<sp/>conditions</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="222"><highlight class="normal"></highlight></codeline>
+<codeline lineno="223"><highlight class="normal"><sp/><sp/><sp/><sp/>ndim<sp/>=<sp/>domain.ndim</highlight></codeline>
+<codeline lineno="224"><highlight class="normal"></highlight></codeline>
+<codeline lineno="225"><highlight class="normal"><sp/><sp/><sp/><sp/>bcu<sp/>=<sp/>[]</highlight></codeline>
+<codeline lineno="226"><highlight class="normal"></highlight></codeline>
+<codeline lineno="227"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">#<sp/>Generate<sp/>list<sp/>of<sp/>locations<sp/>to<sp/>loop<sp/>over</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="228"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>ndim<sp/>==<sp/>2:</highlight></codeline>
+<codeline lineno="229"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>bc_location_list<sp/>=<sp/>[</highlight><highlight class="stringliteral">&quot;y_min&quot;</highlight><highlight class="normal">,<sp/></highlight><highlight class="stringliteral">&quot;y_max&quot;</highlight><highlight class="normal">]</highlight></codeline>
+<codeline lineno="230"><highlight class="normal"></highlight></codeline>
+<codeline lineno="231"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">elif</highlight><highlight class="normal"><sp/>ndim<sp/>==<sp/>3:</highlight></codeline>
+<codeline lineno="232"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>bc_location_list<sp/>=<sp/>[</highlight><highlight class="stringliteral">&quot;y_min&quot;</highlight><highlight class="normal">,<sp/></highlight><highlight class="stringliteral">&quot;y_max&quot;</highlight><highlight class="normal">,<sp/></highlight><highlight class="stringliteral">&quot;z_min&quot;</highlight><highlight class="normal">,<sp/></highlight><highlight class="stringliteral">&quot;z_max&quot;</highlight><highlight class="normal">]</highlight></codeline>
+<codeline lineno="233"><highlight class="normal"></highlight></codeline>
+<codeline lineno="234"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">#<sp/>Iterate<sp/>over<sp/>all<sp/>user-prescribed<sp/>boundaries</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="235"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>bc_location<sp/></highlight><highlight class="keywordflow">in</highlight><highlight class="normal"><sp/>bc_location_list:</highlight></codeline>
+<codeline lineno="236"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>bc_type<sp/>=<sp/>getattr(params.fluid,<sp/>f</highlight><highlight class="stringliteral">&quot;bc_{bc_location}&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="237"><highlight class="normal"></highlight></codeline>
+<codeline lineno="238"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>bc<sp/>=<sp/><ref refid="namespacepvade_1_1structure_1_1boundary__conditions_1a588b091db900dbb2121dec159ce5ad48" kindref="member">build_vel_bc_by_type</ref>(bc_type,<sp/>domain,<sp/>functionspace,<sp/>bc_location)</highlight></codeline>
+<codeline lineno="239"><highlight class="normal"></highlight></codeline>
+<codeline lineno="240"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>bcu.append(bc)</highlight></codeline>
+<codeline lineno="241"><highlight class="normal"></highlight></codeline>
+<codeline lineno="242"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">#<sp/>Set<sp/>all<sp/>interior<sp/>surfaces<sp/>to<sp/>no<sp/>slip</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="243"><highlight class="normal"><sp/><sp/><sp/><sp/>bc<sp/>=<sp/><ref refid="namespacepvade_1_1structure_1_1boundary__conditions_1a588b091db900dbb2121dec159ce5ad48" kindref="member">build_vel_bc_by_type</ref>(</highlight><highlight class="stringliteral">&quot;noslip&quot;</highlight><highlight class="normal">,<sp/>domain,<sp/>functionspace,<sp/></highlight><highlight class="stringliteral">&quot;internal_surface&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="244"><highlight class="normal"><sp/><sp/><sp/><sp/>bcu.append(bc)</highlight></codeline>
+<codeline lineno="245"><highlight class="normal"></highlight></codeline>
+<codeline lineno="246"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">#<sp/>Set<sp/>the<sp/>inflow<sp/>boundary<sp/>condition</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="247"><highlight class="normal"><sp/><sp/><sp/><sp/>inflow_function<sp/>=<sp/><ref refid="namespacepvade_1_1structure_1_1boundary__conditions_1af7e0dd8d6e1994c2dc89cd47656632f5" kindref="member">get_inflow_profile_function</ref>(domain,<sp/>params,<sp/>functionspace)</highlight></codeline>
+<codeline lineno="248"><highlight class="normal"><sp/><sp/><sp/><sp/>dofs<sp/>=<sp/><ref refid="namespacepvade_1_1structure_1_1boundary__conditions_1a564af8b53fc7c85edb8f4b100b147dd7" kindref="member">get_facet_dofs_by_gmsh_tag</ref>(domain,<sp/>functionspace,<sp/></highlight><highlight class="stringliteral">&quot;x_min&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="249"><highlight class="normal"><sp/><sp/><sp/><sp/>bcu.append(dolfinx.fem.dirichletbc(inflow_function,<sp/>dofs))</highlight></codeline>
+<codeline lineno="250"><highlight class="normal"></highlight></codeline>
+<codeline lineno="251"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>bcu,<sp/>inflow_function</highlight></codeline>
+<codeline lineno="252"><highlight class="normal"></highlight></codeline>
+<codeline lineno="253"><highlight class="normal"></highlight></codeline>
+<codeline lineno="254"><highlight class="normal"></highlight><highlight class="keyword">def<sp/></highlight><highlight class="normal"><ref refid="namespacepvade_1_1structure_1_1boundary__conditions_1a173fe6f5aa2a50cbdba1f49e878b9c0b" kindref="member">build_pressure_boundary_conditions</ref>(domain,<sp/>params,<sp/>functionspace):</highlight></codeline>
+<codeline lineno="255"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;&quot;&quot;Build<sp/>all<sp/>boundary<sp/>conditions<sp/>on<sp/>pressure</highlight></codeline>
+<codeline lineno="256"><highlight class="stringliteral"></highlight></codeline>
+<codeline lineno="257"><highlight class="stringliteral"><sp/><sp/><sp/><sp/>This<sp/>method<sp/>builds<sp/>all<sp/>the<sp/>boundary<sp/>conditions<sp/>associated<sp/>with<sp/>pressure<sp/>and<sp/>stores<sp/>in<sp/>a<sp/>list,<sp/>``bcp``.</highlight></codeline>
+<codeline lineno="258"><highlight class="stringliteral"></highlight></codeline>
+<codeline lineno="259"><highlight class="stringliteral"><sp/><sp/><sp/><sp/>Args:</highlight></codeline>
+<codeline lineno="260"><highlight class="stringliteral"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>domain<sp/>(:obj:`pvade.geometry.MeshManager.Domain`):<sp/>A<sp/>Domain<sp/>object</highlight></codeline>
+<codeline lineno="261"><highlight class="stringliteral"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>params<sp/>(:obj:`pvade.Parameters.SimParams`):<sp/>A<sp/>SimParams<sp/>object</highlight></codeline>
+<codeline lineno="262"><highlight class="stringliteral"><sp/><sp/><sp/><sp/>&quot;&quot;&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="263"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">#<sp/>Define<sp/>pressure<sp/>boundary<sp/>conditions</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="264"><highlight class="normal"><sp/><sp/><sp/><sp/>bcp<sp/>=<sp/>[]</highlight></codeline>
+<codeline lineno="265"><highlight class="normal"></highlight></codeline>
+<codeline lineno="266"><highlight class="normal"><sp/><sp/><sp/><sp/>zero_scalar<sp/>=<sp/>dolfinx.fem.Constant(domain.fluid.msh,<sp/>PETSc.ScalarType(0.0))</highlight></codeline>
+<codeline lineno="267"><highlight class="normal"></highlight></codeline>
+<codeline lineno="268"><highlight class="normal"><sp/><sp/><sp/><sp/>dofs<sp/>=<sp/><ref refid="namespacepvade_1_1structure_1_1boundary__conditions_1a564af8b53fc7c85edb8f4b100b147dd7" kindref="member">get_facet_dofs_by_gmsh_tag</ref>(domain,<sp/>functionspace,<sp/></highlight><highlight class="stringliteral">&quot;x_max&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="269"><highlight class="normal"><sp/><sp/><sp/><sp/>bcp.append(dolfinx.fem.dirichletbc(zero_scalar,<sp/>dofs,<sp/>functionspace))</highlight></codeline>
+<codeline lineno="270"><highlight class="normal"></highlight></codeline>
+<codeline lineno="271"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>bcp</highlight></codeline>
+<codeline lineno="272"><highlight class="normal"></highlight></codeline>
+<codeline lineno="273"><highlight class="normal"></highlight></codeline>
+<codeline lineno="274"><highlight class="normal"></highlight><highlight class="keyword">def<sp/></highlight><highlight class="normal"><ref refid="namespacepvade_1_1structure_1_1boundary__conditions_1addd1d8fdf7b79e8c794038a098cf6497" kindref="member">build_structure_boundary_conditions</ref>(domain,<sp/>params,<sp/>functionspace):</highlight></codeline>
+<codeline lineno="275"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;&quot;&quot;Build<sp/>all<sp/>Dirichlet<sp/>boundary<sp/>conditions<sp/>for<sp/>the<sp/>structure.</highlight></codeline>
+<codeline lineno="276"><highlight class="stringliteral"></highlight></codeline>
+<codeline lineno="277"><highlight class="stringliteral"><sp/><sp/><sp/><sp/>Applies<sp/>zero-displacement<sp/>constraints<sp/>on<sp/>all<sp/>panel<sp/>surface<sp/>faces<sp/>listed</highlight></codeline>
+<codeline lineno="278"><highlight class="stringliteral"><sp/><sp/><sp/><sp/>in<sp/>``params.structure.bc_list``.<sp/><sp/>Optionally<sp/>pins<sp/>nodes<sp/>along<sp/>the<sp/>torque</highlight></codeline>
+<codeline lineno="279"><highlight class="stringliteral"><sp/><sp/><sp/><sp/>tube<sp/>line<sp/>(``params.structure.tube_connection``)<sp/>and<sp/>along<sp/>motor-mount</highlight></codeline>
+<codeline lineno="280"><highlight class="stringliteral"><sp/><sp/><sp/><sp/>lines<sp/>(``params.structure.motor_connection``)<sp/>using<sp/>a<sp/>collinearity<sp/>test.</highlight></codeline>
+<codeline lineno="281"><highlight class="stringliteral"></highlight></codeline>
+<codeline lineno="282"><highlight class="stringliteral"><sp/><sp/><sp/><sp/>Args:</highlight></codeline>
+<codeline lineno="283"><highlight class="stringliteral"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>domain<sp/>(:obj:`pvade.geometry.MeshManager.FSIDomain`):<sp/>A<sp/>Domain<sp/>object</highlight></codeline>
+<codeline lineno="284"><highlight class="stringliteral"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>that<sp/>holds<sp/>the<sp/>structure<sp/>submesh<sp/>and<sp/>facet<sp/>tags.</highlight></codeline>
+<codeline lineno="285"><highlight class="stringliteral"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>params<sp/>(:obj:`pvade.IO.Parameters.SimParams`):<sp/>A<sp/>SimParams<sp/>object</highlight></codeline>
+<codeline lineno="286"><highlight class="stringliteral"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>containing<sp/>boundary<sp/>condition<sp/>settings<sp/>and<sp/>panel<sp/>geometry.</highlight></codeline>
+<codeline lineno="287"><highlight class="stringliteral"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>functionspace<sp/>(dolfinx.fem.FunctionSpace):<sp/>The<sp/>vector<sp/>displacement</highlight></codeline>
+<codeline lineno="288"><highlight class="stringliteral"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>function<sp/>space<sp/>on<sp/>which<sp/>boundary<sp/>conditions<sp/>are<sp/>applied.</highlight></codeline>
+<codeline lineno="289"><highlight class="stringliteral"></highlight></codeline>
+<codeline lineno="290"><highlight class="stringliteral"><sp/><sp/><sp/><sp/>Returns:</highlight></codeline>
+<codeline lineno="291"><highlight class="stringliteral"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>list[dolfinx.fem.DirichletBC]:<sp/>A<sp/>list<sp/>of<sp/>assembled<sp/>Dirichlet<sp/>boundary</highlight></codeline>
+<codeline lineno="292"><highlight class="stringliteral"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>condition<sp/>objects<sp/>ready<sp/>to<sp/>be<sp/>passed<sp/>to<sp/>the<sp/>nonlinear<sp/>solver.</highlight></codeline>
+<codeline lineno="293"><highlight class="stringliteral"><sp/><sp/><sp/><sp/>&quot;&quot;&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="294"><highlight class="normal"><sp/><sp/><sp/><sp/>facet_dim<sp/>=<sp/>domain.ndim<sp/>-<sp/>1</highlight></codeline>
+<codeline lineno="295"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>domain.ndim<sp/>==<sp/>2:</highlight></codeline>
+<codeline lineno="296"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>zero_vec<sp/>=<sp/>dolfinx.fem.Constant(</highlight></codeline>
+<codeline lineno="297"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>domain.structure.msh,<sp/>PETSc.ScalarType((0.0,<sp/>0.0))</highlight></codeline>
+<codeline lineno="298"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>)</highlight></codeline>
+<codeline lineno="299"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">elif</highlight><highlight class="normal"><sp/>domain.ndim<sp/>==<sp/>3:</highlight></codeline>
+<codeline lineno="300"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>zero_vec<sp/>=<sp/>dolfinx.fem.Constant(</highlight></codeline>
+<codeline lineno="301"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>domain.structure.msh,<sp/>PETSc.ScalarType((0.0,<sp/>0.0,<sp/>0.0))</highlight></codeline>
+<codeline lineno="302"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>)</highlight></codeline>
+<codeline lineno="303"><highlight class="normal"><sp/><sp/><sp/><sp/>bc<sp/>=<sp/>[]</highlight></codeline>
+<codeline lineno="304"><highlight class="normal"></highlight></codeline>
+<codeline lineno="305"><highlight class="normal"><sp/><sp/><sp/><sp/>total_num_panels<sp/>=<sp/>params.pv_array.stream_rows<sp/>*<sp/>params.pv_array.span_rows</highlight></codeline>
+<codeline lineno="306"><highlight class="normal"></highlight></codeline>
+<codeline lineno="307"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>num_panel<sp/></highlight><highlight class="keywordflow">in</highlight><highlight class="normal"><sp/>range(total_num_panels):</highlight></codeline>
+<codeline lineno="308"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>location<sp/></highlight><highlight class="keywordflow">in</highlight><highlight class="normal"><sp/>params.structure.bc_list:</highlight></codeline>
+<codeline lineno="309"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>location_panel<sp/>=<sp/>f</highlight><highlight class="stringliteral">&quot;{location}_{num_panel}&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="310"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">#<sp/>f&quot;front_{num_panel}&quot;<sp/>,<sp/>f&quot;back_{num_panel}&quot;:</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="311"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">#<sp/>for<sp/>location<sp/>in<sp/><sp/>[f&quot;left_{num_panel}&quot;]:#<sp/>,<sp/>f&quot;right_{num_panel}&quot;:</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="312"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">#<sp/>for<sp/>location<sp/>in<sp/><sp/>f&quot;left_{num_panel}&quot;:</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="313"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">#<sp/>for<sp/>location<sp/>in<sp/>f&quot;left_{num_panel}&quot;:</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="314"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">#<sp/>location<sp/>=<sp/>f&quot;top_{num_panel}&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="315"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>dofs<sp/>=<sp/><ref refid="namespacepvade_1_1structure_1_1boundary__conditions_1a564af8b53fc7c85edb8f4b100b147dd7" kindref="member">get_facet_dofs_by_gmsh_tag</ref>(domain,<sp/>functionspace,<sp/>location_panel)</highlight></codeline>
+<codeline lineno="316"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>bc.append(dolfinx.fem.dirichletbc(zero_vec,<sp/>dofs,<sp/>functionspace))</highlight></codeline>
+<codeline lineno="317"><highlight class="normal"></highlight></codeline>
+<codeline lineno="318"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">def<sp/></highlight><highlight class="normal">connection_point_up(x,<sp/>nodes_to_pin_between):</highlight></codeline>
+<codeline lineno="319"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;&quot;&quot;</highlight></codeline>
+<codeline lineno="320"><highlight class="stringliteral"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>This<sp/>pins<sp/>points<sp/>along<sp/>a<sp/>line<sp/>between<sp/>the<sp/>values<sp/>in<sp/>`nodes_to_pin_between`</highlight></codeline>
+<codeline lineno="321"><highlight class="stringliteral"></highlight></codeline>
+<codeline lineno="322"><highlight class="stringliteral"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>This<sp/>function<sp/>returns<sp/>a<sp/>boolean<sp/>array<sp/>which<sp/>is<sp/>true<sp/>for<sp/>nodes</highlight></codeline>
+<codeline lineno="323"><highlight class="stringliteral"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(0D<sp/>elements)<sp/>that<sp/>fall<sp/>along<sp/>a<sp/>line<sp/>between<sp/>the<sp/>start<sp/>and<sp/>stop<sp/>points<sp/>expressed</highlight></codeline>
+<codeline lineno="324"><highlight class="stringliteral"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>`nodes_to_pin_between`.<sp/>Each<sp/>row<sp/>of<sp/>`nodes_to_pin_between`<sp/>is<sp/>a<sp/>single<sp/>line</highlight></codeline>
+<codeline lineno="325"><highlight class="stringliteral"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>constraint,<sp/>with<sp/>the<sp/>first<sp/>three<sp/>columns<sp/>expressing<sp/>the<sp/>3D<sp/>starting<sp/>point<sp/>and<sp/>the</highlight></codeline>
+<codeline lineno="326"><highlight class="stringliteral"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>second<sp/>three<sp/>columns<sp/>expressing<sp/>the<sp/>ending<sp/>point.<sp/>`nodes_to_pin_between`<sp/>has</highlight></codeline>
+<codeline lineno="327"><highlight class="stringliteral"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>dimension<sp/>`number_of_fixation_lines<sp/>x<sp/>6`.<sp/>The<sp/>decision<sp/>about<sp/>whether<sp/>or<sp/>not<sp/>a<sp/>node</highlight></codeline>
+<codeline lineno="328"><highlight class="stringliteral"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>is<sp/>colinear<sp/>with<sp/>the<sp/>line<sp/>defined<sp/>by<sp/>the<sp/>starting<sp/>and<sp/>stopping<sp/>points<sp/>is<sp/>made<sp/>by</highlight></codeline>
+<codeline lineno="329"><highlight class="stringliteral"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>calculating<sp/>a<sp/>cross<sp/>product.<sp/>If<sp/>A<sp/>is<sp/>the<sp/>starting<sp/>point,<sp/>B<sp/>is<sp/>the<sp/>stopping<sp/>point,</highlight></codeline>
+<codeline lineno="330"><highlight class="stringliteral"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>and<sp/>C<sp/>is<sp/>an<sp/>arbitrary<sp/>point<sp/>we<sp/>are<sp/>testing<sp/>for<sp/>collinearity,<sp/>then</highlight></codeline>
+<codeline lineno="331"><highlight class="stringliteral"></highlight></codeline>
+<codeline lineno="332"><highlight class="stringliteral"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>|<sp/>AC<sp/>x<sp/>AB<sp/>|<sp/>=<sp/>0</highlight></codeline>
+<codeline lineno="333"><highlight class="stringliteral"></highlight></codeline>
+<codeline lineno="334"><highlight class="stringliteral"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>or<sp/>the<sp/>magnitude<sp/>of<sp/>segement<sp/>AC<sp/>(test<sp/>vector)<sp/>crossed<sp/>with<sp/>the<sp/>segment<sp/>AB</highlight></codeline>
+<codeline lineno="335"><highlight class="stringliteral"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(truth<sp/>vector)<sp/>being<sp/>near<sp/>zero<sp/>means<sp/>the<sp/>three<sp/>points<sp/>are<sp/>collinear.</highlight></codeline>
+<codeline lineno="336"><highlight class="stringliteral"></highlight></codeline>
+<codeline lineno="337"><highlight class="stringliteral"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;&quot;&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="338"><highlight class="normal"></highlight></codeline>
+<codeline lineno="339"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>eps<sp/>=<sp/>1e-3</highlight></codeline>
+<codeline lineno="340"><highlight class="normal"></highlight></codeline>
+<codeline lineno="341"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>k,<sp/>pts<sp/></highlight><highlight class="keywordflow">in</highlight><highlight class="normal"><sp/>enumerate(nodes_to_pin_between):</highlight></codeline>
+<codeline lineno="342"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">#<sp/>print(pts)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="343"><highlight class="normal"></highlight></codeline>
+<codeline lineno="344"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>test_vecs<sp/>=<sp/>x[:,<sp/>:].T<sp/>-<sp/>pts[0:3]</highlight></codeline>
+<codeline lineno="345"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>truth_vec<sp/>=<sp/>pts[3:6]<sp/>-<sp/>pts[0:3]</highlight></codeline>
+<codeline lineno="346"><highlight class="normal"></highlight></codeline>
+<codeline lineno="347"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>cross_product<sp/>=<sp/>np.cross(test_vecs,<sp/>truth_vec)</highlight></codeline>
+<codeline lineno="348"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>cross_product_mag<sp/>=<sp/>np.linalg.norm(cross_product,<sp/>axis=1)</highlight></codeline>
+<codeline lineno="349"><highlight class="normal"></highlight></codeline>
+<codeline lineno="350"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>pinned_pts<sp/>=<sp/>cross_product_mag<sp/>&lt;<sp/>eps</highlight></codeline>
+<codeline lineno="351"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">#<sp/>print(np.shape(cross_product),<sp/>np.shape(cross_product_mag))</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="352"><highlight class="normal"></highlight></codeline>
+<codeline lineno="353"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>k<sp/>==<sp/>0:</highlight></codeline>
+<codeline lineno="354"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>total_pinned_pts<sp/>=<sp/>np.copy(pinned_pts)</highlight></codeline>
+<codeline lineno="355"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="356"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>total_pinned_pts<sp/>=<sp/>np.logical_or(pinned_pts,<sp/>total_pinned_pts)</highlight></codeline>
+<codeline lineno="357"><highlight class="normal"></highlight></codeline>
+<codeline lineno="358"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>total_pinned_pts</highlight></codeline>
+<codeline lineno="359"><highlight class="normal"></highlight></codeline>
+<codeline lineno="360"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">def<sp/></highlight><highlight class="normal">connection_point_up_helper(nodes_to_pin_between):</highlight></codeline>
+<codeline lineno="361"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;&quot;&quot;</highlight></codeline>
+<codeline lineno="362"><highlight class="stringliteral"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>This<sp/>returns<sp/>a<sp/>function<sp/>with<sp/>a<sp/>single<sp/>input,<sp/>x,<sp/>as<sp/>expected<sp/>by<sp/>`dolfinx.mesh.locate_entities`</highlight></codeline>
+<codeline lineno="363"><highlight class="stringliteral"></highlight></codeline>
+<codeline lineno="364"><highlight class="stringliteral"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>This<sp/>is<sp/>a<sp/>wrapper<sp/>around<sp/>the<sp/>function<sp/>`connection_point_up`.<sp/>It<sp/>allows<sp/>us<sp/>to<sp/>pass<sp/>extra<sp/>arguments</highlight></codeline>
+<codeline lineno="365"><highlight class="stringliteral"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>to<sp/>that<sp/>function<sp/>(besides<sp/>just<sp/>`x`)<sp/>to<sp/>define<sp/>how<sp/>the<sp/>calculation<sp/>should<sp/>be<sp/>carried<sp/>out.<sp/>The<sp/>return</highlight></codeline>
+<codeline lineno="366"><highlight class="stringliteral"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>value<sp/>of<sp/>this<sp/>helper<sp/>function<sp/>is<sp/>a<sp/>function<sp/>handle<sp/>with<sp/>a<sp/>single<sp/>input,<sp/>`x`,<sp/>which<sp/>is<sp/>what</highlight></codeline>
+<codeline lineno="367"><highlight class="stringliteral"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>`dolfinx.mesh.locate_entities`<sp/>expects.</highlight></codeline>
+<codeline lineno="368"><highlight class="stringliteral"></highlight></codeline>
+<codeline lineno="369"><highlight class="stringliteral"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>That<sp/>is:</highlight></codeline>
+<codeline lineno="370"><highlight class="stringliteral"></highlight></codeline>
+<codeline lineno="371"><highlight class="stringliteral"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>fn_handle(x)<sp/>=<sp/>fn(x,<sp/>extra_arg_1,<sp/>extra_arg_2)</highlight></codeline>
+<codeline lineno="372"><highlight class="stringliteral"></highlight></codeline>
+<codeline lineno="373"><highlight class="stringliteral"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>where<sp/>the<sp/>extra<sp/>arguments<sp/>can<sp/>be<sp/>passed<sp/>in<sp/>here.</highlight></codeline>
+<codeline lineno="374"><highlight class="stringliteral"></highlight></codeline>
+<codeline lineno="375"><highlight class="stringliteral"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;&quot;&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="376"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>fn_handle<sp/>=<sp/></highlight><highlight class="keyword">lambda</highlight><highlight class="normal"><sp/>x:<sp/>connection_point_up(x,<sp/>nodes_to_pin_between)</highlight></codeline>
+<codeline lineno="377"><highlight class="normal"></highlight></codeline>
+<codeline lineno="378"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>fn_handle</highlight></codeline>
+<codeline lineno="379"><highlight class="normal"></highlight></codeline>
+<codeline lineno="380"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">#<sp/>Start<sp/>pinning<sp/>along<sp/>the<sp/>lines<sp/>expressed<sp/>byt<sp/>numpy_pt_total_array</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="381"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">#<sp/>First,<sp/>determine<sp/>the<sp/>total<sp/>number<sp/>of<sp/>rows<sp/>(number<sp/>of<sp/>lines<sp/>to<sp/>pin)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="382"><highlight class="normal"><sp/><sp/><sp/><sp/>num_nodes<sp/>=<sp/>np.shape(domain.numpy_pt_total_array)[0]</highlight></codeline>
+<codeline lineno="383"><highlight class="normal"></highlight></codeline>
+<codeline lineno="384"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">#<sp/>Determine<sp/>how<sp/>many<sp/>pinning<sp/>lines<sp/>exist<sp/>per<sp/>each<sp/>panel<sp/>(e.g.,<sp/>24<sp/>lines<sp/>distributed<sp/>on<sp/>8<sp/>panels<sp/>means<sp/>3<sp/>lines<sp/>per<sp/>panel)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="385"><highlight class="normal"><sp/><sp/><sp/><sp/>nodes_per_panel<sp/>=<sp/>int(num_nodes<sp/>/<sp/>total_num_panels)</highlight></codeline>
+<codeline lineno="386"><highlight class="normal"></highlight></codeline>
+<codeline lineno="387"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">#<sp/>The<sp/>torque<sp/>tube<sp/>entry<sp/>(oriented<sp/>spanwise<sp/>along<sp/>the<sp/>middle,<sp/>divides<sp/>panel<sp/>into<sp/>upstream<sp/>and<sp/>downstream<sp/>rectangular<sp/>halves)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="388"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">#<sp/>is<sp/>always<sp/>the<sp/>first<sp/>entry,<sp/>e.g.,<sp/>[0,<sp/>...,<sp/>...,<sp/>3,<sp/>...,<sp/>...,<sp/>6,<sp/>...,<sp/>...],<sp/>[0,<sp/>3,<sp/>6]<sp/>are<sp/>the<sp/>torque<sp/>tubes</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="389"><highlight class="normal"><sp/><sp/><sp/><sp/>tube_nodes_idx<sp/>=<sp/>np.arange(0,<sp/>num_nodes,<sp/>nodes_per_panel,<sp/>dtype=np.int64)</highlight></codeline>
+<codeline lineno="390"><highlight class="normal"></highlight></codeline>
+<codeline lineno="391"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>params.structure.tube_connection<sp/>==<sp/></highlight><highlight class="keyword">True</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="392"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">#<sp/>If<sp/>making<sp/>torque<sp/>tube<sp/>connections,<sp/>pass<sp/>only<sp/>those<sp/>pinning<sp/>lines<sp/>to<sp/>the<sp/>BC<sp/>identification<sp/>function</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="393"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>tube_nodes<sp/>=<sp/>domain.numpy_pt_total_array[tube_nodes_idx,<sp/>:]</highlight></codeline>
+<codeline lineno="394"><highlight class="normal"></highlight></codeline>
+<codeline lineno="395"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>facet_uppoint<sp/>=<sp/>dolfinx.mesh.locate_entities(</highlight></codeline>
+<codeline lineno="396"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>domain.structure.msh,<sp/>1,<sp/>connection_point_up_helper(tube_nodes)</highlight></codeline>
+<codeline lineno="397"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>)</highlight></codeline>
+<codeline lineno="398"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>dofs_disp<sp/>=<sp/>dolfinx.fem.locate_dofs_topological(</highlight></codeline>
+<codeline lineno="399"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>functionspace,<sp/>1,<sp/>[facet_uppoint]</highlight></codeline>
+<codeline lineno="400"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>)</highlight></codeline>
+<codeline lineno="401"><highlight class="normal"></highlight></codeline>
+<codeline lineno="402"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>bc.append(dolfinx.fem.dirichletbc(zero_vec,<sp/>dofs_disp,<sp/>functionspace))</highlight></codeline>
+<codeline lineno="403"><highlight class="normal"></highlight></codeline>
+<codeline lineno="404"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>params.structure.motor_connection<sp/>==<sp/></highlight><highlight class="keyword">True</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="405"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">#<sp/>If<sp/>making<sp/>motor<sp/>mount<sp/>connections,<sp/>pass<sp/>only<sp/>those<sp/>pinning<sp/>lines<sp/>to<sp/>the<sp/>BC<sp/>identification<sp/>function</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="406"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">#<sp/>this<sp/>is<sp/>done<sp/>by<sp/>making<sp/>a<sp/>copy<sp/>of<sp/>the<sp/>numpy_pt_total_array<sp/>with<sp/>the<sp/>torque<sp/>tube<sp/>lines<sp/>*deleted*</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="407"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">#<sp/>not<sp/>done<sp/>in<sp/>place,<sp/>so<sp/>numpy_pt_total_array<sp/>remains<sp/>unaltered.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="408"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>motor_nodes<sp/>=<sp/>np.delete(domain.numpy_pt_total_array,<sp/>tube_nodes_idx,<sp/>axis=0)</highlight></codeline>
+<codeline lineno="409"><highlight class="normal"></highlight></codeline>
+<codeline lineno="410"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>facet_uppoint<sp/>=<sp/>dolfinx.mesh.locate_entities(</highlight></codeline>
+<codeline lineno="411"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>domain.structure.msh,<sp/>1,<sp/>connection_point_up_helper(motor_nodes)</highlight></codeline>
+<codeline lineno="412"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>)</highlight></codeline>
+<codeline lineno="413"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>dofs_disp<sp/>=<sp/>dolfinx.fem.locate_dofs_topological(</highlight></codeline>
+<codeline lineno="414"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>functionspace,<sp/>1,<sp/>[facet_uppoint]</highlight></codeline>
+<codeline lineno="415"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>)</highlight></codeline>
+<codeline lineno="416"><highlight class="normal"></highlight></codeline>
+<codeline lineno="417"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>bc.append(dolfinx.fem.dirichletbc(zero_vec,<sp/>dofs_disp,<sp/>functionspace))</highlight></codeline>
+<codeline lineno="418"><highlight class="normal"></highlight></codeline>
+<codeline lineno="419"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>bc</highlight></codeline>
+    </programlisting>
+    <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/boundary_conditions.py"/>
+  </compounddef>
+</doxygen>

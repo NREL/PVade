@@ -1,0 +1,286 @@
+\doxysection{pvade.\+fluid.\+boundary\+\_\+conditions.\+Inflow\+Velocity Class Reference}
+\hypertarget{classpvade_1_1fluid_1_1boundary__conditions_1_1_inflow_velocity}{}\label{classpvade_1_1fluid_1_1boundary__conditions_1_1_inflow_velocity}\index{pvade.fluid.boundary\_conditions.InflowVelocity@{pvade.fluid.boundary\_conditions.InflowVelocity}}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\doxymbox{\hyperlink{classpvade_1_1fluid_1_1boundary__conditions_1_1_inflow_velocity_aca6fdde310eb50f5e5cb47f0c18b7b0c}{\+\_\+\+\_\+init\+\_\+\+\_\+}} (self, ndim, params, current\+\_\+time)
+\item 
+\doxymbox{\hyperlink{classpvade_1_1fluid_1_1boundary__conditions_1_1_inflow_velocity_a65f1ea58b384d40c7279d91caa502d72}{\+\_\+\+\_\+call\+\_\+\+\_\+}} (self, x)
+\item 
+\doxymbox{\hyperlink{classpvade_1_1fluid_1_1boundary__conditions_1_1_inflow_velocity_a8f96c3d7e6dd51478a69d84e1d5b7d44}{calculate\+\_\+u\+\_\+ref}} (self, params)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+int \doxymbox{\hyperlink{classpvade_1_1fluid_1_1boundary__conditions_1_1_inflow_velocity_ab223d26da444a0717fb1b2da2a9bf870}{ndim}} = ndim
+\item 
+\doxymbox{\hyperlink{classpvade_1_1fluid_1_1boundary__conditions_1_1_inflow_velocity_aecc4ae868b200ab84c685b5f1fc2bca5}{params}} = params
+\item 
+float \doxymbox{\hyperlink{classpvade_1_1fluid_1_1boundary__conditions_1_1_inflow_velocity_a2e339433f11cd898f976e43748d2e1a6}{current\+\_\+time}} = current\+\_\+time
+\item 
+\doxymbox{\hyperlink{classpvade_1_1fluid_1_1boundary__conditions_1_1_inflow_velocity_a7b99a028a8dcb051c6e02cc56cf0c9f7}{time\+\_\+index}} = fp\+["{}time\+\_\+index"{}]\+\+[:\+]\+
+\item 
+\doxymbox{\hyperlink{classpvade_1_1fluid_1_1boundary__conditions_1_1_inflow_velocity_ac37d8a1e85642b5052278961a9f16218}{y\+\_\+coordinates}} = fp\+["{}y\+\_\+coordinates"{}]\+\+[:\+]\+
+\item 
+\doxymbox{\hyperlink{classpvade_1_1fluid_1_1boundary__conditions_1_1_inflow_velocity_a6b13ee084d36a31e01e0178848aaf86d}{z\+\_\+coordinates}} = fp\+["{}z\+\_\+coordinates"{}]\+\+[:\+]\+
+\item 
+\doxymbox{\hyperlink{classpvade_1_1fluid_1_1boundary__conditions_1_1_inflow_velocity_ad678f7ce506a549802cf141256482a51}{u}} = fp\+["{}u"{}]\+\+[:\+]\+
+\item 
+\doxymbox{\hyperlink{classpvade_1_1fluid_1_1boundary__conditions_1_1_inflow_velocity_a7c2ded6e93c69a4d7f70ac95ed8df123}{v}} = fp\+["{}v"{}]\+\+[:\+]\+
+\item 
+\doxymbox{\hyperlink{classpvade_1_1fluid_1_1boundary__conditions_1_1_inflow_velocity_a5db96bc6d6d95e1f90cf1249b6e0e5e4}{w}} = fp\+["{}w"{}]\+\+[:\+]\+
+\item 
+\doxymbox{\hyperlink{classpvade_1_1fluid_1_1boundary__conditions_1_1_inflow_velocity_a977551818a0ba996f2d93a3d8e604414}{interp\+\_\+u\+\_\+bar}}
+\item 
+\doxymbox{\hyperlink{classpvade_1_1fluid_1_1boundary__conditions_1_1_inflow_velocity_ad071e93a46787f3d0ac8decb3e3f3dc7}{interp\+\_\+v\+\_\+bar}}
+\item 
+\doxymbox{\hyperlink{classpvade_1_1fluid_1_1boundary__conditions_1_1_inflow_velocity_ac77659a0c9a09b1ecb85338caae14a36}{interp\+\_\+w\+\_\+bar}}
+\item 
+\doxymbox{\hyperlink{classpvade_1_1fluid_1_1boundary__conditions_1_1_inflow_velocity_a94baadce51af48b7987545d39e19b8f6}{interp\+\_\+u}}
+\item 
+\doxymbox{\hyperlink{classpvade_1_1fluid_1_1boundary__conditions_1_1_inflow_velocity_a38abf777c3110e2bcabb5b3766a99828}{interp\+\_\+v}}
+\item 
+\doxymbox{\hyperlink{classpvade_1_1fluid_1_1boundary__conditions_1_1_inflow_velocity_a1c9d436f7ef5dc9d24fcda8a1173a506}{interp\+\_\+w}}
+\item 
+\doxymbox{\hyperlink{classpvade_1_1fluid_1_1boundary__conditions_1_1_inflow_velocity_aba5c1f2a1c027f4de6b9b3f3965177d5}{inflow\+\_\+t\+\_\+final}}
+\item 
+\doxymbox{\hyperlink{classpvade_1_1fluid_1_1boundary__conditions_1_1_inflow_velocity_a42931b079e2006b2bef092a0f5949cf8}{u\+\_\+ref}} = u\+\_\+ref\+\_\+calc
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\begin{DoxyVerb}Callable inflow velocity profile for use as a Dirichlet boundary condition.
+
+Supports the following profile types, selected via
+``params.fluid.velocity_profile_type``:
+
+* ``"uniform"`` – constant streamwise velocity equal to ``u_ref``.
+* ``"parabolic"`` – parabolic Poiseuille-like profile.
+* ``"loglaw"`` – atmospheric surface-layer log-law profile.
+* ``"specified_from_file"`` – time-varying 3-D inflow field read from an
+  HDF5 file and interpolated to the current mesh and time.
+
+An optional cosine ramp (``params.fluid.ramp_window``) smoothly increases
+the inflow speed from zero to ``u_ref`` during the early simulation phase.
+
+Attributes:
+    ndim (int): Number of spatial dimensions of the mesh.
+    params (:obj:`pvade.IO.Parameters.SimParams`): Simulation parameters.
+    current_time (float): Current simulation time used when interpolating
+        time-varying inflow data.
+    u_ref (float): Effective reference velocity computed from the inflow
+        file (only set when *velocity_profile_type* is
+        ``"specified_from_file"``).
+    inflow_t_final (float): The last time instant available in the inflow
+        HDF5 file.
+\end{DoxyVerb}
+ 
+
+\label{classpvade_1_1fluid_1_1boundary__conditions_1_1_inflow_velocity_doc-constructors}
+\Hypertarget{classpvade_1_1fluid_1_1boundary__conditions_1_1_inflow_velocity_doc-constructors}
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{classpvade_1_1fluid_1_1boundary__conditions_1_1_inflow_velocity_aca6fdde310eb50f5e5cb47f0c18b7b0c}\index{pvade.fluid.boundary\_conditions.InflowVelocity@{pvade.fluid.boundary\_conditions.InflowVelocity}!\_\_init\_\_@{\_\_init\_\_}}
+\index{\_\_init\_\_@{\_\_init\_\_}!pvade.fluid.boundary\_conditions.InflowVelocity@{pvade.fluid.boundary\_conditions.InflowVelocity}}
+\doxysubsubsection{\texorpdfstring{\_\_init\_\_()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily \label{classpvade_1_1fluid_1_1boundary__conditions_1_1_inflow_velocity_aca6fdde310eb50f5e5cb47f0c18b7b0c} 
+pvade.\+fluid.\+boundary\+\_\+conditions.\+Inflow\+Velocity.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self}{, }\item[{}]{ndim}{, }\item[{}]{params}{, }\item[{}]{current\+\_\+time}{}\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Inflow velocity object
+
+Args:
+    geom_dim (int): The geometric dimension (as opposed to the topological dimension, usually this is 3)
+    params (:obj:`pvade.Parameters.SimParams`): A SimParams object
+\end{DoxyVerb}
+ 
+
+\label{classpvade_1_1fluid_1_1boundary__conditions_1_1_inflow_velocity_doc-func-members}
+\Hypertarget{classpvade_1_1fluid_1_1boundary__conditions_1_1_inflow_velocity_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{classpvade_1_1fluid_1_1boundary__conditions_1_1_inflow_velocity_a65f1ea58b384d40c7279d91caa502d72}\index{pvade.fluid.boundary\_conditions.InflowVelocity@{pvade.fluid.boundary\_conditions.InflowVelocity}!\_\_call\_\_@{\_\_call\_\_}}
+\index{\_\_call\_\_@{\_\_call\_\_}!pvade.fluid.boundary\_conditions.InflowVelocity@{pvade.fluid.boundary\_conditions.InflowVelocity}}
+\doxysubsubsection{\texorpdfstring{\_\_call\_\_()}{\_\_call\_\_()}}
+{\footnotesize\ttfamily \label{classpvade_1_1fluid_1_1boundary__conditions_1_1_inflow_velocity_a65f1ea58b384d40c7279d91caa502d72} 
+pvade.\+fluid.\+boundary\+\_\+conditions.\+Inflow\+Velocity.\+\_\+\+\_\+call\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self}{, }\item[{}]{x}{}\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Define an inflow expression for use as boundary condition
+
+Args:
+    x (np.ndarray): Array of coordinates
+
+Returns:
+    np.ndarray: Value of velocity at each coordinate in input array
+\end{DoxyVerb}
+ \Hypertarget{classpvade_1_1fluid_1_1boundary__conditions_1_1_inflow_velocity_a8f96c3d7e6dd51478a69d84e1d5b7d44}\index{pvade.fluid.boundary\_conditions.InflowVelocity@{pvade.fluid.boundary\_conditions.InflowVelocity}!calculate\_u\_ref@{calculate\_u\_ref}}
+\index{calculate\_u\_ref@{calculate\_u\_ref}!pvade.fluid.boundary\_conditions.InflowVelocity@{pvade.fluid.boundary\_conditions.InflowVelocity}}
+\doxysubsubsection{\texorpdfstring{calculate\_u\_ref()}{calculate\_u\_ref()}}
+{\footnotesize\ttfamily \label{classpvade_1_1fluid_1_1boundary__conditions_1_1_inflow_velocity_a8f96c3d7e6dd51478a69d84e1d5b7d44} 
+pvade.\+fluid.\+boundary\+\_\+conditions.\+Inflow\+Velocity.\+calculate\+\_\+u\+\_\+ref (\begin{DoxyParamCaption}\item[{}]{self}{, }\item[{}]{params}{}\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Compute time-averaged inflow profile from file
+
+Outputs:
+    u_ref : effective u_ref computed from input inflow file - velocity at panel elevation
+    u_inf : streamwise velocity in freestream (at highest elevation in domain)
+    z0
+\end{DoxyVerb}
+ 
+
+\label{classpvade_1_1fluid_1_1boundary__conditions_1_1_inflow_velocity_doc-variable-members}
+\Hypertarget{classpvade_1_1fluid_1_1boundary__conditions_1_1_inflow_velocity_doc-variable-members}
+\doxysubsection{Member Data Documentation}
+\Hypertarget{classpvade_1_1fluid_1_1boundary__conditions_1_1_inflow_velocity_a2e339433f11cd898f976e43748d2e1a6}\index{pvade.fluid.boundary\_conditions.InflowVelocity@{pvade.fluid.boundary\_conditions.InflowVelocity}!current\_time@{current\_time}}
+\index{current\_time@{current\_time}!pvade.fluid.boundary\_conditions.InflowVelocity@{pvade.fluid.boundary\_conditions.InflowVelocity}}
+\doxysubsubsection{\texorpdfstring{current\_time}{current\_time}}
+{\footnotesize\ttfamily \label{classpvade_1_1fluid_1_1boundary__conditions_1_1_inflow_velocity_a2e339433f11cd898f976e43748d2e1a6} 
+float pvade.\+fluid.\+boundary\+\_\+conditions.\+Inflow\+Velocity.\+current\+\_\+time = current\+\_\+time}
+
+\Hypertarget{classpvade_1_1fluid_1_1boundary__conditions_1_1_inflow_velocity_aba5c1f2a1c027f4de6b9b3f3965177d5}\index{pvade.fluid.boundary\_conditions.InflowVelocity@{pvade.fluid.boundary\_conditions.InflowVelocity}!inflow\_t\_final@{inflow\_t\_final}}
+\index{inflow\_t\_final@{inflow\_t\_final}!pvade.fluid.boundary\_conditions.InflowVelocity@{pvade.fluid.boundary\_conditions.InflowVelocity}}
+\doxysubsubsection{\texorpdfstring{inflow\_t\_final}{inflow\_t\_final}}
+{\footnotesize\ttfamily \label{classpvade_1_1fluid_1_1boundary__conditions_1_1_inflow_velocity_aba5c1f2a1c027f4de6b9b3f3965177d5} 
+pvade.\+fluid.\+boundary\+\_\+conditions.\+Inflow\+Velocity.\+inflow\+\_\+t\+\_\+final}
+
+{\bfseries Initial value:\+}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{=\ \ self.time\_index[}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ -\/1}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ ]}
+
+\end{DoxyCode}
+\Hypertarget{classpvade_1_1fluid_1_1boundary__conditions_1_1_inflow_velocity_a94baadce51af48b7987545d39e19b8f6}\index{pvade.fluid.boundary\_conditions.InflowVelocity@{pvade.fluid.boundary\_conditions.InflowVelocity}!interp\_u@{interp\_u}}
+\index{interp\_u@{interp\_u}!pvade.fluid.boundary\_conditions.InflowVelocity@{pvade.fluid.boundary\_conditions.InflowVelocity}}
+\doxysubsubsection{\texorpdfstring{interp\_u}{interp\_u}}
+{\footnotesize\ttfamily \label{classpvade_1_1fluid_1_1boundary__conditions_1_1_inflow_velocity_a94baadce51af48b7987545d39e19b8f6} 
+pvade.\+fluid.\+boundary\+\_\+conditions.\+Inflow\+Velocity.\+interp\+\_\+u}
+
+{\bfseries Initial value:\+}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{=\ \ interp.RegularGridInterpolator(}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ x0,\ self.u,\ bounds\_error=\textcolor{keyword}{False},\ fill\_value=\textcolor{keywordtype}{None}}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ )}
+
+\end{DoxyCode}
+\Hypertarget{classpvade_1_1fluid_1_1boundary__conditions_1_1_inflow_velocity_a977551818a0ba996f2d93a3d8e604414}\index{pvade.fluid.boundary\_conditions.InflowVelocity@{pvade.fluid.boundary\_conditions.InflowVelocity}!interp\_u\_bar@{interp\_u\_bar}}
+\index{interp\_u\_bar@{interp\_u\_bar}!pvade.fluid.boundary\_conditions.InflowVelocity@{pvade.fluid.boundary\_conditions.InflowVelocity}}
+\doxysubsubsection{\texorpdfstring{interp\_u\_bar}{interp\_u\_bar}}
+{\footnotesize\ttfamily \label{classpvade_1_1fluid_1_1boundary__conditions_1_1_inflow_velocity_a977551818a0ba996f2d93a3d8e604414} 
+pvade.\+fluid.\+boundary\+\_\+conditions.\+Inflow\+Velocity.\+interp\+\_\+u\+\_\+bar}
+
+{\bfseries Initial value:\+}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{=\ \ interp.RegularGridInterpolator(}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ x0\_bar,\ np.mean(self.u,\ axis=0),\ bounds\_error=\textcolor{keyword}{False},\ fill\_value=\textcolor{keywordtype}{None}}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ )}
+
+\end{DoxyCode}
+\Hypertarget{classpvade_1_1fluid_1_1boundary__conditions_1_1_inflow_velocity_a38abf777c3110e2bcabb5b3766a99828}\index{pvade.fluid.boundary\_conditions.InflowVelocity@{pvade.fluid.boundary\_conditions.InflowVelocity}!interp\_v@{interp\_v}}
+\index{interp\_v@{interp\_v}!pvade.fluid.boundary\_conditions.InflowVelocity@{pvade.fluid.boundary\_conditions.InflowVelocity}}
+\doxysubsubsection{\texorpdfstring{interp\_v}{interp\_v}}
+{\footnotesize\ttfamily \label{classpvade_1_1fluid_1_1boundary__conditions_1_1_inflow_velocity_a38abf777c3110e2bcabb5b3766a99828} 
+pvade.\+fluid.\+boundary\+\_\+conditions.\+Inflow\+Velocity.\+interp\+\_\+v}
+
+{\bfseries Initial value:\+}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{=\ \ interp.RegularGridInterpolator(}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ x0,\ self.v,\ bounds\_error=\textcolor{keyword}{False},\ fill\_value=\textcolor{keywordtype}{None}}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ )}
+
+\end{DoxyCode}
+\Hypertarget{classpvade_1_1fluid_1_1boundary__conditions_1_1_inflow_velocity_ad071e93a46787f3d0ac8decb3e3f3dc7}\index{pvade.fluid.boundary\_conditions.InflowVelocity@{pvade.fluid.boundary\_conditions.InflowVelocity}!interp\_v\_bar@{interp\_v\_bar}}
+\index{interp\_v\_bar@{interp\_v\_bar}!pvade.fluid.boundary\_conditions.InflowVelocity@{pvade.fluid.boundary\_conditions.InflowVelocity}}
+\doxysubsubsection{\texorpdfstring{interp\_v\_bar}{interp\_v\_bar}}
+{\footnotesize\ttfamily \label{classpvade_1_1fluid_1_1boundary__conditions_1_1_inflow_velocity_ad071e93a46787f3d0ac8decb3e3f3dc7} 
+pvade.\+fluid.\+boundary\+\_\+conditions.\+Inflow\+Velocity.\+interp\+\_\+v\+\_\+bar}
+
+{\bfseries Initial value:\+}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{=\ \ interp.RegularGridInterpolator(}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ x0\_bar,\ np.mean(self.v,\ axis=0),\ bounds\_error=\textcolor{keyword}{False},\ fill\_value=\textcolor{keywordtype}{None}}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ )}
+
+\end{DoxyCode}
+\Hypertarget{classpvade_1_1fluid_1_1boundary__conditions_1_1_inflow_velocity_a1c9d436f7ef5dc9d24fcda8a1173a506}\index{pvade.fluid.boundary\_conditions.InflowVelocity@{pvade.fluid.boundary\_conditions.InflowVelocity}!interp\_w@{interp\_w}}
+\index{interp\_w@{interp\_w}!pvade.fluid.boundary\_conditions.InflowVelocity@{pvade.fluid.boundary\_conditions.InflowVelocity}}
+\doxysubsubsection{\texorpdfstring{interp\_w}{interp\_w}}
+{\footnotesize\ttfamily \label{classpvade_1_1fluid_1_1boundary__conditions_1_1_inflow_velocity_a1c9d436f7ef5dc9d24fcda8a1173a506} 
+pvade.\+fluid.\+boundary\+\_\+conditions.\+Inflow\+Velocity.\+interp\+\_\+w}
+
+{\bfseries Initial value:\+}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{=\ \ interp.RegularGridInterpolator(}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ x0,\ self.w,\ bounds\_error=\textcolor{keyword}{False},\ fill\_value=\textcolor{keywordtype}{None}}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ )}
+
+\end{DoxyCode}
+\Hypertarget{classpvade_1_1fluid_1_1boundary__conditions_1_1_inflow_velocity_ac77659a0c9a09b1ecb85338caae14a36}\index{pvade.fluid.boundary\_conditions.InflowVelocity@{pvade.fluid.boundary\_conditions.InflowVelocity}!interp\_w\_bar@{interp\_w\_bar}}
+\index{interp\_w\_bar@{interp\_w\_bar}!pvade.fluid.boundary\_conditions.InflowVelocity@{pvade.fluid.boundary\_conditions.InflowVelocity}}
+\doxysubsubsection{\texorpdfstring{interp\_w\_bar}{interp\_w\_bar}}
+{\footnotesize\ttfamily \label{classpvade_1_1fluid_1_1boundary__conditions_1_1_inflow_velocity_ac77659a0c9a09b1ecb85338caae14a36} 
+pvade.\+fluid.\+boundary\+\_\+conditions.\+Inflow\+Velocity.\+interp\+\_\+w\+\_\+bar}
+
+{\bfseries Initial value:\+}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{=\ \ interp.RegularGridInterpolator(}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ x0\_bar,\ np.mean(self.w,\ axis=0),\ bounds\_error=\textcolor{keyword}{False},\ fill\_value=\textcolor{keywordtype}{None}}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ )}
+
+\end{DoxyCode}
+\Hypertarget{classpvade_1_1fluid_1_1boundary__conditions_1_1_inflow_velocity_ab223d26da444a0717fb1b2da2a9bf870}\index{pvade.fluid.boundary\_conditions.InflowVelocity@{pvade.fluid.boundary\_conditions.InflowVelocity}!ndim@{ndim}}
+\index{ndim@{ndim}!pvade.fluid.boundary\_conditions.InflowVelocity@{pvade.fluid.boundary\_conditions.InflowVelocity}}
+\doxysubsubsection{\texorpdfstring{ndim}{ndim}}
+{\footnotesize\ttfamily \label{classpvade_1_1fluid_1_1boundary__conditions_1_1_inflow_velocity_ab223d26da444a0717fb1b2da2a9bf870} 
+int pvade.\+fluid.\+boundary\+\_\+conditions.\+Inflow\+Velocity.\+ndim = ndim}
+
+\Hypertarget{classpvade_1_1fluid_1_1boundary__conditions_1_1_inflow_velocity_aecc4ae868b200ab84c685b5f1fc2bca5}\index{pvade.fluid.boundary\_conditions.InflowVelocity@{pvade.fluid.boundary\_conditions.InflowVelocity}!params@{params}}
+\index{params@{params}!pvade.fluid.boundary\_conditions.InflowVelocity@{pvade.fluid.boundary\_conditions.InflowVelocity}}
+\doxysubsubsection{\texorpdfstring{params}{params}}
+{\footnotesize\ttfamily \label{classpvade_1_1fluid_1_1boundary__conditions_1_1_inflow_velocity_aecc4ae868b200ab84c685b5f1fc2bca5} 
+pvade.\+fluid.\+boundary\+\_\+conditions.\+Inflow\+Velocity.\+params = params}
+
+\Hypertarget{classpvade_1_1fluid_1_1boundary__conditions_1_1_inflow_velocity_a7b99a028a8dcb051c6e02cc56cf0c9f7}\index{pvade.fluid.boundary\_conditions.InflowVelocity@{pvade.fluid.boundary\_conditions.InflowVelocity}!time\_index@{time\_index}}
+\index{time\_index@{time\_index}!pvade.fluid.boundary\_conditions.InflowVelocity@{pvade.fluid.boundary\_conditions.InflowVelocity}}
+\doxysubsubsection{\texorpdfstring{time\_index}{time\_index}}
+{\footnotesize\ttfamily \label{classpvade_1_1fluid_1_1boundary__conditions_1_1_inflow_velocity_a7b99a028a8dcb051c6e02cc56cf0c9f7} 
+pvade.\+fluid.\+boundary\+\_\+conditions.\+Inflow\+Velocity.\+time\+\_\+index = fp\+["{}time\+\_\+index"{}]\+\+[:\+]\+}
+
+\Hypertarget{classpvade_1_1fluid_1_1boundary__conditions_1_1_inflow_velocity_ad678f7ce506a549802cf141256482a51}\index{pvade.fluid.boundary\_conditions.InflowVelocity@{pvade.fluid.boundary\_conditions.InflowVelocity}!u@{u}}
+\index{u@{u}!pvade.fluid.boundary\_conditions.InflowVelocity@{pvade.fluid.boundary\_conditions.InflowVelocity}}
+\doxysubsubsection{\texorpdfstring{u}{u}}
+{\footnotesize\ttfamily \label{classpvade_1_1fluid_1_1boundary__conditions_1_1_inflow_velocity_ad678f7ce506a549802cf141256482a51} 
+pvade.\+fluid.\+boundary\+\_\+conditions.\+Inflow\+Velocity.\+u = fp\+["{}u"{}]\+\+[:\+]\+}
+
+\Hypertarget{classpvade_1_1fluid_1_1boundary__conditions_1_1_inflow_velocity_a42931b079e2006b2bef092a0f5949cf8}\index{pvade.fluid.boundary\_conditions.InflowVelocity@{pvade.fluid.boundary\_conditions.InflowVelocity}!u\_ref@{u\_ref}}
+\index{u\_ref@{u\_ref}!pvade.fluid.boundary\_conditions.InflowVelocity@{pvade.fluid.boundary\_conditions.InflowVelocity}}
+\doxysubsubsection{\texorpdfstring{u\_ref}{u\_ref}}
+{\footnotesize\ttfamily \label{classpvade_1_1fluid_1_1boundary__conditions_1_1_inflow_velocity_a42931b079e2006b2bef092a0f5949cf8} 
+pvade.\+fluid.\+boundary\+\_\+conditions.\+Inflow\+Velocity.\+u\+\_\+ref = u\+\_\+ref\+\_\+calc}
+
+\Hypertarget{classpvade_1_1fluid_1_1boundary__conditions_1_1_inflow_velocity_a7c2ded6e93c69a4d7f70ac95ed8df123}\index{pvade.fluid.boundary\_conditions.InflowVelocity@{pvade.fluid.boundary\_conditions.InflowVelocity}!v@{v}}
+\index{v@{v}!pvade.fluid.boundary\_conditions.InflowVelocity@{pvade.fluid.boundary\_conditions.InflowVelocity}}
+\doxysubsubsection{\texorpdfstring{v}{v}}
+{\footnotesize\ttfamily \label{classpvade_1_1fluid_1_1boundary__conditions_1_1_inflow_velocity_a7c2ded6e93c69a4d7f70ac95ed8df123} 
+pvade.\+fluid.\+boundary\+\_\+conditions.\+Inflow\+Velocity.\+v = fp\+["{}v"{}]\+\+[:\+]\+}
+
+\Hypertarget{classpvade_1_1fluid_1_1boundary__conditions_1_1_inflow_velocity_a5db96bc6d6d95e1f90cf1249b6e0e5e4}\index{pvade.fluid.boundary\_conditions.InflowVelocity@{pvade.fluid.boundary\_conditions.InflowVelocity}!w@{w}}
+\index{w@{w}!pvade.fluid.boundary\_conditions.InflowVelocity@{pvade.fluid.boundary\_conditions.InflowVelocity}}
+\doxysubsubsection{\texorpdfstring{w}{w}}
+{\footnotesize\ttfamily \label{classpvade_1_1fluid_1_1boundary__conditions_1_1_inflow_velocity_a5db96bc6d6d95e1f90cf1249b6e0e5e4} 
+pvade.\+fluid.\+boundary\+\_\+conditions.\+Inflow\+Velocity.\+w = fp\+["{}w"{}]\+\+[:\+]\+}
+
+\Hypertarget{classpvade_1_1fluid_1_1boundary__conditions_1_1_inflow_velocity_ac37d8a1e85642b5052278961a9f16218}\index{pvade.fluid.boundary\_conditions.InflowVelocity@{pvade.fluid.boundary\_conditions.InflowVelocity}!y\_coordinates@{y\_coordinates}}
+\index{y\_coordinates@{y\_coordinates}!pvade.fluid.boundary\_conditions.InflowVelocity@{pvade.fluid.boundary\_conditions.InflowVelocity}}
+\doxysubsubsection{\texorpdfstring{y\_coordinates}{y\_coordinates}}
+{\footnotesize\ttfamily \label{classpvade_1_1fluid_1_1boundary__conditions_1_1_inflow_velocity_ac37d8a1e85642b5052278961a9f16218} 
+pvade.\+fluid.\+boundary\+\_\+conditions.\+Inflow\+Velocity.\+y\+\_\+coordinates = fp\+["{}y\+\_\+coordinates"{}]\+\+[:\+]\+}
+
+\Hypertarget{classpvade_1_1fluid_1_1boundary__conditions_1_1_inflow_velocity_a6b13ee084d36a31e01e0178848aaf86d}\index{pvade.fluid.boundary\_conditions.InflowVelocity@{pvade.fluid.boundary\_conditions.InflowVelocity}!z\_coordinates@{z\_coordinates}}
+\index{z\_coordinates@{z\_coordinates}!pvade.fluid.boundary\_conditions.InflowVelocity@{pvade.fluid.boundary\_conditions.InflowVelocity}}
+\doxysubsubsection{\texorpdfstring{z\_coordinates}{z\_coordinates}}
+{\footnotesize\ttfamily \label{classpvade_1_1fluid_1_1boundary__conditions_1_1_inflow_velocity_a6b13ee084d36a31e01e0178848aaf86d} 
+pvade.\+fluid.\+boundary\+\_\+conditions.\+Inflow\+Velocity.\+z\+\_\+coordinates = fp\+["{}z\+\_\+coordinates"{}]\+\+[:\+]\+}
+
+
+
+The documentation for this class was generated from the following file:\+\begin{DoxyCompactItemize}
+\item 
+/\+\+Users/\+warsalan/\+work/\+pvade/\+main\+\_\+branch/\+\+PVade/\+pvade/\+fluid/\+\doxymbox{\hyperlink{fluid_2boundary__conditions_8py}{boundary\+\_\+conditions.\+py}}\end{DoxyCompactItemize}

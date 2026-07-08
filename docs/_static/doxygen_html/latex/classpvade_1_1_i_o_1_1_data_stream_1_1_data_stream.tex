@@ -1,0 +1,172 @@
+\doxysection{pvade.\+IO.\+Data\+Stream.\+Data\+Stream Class Reference}
+\hypertarget{classpvade_1_1_i_o_1_1_data_stream_1_1_data_stream}{}\label{classpvade_1_1_i_o_1_1_data_stream_1_1_data_stream}\index{pvade.IO.DataStream.DataStream@{pvade.IO.DataStream.DataStream}}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\doxymbox{\hyperlink{classpvade_1_1_i_o_1_1_data_stream_1_1_data_stream_a2d90d61e73828841fd50bad7b5922a78}{\+\_\+\+\_\+init\+\_\+\+\_\+}} (self, domain, flow, structure=None, params=None)
+\item 
+\doxymbox{\hyperlink{classpvade_1_1_i_o_1_1_data_stream_1_1_data_stream_ae9e9928fe2853f960c702e5b10ac3540}{save\+\_\+\+XDMF\+\_\+files}} (self, fsi\+\_\+object, domain, tt)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\doxymbox{\hyperlink{classpvade_1_1_i_o_1_1_data_stream_1_1_data_stream_a65af4f3d725f01ff77cef47c7f648e9a}{comm}} = params.\+comm
+\item 
+\doxymbox{\hyperlink{classpvade_1_1_i_o_1_1_data_stream_1_1_data_stream_abdfaa8040a8f384d6ab9bf067ec921ab}{rank}} = params.\+rank
+\item 
+\doxymbox{\hyperlink{classpvade_1_1_i_o_1_1_data_stream_1_1_data_stream_a32af17c45f863d525c1908ebee3d5c32}{num\+\_\+procs}} = params.\+num\+\_\+procs
+\item 
+\doxymbox{\hyperlink{classpvade_1_1_i_o_1_1_data_stream_1_1_data_stream_ab3ccc8ff8969e26038cab0c5d39a8eb6}{ndim}} = domain.\+fluid.\+msh.\+topology.\+dim
+\item 
+\doxymbox{\hyperlink{classpvade_1_1_i_o_1_1_data_stream_1_1_data_stream_a9d676100ac6eab813cbba05a668d0e44}{thermal\+\_\+analysis}} = params.\+general.\+thermal\+\_\+analysis
+\item 
+tuple \doxymbox{\hyperlink{classpvade_1_1_i_o_1_1_data_stream_1_1_data_stream_a5d77523c7869cbe9ef5a6cef9199e748}{results\+\_\+filename\+\_\+fluid}}
+\item 
+tuple \doxymbox{\hyperlink{classpvade_1_1_i_o_1_1_data_stream_1_1_data_stream_af46cff73741888659fb588d00e722814}{results\+\_\+filename\+\_\+structure}}
+\item 
+\doxymbox{\hyperlink{classpvade_1_1_i_o_1_1_data_stream_1_1_data_stream_aca24411cdf74ec8e66978a0ec50037f5}{prob\+\_\+k\+\_\+nominal}}
+\item 
+str \doxymbox{\hyperlink{classpvade_1_1_i_o_1_1_data_stream_1_1_data_stream_aa85e7c687cff35830aef2023e2d62a00}{log\+\_\+filename\+\_\+structure}} = f"{}\{params.\+general.\+output\+\_\+dir\+\_\+sol\}/\+log\+\_\+str.\+txt"{}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\begin{DoxyVerb}Input/Output and file writing class
+
+This class manages the generation and updating of the saved xdmf files
+from each run along with command line outputs and log files.
+
+Attributes:
+    comm (MPI Communicator): An MPI communicator used by all PVade objects
+    ndim (int): The number of dimensions in the problem
+    num_procs (int): The total number of processors being used to solve the problem
+    rank (int): A unique ID for each process in the range `[0, 1, ..., num_procs-1]`
+    results_filename_fluid (str): The full path to the directory in which all saved files will be written.
+\end{DoxyVerb}
+ 
+
+\label{classpvade_1_1_i_o_1_1_data_stream_1_1_data_stream_doc-constructors}
+\Hypertarget{classpvade_1_1_i_o_1_1_data_stream_1_1_data_stream_doc-constructors}
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{classpvade_1_1_i_o_1_1_data_stream_1_1_data_stream_a2d90d61e73828841fd50bad7b5922a78}\index{pvade.IO.DataStream.DataStream@{pvade.IO.DataStream.DataStream}!\_\_init\_\_@{\_\_init\_\_}}
+\index{\_\_init\_\_@{\_\_init\_\_}!pvade.IO.DataStream.DataStream@{pvade.IO.DataStream.DataStream}}
+\doxysubsubsection{\texorpdfstring{\_\_init\_\_()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily \label{classpvade_1_1_i_o_1_1_data_stream_1_1_data_stream_a2d90d61e73828841fd50bad7b5922a78} 
+pvade.\+IO.\+Data\+Stream.\+Data\+Stream.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self}{, }\item[{}]{domain}{, }\item[{}]{flow}{, }\item[{}]{structure}{ = {\ttfamily None}, }\item[{}]{params}{ = {\ttfamily None}}\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Initialize the DataStream object
+
+This initializes an object that manages the I/O for all of PVade.
+
+Args:
+    domain (:obj:`pvade.geometry.MeshManager.Domain`): A Domain object
+    flow (:obj:`pvade.fluid.FlowManager.Flow`): A Flow object
+    params (:obj:`pvade.Parameters.SimParams`): A SimParams object
+\end{DoxyVerb}
+ 
+
+\label{classpvade_1_1_i_o_1_1_data_stream_1_1_data_stream_doc-func-members}
+\Hypertarget{classpvade_1_1_i_o_1_1_data_stream_1_1_data_stream_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{classpvade_1_1_i_o_1_1_data_stream_1_1_data_stream_ae9e9928fe2853f960c702e5b10ac3540}\index{pvade.IO.DataStream.DataStream@{pvade.IO.DataStream.DataStream}!save\_XDMF\_files@{save\_XDMF\_files}}
+\index{save\_XDMF\_files@{save\_XDMF\_files}!pvade.IO.DataStream.DataStream@{pvade.IO.DataStream.DataStream}}
+\doxysubsubsection{\texorpdfstring{save\_XDMF\_files()}{save\_XDMF\_files()}}
+{\footnotesize\ttfamily \label{classpvade_1_1_i_o_1_1_data_stream_1_1_data_stream_ae9e9928fe2853f960c702e5b10ac3540} 
+pvade.\+IO.\+Data\+Stream.\+Data\+Stream.\+save\+\_\+\+XDMF\+\_\+files (\begin{DoxyParamCaption}\item[{}]{self}{, }\item[{}]{fsi\+\_\+object}{, }\item[{}]{domain}{, }\item[{}]{tt}{}\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Write additional timestep to XDMF file
+
+This function appends the state of the flow at time `tt` to an existing XDMF file.
+
+Args:
+    flow (:obj:`pvade.fluid.FlowManager.Flow`): A Flow object
+    tt (float): The time at which the current solution exists
+\end{DoxyVerb}
+ 
+
+\label{classpvade_1_1_i_o_1_1_data_stream_1_1_data_stream_doc-variable-members}
+\Hypertarget{classpvade_1_1_i_o_1_1_data_stream_1_1_data_stream_doc-variable-members}
+\doxysubsection{Member Data Documentation}
+\Hypertarget{classpvade_1_1_i_o_1_1_data_stream_1_1_data_stream_a65af4f3d725f01ff77cef47c7f648e9a}\index{pvade.IO.DataStream.DataStream@{pvade.IO.DataStream.DataStream}!comm@{comm}}
+\index{comm@{comm}!pvade.IO.DataStream.DataStream@{pvade.IO.DataStream.DataStream}}
+\doxysubsubsection{\texorpdfstring{comm}{comm}}
+{\footnotesize\ttfamily \label{classpvade_1_1_i_o_1_1_data_stream_1_1_data_stream_a65af4f3d725f01ff77cef47c7f648e9a} 
+pvade.\+IO.\+Data\+Stream.\+Data\+Stream.\+comm = params.\+comm}
+
+\Hypertarget{classpvade_1_1_i_o_1_1_data_stream_1_1_data_stream_aa85e7c687cff35830aef2023e2d62a00}\index{pvade.IO.DataStream.DataStream@{pvade.IO.DataStream.DataStream}!log\_filename\_structure@{log\_filename\_structure}}
+\index{log\_filename\_structure@{log\_filename\_structure}!pvade.IO.DataStream.DataStream@{pvade.IO.DataStream.DataStream}}
+\doxysubsubsection{\texorpdfstring{log\_filename\_structure}{log\_filename\_structure}}
+{\footnotesize\ttfamily \label{classpvade_1_1_i_o_1_1_data_stream_1_1_data_stream_aa85e7c687cff35830aef2023e2d62a00} 
+pvade.\+IO.\+Data\+Stream.\+Data\+Stream.\+log\+\_\+filename\+\_\+structure = f"{}\{params.\+general.\+output\+\_\+dir\+\_\+sol\}/\+log\+\_\+str.\+txt"{}}
+
+\Hypertarget{classpvade_1_1_i_o_1_1_data_stream_1_1_data_stream_ab3ccc8ff8969e26038cab0c5d39a8eb6}\index{pvade.IO.DataStream.DataStream@{pvade.IO.DataStream.DataStream}!ndim@{ndim}}
+\index{ndim@{ndim}!pvade.IO.DataStream.DataStream@{pvade.IO.DataStream.DataStream}}
+\doxysubsubsection{\texorpdfstring{ndim}{ndim}}
+{\footnotesize\ttfamily \label{classpvade_1_1_i_o_1_1_data_stream_1_1_data_stream_ab3ccc8ff8969e26038cab0c5d39a8eb6} 
+pvade.\+IO.\+Data\+Stream.\+Data\+Stream.\+ndim = domain.\+fluid.\+msh.\+topology.\+dim}
+
+\Hypertarget{classpvade_1_1_i_o_1_1_data_stream_1_1_data_stream_a32af17c45f863d525c1908ebee3d5c32}\index{pvade.IO.DataStream.DataStream@{pvade.IO.DataStream.DataStream}!num\_procs@{num\_procs}}
+\index{num\_procs@{num\_procs}!pvade.IO.DataStream.DataStream@{pvade.IO.DataStream.DataStream}}
+\doxysubsubsection{\texorpdfstring{num\_procs}{num\_procs}}
+{\footnotesize\ttfamily \label{classpvade_1_1_i_o_1_1_data_stream_1_1_data_stream_a32af17c45f863d525c1908ebee3d5c32} 
+pvade.\+IO.\+Data\+Stream.\+Data\+Stream.\+num\+\_\+procs = params.\+num\+\_\+procs}
+
+\Hypertarget{classpvade_1_1_i_o_1_1_data_stream_1_1_data_stream_aca24411cdf74ec8e66978a0ec50037f5}\index{pvade.IO.DataStream.DataStream@{pvade.IO.DataStream.DataStream}!prob\_k\_nominal@{prob\_k\_nominal}}
+\index{prob\_k\_nominal@{prob\_k\_nominal}!pvade.IO.DataStream.DataStream@{pvade.IO.DataStream.DataStream}}
+\doxysubsubsection{\texorpdfstring{prob\_k\_nominal}{prob\_k\_nominal}}
+{\footnotesize\ttfamily \label{classpvade_1_1_i_o_1_1_data_stream_1_1_data_stream_aca24411cdf74ec8e66978a0ec50037f5} 
+pvade.\+IO.\+Data\+Stream.\+Data\+Stream.\+prob\+\_\+k\+\_\+nominal}
+
+{\bfseries Initial value:\+}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{=\ \ dolfinx.fem.petsc.LinearProblem(}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ufl.lhs(structure.elasticity.k\_nominal\_proj),}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ufl.rhs(structure.elasticity.k\_nominal\_proj),}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ bcs=[],}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ petsc\_options=petsc\_options,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ )}
+
+\end{DoxyCode}
+\Hypertarget{classpvade_1_1_i_o_1_1_data_stream_1_1_data_stream_abdfaa8040a8f384d6ab9bf067ec921ab}\index{pvade.IO.DataStream.DataStream@{pvade.IO.DataStream.DataStream}!rank@{rank}}
+\index{rank@{rank}!pvade.IO.DataStream.DataStream@{pvade.IO.DataStream.DataStream}}
+\doxysubsubsection{\texorpdfstring{rank}{rank}}
+{\footnotesize\ttfamily \label{classpvade_1_1_i_o_1_1_data_stream_1_1_data_stream_abdfaa8040a8f384d6ab9bf067ec921ab} 
+pvade.\+IO.\+Data\+Stream.\+Data\+Stream.\+rank = params.\+rank}
+
+\Hypertarget{classpvade_1_1_i_o_1_1_data_stream_1_1_data_stream_a5d77523c7869cbe9ef5a6cef9199e748}\index{pvade.IO.DataStream.DataStream@{pvade.IO.DataStream.DataStream}!results\_filename\_fluid@{results\_filename\_fluid}}
+\index{results\_filename\_fluid@{results\_filename\_fluid}!pvade.IO.DataStream.DataStream@{pvade.IO.DataStream.DataStream}}
+\doxysubsubsection{\texorpdfstring{results\_filename\_fluid}{results\_filename\_fluid}}
+{\footnotesize\ttfamily \label{classpvade_1_1_i_o_1_1_data_stream_1_1_data_stream_a5d77523c7869cbe9ef5a6cef9199e748} 
+pvade.\+IO.\+Data\+Stream.\+Data\+Stream.\+results\+\_\+filename\+\_\+fluid}
+
+{\bfseries Initial value:\+}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{=\ \ (}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ f\textcolor{stringliteral}{"{}\{params.general.output\_dir\_sol\}/solution\_fluid.xdmf"{}}}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ )}
+
+\end{DoxyCode}
+\Hypertarget{classpvade_1_1_i_o_1_1_data_stream_1_1_data_stream_af46cff73741888659fb588d00e722814}\index{pvade.IO.DataStream.DataStream@{pvade.IO.DataStream.DataStream}!results\_filename\_structure@{results\_filename\_structure}}
+\index{results\_filename\_structure@{results\_filename\_structure}!pvade.IO.DataStream.DataStream@{pvade.IO.DataStream.DataStream}}
+\doxysubsubsection{\texorpdfstring{results\_filename\_structure}{results\_filename\_structure}}
+{\footnotesize\ttfamily \label{classpvade_1_1_i_o_1_1_data_stream_1_1_data_stream_af46cff73741888659fb588d00e722814} 
+pvade.\+IO.\+Data\+Stream.\+Data\+Stream.\+results\+\_\+filename\+\_\+structure}
+
+{\bfseries Initial value:\+}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{=\ \ (}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ f\textcolor{stringliteral}{"{}\{params.general.output\_dir\_sol\}/solution\_structure.xdmf"{}}}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ )}
+
+\end{DoxyCode}
+\Hypertarget{classpvade_1_1_i_o_1_1_data_stream_1_1_data_stream_a9d676100ac6eab813cbba05a668d0e44}\index{pvade.IO.DataStream.DataStream@{pvade.IO.DataStream.DataStream}!thermal\_analysis@{thermal\_analysis}}
+\index{thermal\_analysis@{thermal\_analysis}!pvade.IO.DataStream.DataStream@{pvade.IO.DataStream.DataStream}}
+\doxysubsubsection{\texorpdfstring{thermal\_analysis}{thermal\_analysis}}
+{\footnotesize\ttfamily \label{classpvade_1_1_i_o_1_1_data_stream_1_1_data_stream_a9d676100ac6eab813cbba05a668d0e44} 
+pvade.\+IO.\+Data\+Stream.\+Data\+Stream.\+thermal\+\_\+analysis = params.\+general.\+thermal\+\_\+analysis}
+
+
+
+The documentation for this class was generated from the following file:\+\begin{DoxyCompactItemize}
+\item 
+/\+\+Users/\+warsalan/\+work/\+pvade/\+main\+\_\+branch/\+\+PVade/\+pvade/\+\+IO/\+\doxymbox{\hyperlink{_data_stream_8py}{Data\+Stream.\+py}}\end{DoxyCompactItemize}

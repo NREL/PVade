@@ -1,0 +1,116 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.17.0" xml:lang="en-US">
+  <compounddef id="_f_s_i_8py" kind="file" language="Python">
+    <compoundname>FSI.py</compoundname>
+    <innerclass refid="classpvade_1_1fsi_1_1_f_s_i_1_1_f_s_i" prot="public">pvade::fsi::FSI::FSI</innerclass>
+    <innernamespace refid="namespacepvade">pvade</innernamespace>
+    <innernamespace refid="namespacepvade_1_1fsi">pvade::fsi</innernamespace>
+    <innernamespace refid="namespacepvade_1_1fsi_1_1_f_s_i">pvade::fsi::FSI</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1" refid="namespacepvade_1_1fsi_1_1_f_s_i" refkind="compound"><highlight class="comment">#<sp/>from<sp/>dolfinx<sp/>import<sp/>*</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight><highlight class="stringliteral">&quot;&quot;&quot;Fluid-structure<sp/>coupling<sp/>utilities.</highlight></codeline>
+<codeline lineno="3"><highlight class="stringliteral"></highlight></codeline>
+<codeline lineno="4"><highlight class="stringliteral">This<sp/>module<sp/>defines<sp/>the<sp/>:class:`FSI`<sp/>class<sp/>used<sp/>to<sp/>transfer<sp/>fluid<sp/>traction</highlight></codeline>
+<codeline lineno="5"><highlight class="stringliteral">loads<sp/>to<sp/>the<sp/>structure<sp/>solver.<sp/><sp/>The<sp/>main<sp/>coupling<sp/>operation<sp/>is<sp/>implemented</highlight></codeline>
+<codeline lineno="6"><highlight class="stringliteral">in<sp/>:meth:`FSI.fluid_struct`,<sp/>where<sp/>panel<sp/>stress<sp/>fields<sp/>computed<sp/>by<sp/>the<sp/>fluid</highlight></codeline>
+<codeline lineno="7"><highlight class="stringliteral">solver<sp/>are<sp/>relaxed<sp/>and<sp/>written<sp/>into<sp/>the<sp/>structural<sp/>solver<sp/>state.</highlight></codeline>
+<codeline lineno="8"><highlight class="stringliteral">&quot;&quot;&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="comment">#<sp/>from<sp/>dolfinx<sp/>import<sp/>*</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight><highlight class="keyword">import</highlight><highlight class="normal"><sp/>numpy<sp/></highlight><highlight class="keyword">as</highlight><highlight class="normal"><sp/>np</highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight><highlight class="keyword">import</highlight><highlight class="normal"><sp/>time</highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="keyword">import</highlight><highlight class="normal"><sp/>os</highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="keyword">import</highlight><highlight class="normal"><sp/>shutil</highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="keyword">from</highlight><highlight class="normal"><sp/>dolfinx.io<sp/></highlight><highlight class="keyword">import</highlight><highlight class="normal"><sp/>XDMFFile,<sp/>VTKFile</highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="keyword">from</highlight><highlight class="normal"><sp/>mpi4py<sp/></highlight><highlight class="keyword">import</highlight><highlight class="normal"><sp/>MPI</highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="keyword">from</highlight><highlight class="normal"><sp/>pathlib<sp/></highlight><highlight class="keyword">import</highlight><highlight class="normal"><sp/>Path</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="keyword">import</highlight><highlight class="normal"><sp/>pytest</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="keyword">import</highlight><highlight class="normal"><sp/>dolfinx</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="keyword">from</highlight><highlight class="normal"><sp/>petsc4py<sp/></highlight><highlight class="keyword">import</highlight><highlight class="normal"><sp/>PETSc</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight><highlight class="keyword">import</highlight><highlight class="normal"><sp/>json</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight><highlight class="comment">#<sp/>from<sp/>dolfinx.fem<sp/>import<sp/>create_nonmatching_meshes_interpolation_data</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="24"><highlight class="normal"></highlight></codeline>
+<codeline lineno="25"><highlight class="normal"></highlight><highlight class="comment">#<sp/>hello</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="26"><highlight class="normal"></highlight></codeline>
+<codeline lineno="27"><highlight class="normal"></highlight></codeline>
+<codeline lineno="28"><highlight class="normal"></highlight><highlight class="comment">#<sp/>test<sp/>actions</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="29" refid="classpvade_1_1fsi_1_1_f_s_i_1_1_f_s_i" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classpvade_1_1fsi_1_1_f_s_i_1_1_f_s_i" kindref="compound">FSI</ref>:</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;&quot;&quot;Fluid-structure<sp/>coupling<sp/>manager.</highlight></codeline>
+<codeline lineno="31"><highlight class="stringliteral"></highlight></codeline>
+<codeline lineno="32"><highlight class="stringliteral"><sp/><sp/><sp/><sp/>Stores<sp/>MPI<sp/>metadata<sp/>and<sp/>provides<sp/>a<sp/>method<sp/>to<sp/>transfer<sp/>fluid<sp/>stresses<sp/>to</highlight></codeline>
+<codeline lineno="33"><highlight class="stringliteral"><sp/><sp/><sp/><sp/>the<sp/>structural<sp/>solver<sp/>with<sp/>optional<sp/>under-relaxation.</highlight></codeline>
+<codeline lineno="34"><highlight class="stringliteral"></highlight></codeline>
+<codeline lineno="35"><highlight class="stringliteral"><sp/><sp/><sp/><sp/>Attributes:</highlight></codeline>
+<codeline lineno="36"><highlight class="stringliteral"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>comm<sp/>(MPI<sp/>Communicator):<sp/>An<sp/>MPI<sp/>communicator<sp/>used<sp/>by<sp/>all<sp/>PVade<sp/>objects</highlight></codeline>
+<codeline lineno="37"><highlight class="stringliteral"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>ndim<sp/>(int):<sp/>The<sp/>number<sp/>of<sp/>dimensions<sp/>in<sp/>the<sp/>problem</highlight></codeline>
+<codeline lineno="38"><highlight class="stringliteral"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>num_procs<sp/>(int):<sp/>The<sp/>total<sp/>number<sp/>of<sp/>processors<sp/>being<sp/>used<sp/>to<sp/>solve<sp/>the<sp/>problem</highlight></codeline>
+<codeline lineno="39"><highlight class="stringliteral"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>rank<sp/>(int):<sp/>A<sp/>unique<sp/>ID<sp/>for<sp/>each<sp/>process<sp/>in<sp/>the<sp/>range<sp/>`[0,<sp/>1,<sp/>...,<sp/>num_procs-1]`</highlight></codeline>
+<codeline lineno="40"><highlight class="stringliteral"></highlight></codeline>
+<codeline lineno="41"><highlight class="stringliteral"><sp/><sp/><sp/><sp/>&quot;&quot;&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="42"><highlight class="normal"></highlight></codeline>
+<codeline lineno="43"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">def<sp/></highlight><highlight class="normal"><ref refid="classpvade_1_1fsi_1_1_f_s_i_1_1_f_s_i_1ab3048397e964a6b8cedb1348df6cbca9" kindref="member">__init__</ref>(self,<sp/>domain,<sp/>flow,<sp/>structure,<sp/>params):</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;&quot;&quot;Initialize<sp/>the<sp/>FSI<sp/>coupling<sp/>object.</highlight></codeline>
+<codeline lineno="45"><highlight class="stringliteral"></highlight></codeline>
+<codeline lineno="46"><highlight class="stringliteral"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Stores<sp/>MPI<sp/>communicator<sp/>metadata<sp/>and<sp/>the<sp/>problem<sp/>dimensionality<sp/>used</highlight></codeline>
+<codeline lineno="47"><highlight class="stringliteral"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>during<sp/>coupling<sp/>operations.</highlight></codeline>
+<codeline lineno="48"><highlight class="stringliteral"></highlight></codeline>
+<codeline lineno="49"><highlight class="stringliteral"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Args:</highlight></codeline>
+<codeline lineno="50"><highlight class="stringliteral"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>domain<sp/>(:obj:`pvade.geometry.MeshManager.Domain`):<sp/>A<sp/>Domain<sp/>object</highlight></codeline>
+<codeline lineno="51"><highlight class="stringliteral"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>flow<sp/>(:obj:`pvade.fluid.FlowManager.Flow`):<sp/>A<sp/>Flow<sp/>object</highlight></codeline>
+<codeline lineno="52"><highlight class="stringliteral"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>structure<sp/>(:obj:`pvade.structure.StructureMain.Structure`):<sp/>A</highlight></codeline>
+<codeline lineno="53"><highlight class="stringliteral"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Structure<sp/>object.</highlight></codeline>
+<codeline lineno="54"><highlight class="stringliteral"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>params<sp/>(:obj:`pvade.Parameters.SimParams`):<sp/>A<sp/>SimParams<sp/>object</highlight></codeline>
+<codeline lineno="55"><highlight class="stringliteral"></highlight></codeline>
+<codeline lineno="56"><highlight class="stringliteral"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;&quot;&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="57"><highlight class="normal"></highlight></codeline>
+<codeline lineno="58"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>self.<ref refid="classpvade_1_1fsi_1_1_f_s_i_1_1_f_s_i_1a3da5739dfd791beb92839e471bddef30" kindref="member">comm</ref><sp/>=<sp/>params.comm</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>self.<ref refid="classpvade_1_1fsi_1_1_f_s_i_1_1_f_s_i_1a0bda1d6eb422bae971c9d3659451647d" kindref="member">rank</ref><sp/>=<sp/>params.rank</highlight></codeline>
+<codeline lineno="60"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>self.<ref refid="classpvade_1_1fsi_1_1_f_s_i_1_1_f_s_i_1a978caff518a1b22fb9d10d29d62451d7" kindref="member">num_procs</ref><sp/>=<sp/>params.num_procs</highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>self.<ref refid="classpvade_1_1fsi_1_1_f_s_i_1_1_f_s_i_1ae373014bdf045c29243a30b27d43b03f" kindref="member">ndim</ref><sp/>=<sp/>domain.fluid.msh.topology.dim</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"></highlight></codeline>
+<codeline lineno="63"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">def<sp/></highlight><highlight class="normal"><ref refid="classpvade_1_1fsi_1_1_f_s_i_1_1_f_s_i_1a105ff3fd7c5bf81461bdb9c552245e14" kindref="member">fluid_struct</ref>(self,<sp/>domain,<sp/>flow,<sp/>structure,<sp/>params):</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;&quot;&quot;Transfer<sp/>fluid<sp/>stress<sp/>to<sp/>the<sp/>structure<sp/>and<sp/>apply<sp/>relaxation.</highlight></codeline>
+<codeline lineno="65"><highlight class="stringliteral"></highlight></codeline>
+<codeline lineno="66"><highlight class="stringliteral"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Performs<sp/>one<sp/>FSI<sp/>coupling<sp/>update:</highlight></codeline>
+<codeline lineno="67"><highlight class="stringliteral"></highlight></codeline>
+<codeline lineno="68"><highlight class="stringliteral"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>1.<sp/>Copies<sp/>the<sp/>previous<sp/>structural<sp/>stress<sp/>state<sp/>to<sp/>``stress_old``.</highlight></codeline>
+<codeline lineno="69"><highlight class="stringliteral"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>2.<sp/>Interpolates<sp/>the<sp/>current<sp/>fluid<sp/>panel<sp/>stress<sp/>field<sp/>onto<sp/>the</highlight></codeline>
+<codeline lineno="70"><highlight class="stringliteral"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>structure<sp/>stress<sp/>function.</highlight></codeline>
+<codeline lineno="71"><highlight class="stringliteral"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>3.<sp/>Applies<sp/>linear<sp/>under-relaxation<sp/>using</highlight></codeline>
+<codeline lineno="72"><highlight class="stringliteral"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>``params.structure.beta_relaxation``<sp/>and<sp/>the<sp/>predicted<sp/>stress.</highlight></codeline>
+<codeline lineno="73"><highlight class="stringliteral"></highlight></codeline>
+<codeline lineno="74"><highlight class="stringliteral"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Args:</highlight></codeline>
+<codeline lineno="75"><highlight class="stringliteral"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>domain<sp/>(:obj:`pvade.geometry.MeshManager.FSIDomain`):<sp/>Domain<sp/>object</highlight></codeline>
+<codeline lineno="76"><highlight class="stringliteral"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>containing<sp/>fluid<sp/>and<sp/>structure<sp/>meshes.</highlight></codeline>
+<codeline lineno="77"><highlight class="stringliteral"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>flow<sp/>(:obj:`pvade.fluid.FlowManager.Flow`):<sp/>Flow<sp/>object<sp/>containing</highlight></codeline>
+<codeline lineno="78"><highlight class="stringliteral"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>``panel_stress_undeformed``.</highlight></codeline>
+<codeline lineno="79"><highlight class="stringliteral"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>structure<sp/>(:obj:`pvade.structure.StructureMain.Structure`):</highlight></codeline>
+<codeline lineno="80"><highlight class="stringliteral"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Structure<sp/>object<sp/>whose<sp/>elasticity<sp/>stress<sp/>fields<sp/>are<sp/>updated.</highlight></codeline>
+<codeline lineno="81"><highlight class="stringliteral"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>params<sp/>(:obj:`pvade.IO.Parameters.SimParams`):<sp/>Simulation<sp/>parameters</highlight></codeline>
+<codeline lineno="82"><highlight class="stringliteral"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>containing<sp/>the<sp/>stress<sp/>relaxation<sp/>factor.</highlight></codeline>
+<codeline lineno="83"><highlight class="stringliteral"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;&quot;&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="84"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">#<sp/>print(&quot;tst&quot;)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="85"><highlight class="normal"></highlight></codeline>
+<codeline lineno="86"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>structure.elasticity.stress_old.x.array[:]<sp/>=<sp/>structure.elasticity.stress.x.array</highlight></codeline>
+<codeline lineno="87"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>structure.elasticity.stress_old.x.scatter_forward()</highlight></codeline>
+<codeline lineno="88"><highlight class="normal"></highlight></codeline>
+<codeline lineno="89"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>structure.elasticity.stress.interpolate(flow.panel_stress_undeformed)</highlight></codeline>
+<codeline lineno="90"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>structure.elasticity.stress.x.scatter_forward()</highlight></codeline>
+<codeline lineno="91"><highlight class="normal"></highlight></codeline>
+<codeline lineno="92"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>beta<sp/>=<sp/>params.structure.beta_relaxation</highlight></codeline>
+<codeline lineno="93"><highlight class="normal"></highlight></codeline>
+<codeline lineno="94"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>structure.elasticity.stress.x.array[:]<sp/>=<sp/>(</highlight></codeline>
+<codeline lineno="95"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>beta<sp/>*<sp/>structure.elasticity.stress.x.array</highlight></codeline>
+<codeline lineno="96"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>+<sp/>(1.0<sp/>-<sp/>beta)<sp/>*<sp/>structure.elasticity.stress_predicted.x.array</highlight></codeline>
+<codeline lineno="97"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>)</highlight></codeline>
+<codeline lineno="98"><highlight class="normal"></highlight></codeline>
+<codeline lineno="99"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>structure.elasticity.stress.x.scatter_forward()</highlight></codeline>
+    </programlisting>
+    <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fsi/FSI.py"/>
+  </compounddef>
+</doxygen>

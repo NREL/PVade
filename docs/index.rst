@@ -16,18 +16,18 @@ PVade is an open source fluid-structure interaction model which can be used to s
 Organization
 ------------
 
-Documentation is currently organized into three main categories:
+Documentation is organized into four main sections:
 
-* :ref:`User Manual`: User guides covering basic topics and use cases for the PVade software
-* :ref:`Theory Manual`: Walkthrough in the PVade code blocks
-* :ref:`Technical Reference`: Programming details on the PVade API and functions
-* :ref:`Background`: Information and research sources for fluid and structural solvers and PV topics
+`User Guide `: User-facing guides covering basic topics and use cases for the PVade software
+`Theory `: The governing equations and modeling background used by PVade
+`Implementation `: Programming details, API reference material, and supporting background
+`Testing `: Notes on the automated test suite and how to run it
 
-New users may find it helpful to review the :ref:`User Manual` materials first.
+New users may find it helpful to review the User Guide materials first.
 
 
 
-.. image:: how_to_guides/benchmark_png/main_animation.gif 
+.. image:: benchmark_png/main_animation.gif 
    :alt: StreamPlayer
    :align: center
 
@@ -37,8 +37,42 @@ Contents
 .. toctree::
    :maxdepth: 2
 
-   how_to_guides/index
-   technical_reference/index
-   theory_manual/index
-   background/index
+   doxygen/index
+   background
+
+.. toctree::
+   :maxdepth: 1
+   :caption: USER GUIDE
+
+
+   installing_pvade
+   running_pvade
+   hpc_jobs
+   benchmark
+   examples/index
+
+
+.. toctree::
+   :maxdepth: 2
+   :caption: THEORY
+
+   governing_equations
+   mesh_generation
+   CFD
+   CSD
+   mesh_movement
+
+.. toctree::
+   :maxdepth: 2
+   :caption: IMPLEMENTATION
+
+   
+   api_reference
+   .. background/index
+
+.. toctree::
+   :maxdepth: 2
+   :caption: TESTING
+
+   testing
    

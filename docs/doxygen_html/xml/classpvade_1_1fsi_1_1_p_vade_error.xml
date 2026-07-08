@@ -1,0 +1,39 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.17.0" xml:lang="en-US">
+  <compounddef id="classpvade_1_1fsi_1_1_p_vade_error" kind="class" language="Python" prot="public">
+    <compoundname>pvade::fsi::PVadeError</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">Exception</basecompoundref>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><verbatim>The base error for the package. All custom exceptions raised will derive
+from this exception.
+</verbatim> </para>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="2">
+        <label>Exception</label>
+      </node>
+      <node id="1">
+        <label>pvade.fsi.PVadeError</label>
+        <link refid="classpvade_1_1fsi_1_1_p_vade_error"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="2">
+        <label>Exception</label>
+      </node>
+      <node id="1">
+        <label>pvade.fsi.PVadeError</label>
+        <link refid="classpvade_1_1fsi_1_1_p_vade_error"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fsi/__init__.py" line="4" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fsi/__init__.py" bodystart="4" bodyend="10"/>
+    <listofallmembers>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

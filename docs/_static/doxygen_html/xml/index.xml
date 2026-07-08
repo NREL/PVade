@@ -1,0 +1,716 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygenindex xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="index.xsd" version="1.17.0" xml:lang="en-US">
+  <compound refid="classpvade_1_1_i_o_1_1_data_stream_1_1_data_stream" kind="class"><name>pvade::IO::DataStream::DataStream</name>
+    <member refid="classpvade_1_1_i_o_1_1_data_stream_1_1_data_stream_1a65af4f3d725f01ff77cef47c7f648e9a" kind="variable"><name>comm</name></member>
+    <member refid="classpvade_1_1_i_o_1_1_data_stream_1_1_data_stream_1abdfaa8040a8f384d6ab9bf067ec921ab" kind="variable"><name>rank</name></member>
+    <member refid="classpvade_1_1_i_o_1_1_data_stream_1_1_data_stream_1a32af17c45f863d525c1908ebee3d5c32" kind="variable"><name>num_procs</name></member>
+    <member refid="classpvade_1_1_i_o_1_1_data_stream_1_1_data_stream_1ab3ccc8ff8969e26038cab0c5d39a8eb6" kind="variable"><name>ndim</name></member>
+    <member refid="classpvade_1_1_i_o_1_1_data_stream_1_1_data_stream_1a9d676100ac6eab813cbba05a668d0e44" kind="variable"><name>thermal_analysis</name></member>
+    <member refid="classpvade_1_1_i_o_1_1_data_stream_1_1_data_stream_1a5d77523c7869cbe9ef5a6cef9199e748" kind="variable"><name>results_filename_fluid</name></member>
+    <member refid="classpvade_1_1_i_o_1_1_data_stream_1_1_data_stream_1af46cff73741888659fb588d00e722814" kind="variable"><name>results_filename_structure</name></member>
+    <member refid="classpvade_1_1_i_o_1_1_data_stream_1_1_data_stream_1aca24411cdf74ec8e66978a0ec50037f5" kind="variable"><name>prob_k_nominal</name></member>
+    <member refid="classpvade_1_1_i_o_1_1_data_stream_1_1_data_stream_1aa85e7c687cff35830aef2023e2d62a00" kind="variable"><name>log_filename_structure</name></member>
+    <member refid="classpvade_1_1_i_o_1_1_data_stream_1_1_data_stream_1a2d90d61e73828841fd50bad7b5922a78" kind="function"><name>__init__</name></member>
+    <member refid="classpvade_1_1_i_o_1_1_data_stream_1_1_data_stream_1ae9e9928fe2853f960c702e5b10ac3540" kind="function"><name>save_XDMF_files</name></member>
+  </compound>
+  <compound refid="classpvade_1_1geometry_1_1cylinder2d_1_1_domain_creation_1_1_domain_creation" kind="class"><name>pvade::geometry::cylinder2d::DomainCreation::DomainCreation</name>
+    <member refid="classpvade_1_1geometry_1_1cylinder2d_1_1_domain_creation_1_1_domain_creation_1a7d04d782dd406a5f1421191371b3099e" kind="variable"><name>numpy_pt_total_array</name></member>
+    <member refid="classpvade_1_1geometry_1_1cylinder2d_1_1_domain_creation_1_1_domain_creation_1a4eb221f2fb8a599b1fea77a603584801" kind="function"><name>__init__</name></member>
+    <member refid="classpvade_1_1geometry_1_1cylinder2d_1_1_domain_creation_1_1_domain_creation_1ada0431466e10e4ff6c90696c35f389d1" kind="function"><name>build_FSI</name></member>
+  </compound>
+  <compound refid="classpvade_1_1geometry_1_1cylinder3d_1_1_domain_creation_1_1_domain_creation" kind="class"><name>pvade::geometry::cylinder3d::DomainCreation::DomainCreation</name>
+    <member refid="classpvade_1_1geometry_1_1cylinder3d_1_1_domain_creation_1_1_domain_creation_1a943fd2aa949f98d210da86297b977a64" kind="variable"><name>x_span</name></member>
+    <member refid="classpvade_1_1geometry_1_1cylinder3d_1_1_domain_creation_1_1_domain_creation_1a601b88f426171770c1d780c9038aa38b" kind="variable"><name>y_span</name></member>
+    <member refid="classpvade_1_1geometry_1_1cylinder3d_1_1_domain_creation_1_1_domain_creation_1a240b531bedd25af79d4caaea48b3c809" kind="variable"><name>z_span</name></member>
+    <member refid="classpvade_1_1geometry_1_1cylinder3d_1_1_domain_creation_1_1_domain_creation_1afabac8097c74f171ca30a5f68edf83ca" kind="variable"><name>cyld_radius</name></member>
+    <member refid="classpvade_1_1geometry_1_1cylinder3d_1_1_domain_creation_1_1_domain_creation_1a77388eada1cb326d937f262aaf79f50f" kind="variable"><name>numpy_pt_total_array</name></member>
+    <member refid="classpvade_1_1geometry_1_1cylinder3d_1_1_domain_creation_1_1_domain_creation_1a004ba99de0f9afae04d6e15c412c4387" kind="function"><name>__init__</name></member>
+    <member refid="classpvade_1_1geometry_1_1cylinder3d_1_1_domain_creation_1_1_domain_creation_1ab644c4b9ae1f22c0e97c554792beb53b" kind="function"><name>build_FSI</name></member>
+    <member refid="classpvade_1_1geometry_1_1cylinder3d_1_1_domain_creation_1_1_domain_creation_1a24ac9da5dd909970dc12feb2b5190cc0" kind="function"><name>set_length_scales</name></member>
+  </compound>
+  <compound refid="classpvade_1_1geometry_1_1flag2d_1_1_domain_creation_1_1_domain_creation" kind="class"><name>pvade::geometry::flag2d::DomainCreation::DomainCreation</name>
+    <member refid="classpvade_1_1geometry_1_1flag2d_1_1_domain_creation_1_1_domain_creation_1aec5cc043f5af49025a8626b864dd8b75" kind="variable"><name>domain_markers</name></member>
+    <member refid="classpvade_1_1geometry_1_1flag2d_1_1_domain_creation_1_1_domain_creation_1a8bba254bb2d1ed5d78307acc88aa4da3" kind="variable"><name>numpy_pt_total_array</name></member>
+    <member refid="classpvade_1_1geometry_1_1flag2d_1_1_domain_creation_1_1_domain_creation_1a22441e4b790e7569c41f5fb409021353" kind="function"><name>__init__</name></member>
+    <member refid="classpvade_1_1geometry_1_1flag2d_1_1_domain_creation_1_1_domain_creation_1ab3bfdc5fb5b1a3baa9420af156005d50" kind="function"><name>build_FSI</name></member>
+    <member refid="classpvade_1_1geometry_1_1flag2d_1_1_domain_creation_1_1_domain_creation_1a38d4e5277c0997e9f602ac7bc4a4b155" kind="function"><name>set_length_scales</name></member>
+    <member refid="classpvade_1_1geometry_1_1flag2d_1_1_domain_creation_1_1_domain_creation_1af9a5228bfa630519ab185890a3ce2056" kind="function"><name>_add_to_domain_markers</name></member>
+  </compound>
+  <compound refid="classpvade_1_1geometry_1_1heliostats3d_1_1_domain_creation_1_1_domain_creation" kind="class"><name>pvade::geometry::heliostats3d::DomainCreation::DomainCreation</name>
+    <member refid="classpvade_1_1geometry_1_1heliostats3d_1_1_domain_creation_1_1_domain_creation_1a3a2037e63a35bdab9f3e6c5014449b3b" kind="variable"><name>domain_markers</name></member>
+    <member refid="classpvade_1_1geometry_1_1heliostats3d_1_1_domain_creation_1_1_domain_creation_1a2e3187c74c1a2b161d2cfa469a0d9dd3" kind="variable"><name>x_span</name></member>
+    <member refid="classpvade_1_1geometry_1_1heliostats3d_1_1_domain_creation_1_1_domain_creation_1a0005db9f8e0c3f97ec5b9b6763cf88c1" kind="variable"><name>y_span</name></member>
+    <member refid="classpvade_1_1geometry_1_1heliostats3d_1_1_domain_creation_1_1_domain_creation_1a41a5dbc752767cb8cb18be5e796fd758" kind="variable"><name>z_span</name></member>
+    <member refid="classpvade_1_1geometry_1_1heliostats3d_1_1_domain_creation_1_1_domain_creation_1a891c5333f80eb1338b171546fdabb9da" kind="variable"><name>numpy_pt_total_array</name></member>
+    <member refid="classpvade_1_1geometry_1_1heliostats3d_1_1_domain_creation_1_1_domain_creation_1aa3a8371e24ebd7f1ff7496c48cef061f" kind="function"><name>__init__</name></member>
+    <member refid="classpvade_1_1geometry_1_1heliostats3d_1_1_domain_creation_1_1_domain_creation_1af9f175300a770a7ebeb1b815e5a8c76f" kind="function"><name>build_FSI</name></member>
+    <member refid="classpvade_1_1geometry_1_1heliostats3d_1_1_domain_creation_1_1_domain_creation_1af6d0f5e49c19ad3177c13fa343453edf" kind="function"><name>build_structure_old</name></member>
+    <member refid="classpvade_1_1geometry_1_1heliostats3d_1_1_domain_creation_1_1_domain_creation_1ac856a0043e7554cf407fa0146f642111" kind="function"><name>build_structure</name></member>
+    <member refid="classpvade_1_1geometry_1_1heliostats3d_1_1_domain_creation_1_1_domain_creation_1af2134b183aa37b3c2ef7c9b9146e6c56" kind="function"><name>set_length_scales_DEV</name></member>
+    <member refid="classpvade_1_1geometry_1_1heliostats3d_1_1_domain_creation_1_1_domain_creation_1a6932c7dc6d60b46952e3804b5d84b013" kind="function"><name>set_length_scales</name></member>
+    <member refid="classpvade_1_1geometry_1_1heliostats3d_1_1_domain_creation_1_1_domain_creation_1a9fba68467b793e6818ce8ed5d30beed2" kind="function"><name>_add_to_domain_markers</name></member>
+  </compound>
+  <compound refid="classpvade_1_1geometry_1_1panels2d_1_1_domain_creation_1_1_domain_creation" kind="class"><name>pvade::geometry::panels2d::DomainCreation::DomainCreation</name>
+    <member refid="classpvade_1_1geometry_1_1panels2d_1_1_domain_creation_1_1_domain_creation_1ac8d84fb651be2e315e3b883d5a079e9b" kind="variable"><name>domain_markers</name></member>
+    <member refid="classpvade_1_1geometry_1_1panels2d_1_1_domain_creation_1_1_domain_creation_1a3a47d95d996878534f816785c1ccefaf" kind="variable"><name>x_span</name></member>
+    <member refid="classpvade_1_1geometry_1_1panels2d_1_1_domain_creation_1_1_domain_creation_1acf2ffe647660e80be135f3ad8b225446" kind="variable"><name>y_span</name></member>
+    <member refid="classpvade_1_1geometry_1_1panels2d_1_1_domain_creation_1_1_domain_creation_1a39ab8d9691d090452616e24c1f07a9f9" kind="variable"><name>numpy_pt_total_array</name></member>
+    <member refid="classpvade_1_1geometry_1_1panels2d_1_1_domain_creation_1_1_domain_creation_1a79719dbdcf6509ae768ffeec065f0324" kind="function"><name>__init__</name></member>
+    <member refid="classpvade_1_1geometry_1_1panels2d_1_1_domain_creation_1_1_domain_creation_1ac94df6b1025943d059848719a5148a32" kind="function"><name>build_FSI</name></member>
+    <member refid="classpvade_1_1geometry_1_1panels2d_1_1_domain_creation_1_1_domain_creation_1a469fa37b1750abba57a69523722a7439" kind="function"><name>set_length_scales</name></member>
+    <member refid="classpvade_1_1geometry_1_1panels2d_1_1_domain_creation_1_1_domain_creation_1aa9809ed82334d7631f7edb163aca184b" kind="function"><name>_add_to_domain_markers</name></member>
+  </compound>
+  <compound refid="classpvade_1_1geometry_1_1panels3d_1_1_domain_creation_1_1_domain_creation" kind="class"><name>pvade::geometry::panels3d::DomainCreation::DomainCreation</name>
+    <member refid="classpvade_1_1geometry_1_1panels3d_1_1_domain_creation_1_1_domain_creation_1a4d7bf35bd7ad775a96b69fb947a36581" kind="variable"><name>domain_markers</name></member>
+    <member refid="classpvade_1_1geometry_1_1panels3d_1_1_domain_creation_1_1_domain_creation_1af86a0b8093d621548c8afa57ec188f1a" kind="variable"><name>x_span</name></member>
+    <member refid="classpvade_1_1geometry_1_1panels3d_1_1_domain_creation_1_1_domain_creation_1aba5dcefba19cf92d829ecd3a3d29100f" kind="variable"><name>y_span</name></member>
+    <member refid="classpvade_1_1geometry_1_1panels3d_1_1_domain_creation_1_1_domain_creation_1a009b97ffc6f0806a7460bb6a94885004" kind="variable"><name>z_span</name></member>
+    <member refid="classpvade_1_1geometry_1_1panels3d_1_1_domain_creation_1_1_domain_creation_1ac43ffd6882b030d5a0fab94ea92ff698" kind="variable"><name>numpy_pt_total_array</name></member>
+    <member refid="classpvade_1_1geometry_1_1panels3d_1_1_domain_creation_1_1_domain_creation_1ac03b2d3b1df580d0c8046cd068caea23" kind="function"><name>__init__</name></member>
+    <member refid="classpvade_1_1geometry_1_1panels3d_1_1_domain_creation_1_1_domain_creation_1a12936179065cc29c1ff8e6c400dac336" kind="function"><name>build_FSI</name></member>
+    <member refid="classpvade_1_1geometry_1_1panels3d_1_1_domain_creation_1_1_domain_creation_1ab9b81f699384cba640605a2394fd8dee" kind="function"><name>build_structure_old</name></member>
+    <member refid="classpvade_1_1geometry_1_1panels3d_1_1_domain_creation_1_1_domain_creation_1ae074280405cfc56eae130230c5d2c64c" kind="function"><name>build_structure</name></member>
+    <member refid="classpvade_1_1geometry_1_1panels3d_1_1_domain_creation_1_1_domain_creation_1acc89157b83539d12a9262239346d96ab" kind="function"><name>set_length_scales_DEV</name></member>
+    <member refid="classpvade_1_1geometry_1_1panels3d_1_1_domain_creation_1_1_domain_creation_1a20de5dee69ae9ea4c310b861029b53a2" kind="function"><name>set_length_scales</name></member>
+    <member refid="classpvade_1_1geometry_1_1panels3d_1_1_domain_creation_1_1_domain_creation_1a1cfb6d025cfb5793ec48a6e3744d56bd" kind="function"><name>_add_to_domain_markers</name></member>
+  </compound>
+  <compound refid="classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity" kind="class"><name>pvade::structure::ElasticityAnalysis::Elasticity</name>
+    <member refid="classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_1a601b8257d3040df8248cefcbd55b2bfd" kind="variable"><name>comm</name></member>
+    <member refid="classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_1aca752b82e70c563f7778433ab6634e3e" kind="variable"><name>rank</name></member>
+    <member refid="classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_1ac162c7dffdb991cbd7c50f14c9598647" kind="variable"><name>num_procs</name></member>
+    <member refid="classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_1a86c2a9fe2e74d26a94af9258e1daab9a" kind="variable"><name>V</name></member>
+    <member refid="classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_1ab59d9dc0397edc8ebf1f367553f02bc6" kind="variable"><name>W</name></member>
+    <member refid="classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_1a41cc9ac596d5aef4223332791b52d7e1" kind="variable"><name>first_call_to_solver</name></member>
+    <member refid="classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_1aaa8fbed411493e494056f8c22d56ac6a" kind="variable"><name>num_V_dofs</name></member>
+    <member refid="classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_1af21436d2428ab66c7edc680f8164d789" kind="variable"><name>eta_m</name></member>
+    <member refid="classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_1aaef498cb90b989caff84ca6a3c2aa34c" kind="variable"><name>eta_k</name></member>
+    <member refid="classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_1a99e045065c01c2ffdcd4bf7ba343d36a" kind="variable"><name>alpha_m</name></member>
+    <member refid="classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_1ade5db988f81280faba5688e1e0a8aa13" kind="variable"><name>alpha_f</name></member>
+    <member refid="classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_1aef84ab4df838eea9d7be5000862f8f91" kind="variable"><name>gamma</name></member>
+    <member refid="classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_1a4994cb13b92cee4fa8e29e1bb77130d9" kind="variable"><name>beta</name></member>
+    <member refid="classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_1a276f725ef0b58f86607111a68a1a9d88" kind="variable"><name>dt_st</name></member>
+    <member refid="classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_1af20d8531eeaf1b327aee1c604e56a306" kind="variable"><name>bc</name></member>
+    <member refid="classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_1aecd501363586ea8563e825c7bf09ef35" kind="variable"><name>u_</name></member>
+    <member refid="classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_1a71f4306215f0f080b7ef4269c486920d" kind="variable"><name>T</name></member>
+    <member refid="classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_1a6e7eb962729583f164dcdf3ccb63db08" kind="variable"><name>trial_tensor</name></member>
+    <member refid="classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_1a1e4a10ba98734084823cf30bc42bdcbc" kind="variable"><name>test_tensor</name></member>
+    <member refid="classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_1af1b16155bf3e2e1d422ca2e1fc142574" kind="variable"><name>internal_stress</name></member>
+    <member refid="classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_1a5ee3a749dd20648e6bf726b75f4143a0" kind="variable"><name>stress</name></member>
+    <member refid="classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_1a6e8676355b9c21570afee6272c102da8" kind="variable"><name>stress_old</name></member>
+    <member refid="classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_1a0e51c1ec95f911598a4d427aea8fbc87" kind="variable"><name>stress_predicted</name></member>
+    <member refid="classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_1a99abed187c9352693f3263681011c0bb" kind="variable"><name>u</name></member>
+    <member refid="classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_1a3c49f0b92e8eccb6f1b76a901a2aa8bc" kind="variable"><name>u_old</name></member>
+    <member refid="classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_1a4666a39e7b0346fd231ba5e6956762f8" kind="variable"><name>u_delta</name></member>
+    <member refid="classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_1a196c1fc8bd1509d439b895de12496b03" kind="variable"><name>v</name></member>
+    <member refid="classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_1a5d8b059ddb971ceb52445ed6197b0a62" kind="variable"><name>v_old</name></member>
+    <member refid="classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_1ad5ddd27fb870b9c528f69a853a0e95f0" kind="variable"><name>a</name></member>
+    <member refid="classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_1a899cc8ac3708e18a39b03af3db84a798" kind="variable"><name>a_old</name></member>
+    <member refid="classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_1a037b72fdb5daf9349f14474a6c4f1567" kind="variable"><name>f</name></member>
+    <member refid="classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_1a5840faf157a86e34dafb1b1c0e28905f" kind="variable"><name>ds</name></member>
+    <member refid="classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_1aa2aa899db0e01e8ee1f5ebcced35531f" kind="variable"><name>res</name></member>
+    <member refid="classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_1a9143978c5fb0f0d42fd6ff4ac645784b" kind="variable"><name>k_nominal_proj</name></member>
+    <member refid="classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_1a5f11ae5dc586600d721b5afd51ea9caf" kind="variable"><name>problem</name></member>
+    <member refid="classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_1a8a5d7daaaadea02c1a183687aca6857d" kind="variable"><name>solver</name></member>
+    <member refid="classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_1a25fef720299683fb3203520be2f26938" kind="function"><name>__init__</name></member>
+    <member refid="classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_1a1df3ca0fa9029ede29395181173945ca" kind="function"><name>build_boundary_conditions</name></member>
+    <member refid="classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_1ae859f045d6bfd91299964bf5e02cde99" kind="function"><name>update_a</name></member>
+    <member refid="classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_1ad91ee0ce917023cf183f7a7663e76c1b" kind="function"><name>update_v</name></member>
+    <member refid="classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_1a49a101e34786b3280cde021c89ccbd79" kind="function"><name>update_fields</name></member>
+    <member refid="classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_1a80ddd851fd3eeef7d9d700e5efe67287" kind="function"><name>avg</name></member>
+    <member refid="classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_1a8a524c73b5421d177a7717ffcb4966c4" kind="function"><name>build_forms</name></member>
+    <member refid="classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_1a183995e9763994d7ec70ee18cb5197af" kind="function"><name>build_nullspace</name></member>
+    <member refid="classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_1af3759148a0aa1a35d11ba911ad0074c6" kind="function"><name>solve</name></member>
+    <member refid="classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity_1a756b22e512222dd38a24a5457b7260c0" kind="function"><name>_assemble_system</name></member>
+  </compound>
+  <compound refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow" kind="class"><name>pvade::fluid::FlowManager::Flow</name>
+    <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a3d92ee6f6d4c4679c2eca754ec53ebae" kind="variable"><name>fluid_analysis</name></member>
+    <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a87e175767b359d9373f9467f00a9bf92" kind="variable"><name>thermal_analysis</name></member>
+    <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1af815465a07a898102c789f4d3ac37d2d" kind="variable"><name>name</name></member>
+    <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1ae93b399034fd2950baa1b46c15c3774d" kind="variable"><name>comm</name></member>
+    <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1af83bf90876c5921d98b51c5fcf9b1599" kind="variable"><name>rank</name></member>
+    <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a8c50d7a2e639d7e5060d60e2302c495d" kind="variable"><name>num_procs</name></member>
+    <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1afb2e076bea03878ee71267d5f71f2559" kind="variable"><name>Q</name></member>
+    <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a6a7d4a2b4606b59e6d5a38400bb40d00" kind="variable"><name>V</name></member>
+    <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1ab206a97cd3fbaebc674cbdc3ea3494ad" kind="variable"><name>T</name></member>
+    <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a8a3eac5b0807ce3fc1bd0404e7647292" kind="variable"><name>T_undeformed</name></member>
+    <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1aef369c2c1a2e7c1c31e95da2abc32e99" kind="variable"><name>S</name></member>
+    <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a3cd97905c4c08eeffa53cc6b7896a2a0" kind="variable"><name>DG</name></member>
+    <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a785029248dc6d8e984dc417cef123ef7" kind="variable"><name>first_call_to_solver</name></member>
+    <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a497bd3485aa1d5af3ee14b2cfc8fbcfb" kind="variable"><name>first_call_to_surface_pressure</name></member>
+    <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a0d316e11ea705d3ea29a1ff1e208ea2d" kind="variable"><name>ndim</name></member>
+    <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1ae462d6e9dece3f05989905df42065da7" kind="variable"><name>facet_dim</name></member>
+    <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1acfcee9adf457abc8326872d33dbc5ecd" kind="variable"><name>hmin</name></member>
+    <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1ac6606676a8cc1ae285eefcae3f42ebec" kind="variable"><name>num_Q_dofs</name></member>
+    <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a461e548d879d6d81543ac357df2430c5" kind="variable"><name>num_V_dofs</name></member>
+    <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a4c2d8906ebe28ba010f330cc573890c7" kind="variable"><name>bcu</name></member>
+    <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a1e7cf76918d2911fe61ce5ff934d7852" kind="variable"><name>inflow_profile</name></member>
+    <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a425733d05c08287719a533249af1e997" kind="variable"><name>inflow_velocity</name></member>
+    <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1ae3e1522ff1732d85ad1d2750793c559a" kind="variable"><name>upper_cells</name></member>
+    <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a6ed4b7f8b3cc69837cb8b9961720e17e" kind="variable"><name>bcp</name></member>
+    <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a3c5350226de82de50accdebe491e08e4" kind="variable"><name>bcT</name></member>
+    <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1ac55a6cf94fe50993105b703d2d39b4b6" kind="variable"><name>dpdx</name></member>
+    <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a84f036bcf92820d81dd33b1e2871bb0c" kind="variable"><name>dt_c</name></member>
+    <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a600cde920361dfe5501dacd30631fc22" kind="variable"><name>rho_c</name></member>
+    <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1aa3e7c4bd7ad50e275ccafeb326e8c595" kind="variable"><name>g</name></member>
+    <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1acfb5b790243c0b1772f9199564690249" kind="variable"><name>beta_c</name></member>
+    <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a9af034e23aacfe747c49a7aadd2c7b55" kind="variable"><name>alpha_c</name></member>
+    <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1ac7f8729c9397682a491729e539ce14d7" kind="variable"><name>Pe_approx</name></member>
+    <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a48804905b8b3d8d1cb7f91b434040c85" kind="variable"><name>stabilizing</name></member>
+    <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1ae8fdf3666b5cf7a9f45fa6c037366d9a" kind="variable"><name>u</name></member>
+    <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1ae29cea031e713f4af0de0e7c11c0abc3" kind="variable"><name>v</name></member>
+    <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a9a7e12f08d8add1142a1f53325178104" kind="variable"><name>p</name></member>
+    <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a58890e0a00f946edb082de0779132a16" kind="variable"><name>q</name></member>
+    <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1af8d1bc4ed3902518f4b8393436bf5ae0" kind="variable"><name>u_k</name></member>
+    <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1aec92a0408334079dcc1a35adba810e3c" kind="variable"><name>u_k1</name></member>
+    <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a5ddee51ec783dda2fbe64cb5ad864947" kind="variable"><name>u_k2</name></member>
+    <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1ae460604821e7895eb220987b4288fd14" kind="variable"><name>theta</name></member>
+    <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a41c80f8de0abfe05b1f847200efe59d5" kind="variable"><name>s</name></member>
+    <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1aac4c345b174d117b5fad6ac07a9270f3" kind="variable"><name>theta_k</name></member>
+    <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1af404c5b82410414a92270fccfdfdf3f9" kind="variable"><name>theta_k1</name></member>
+    <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1ac37f4e4e7858d5069e396ed5d11cb822" kind="variable"><name>theta_r</name></member>
+    <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a8cbd4fde37fd771f0da01db0b4f80b66" kind="variable"><name>mesh_vel</name></member>
+    <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1aef6adc85442935cecaa72185ecbf8ffe" kind="variable"><name>mesh_vel_old</name></member>
+    <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a311fb95b87c36ab67a3bf29ce49ba241" kind="variable"><name>mesh_vel_bc</name></member>
+    <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1aaf97b1c7d8780461e476855538ce8485" kind="variable"><name>mesh_vel_bc_old</name></member>
+    <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a015c059f504ac20af2ffc392bd0c89ea" kind="variable"><name>p_k</name></member>
+    <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a488a8357af27126a578fcc70306f9f87" kind="variable"><name>p_k1</name></member>
+    <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a6fb2bd4c9c29ffc13eaec877681a93b0" kind="variable"><name>nu_T</name></member>
+    <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1add11cda4d3e58324f2a937057971106e" kind="variable"><name>U_ALE</name></member>
+    <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a23b4fab7dc5f6e3f6defed8d141b85c8" kind="variable"><name>F1</name></member>
+    <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1aa6ab4b080112c05c37ac45584fdd490c" kind="variable"><name>a1</name></member>
+    <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1ae155fdf3c999161c703d7f6518abceaa" kind="variable"><name>L1</name></member>
+    <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1ad31b19692515c7cd136acb5cb03a39cb" kind="variable"><name>a2</name></member>
+    <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a6e927345a2b0b6f882ddde9cf237aa60" kind="variable"><name>L2</name></member>
+    <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a2b91dd0c7e13c81538d2e383729ac6e9" kind="variable"><name>a3</name></member>
+    <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a2b76056289f0b4ebae5514f0de464c4b" kind="variable"><name>L3</name></member>
+    <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1af8fdc128a50054828567640d589eb876" kind="variable"><name>r</name></member>
+    <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a03b68df0739bebcb02e07d91802b0bf9" kind="variable"><name>F4</name></member>
+    <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a90a3d71a274ead03d652028068b0a827" kind="variable"><name>a4</name></member>
+    <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1aecb8540f3a73da8dce307bcba7682d0a" kind="variable"><name>L4</name></member>
+    <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a9fc9ae81a6b86a234cf81e4e2ad7bbfc" kind="variable"><name>panel_stress</name></member>
+    <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a858cf1d8892c0ee0bbd0714af0fc2991" kind="variable"><name>panel_stress_undeformed</name></member>
+    <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a75f9b97f7dea37d0437aed65bcdd46a1" kind="variable"><name>stress</name></member>
+    <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a84badbf265b079bd44ea62f89f58f866" kind="variable"><name>n</name></member>
+    <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a42c307d82c81b5bbd9ddfc3827266f5c" kind="variable"><name>traction</name></member>
+    <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a48e7516c92bab48401ae9ed5b70c7293" kind="variable"><name>a5</name></member>
+    <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a25a81975606d85bf8e6194125a4b8026" kind="variable"><name>L5</name></member>
+    <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a20e160be10e11b2880578b43018448d5" kind="variable"><name>cfl_vec</name></member>
+    <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a5bd5e9bfd52d247263b3544269440845" kind="variable"><name>a6</name></member>
+    <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1aa202b4e97208c021faf7a69a715f99b8" kind="variable"><name>L6</name></member>
+    <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a2ce7b4bb20489c7c6f0e51e29aee44c4" kind="variable"><name>flux_plane</name></member>
+    <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a73181bd2d18cd30276c8ada2e34b5b34" kind="variable"><name>dpdx_history</name></member>
+    <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1af2df911dcd50ac759488270dbc031785" kind="variable"><name>all_interior_V_dofs</name></member>
+    <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a7573382749d323d62d32e86cb7159ca5" kind="variable"><name>zero_vec</name></member>
+    <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a09022717c53c249d99a85b57c86534a8" kind="variable"><name>integrated_force_x_form</name></member>
+    <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1ac9b03d6704a30f145f130f1d7d405111" kind="variable"><name>integrated_force_y_form</name></member>
+    <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1ac6ed25dec800bf25ffb47f06d03c6c69" kind="variable"><name>integrated_force_z_form</name></member>
+    <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1aa6649203282ba11829d3ae0c525332be" kind="variable"><name>A1</name></member>
+    <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a679422a138050d7f6ad9463624f37fc5" kind="variable"><name>A2</name></member>
+    <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1ae74ac2ab09c0e20578561b6f35ae9c32" kind="variable"><name>A3</name></member>
+    <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1aaf7575cbc1bf5134e387ef203ecbcc9b" kind="variable"><name>A4</name></member>
+    <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a51d374aa3d6e5d2d6002d1faef959284" kind="variable"><name>A5</name></member>
+    <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a4db460cc6fcc288aba7b52d76b004cd6" kind="variable"><name>A6</name></member>
+    <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a4e0b4179758c0190363d8780747bb69f" kind="variable"><name>b1</name></member>
+    <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1aac6bc991b874206f7c4467f51ccab71d" kind="variable"><name>b2</name></member>
+    <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1add4c5d273366c793ba44c4fabdf644d1" kind="variable"><name>b3</name></member>
+    <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1adab8a4219bcfe36c2cd452a0853565ac" kind="variable"><name>b4</name></member>
+    <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a18d36fc25a2d69e6c2b508101f9af2e6" kind="variable"><name>b5</name></member>
+    <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a0374043c73cd492a2699452b86a80352" kind="variable"><name>b6</name></member>
+    <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a82976bcbb9494c3e388cb80895fb38ec" kind="variable"><name>solver_1</name></member>
+    <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1ac6de5a8176648f0ed1fea5ba73e6ecbf" kind="variable"><name>solver_2</name></member>
+    <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a7ce2e451dd888cd03aa1235588d7477f" kind="variable"><name>solver_3</name></member>
+    <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a7a3b151b4668d0181dddd8543153dc12" kind="variable"><name>solver_4</name></member>
+    <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1addbd2cce8f32aa2b29a015779543a751" kind="variable"><name>solver_5</name></member>
+    <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a663739d96a942572f174adcdbdfc1d1b" kind="variable"><name>solver_6</name></member>
+    <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a8353ec846d7fd4b25fb0207f322570be" kind="variable"><name>nullspace</name></member>
+    <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a1bf4833befd9b1ea9c463df3a56a3019" kind="variable"><name>theta_max</name></member>
+    <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1ade734da5731e35e321a90d4107505c83" kind="variable"><name>cfl_max</name></member>
+    <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a34233dddcc77855770ea6880ca8a53b1" kind="variable"><name>integrated_force_x</name></member>
+    <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1afb3c48c32fd8193aa7f4b1dedbf4980b" kind="variable"><name>integrated_force_y</name></member>
+    <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a94a32715f40af77bfd3be17af1498316" kind="variable"><name>integrated_force_z</name></member>
+    <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1af8df5dead5f6f076ec69350fdcc29de2" kind="variable"><name>lift_and_drag_filename</name></member>
+    <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a6be5aa01ef906d87ff3239c3ee5ff545" kind="function"><name>__init__</name></member>
+    <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1af8e4d3fea94279f378aa776472aa3b50" kind="function"><name>build_boundary_conditions</name></member>
+    <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1ae1f61abbd382547d002824bfd057f20e" kind="function"><name>build_forms</name></member>
+    <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a065a7470c36f8de504725c9428749615" kind="function"><name>solve</name></member>
+    <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1ae63cd88a8a509eef6d70903395c7effe" kind="function"><name>compute_cfl</name></member>
+    <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1ab41a9ca029f30a15ffd8d5d121fff101" kind="function"><name>compute_lift_and_drag</name></member>
+    <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a077051e530518bd246cd81fe0dce2e59" kind="function"><name>compute_pressure_drop_between_points</name></member>
+    <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a2a086d1967fab26f676d3efa427c6539" kind="function"><name>adjust_dpdx_for_constant_flux</name></member>
+    <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a166f66c8e74adb190ce681ba53e6c595" kind="function"><name>_assemble_system</name></member>
+    <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a0aac3afac8843fcda761ff822836274e" kind="function"><name>_solver_step_1</name></member>
+    <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1ae251861e34685fe3e8b71ee572b3814d" kind="function"><name>_solver_step_2</name></member>
+    <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1ab504d1daa4ddc6c0d18ccaf3ff06d440" kind="function"><name>_solver_step_3</name></member>
+    <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a65e4f1ff97aebfdf40f7f92347802e87" kind="function"><name>_solver_step_4</name></member>
+    <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a5f8f9dda8642c8768734b03536314b52" kind="function"><name>_solver_step_5</name></member>
+  </compound>
+  <compound refid="classpvade_1_1fsi_1_1_f_s_i_1_1_f_s_i" kind="class"><name>pvade::fsi::FSI::FSI</name>
+    <member refid="classpvade_1_1fsi_1_1_f_s_i_1_1_f_s_i_1a3da5739dfd791beb92839e471bddef30" kind="variable"><name>comm</name></member>
+    <member refid="classpvade_1_1fsi_1_1_f_s_i_1_1_f_s_i_1a0bda1d6eb422bae971c9d3659451647d" kind="variable"><name>rank</name></member>
+    <member refid="classpvade_1_1fsi_1_1_f_s_i_1_1_f_s_i_1a978caff518a1b22fb9d10d29d62451d7" kind="variable"><name>num_procs</name></member>
+    <member refid="classpvade_1_1fsi_1_1_f_s_i_1_1_f_s_i_1ae373014bdf045c29243a30b27d43b03f" kind="variable"><name>ndim</name></member>
+    <member refid="classpvade_1_1fsi_1_1_f_s_i_1_1_f_s_i_1ab3048397e964a6b8cedb1348df6cbca9" kind="function"><name>__init__</name></member>
+    <member refid="classpvade_1_1fsi_1_1_f_s_i_1_1_f_s_i_1a105ff3fd7c5bf81461bdb9c552245e14" kind="function"><name>fluid_struct</name></member>
+  </compound>
+  <compound refid="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain" kind="class"><name>pvade::geometry::MeshManager::FSIDomain</name>
+    <member refid="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1a7fe83760c27238f2220a4ab0ae1e0eba" kind="variable"><name>comm</name></member>
+    <member refid="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1a6316d0186127a5bbfc2d8ee5cca21d80" kind="variable"><name>rank</name></member>
+    <member refid="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1a17a3cbbeac4423c88c89e3e6efd52563" kind="variable"><name>num_procs</name></member>
+    <member refid="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1a5e0ccb0361663df70b1a3ded33a6231b" kind="variable"><name>first_move_mesh</name></member>
+    <member refid="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1ac5d8679dbc88f4f97baab3aae9d7589b" kind="variable"><name>numpy_pt_total_array</name></member>
+    <member refid="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1a2ea162371a28917af671ed3273df8e5f" kind="variable"><name>ndim</name></member>
+    <member refid="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1aec5727eeca463face60130372d09c848" kind="variable"><name>domain_markers</name></member>
+    <member refid="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1a5ad373d7a79298d9e2dc9464031d57b8" kind="variable"><name>geometry</name></member>
+    <member refid="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1ae61060991ba9c0d359a6280633dca381" kind="variable"><name>msh</name></member>
+    <member refid="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1a20aabf73b67f44c186704c6f3b8943db" kind="variable"><name>cell_tags</name></member>
+    <member refid="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1ac77865b1b085b3c724dfb7772ee03b35" kind="variable"><name>facet_tags</name></member>
+    <member refid="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1a5c0d3f03818ebc21bf28673b5ae842db" kind="variable"><name>V1</name></member>
+    <member refid="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1abc4ee08e9cd03d015fb2a811b7a2c893" kind="variable"><name>V1_undeformed</name></member>
+    <member refid="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1a374bed06258d49d734615073e4dcdbb7" kind="variable"><name>fluid_mesh_displacement</name></member>
+    <member refid="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1a8c060e6609d78e6b0d839dc3cd359af2" kind="variable"><name>fluid_mesh_displacement_bc</name></member>
+    <member refid="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1a62444852ea3373a9081bf1c35963df6c" kind="variable"><name>fluid_mesh_displacement_bc_undeformed</name></member>
+    <member refid="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1ab999bcbda5190fcc867f2a9c12459e3c" kind="variable"><name>total_mesh_displacement</name></member>
+    <member refid="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1a0ed33da66fab39e813b7dabd784e14ed" kind="variable"><name>results_filename_vtk</name></member>
+    <member refid="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1a57b86f7bc78cd0ac22f71a19f43c20ca" kind="variable"><name>Q1</name></member>
+    <member refid="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1a987b06f792d406a4b7643aac12d0f59d" kind="variable"><name>distance</name></member>
+    <member refid="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1af20bda5d268a3ca1ef688ee91c11e42f" kind="variable"><name>idx_vec</name></member>
+    <member refid="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1a6a85f221ceb5411299c9f55a70fe9d89" kind="variable"><name>all_interior_V_dofs</name></member>
+    <member refid="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1af7f9fec4841991a8a9d7126fa3d86e4a" kind="variable"><name>facet_dim</name></member>
+    <member refid="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1a847c23d6c6a612342fef8a147fa64129" kind="variable"><name>all_exterior_V_dofs</name></member>
+    <member refid="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1a2f0b9218488084bc27e7ff78ece0e35d" kind="variable"><name>all_xmin_xmax_V_dofs</name></member>
+    <member refid="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1ae8c08583b1a95d03ef515e536e6e3d2f" kind="variable"><name>all_ymin_ymax_V_dofs</name></member>
+    <member refid="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1a654b9b38832cb616a409789023574410" kind="variable"><name>bcx</name></member>
+    <member refid="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1a25ee2bdada0ccb6a5c11f253eb9feacf" kind="variable"><name>a</name></member>
+    <member refid="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1aeb832719496774fe60d2d1e17acdb29d" kind="variable"><name>L</name></member>
+    <member refid="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1a1e133cb812bf0ece3248fe09f004a734" kind="variable"><name>A</name></member>
+    <member refid="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1ace477202853a3c6059c6f2bfbc5a145a" kind="variable"><name>b</name></member>
+    <member refid="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1a88b9f01e998b1ec80d6023775f2bf5c9" kind="variable"><name>mesh_motion_solver</name></member>
+    <member refid="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1a7cfa9b439d67c6045fad0a8289bf5c37" kind="function"><name>__init__</name></member>
+    <member refid="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1ae32474d7ab3fc2ad4b08ab050fce2a8b" kind="function"><name>build</name></member>
+    <member refid="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1a9ad2aa7438deffed483d514a6aa7d356" kind="function"><name>write_mesh_files</name></member>
+    <member refid="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1aaf393f71ea473483d23fe1e5a68ee17a" kind="function"><name>read_mesh_files</name></member>
+    <member refid="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1a26fabdc3a2e58d2a1b1c079429bf3820" kind="function"><name>test_mesh_functionspace</name></member>
+    <member refid="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1acc4ac74ea8c15d94e8dc1c160d97bbf2" kind="function"><name>test_submesh_transfer</name></member>
+    <member refid="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1a815bda42657bad98527e00dffac1b6ee" kind="function"><name>move_mesh</name></member>
+    <member refid="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1a7f141e543c18424870f494d6c4b43a5b" kind="function"><name>_get_domain_markers</name></member>
+    <member refid="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1a6259c09bd9ec935529f1e2c033823791" kind="function"><name>_save_submeshes_for_reload_hack</name></member>
+    <member refid="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1a7344af636e0c4bb3ed18c144f3e9a98b" kind="function"><name>_create_submeshes_from_parent</name></member>
+    <member refid="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1a37881c921f7f2f63267f8511fd56f1e5" kind="function"><name>_transfer_mesh_tags_to_submeshes</name></member>
+    <member refid="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1ac4a2b6bd95af7a131a3db0b3517ad06a" kind="function"><name>_enforce_periodicity</name></member>
+    <member refid="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1a87ec192e9d98f97ef727fb9e63270574" kind="function"><name>_generate_mesh</name></member>
+    <member refid="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1ace1cc3a67f289931ad0fb3cb9c7f9fde" kind="function"><name>_generate_mesh_3d</name></member>
+    <member refid="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1a93c170d13ed61a0869ba0204da2f112d" kind="function"><name>_generate_mesh_2d</name></member>
+    <member refid="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1a57d602137e1a94068a500b1d3a5394d4" kind="function"><name>_calc_distance_to_panel_surface</name></member>
+    <member refid="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain_1a6e146f3470d6d1a11cd8b5dec4d60e44" kind="function"><name>_force_interface_node_matching</name></member>
+  </compound>
+  <compound refid="classpvade_1_1fluid_1_1boundary__conditions_1_1_inflow_velocity" kind="class"><name>pvade::fluid::boundary_conditions::InflowVelocity</name>
+    <member refid="classpvade_1_1fluid_1_1boundary__conditions_1_1_inflow_velocity_1ab223d26da444a0717fb1b2da2a9bf870" kind="variable"><name>ndim</name></member>
+    <member refid="classpvade_1_1fluid_1_1boundary__conditions_1_1_inflow_velocity_1aecc4ae868b200ab84c685b5f1fc2bca5" kind="variable"><name>params</name></member>
+    <member refid="classpvade_1_1fluid_1_1boundary__conditions_1_1_inflow_velocity_1a2e339433f11cd898f976e43748d2e1a6" kind="variable"><name>current_time</name></member>
+    <member refid="classpvade_1_1fluid_1_1boundary__conditions_1_1_inflow_velocity_1a7b99a028a8dcb051c6e02cc56cf0c9f7" kind="variable"><name>time_index</name></member>
+    <member refid="classpvade_1_1fluid_1_1boundary__conditions_1_1_inflow_velocity_1ac37d8a1e85642b5052278961a9f16218" kind="variable"><name>y_coordinates</name></member>
+    <member refid="classpvade_1_1fluid_1_1boundary__conditions_1_1_inflow_velocity_1a6b13ee084d36a31e01e0178848aaf86d" kind="variable"><name>z_coordinates</name></member>
+    <member refid="classpvade_1_1fluid_1_1boundary__conditions_1_1_inflow_velocity_1ad678f7ce506a549802cf141256482a51" kind="variable"><name>u</name></member>
+    <member refid="classpvade_1_1fluid_1_1boundary__conditions_1_1_inflow_velocity_1a7c2ded6e93c69a4d7f70ac95ed8df123" kind="variable"><name>v</name></member>
+    <member refid="classpvade_1_1fluid_1_1boundary__conditions_1_1_inflow_velocity_1a5db96bc6d6d95e1f90cf1249b6e0e5e4" kind="variable"><name>w</name></member>
+    <member refid="classpvade_1_1fluid_1_1boundary__conditions_1_1_inflow_velocity_1a977551818a0ba996f2d93a3d8e604414" kind="variable"><name>interp_u_bar</name></member>
+    <member refid="classpvade_1_1fluid_1_1boundary__conditions_1_1_inflow_velocity_1ad071e93a46787f3d0ac8decb3e3f3dc7" kind="variable"><name>interp_v_bar</name></member>
+    <member refid="classpvade_1_1fluid_1_1boundary__conditions_1_1_inflow_velocity_1ac77659a0c9a09b1ecb85338caae14a36" kind="variable"><name>interp_w_bar</name></member>
+    <member refid="classpvade_1_1fluid_1_1boundary__conditions_1_1_inflow_velocity_1a94baadce51af48b7987545d39e19b8f6" kind="variable"><name>interp_u</name></member>
+    <member refid="classpvade_1_1fluid_1_1boundary__conditions_1_1_inflow_velocity_1a38abf777c3110e2bcabb5b3766a99828" kind="variable"><name>interp_v</name></member>
+    <member refid="classpvade_1_1fluid_1_1boundary__conditions_1_1_inflow_velocity_1a1c9d436f7ef5dc9d24fcda8a1173a506" kind="variable"><name>interp_w</name></member>
+    <member refid="classpvade_1_1fluid_1_1boundary__conditions_1_1_inflow_velocity_1aba5c1f2a1c027f4de6b9b3f3965177d5" kind="variable"><name>inflow_t_final</name></member>
+    <member refid="classpvade_1_1fluid_1_1boundary__conditions_1_1_inflow_velocity_1a42931b079e2006b2bef092a0f5949cf8" kind="variable"><name>u_ref</name></member>
+    <member refid="classpvade_1_1fluid_1_1boundary__conditions_1_1_inflow_velocity_1aca6fdde310eb50f5e5cb47f0c18b7b0c" kind="function"><name>__init__</name></member>
+    <member refid="classpvade_1_1fluid_1_1boundary__conditions_1_1_inflow_velocity_1a65f1ea58b384d40c7279d91caa502d72" kind="function"><name>__call__</name></member>
+    <member refid="classpvade_1_1fluid_1_1boundary__conditions_1_1_inflow_velocity_1a8f96c3d7e6dd51478a69d84e1d5b7d44" kind="function"><name>calculate_u_ref</name></member>
+  </compound>
+  <compound refid="classpvade_1_1structure_1_1boundary__conditions_1_1_inflow_velocity" kind="class"><name>pvade::structure::boundary_conditions::InflowVelocity</name>
+    <member refid="classpvade_1_1structure_1_1boundary__conditions_1_1_inflow_velocity_1abfbf5ce48da81542e2e214326763754b" kind="variable"><name>geom_dim</name></member>
+    <member refid="classpvade_1_1structure_1_1boundary__conditions_1_1_inflow_velocity_1ac0ead32c07617e3c37b4706b66d586aa" kind="variable"><name>params</name></member>
+    <member refid="classpvade_1_1structure_1_1boundary__conditions_1_1_inflow_velocity_1a35a504641fbf4d994d120c1b958d8c1a" kind="function"><name>__init__</name></member>
+    <member refid="classpvade_1_1structure_1_1boundary__conditions_1_1_inflow_velocity_1a290c3533a25770fc07abf2e1b8b41a1d" kind="function"><name>__call__</name></member>
+  </compound>
+  <compound refid="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis" kind="class"><name>pvade::structure::ModalAnalysis::ModalAnalysis</name>
+    <member refid="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1afd43a30871887b9dcad0f5979ef46f0a" kind="variable"><name>structural_analysis</name></member>
+    <member refid="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1ad098981d9f5ad6be7bf4d8d6a367d54c" kind="variable"><name>name</name></member>
+    <member refid="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1a062b5e71b7efb23d692980c642e501be" kind="variable"><name>comm</name></member>
+    <member refid="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1a6480e80912a9e98f683bb8b1c375bdd3" kind="variable"><name>rank</name></member>
+    <member refid="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1aacfd20920357d37fdeb7d608a557a3bc" kind="variable"><name>num_procs</name></member>
+    <member refid="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1a46c04b377058719dd7297c2d4e88fb8b" kind="variable"><name>V</name></member>
+    <member refid="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1adc5f00289140cd19748b9bfc518591b6" kind="variable"><name>first_call_to_solver</name></member>
+    <member refid="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1a3813ee2d521cbd843f9159c0af51a573" kind="variable"><name>num_V_dofs</name></member>
+    <member refid="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1a80fa3b1f2c62d8ec7b6ef00bebae3603" kind="variable"><name>ndim</name></member>
+    <member refid="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1ae000508c15c596e00fc16845cfafa7f9" kind="variable"><name>facet_dim</name></member>
+    <member refid="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1a39bffec207fd6b15512039c9b824b206" kind="variable"><name>hmin</name></member>
+    <member refid="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1a2ee5445330f7e1e9991db2f24064ea55" kind="variable"><name>rho</name></member>
+    <member refid="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1a051e74dc54a5d137cf402ecc04fffe26" kind="variable"><name>eta_m</name></member>
+    <member refid="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1ab82b5ecc35eea5486fca39799251531f" kind="variable"><name>eta_k</name></member>
+    <member refid="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1afa8e16de18ad7e664d2ea97db67cc18b" kind="variable"><name>alpha_m</name></member>
+    <member refid="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1a47719453430f39117ee0fd70d06d77fe" kind="variable"><name>alpha_f</name></member>
+    <member refid="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1a8e69c5e38a8149b9c57a04959c562833" kind="variable"><name>gamma</name></member>
+    <member refid="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1a1d6265c13f8a9d712a7ee016c5ce3886" kind="variable"><name>beta</name></member>
+    <member refid="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1a2473b183b796a68e013d376fd51ef669" kind="variable"><name>E</name></member>
+    <member refid="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1a4129a01003c2f302ce921a29e034e1cd" kind="variable"><name>poissons_ratio</name></member>
+    <member refid="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1a5dfdd8f2ac2e0c61dfadd7dcc5703fe1" kind="variable"><name>lame_mu</name></member>
+    <member refid="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1a63ef88177de7e7ae3e8d1a25734bf72e" kind="variable"><name>lame_lambda</name></member>
+    <member refid="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1a9b91cb3eaf0682f27712763b14492a9a" kind="variable"><name>dt_st</name></member>
+    <member refid="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1a4787f85f484322e354305a9179462bd4" kind="variable"><name>north_east_corner_dofs</name></member>
+    <member refid="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1a05e072bd951abc2bc14fa65a0f52907a" kind="variable"><name>bc</name></member>
+    <member refid="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1a3e2992f0f821d055df93ea6a6511c94e" kind="variable"><name>u_</name></member>
+    <member refid="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1a410a81519da31e54a46fecd466da2d5c" kind="variable"><name>T</name></member>
+    <member refid="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1ae0af187bf9dbeccc523040c4075383ab" kind="variable"><name>stress</name></member>
+    <member refid="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1a59b36d2c3b4523af6275e1d64bcc402e" kind="variable"><name>stress_old</name></member>
+    <member refid="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1a8f9c8f2e45c40337ce9f323e75074fa2" kind="variable"><name>stress_predicted</name></member>
+    <member refid="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1a6eaa2fd6ba7cb81e4a87a6dea9e55e6c" kind="variable"><name>sigma_vm_h</name></member>
+    <member refid="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1a4183465e3f48c4e2ba932d223c8029d3" kind="variable"><name>u</name></member>
+    <member refid="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1add3dbcacbad19bdeb22477eeb0ca4058" kind="variable"><name>u_old</name></member>
+    <member refid="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1ad647ba07832a6541b79c724e82619336" kind="variable"><name>u_delta</name></member>
+    <member refid="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1a5b291d54c6bf1e7f8533ba0e03f14c16" kind="variable"><name>v</name></member>
+    <member refid="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1aef89e5618bcd1d23d1d91ba8a8c9b2fb" kind="variable"><name>v_old</name></member>
+    <member refid="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1a355b24e7d5d8b1571856d43a11089425" kind="variable"><name>a</name></member>
+    <member refid="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1aa0ee045a92a51256c9d49dd6854ad6be" kind="variable"><name>a_old</name></member>
+    <member refid="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1a439af299d2bbf877e8a71acb61e73674" kind="variable"><name>f</name></member>
+    <member refid="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1a2229dc674b0e0db87e4b5ef73d7cacf1" kind="variable"><name>ds</name></member>
+    <member refid="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1a2c5fae9ee7f0cc20a9e407e0d7fffd84" kind="variable"><name>res</name></member>
+    <member refid="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1aa0bc6d26f4f471a1131f2586c91d0c98" kind="variable"><name>problem</name></member>
+    <member refid="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1a9752c8d88488d477f1cf5c73d67842f6" kind="variable"><name>solver</name></member>
+    <member refid="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1a000b25bfafb3f6e017128055cb938075" kind="function"><name>__init__</name></member>
+    <member refid="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1a92d67f461a2129cc4df089bfb61bd87f" kind="function"><name>build_boundary_conditions</name></member>
+    <member refid="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1a624954bfc2ddcc4145c09417b4cf0cb8" kind="function"><name>update_a</name></member>
+    <member refid="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1a2c35e716ed4fbc8986169b327fd27919" kind="function"><name>update_v</name></member>
+    <member refid="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1ae6c8fad55a8707aee3b7f9866c079d6e" kind="function"><name>update_fields</name></member>
+    <member refid="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1a53ba9e02f9a57301739e79f032f64f20" kind="function"><name>avg</name></member>
+    <member refid="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1a22767b0826452306c881cea3e4c9f4f0" kind="function"><name>build_forms</name></member>
+    <member refid="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1a6d6d7f58de2514e86a1555c848e8895a" kind="function"><name>build_nullspace</name></member>
+    <member refid="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1a2990c63b9db3906a6f174b87709fa319" kind="function"><name>solve</name></member>
+    <member refid="classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis_1a10ee0ecfa053ddd50e72c6a5cac611b9" kind="function"><name>_assemble_system</name></member>
+  </compound>
+  <compound refid="classpvade_1_1fsi_1_1_p_vade_error" kind="class"><name>pvade::fsi::PVadeError</name>
+  </compound>
+  <compound refid="classpvade_1_1_i_o_1_1_p_vade_error" kind="class"><name>pvade::IO::PVadeError</name>
+  </compound>
+  <compound refid="classpvade_1_1_p_vade_error" kind="class"><name>pvade::PVadeError</name>
+  </compound>
+  <compound refid="classpvade_1_1_i_o_1_1_parameters_1_1_sim_params" kind="class"><name>pvade::IO::Parameters::SimParams</name>
+    <member refid="classpvade_1_1_i_o_1_1_parameters_1_1_sim_params_1a74f30fd8825a783c1cde15d8791b7df7" kind="variable"><name>comm</name></member>
+    <member refid="classpvade_1_1_i_o_1_1_parameters_1_1_sim_params_1a6d39976dbdb4dca1eadb2803c2dd9c73" kind="variable"><name>rank</name></member>
+    <member refid="classpvade_1_1_i_o_1_1_parameters_1_1_sim_params_1a7f16f5aaa14321f7def171d6e17f8c1b" kind="variable"><name>num_procs</name></member>
+    <member refid="classpvade_1_1_i_o_1_1_parameters_1_1_sim_params_1ada3c5686556fbc3fb468657bd4fb0ff4" kind="variable"><name>verbosity_level</name></member>
+    <member refid="classpvade_1_1_i_o_1_1_parameters_1_1_sim_params_1afd5e70ba06a7da0ea5d0afe552dc87c3" kind="variable"><name>schema_dict</name></member>
+    <member refid="classpvade_1_1_i_o_1_1_parameters_1_1_sim_params_1a4a7249cf9c76ea7e801af35e3867de9b" kind="variable"><name>input_dict</name></member>
+    <member refid="classpvade_1_1_i_o_1_1_parameters_1_1_sim_params_1a3fe5d31c9b9001a9bea925dbe8854bc6" kind="variable"><name>input_file_dict</name></member>
+    <member refid="classpvade_1_1_i_o_1_1_parameters_1_1_sim_params_1adaf80c6914cc81579c38e6b2c03e8650" kind="variable"><name>flat_schema_dict</name></member>
+    <member refid="classpvade_1_1_i_o_1_1_parameters_1_1_sim_params_1a7fb030f8bb2d150c55c038906e75ada6" kind="function"><name>__init__</name></member>
+    <member refid="classpvade_1_1_i_o_1_1_parameters_1_1_sim_params_1a2ce10c8be6903bcdd9ae459c28d13600" kind="function"><name>_flatten_schema_dict</name></member>
+    <member refid="classpvade_1_1_i_o_1_1_parameters_1_1_sim_params_1a774eba3fc1bb85b552feeced2c8197ab" kind="function"><name>_set_user_params_from_file</name></member>
+    <member refid="classpvade_1_1_i_o_1_1_parameters_1_1_sim_params_1ab9083fd64c5b6119969eb119c92a3643" kind="function"><name>_initialize_params_to_default</name></member>
+    <member refid="classpvade_1_1_i_o_1_1_parameters_1_1_sim_params_1ad7815e9f43c85bb533b0943c850080be" kind="function"><name>_set_user_params_from_cli</name></member>
+    <member refid="classpvade_1_1_i_o_1_1_parameters_1_1_sim_params_1aea671d49f6024783c80c3ed32305306b" kind="function"><name>_vprint</name></member>
+    <member refid="classpvade_1_1_i_o_1_1_parameters_1_1_sim_params_1a44898e8275d9f62b4a0c087927b6795d" kind="function"><name>_validate_inputs</name></member>
+    <member refid="classpvade_1_1_i_o_1_1_parameters_1_1_sim_params_1a60263815196d32987d9dc65665bcc3e8" kind="function"><name>_store_dict_as_attrs</name></member>
+    <member refid="classpvade_1_1_i_o_1_1_parameters_1_1_sim_params_1a1d4c9b53dcec14068d6e178668700810" kind="function"><name>_set_nested_dict_value</name></member>
+    <member refid="classpvade_1_1_i_o_1_1_parameters_1_1_sim_params_1ad87ed0c0e135a7f5f7af619c090f73e6" kind="function"><name>_rec_settattr</name></member>
+    <member refid="classpvade_1_1_i_o_1_1_parameters_1_1_sim_params_1aebf6c329e9fa19233925339a3eac1c3f" kind="function"><name>_pprint_dict</name></member>
+    <member refid="classpvade_1_1_i_o_1_1_parameters_1_1_sim_params_1ac7e4cec980188de9bde7ab8c57e6dcc9" kind="function"><name>_add_derived_quantities</name></member>
+  </compound>
+  <compound refid="classpvade_1_1structure_1_1_structure_main_1_1_structure" kind="class"><name>pvade::structure::StructureMain::Structure</name>
+    <member refid="classpvade_1_1structure_1_1_structure_main_1_1_structure_1aa668e2e0d37154411d5f867b1ca1eeaa" kind="variable"><name>structural_analysis</name></member>
+    <member refid="classpvade_1_1structure_1_1_structure_main_1_1_structure_1a75613a8148115a9cba5f63b6960e47bd" kind="variable"><name>name</name></member>
+    <member refid="classpvade_1_1structure_1_1_structure_main_1_1_structure_1acde0a39d1c21ecf73d9d07b57f28f0dd" kind="variable"><name>comm</name></member>
+    <member refid="classpvade_1_1structure_1_1_structure_main_1_1_structure_1a016c5a1aa5349c5adecee9ec1ee219d8" kind="variable"><name>rank</name></member>
+    <member refid="classpvade_1_1structure_1_1_structure_main_1_1_structure_1a3e6709136a3c6c72edd7d3faa5cd4673" kind="variable"><name>num_procs</name></member>
+    <member refid="classpvade_1_1structure_1_1_structure_main_1_1_structure_1aa863d8acc310443bb81ebbe00029821b" kind="variable"><name>elasticity</name></member>
+    <member refid="classpvade_1_1structure_1_1_structure_main_1_1_structure_1aba6f155f898656c145ec2f40706bced2" kind="variable"><name>ndim</name></member>
+    <member refid="classpvade_1_1structure_1_1_structure_main_1_1_structure_1ac3689bd218b9b0817b4901525ab3c95f" kind="variable"><name>facet_dim</name></member>
+    <member refid="classpvade_1_1structure_1_1_structure_main_1_1_structure_1ab523de80238563ccdf264a62b2dcbf7d" kind="variable"><name>hmin</name></member>
+    <member refid="classpvade_1_1structure_1_1_structure_main_1_1_structure_1a3bf3e69f3b79d3979e7f1a3d67feab40" kind="variable"><name>num_V_dofs</name></member>
+    <member refid="classpvade_1_1structure_1_1_structure_main_1_1_structure_1a9558f1923fcceef8432dd779ef0e57a0" kind="variable"><name>rho</name></member>
+    <member refid="classpvade_1_1structure_1_1_structure_main_1_1_structure_1a4ebfe6b812b70fec226239fa9d082d1d" kind="variable"><name>E</name></member>
+    <member refid="classpvade_1_1structure_1_1_structure_main_1_1_structure_1a21e515353253042e206126d46abd1b64" kind="variable"><name>poissons_ratio</name></member>
+    <member refid="classpvade_1_1structure_1_1_structure_main_1_1_structure_1aa29b033b9ca3f2a82d3ef3e50d9974d3" kind="variable"><name>lame_mu</name></member>
+    <member refid="classpvade_1_1structure_1_1_structure_main_1_1_structure_1a575b004ce9ac563ab613f6376bd86b56" kind="variable"><name>lame_lambda</name></member>
+    <member refid="classpvade_1_1structure_1_1_structure_main_1_1_structure_1a53b08e5b8de5e4f2f6fc1ede11850ce8" kind="variable"><name>north_east_corner_dofs</name></member>
+    <member refid="classpvade_1_1structure_1_1_structure_main_1_1_structure_1a8ae6a59528011c683c3fdbeeb410b960" kind="variable"><name>bc</name></member>
+    <member refid="classpvade_1_1structure_1_1_structure_main_1_1_structure_1a171250f40ec838fe5db6a459f2165887" kind="variable"><name>first_call_to_solver</name></member>
+    <member refid="classpvade_1_1structure_1_1_structure_main_1_1_structure_1a06b47fe9bdc70b88b0f2df16063b40f7" kind="variable"><name>problem</name></member>
+    <member refid="classpvade_1_1structure_1_1_structure_main_1_1_structure_1a474cddb35cb5f563db19778c606fe924" kind="variable"><name>solver</name></member>
+    <member refid="classpvade_1_1structure_1_1_structure_main_1_1_structure_1ad53c5f9221ec153abe804a4ec07c57bf" kind="function"><name>__init__</name></member>
+    <member refid="classpvade_1_1structure_1_1_structure_main_1_1_structure_1a953d987d5da67bea424afd188db01b74" kind="function"><name>build_boundary_conditions</name></member>
+    <member refid="classpvade_1_1structure_1_1_structure_main_1_1_structure_1a41260c0c1bd9b07b6eb59556aab01038" kind="function"><name>update_a</name></member>
+    <member refid="classpvade_1_1structure_1_1_structure_main_1_1_structure_1ab5a8711b75642992ee99a3b3423364b2" kind="function"><name>update_v</name></member>
+    <member refid="classpvade_1_1structure_1_1_structure_main_1_1_structure_1a651969606b881e92aec0fee6878f6300" kind="function"><name>update_fields</name></member>
+    <member refid="classpvade_1_1structure_1_1_structure_main_1_1_structure_1a61265f699a59dcaca4f5f6f3bbc2ac75" kind="function"><name>avg</name></member>
+    <member refid="classpvade_1_1structure_1_1_structure_main_1_1_structure_1ab72c7f582f6303ceb2d0b946d663b55a" kind="function"><name>build_forms</name></member>
+    <member refid="classpvade_1_1structure_1_1_structure_main_1_1_structure_1a9d81ac7cd7484eabff7a9c4ba1a47a51" kind="function"><name>build_nullspace</name></member>
+    <member refid="classpvade_1_1structure_1_1_structure_main_1_1_structure_1a39b78a7464556f9edcb4a5906e8002ed" kind="function"><name>solve</name></member>
+    <member refid="classpvade_1_1structure_1_1_structure_main_1_1_structure_1aa28a000ca9ddfa217d9954b520ff270e" kind="function"><name>_assemble_system</name></member>
+  </compound>
+  <compound refid="classpvade_1_1geometry_1_1template_1_1_template_domain_creation_1_1_template_domain_creation" kind="class"><name>pvade::geometry::template::TemplateDomainCreation::TemplateDomainCreation</name>
+    <member refid="classpvade_1_1geometry_1_1template_1_1_template_domain_creation_1_1_template_domain_creation_1a7b6de9bf6c9803709fa1fc5faa5fbc21" kind="variable"><name>comm</name></member>
+    <member refid="classpvade_1_1geometry_1_1template_1_1_template_domain_creation_1_1_template_domain_creation_1abbad1c751ef372db73981f16e4582fa5" kind="variable"><name>rank</name></member>
+    <member refid="classpvade_1_1geometry_1_1template_1_1_template_domain_creation_1_1_template_domain_creation_1a8079a964a183b0bed265e9a3af12c54f" kind="variable"><name>num_procs</name></member>
+    <member refid="classpvade_1_1geometry_1_1template_1_1_template_domain_creation_1_1_template_domain_creation_1a8de79a9660dd37d1c970021aabb17fe5" kind="variable"><name>gmsh_model</name></member>
+    <member refid="classpvade_1_1geometry_1_1template_1_1_template_domain_creation_1_1_template_domain_creation_1a4f950dc8dc9bea748d5326f0a29ef30d" kind="variable"><name>ndim</name></member>
+    <member refid="classpvade_1_1geometry_1_1template_1_1_template_domain_creation_1_1_template_domain_creation_1a0cb2e12c55e48701e2f927ab240bbbfd" kind="function"><name>__init__</name></member>
+    <member refid="classpvade_1_1geometry_1_1template_1_1_template_domain_creation_1_1_template_domain_creation_1a8128156e3993544dc2852aafb6f28106" kind="function"><name>build</name></member>
+    <member refid="classpvade_1_1geometry_1_1template_1_1_template_domain_creation_1_1_template_domain_creation_1a23633a446558be6fb861b69d58317eff" kind="function"><name>set_length_scales</name></member>
+    <member refid="classpvade_1_1geometry_1_1template_1_1_template_domain_creation_1_1_template_domain_creation_1a477bd7662d834780ade08b72cd34cb5d" kind="function"><name>mark_surfaces</name></member>
+  </compound>
+  <compound refid="namespacepvade" kind="namespace"><name>pvade</name>
+  </compound>
+  <compound refid="namespacepvade_1_1fluid" kind="namespace"><name>pvade::fluid</name>
+  </compound>
+  <compound refid="namespacepvade_1_1fluid_1_1boundary__conditions" kind="namespace"><name>pvade::fluid::boundary_conditions</name>
+    <member refid="namespacepvade_1_1fluid_1_1boundary__conditions_1a9539bb7cfd79da86137d9c228f6b4634" kind="function"><name>_vprint</name></member>
+    <member refid="namespacepvade_1_1fluid_1_1boundary__conditions_1a564af8b53fc7c85edb8f4b100b147dd7" kind="function"><name>get_facet_dofs_by_gmsh_tag</name></member>
+    <member refid="namespacepvade_1_1fluid_1_1boundary__conditions_1a588b091db900dbb2121dec159ce5ad48" kind="function"><name>build_vel_bc_by_type</name></member>
+    <member refid="namespacepvade_1_1fluid_1_1boundary__conditions_1a5d8dd48ba4e9e70cc6ce6c036d4986d1" kind="function"><name>get_inflow_profile_function</name></member>
+    <member refid="namespacepvade_1_1fluid_1_1boundary__conditions_1acfcdc48ec13d45da65dd49ac2fb54fd2" kind="function"><name>build_velocity_boundary_conditions</name></member>
+    <member refid="namespacepvade_1_1fluid_1_1boundary__conditions_1a173fe6f5aa2a50cbdba1f49e878b9c0b" kind="function"><name>build_pressure_boundary_conditions</name></member>
+    <member refid="namespacepvade_1_1fluid_1_1boundary__conditions_1ac58e07957c8c88f475742fc1246a7ff8" kind="function"><name>build_temperature_boundary_conditions</name></member>
+  </compound>
+  <compound refid="namespacepvade_1_1fluid_1_1_flow_manager" kind="namespace"><name>pvade::fluid::FlowManager</name>
+    <member refid="namespacepvade_1_1fluid_1_1_flow_manager_1a9539bb7cfd79da86137d9c228f6b4634" kind="function"><name>_vprint</name></member>
+  </compound>
+  <compound refid="namespacepvade_1_1fsi" kind="namespace"><name>pvade::fsi</name>
+  </compound>
+  <compound refid="namespacepvade_1_1fsi_1_1_f_s_i" kind="namespace"><name>pvade::fsi::FSI</name>
+  </compound>
+  <compound refid="namespacepvade_1_1geometry" kind="namespace"><name>pvade::geometry</name>
+  </compound>
+  <compound refid="namespacepvade_1_1geometry_1_1cylinder2d" kind="namespace"><name>pvade::geometry::cylinder2d</name>
+  </compound>
+  <compound refid="namespacepvade_1_1geometry_1_1cylinder2d_1_1_domain_creation" kind="namespace"><name>pvade::geometry::cylinder2d::DomainCreation</name>
+  </compound>
+  <compound refid="namespacepvade_1_1geometry_1_1cylinder3d" kind="namespace"><name>pvade::geometry::cylinder3d</name>
+  </compound>
+  <compound refid="namespacepvade_1_1geometry_1_1cylinder3d_1_1_domain_creation" kind="namespace"><name>pvade::geometry::cylinder3d::DomainCreation</name>
+  </compound>
+  <compound refid="namespacepvade_1_1geometry_1_1flag2d" kind="namespace"><name>pvade::geometry::flag2d</name>
+  </compound>
+  <compound refid="namespacepvade_1_1geometry_1_1flag2d_1_1_domain_creation" kind="namespace"><name>pvade::geometry::flag2d::DomainCreation</name>
+    <member refid="namespacepvade_1_1geometry_1_1flag2d_1_1_domain_creation_1a9539bb7cfd79da86137d9c228f6b4634" kind="function"><name>_vprint</name></member>
+  </compound>
+  <compound refid="namespacepvade_1_1geometry_1_1heliostats3d" kind="namespace"><name>pvade::geometry::heliostats3d</name>
+  </compound>
+  <compound refid="namespacepvade_1_1geometry_1_1heliostats3d_1_1_domain_creation" kind="namespace"><name>pvade::geometry::heliostats3d::DomainCreation</name>
+  </compound>
+  <compound refid="namespacepvade_1_1geometry_1_1_mesh_manager" kind="namespace"><name>pvade::geometry::MeshManager</name>
+    <member refid="namespacepvade_1_1geometry_1_1_mesh_manager_1a9539bb7cfd79da86137d9c228f6b4634" kind="function"><name>_vprint</name></member>
+  </compound>
+  <compound refid="namespacepvade_1_1geometry_1_1panels2d" kind="namespace"><name>pvade::geometry::panels2d</name>
+  </compound>
+  <compound refid="namespacepvade_1_1geometry_1_1panels2d_1_1_domain_creation" kind="namespace"><name>pvade::geometry::panels2d::DomainCreation</name>
+    <member refid="namespacepvade_1_1geometry_1_1panels2d_1_1_domain_creation_1a9539bb7cfd79da86137d9c228f6b4634" kind="function"><name>_vprint</name></member>
+  </compound>
+  <compound refid="namespacepvade_1_1geometry_1_1panels3d" kind="namespace"><name>pvade::geometry::panels3d</name>
+  </compound>
+  <compound refid="namespacepvade_1_1geometry_1_1panels3d_1_1_domain_creation" kind="namespace"><name>pvade::geometry::panels3d::DomainCreation</name>
+    <member refid="namespacepvade_1_1geometry_1_1panels3d_1_1_domain_creation_1a9539bb7cfd79da86137d9c228f6b4634" kind="function"><name>_vprint</name></member>
+  </compound>
+  <compound refid="namespacepvade_1_1geometry_1_1template" kind="namespace"><name>pvade::geometry::template</name>
+  </compound>
+  <compound refid="namespacepvade_1_1geometry_1_1template_1_1_template_domain_creation" kind="namespace"><name>pvade::geometry::template::TemplateDomainCreation</name>
+  </compound>
+  <compound refid="namespacepvade_1_1_i_o" kind="namespace"><name>pvade::IO</name>
+  </compound>
+  <compound refid="namespacepvade_1_1_i_o_1_1_data_stream" kind="namespace"><name>pvade::IO::DataStream</name>
+    <member refid="namespacepvade_1_1_i_o_1_1_data_stream_1a09149bba83b883eade9baeb760bf8768" kind="variable"><name>logfile_name</name></member>
+    <member refid="namespacepvade_1_1_i_o_1_1_data_stream_1ad0d87705dd71a580c40154000fb42a15" kind="variable"><name>rank</name></member>
+    <member refid="namespacepvade_1_1_i_o_1_1_data_stream_1ab48e31a8a1bb2487f8ff033bf9071da4" kind="variable"><name>message_type</name></member>
+    <member refid="namespacepvade_1_1_i_o_1_1_data_stream_1af630a866b00ccebb5f89b2575bf716ec" kind="variable"><name>verbosity_level</name></member>
+    <member refid="namespacepvade_1_1_i_o_1_1_data_stream_1a8f73924c5e07959d329fa71e6eab3d16" kind="variable"><name>terminal</name></member>
+    <member refid="namespacepvade_1_1_i_o_1_1_data_stream_1a582216c53558e501e9a1142a57871b58" kind="function"><name>start_print_and_log</name></member>
+  </compound>
+  <compound refid="namespacepvade_1_1_i_o_1_1_parameters" kind="namespace"><name>pvade::IO::Parameters</name>
+  </compound>
+  <compound refid="namespacepvade_1_1_i_o_1_1_utilities" kind="namespace"><name>pvade::IO::Utilities</name>
+    <member refid="namespacepvade_1_1_i_o_1_1_utilities_1a24e6feac0ef61fd17d790182f2c4edd6" kind="function"><name>get_input_file</name></member>
+    <member refid="namespacepvade_1_1_i_o_1_1_utilities_1ad2be3b45996c64e3ad178ef7f0523a44" kind="function"><name>write_metrics</name></member>
+  </compound>
+  <compound refid="namespacepvade_1_1_i_o_1_1verbosity" kind="namespace"><name>pvade::IO::verbosity</name>
+    <member refid="namespacepvade_1_1_i_o_1_1verbosity_1ad45534fdfcb09e86d224d2c8c1c24ecf" kind="variable"><name>_VERBOSITY_PREFIX</name></member>
+    <member refid="namespacepvade_1_1_i_o_1_1verbosity_1ab526e5fc29619fe2dae6c53ba74369e9" kind="function"><name>get_verbosity_level</name></member>
+    <member refid="namespacepvade_1_1_i_o_1_1verbosity_1ab15cbcebd6262a7628c129bda8bec1ae" kind="function"><name>should_emit_terminal_message</name></member>
+    <member refid="namespacepvade_1_1_i_o_1_1verbosity_1a57ef26cacaed1206891b2b9da5f03f22" kind="function"><name>emit_verbosity_print</name></member>
+    <member refid="namespacepvade_1_1_i_o_1_1verbosity_1aa262a1d8588440c6ac94f65a0f6258ef" kind="function"><name>parse_verbosity_print</name></member>
+  </compound>
+  <compound refid="namespacepvade_1_1structure" kind="namespace"><name>pvade::structure</name>
+  </compound>
+  <compound refid="namespacepvade_1_1structure_1_1boundary__conditions" kind="namespace"><name>pvade::structure::boundary_conditions</name>
+    <member refid="namespacepvade_1_1structure_1_1boundary__conditions_1a9539bb7cfd79da86137d9c228f6b4634" kind="function"><name>_vprint</name></member>
+    <member refid="namespacepvade_1_1structure_1_1boundary__conditions_1a564af8b53fc7c85edb8f4b100b147dd7" kind="function"><name>get_facet_dofs_by_gmsh_tag</name></member>
+    <member refid="namespacepvade_1_1structure_1_1boundary__conditions_1a588b091db900dbb2121dec159ce5ad48" kind="function"><name>build_vel_bc_by_type</name></member>
+    <member refid="namespacepvade_1_1structure_1_1boundary__conditions_1af7e0dd8d6e1994c2dc89cd47656632f5" kind="function"><name>get_inflow_profile_function</name></member>
+    <member refid="namespacepvade_1_1structure_1_1boundary__conditions_1a6352b7006ba86de232e3bcfaf559e598" kind="function"><name>build_velocity_boundary_conditions</name></member>
+    <member refid="namespacepvade_1_1structure_1_1boundary__conditions_1a173fe6f5aa2a50cbdba1f49e878b9c0b" kind="function"><name>build_pressure_boundary_conditions</name></member>
+    <member refid="namespacepvade_1_1structure_1_1boundary__conditions_1addd1d8fdf7b79e8c794038a098cf6497" kind="function"><name>build_structure_boundary_conditions</name></member>
+  </compound>
+  <compound refid="namespacepvade_1_1structure_1_1_elasticity_analysis" kind="namespace"><name>pvade::structure::ElasticityAnalysis</name>
+    <member refid="namespacepvade_1_1structure_1_1_elasticity_analysis_1a9539bb7cfd79da86137d9c228f6b4634" kind="function"><name>_vprint</name></member>
+  </compound>
+  <compound refid="namespacepvade_1_1structure_1_1_modal_analysis" kind="namespace"><name>pvade::structure::ModalAnalysis</name>
+    <member refid="namespacepvade_1_1structure_1_1_modal_analysis_1a9539bb7cfd79da86137d9c228f6b4634" kind="function"><name>_vprint</name></member>
+  </compound>
+  <compound refid="namespacepvade_1_1structure_1_1_structure_main" kind="namespace"><name>pvade::structure::StructureMain</name>
+    <member refid="namespacepvade_1_1structure_1_1_structure_main_1a9539bb7cfd79da86137d9c228f6b4634" kind="function"><name>_vprint</name></member>
+  </compound>
+  <compound refid="namespacepvade__main" kind="namespace"><name>pvade_main</name>
+    <member refid="namespacepvade__main_1a98b3f0c2e985d334aaedbb34b07b02e6" kind="variable"><name>message</name></member>
+    <member refid="namespacepvade__main_1a8628499c6841f4e739159a971d55b626" kind="variable"><name>category</name></member>
+    <member refid="namespacepvade__main_1a59f421a04dd355ecb453feb49515ea07" kind="variable"><name>module</name></member>
+    <member refid="namespacepvade__main_1a6ccb1aafc2fec7b95368e191a6b9089a" kind="variable"><name>profiler</name></member>
+    <member refid="namespacepvade__main_1a44e72d22fc1eb2203a9b4b0ac3254b2c" kind="variable"><name>params</name></member>
+    <member refid="namespacepvade__main_1a6f8cc740c4b4718fe881521e7bed3204" kind="variable"><name>structure</name></member>
+    <member refid="namespacepvade__main_1a23bd95147586c9e1679ec7b01105c1e4" kind="variable"><name>flow</name></member>
+    <member refid="namespacepvade__main_1a6ca3ed13a67d01ac421ac8504722c28f" kind="variable"><name>prof_filename</name></member>
+    <member refid="namespacepvade__main_1a577ab18562760bb22fbab19d7ca75944" kind="variable"><name>prof_txt_filename</name></member>
+    <member refid="namespacepvade__main_1a0bebe70c4fd254233da4fb6fd2d3b088" kind="variable"><name>stdout</name></member>
+    <member refid="namespacepvade__main_1aee6780d36581c0ea1f318d1a653558ac" kind="variable"><name>sort</name></member>
+    <member refid="namespacepvade__main_1a746aa1cfed2434651a62e342bab17cf3" kind="function"><name>_print_rank0</name></member>
+    <member refid="namespacepvade__main_1a35c43a3473708044cfd7563db6e2168c" kind="function"><name>main</name></member>
+  </compound>
+  <compound refid="namespacetest__fsi__mesh" kind="namespace"><name>test_fsi_mesh</name>
+    <member refid="namespacetest__fsi__mesh_1ab23c726b4cccaa96e0cf5d80d9c8cb3b" kind="variable"><name>input_path</name></member>
+    <member refid="namespacetest__fsi__mesh_1aa866457f4efb88bfcd40286157ba7f37" kind="function"><name>test_meshing_3dpanels</name></member>
+    <member refid="namespacetest__fsi__mesh_1a62993d86643a0452c9706795ae807da7" kind="function"><name>test_meshing_3dpanels_rotations</name></member>
+  </compound>
+  <compound refid="namespacetest__input__files" kind="namespace"><name>test_input_files</name>
+    <member refid="namespacetest__input__files_1a1ce4009ba432fb8fdb81daf53beb04da" kind="variable"><name>rootdir</name></member>
+    <member refid="namespacetest__input__files_1a7756abdd21c587660271685d1e6a435c" kind="variable"><name>list_of_test_files</name></member>
+    <member refid="namespacetest__input__files_1a5d8627880a1768cc7ea525e4e0ca09df" kind="function"><name>launch_sim</name></member>
+    <member refid="namespacetest__input__files_1ac3dcfe572677b1ee20f77327ebdb601a" kind="function"><name>test_launch_with_different_input_files</name></member>
+  </compound>
+  <compound refid="namespacetest__mesh__movement" kind="namespace"><name>test_mesh_movement</name>
+    <member refid="namespacetest__mesh__movement_1a4c7b8503141aa958fe80d96ae0883815" kind="variable"><name>input_path</name></member>
+    <member refid="namespacetest__mesh__movement_1aa7e0a7ddba9b4c54a4f8a605414e7a3b" kind="variable"><name>u_delta</name></member>
+    <member refid="namespacetest__mesh__movement_1a84844ec55a7379b217c20bbb3d657a72" kind="variable"><name>elasticity</name></member>
+    <member refid="namespacetest__mesh__movement_1ad6c8d9d3803cb7ed1689c7c6acc2f050" kind="function"><name>test_calc_distance_to_panel_surface</name></member>
+    <member refid="namespacetest__mesh__movement_1affc094e61f6dfdfd7387ba4a62bdcb98" kind="function"><name>test_move_mesh</name></member>
+  </compound>
+  <compound refid="namespacetest___parameters" kind="namespace"><name>test_Parameters</name>
+    <member refid="namespacetest___parameters_1a8bcbdf7e352abe7f6867b36299d72951" kind="variable"><name>filename</name></member>
+    <member refid="namespacetest___parameters_1aede8b9c3d20f6cd773b4c9773949a434" kind="function"><name>create_params</name></member>
+    <member refid="namespacetest___parameters_1a8ab0aa6ae6aef089c7086722d6c99ed9" kind="function"><name>create_bad_params</name></member>
+    <member refid="namespacetest___parameters_1adccb01ecad52a0649fbb1aefac3b8c06" kind="function"><name>test_parameters</name></member>
+    <member refid="namespacetest___parameters_1a02f77544c98f711f8cfcef91fba1cabf" kind="function"><name>test_bad_parameters</name></member>
+  </compound>
+  <compound refid="namespacetest__solve" kind="namespace"><name>test_solve</name>
+    <member refid="namespacetest__solve_1afe8f6971c948195be902d307b77f573e" kind="variable"><name>rootdir</name></member>
+    <member refid="namespacetest__solve_1a3af6c423117a05142ae3e590427a71f7" kind="variable"><name>input_path</name></member>
+    <member refid="namespacetest__solve_1afeb4df62f544988a6991362a6f2183c7" kind="variable"><name>solve_iter</name></member>
+    <member refid="namespacetest__solve_1aa7abb51fc953afd5cc5a309d2d6326cc" kind="variable"><name>rtol</name></member>
+    <member refid="namespacetest__solve_1ae6a63b3bd9744422ce0980ad9b0f4ff2" kind="function"><name>test_flow_3dpanels</name></member>
+    <member refid="namespacetest__solve_1abc5ff84bf47aa14e9e256e3731388726" kind="function"><name>test_fsi2</name></member>
+  </compound>
+  <compound refid="namespacetest__transfer__facet__tags" kind="namespace"><name>test_transfer_facet_tags</name>
+    <member refid="namespacetest__transfer__facet__tags_1ab0f21e53f17d54f6d0092ba9f7fdd5a4" kind="function"><name>test_transfer_facet_tags</name></member>
+  </compound>
+  <compound refid="fluid_2boundary__conditions_8py" kind="file"><name>boundary_conditions.py</name>
+  </compound>
+  <compound refid="structure_2boundary__conditions_8py" kind="file"><name>boundary_conditions.py</name>
+  </compound>
+  <compound refid="_flow_manager_8py" kind="file"><name>FlowManager.py</name>
+  </compound>
+  <compound refid="_f_s_i_8py" kind="file"><name>FSI.py</name>
+  </compound>
+  <compound refid="_mesh_manager_8py" kind="file"><name>MeshManager.py</name>
+  </compound>
+  <compound refid="cylinder2d_2_domain_creation_8py" kind="file"><name>DomainCreation.py</name>
+  </compound>
+  <compound refid="cylinder3d_2_domain_creation_8py" kind="file"><name>DomainCreation.py</name>
+  </compound>
+  <compound refid="flag2d_2_domain_creation_8py" kind="file"><name>DomainCreation.py</name>
+  </compound>
+  <compound refid="heliostats3d_2_domain_creation_8py" kind="file"><name>DomainCreation.py</name>
+  </compound>
+  <compound refid="panels2d_2_domain_creation_8py" kind="file"><name>DomainCreation.py</name>
+  </compound>
+  <compound refid="panels3d_2_domain_creation_8py" kind="file"><name>DomainCreation.py</name>
+  </compound>
+  <compound refid="_template_domain_creation_8py" kind="file"><name>TemplateDomainCreation.py</name>
+  </compound>
+  <compound refid="____init_____8py" kind="file"><name>__init__.py</name>
+  </compound>
+  <compound refid="fluid_2____init_____8py" kind="file"><name>__init__.py</name>
+  </compound>
+  <compound refid="fsi_2____init_____8py" kind="file"><name>__init__.py</name>
+  </compound>
+  <compound refid="geometry_2____init_____8py" kind="file"><name>__init__.py</name>
+  </compound>
+  <compound refid="geometry_2cylinder2d_2____init_____8py" kind="file"><name>__init__.py</name>
+  </compound>
+  <compound refid="geometry_2cylinder3d_2____init_____8py" kind="file"><name>__init__.py</name>
+  </compound>
+  <compound refid="geometry_2flag2d_2____init_____8py" kind="file"><name>__init__.py</name>
+  </compound>
+  <compound refid="geometry_2heliostats3d_2____init_____8py" kind="file"><name>__init__.py</name>
+  </compound>
+  <compound refid="geometry_2panels2d_2____init_____8py" kind="file"><name>__init__.py</name>
+  </compound>
+  <compound refid="geometry_2panels3d_2____init_____8py" kind="file"><name>__init__.py</name>
+  </compound>
+  <compound refid="geometry_2template_2____init_____8py" kind="file"><name>__init__.py</name>
+  </compound>
+  <compound refid="_i_o_2____init_____8py" kind="file"><name>__init__.py</name>
+  </compound>
+  <compound refid="structure_2____init_____8py" kind="file"><name>__init__.py</name>
+  </compound>
+  <compound refid="_data_stream_8py" kind="file"><name>DataStream.py</name>
+  </compound>
+  <compound refid="_parameters_8py" kind="file"><name>Parameters.py</name>
+  </compound>
+  <compound refid="_utilities_8py" kind="file"><name>Utilities.py</name>
+  </compound>
+  <compound refid="verbosity_8py" kind="file"><name>verbosity.py</name>
+  </compound>
+  <compound refid="_elasticity_analysis_8py" kind="file"><name>ElasticityAnalysis.py</name>
+  </compound>
+  <compound refid="_modal_analysis_8py" kind="file"><name>ModalAnalysis.py</name>
+  </compound>
+  <compound refid="_structure_main_8py" kind="file"><name>StructureMain.py</name>
+  </compound>
+  <compound refid="test__fsi__mesh_8py" kind="file"><name>test_fsi_mesh.py</name>
+  </compound>
+  <compound refid="test__input__files_8py" kind="file"><name>test_input_files.py</name>
+  </compound>
+  <compound refid="test__mesh__movement_8py" kind="file"><name>test_mesh_movement.py</name>
+  </compound>
+  <compound refid="test___parameters_8py" kind="file"><name>test_Parameters.py</name>
+  </compound>
+  <compound refid="test__solve_8py" kind="file"><name>test_solve.py</name>
+  </compound>
+  <compound refid="test__transfer__facet__tags_8py" kind="file"><name>test_transfer_facet_tags.py</name>
+  </compound>
+  <compound refid="pvade__main_8py" kind="file"><name>pvade_main.py</name>
+  </compound>
+  <compound refid="dir_4c829aaab7d172013369da77f1ff636b" kind="dir"><name>/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/cylinder2d</name>
+  </compound>
+  <compound refid="dir_6fac4bbcb5038999bc352e74b82cd797" kind="dir"><name>/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/cylinder3d</name>
+  </compound>
+  <compound refid="dir_1a343223b02395a9492eece885ae451f" kind="dir"><name>/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/flag2d</name>
+  </compound>
+  <compound refid="dir_76cc9be3ca5cf32eae416fa9b1005878" kind="dir"><name>/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid</name>
+  </compound>
+  <compound refid="dir_1904ecd647a60b9b3a99ef4f4d0b1935" kind="dir"><name>/Users/warsalan/work/pvade/main_branch/PVade/pvade/fsi</name>
+  </compound>
+  <compound refid="dir_8097fd8c8761df837f55bfaec7fd90f1" kind="dir"><name>/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry</name>
+  </compound>
+  <compound refid="dir_ebafa80a60d951f439f0b7806a4eb958" kind="dir"><name>/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/heliostats3d</name>
+  </compound>
+  <compound refid="dir_6adeff2deadc2a333db79d885ff82ef0" kind="dir"><name>/Users/warsalan/work/pvade/main_branch/PVade/pvade/IO</name>
+  </compound>
+  <compound refid="dir_853d3ab554e2ba913eec9cad2ff6e810" kind="dir"><name>/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/panels2d</name>
+  </compound>
+  <compound refid="dir_e1e7ed13c53a1e2128ff983ce8f3e80b" kind="dir"><name>/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/panels3d</name>
+  </compound>
+  <compound refid="dir_7a0b7eea2b9d10f88d0b4b01ea8022e4" kind="dir"><name>/Users/warsalan/work/pvade/main_branch/PVade/pvade</name>
+  </compound>
+  <compound refid="dir_ac52a288030165f20214d6bcf5a78283" kind="dir"><name>/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure</name>
+  </compound>
+  <compound refid="dir_bcdef7b443bff7ef4c036f18a8241a01" kind="dir"><name>/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/template</name>
+  </compound>
+  <compound refid="dir_69889a3b4d034d4ba79be7ad77915246" kind="dir"><name>/Users/warsalan/work/pvade/main_branch/PVade/pvade/tests</name>
+  </compound>
+</doxygenindex>

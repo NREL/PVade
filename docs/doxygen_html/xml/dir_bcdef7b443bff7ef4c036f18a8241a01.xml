@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.17.0" xml:lang="en-US">
+  <compounddef id="dir_bcdef7b443bff7ef4c036f18a8241a01" kind="dir">
+    <compoundname>/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/template</compoundname>
+    <innerfile refid="geometry_2template_2____init_____8py">__init__.py</innerfile>
+    <innerfile refid="_template_domain_creation_8py">TemplateDomainCreation.py</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/template/"/>
+  </compounddef>
+</doxygen>

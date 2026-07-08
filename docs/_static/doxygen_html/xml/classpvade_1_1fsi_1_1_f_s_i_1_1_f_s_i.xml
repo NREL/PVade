@@ -1,0 +1,194 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.17.0" xml:lang="en-US">
+  <compounddef id="classpvade_1_1fsi_1_1_f_s_i_1_1_f_s_i" kind="class" language="Python" prot="public">
+    <compoundname>pvade::fsi::FSI::FSI</compoundname>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="classpvade_1_1fsi_1_1_f_s_i_1_1_f_s_i_1a3da5739dfd791beb92839e471bddef30" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.fsi.FSI.FSI::comm</definition>
+        <argsstring></argsstring>
+        <name>comm</name>
+        <qualifiedname>pvade.fsi.FSI.FSI.comm</qualifiedname>
+        <initializer>=  params.comm</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fsi/FSI.py" line="58" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fsi/FSI.py" bodystart="58" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1fsi_1_1_f_s_i_1_1_f_s_i_1a0bda1d6eb422bae971c9d3659451647d" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.fsi.FSI.FSI::rank</definition>
+        <argsstring></argsstring>
+        <name>rank</name>
+        <qualifiedname>pvade.fsi.FSI.FSI.rank</qualifiedname>
+        <initializer>=  params.rank</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fsi/FSI.py" line="59" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fsi/FSI.py" bodystart="59" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1fsi_1_1_f_s_i_1_1_f_s_i_1a978caff518a1b22fb9d10d29d62451d7" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.fsi.FSI.FSI::num_procs</definition>
+        <argsstring></argsstring>
+        <name>num_procs</name>
+        <qualifiedname>pvade.fsi.FSI.FSI.num_procs</qualifiedname>
+        <initializer>=  params.num_procs</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fsi/FSI.py" line="60" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fsi/FSI.py" bodystart="60" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1fsi_1_1_f_s_i_1_1_f_s_i_1ae373014bdf045c29243a30b27d43b03f" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.fsi.FSI.FSI::ndim</definition>
+        <argsstring></argsstring>
+        <name>ndim</name>
+        <qualifiedname>pvade.fsi.FSI.FSI.ndim</qualifiedname>
+        <initializer>=  domain.fluid.msh.topology.dim</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fsi/FSI.py" line="61" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fsi/FSI.py" bodystart="61" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classpvade_1_1fsi_1_1_f_s_i_1_1_f_s_i_1ab3048397e964a6b8cedb1348df6cbca9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>pvade.fsi.FSI.FSI.__init__</definition>
+        <argsstring>(self, domain, flow, structure, params)</argsstring>
+        <name>__init__</name>
+        <qualifiedname>pvade.fsi.FSI.FSI.__init__</qualifiedname>
+        <param>
+          <type>self</type>
+          <defname>self</defname>
+        </param>
+        <param>
+          <type>domain</type>
+          <defname>domain</defname>
+        </param>
+        <param>
+          <type>flow</type>
+          <defname>flow</defname>
+        </param>
+        <param>
+          <type><ref refid="namespacepvade_1_1structure" kindref="compound">structure</ref></type>
+          <defname>structure</defname>
+        </param>
+        <param>
+          <type>params</type>
+          <defname>params</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><verbatim>Initialize the FSI coupling object.
+
+Stores MPI communicator metadata and the problem dimensionality used
+during coupling operations.
+
+Args:
+    domain (:obj:`pvade.geometry.MeshManager.Domain`): A Domain object
+    flow (:obj:`pvade.fluid.FlowManager.Flow`): A Flow object
+    structure (:obj:`pvade.structure.StructureMain.Structure`): A
+        Structure object.
+    params (:obj:`pvade.Parameters.SimParams`): A SimParams object
+</verbatim> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fsi/FSI.py" line="43" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fsi/FSI.py" bodystart="43" bodyend="62"/>
+      </memberdef>
+      <memberdef kind="function" id="classpvade_1_1fsi_1_1_f_s_i_1_1_f_s_i_1a105ff3fd7c5bf81461bdb9c552245e14" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>pvade.fsi.FSI.FSI.fluid_struct</definition>
+        <argsstring>(self, domain, flow, structure, params)</argsstring>
+        <name>fluid_struct</name>
+        <qualifiedname>pvade.fsi.FSI.FSI.fluid_struct</qualifiedname>
+        <param>
+          <type>self</type>
+          <defname>self</defname>
+        </param>
+        <param>
+          <type>domain</type>
+          <defname>domain</defname>
+        </param>
+        <param>
+          <type>flow</type>
+          <defname>flow</defname>
+        </param>
+        <param>
+          <type><ref refid="namespacepvade_1_1structure" kindref="compound">structure</ref></type>
+          <defname>structure</defname>
+        </param>
+        <param>
+          <type>params</type>
+          <defname>params</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><verbatim>Transfer fluid stress to the structure and apply relaxation.
+
+Performs one FSI coupling update:
+
+1. Copies the previous structural stress state to ``stress_old``.
+2. Interpolates the current fluid panel stress field onto the
+   structure stress function.
+3. Applies linear under-relaxation using
+   ``params.structure.beta_relaxation`` and the predicted stress.
+
+Args:
+    domain (:obj:`pvade.geometry.MeshManager.FSIDomain`): Domain object
+        containing fluid and structure meshes.
+    flow (:obj:`pvade.fluid.FlowManager.Flow`): Flow object containing
+        ``panel_stress_undeformed``.
+    structure (:obj:`pvade.structure.StructureMain.Structure`):
+        Structure object whose elasticity stress fields are updated.
+    params (:obj:`pvade.IO.Parameters.SimParams`): Simulation parameters
+        containing the stress relaxation factor.
+</verbatim> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fsi/FSI.py" line="63" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fsi/FSI.py" bodystart="63" bodyend="100"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><verbatim>Fluid-structure coupling manager.
+
+Stores MPI metadata and provides a method to transfer fluid stresses to
+the structural solver with optional under-relaxation.
+
+Attributes:
+    comm (MPI Communicator): An MPI communicator used by all PVade objects
+    ndim (int): The number of dimensions in the problem
+    num_procs (int): The total number of processors being used to solve the problem
+    rank (int): A unique ID for each process in the range `[0, 1, ..., num_procs-1]`
+</verbatim> </para>
+    </detaileddescription>
+    <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fsi/FSI.py" line="29" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fsi/FSI.py" bodystart="29" bodyend="100"/>
+    <listofallmembers>
+      <member refid="classpvade_1_1fsi_1_1_f_s_i_1_1_f_s_i_1ab3048397e964a6b8cedb1348df6cbca9" prot="public" virt="non-virtual"><scope>pvade::fsi::FSI::FSI</scope><name>__init__</name></member>
+      <member refid="classpvade_1_1fsi_1_1_f_s_i_1_1_f_s_i_1a3da5739dfd791beb92839e471bddef30" prot="public" virt="non-virtual"><scope>pvade::fsi::FSI::FSI</scope><name>comm</name></member>
+      <member refid="classpvade_1_1fsi_1_1_f_s_i_1_1_f_s_i_1a105ff3fd7c5bf81461bdb9c552245e14" prot="public" virt="non-virtual"><scope>pvade::fsi::FSI::FSI</scope><name>fluid_struct</name></member>
+      <member refid="classpvade_1_1fsi_1_1_f_s_i_1_1_f_s_i_1ae373014bdf045c29243a30b27d43b03f" prot="public" virt="non-virtual"><scope>pvade::fsi::FSI::FSI</scope><name>ndim</name></member>
+      <member refid="classpvade_1_1fsi_1_1_f_s_i_1_1_f_s_i_1a978caff518a1b22fb9d10d29d62451d7" prot="public" virt="non-virtual"><scope>pvade::fsi::FSI::FSI</scope><name>num_procs</name></member>
+      <member refid="classpvade_1_1fsi_1_1_f_s_i_1_1_f_s_i_1a0bda1d6eb422bae971c9d3659451647d" prot="public" virt="non-virtual"><scope>pvade::fsi::FSI::FSI</scope><name>rank</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

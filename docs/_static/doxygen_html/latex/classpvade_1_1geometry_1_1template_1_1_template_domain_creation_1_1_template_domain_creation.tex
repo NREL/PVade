@@ -1,0 +1,137 @@
+\doxysection{pvade.\+geometry.\+template.\+Template\+Domain\+Creation.\+Template\+Domain\+Creation Class Reference}
+\hypertarget{classpvade_1_1geometry_1_1template_1_1_template_domain_creation_1_1_template_domain_creation}{}\label{classpvade_1_1geometry_1_1template_1_1_template_domain_creation_1_1_template_domain_creation}\index{pvade.geometry.template.TemplateDomainCreation.TemplateDomainCreation@{pvade.geometry.template.TemplateDomainCreation.TemplateDomainCreation}}
+Inheritance diagram for pvade.\+geometry.\+template.\+Template\+Domain\+Creation.\+Template\+Domain\+Creation:\+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=0.415739cm]{classpvade_1_1geometry_1_1template_1_1_template_domain_creation_1_1_template_domain_creation}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\doxymbox{\hyperlink{classpvade_1_1geometry_1_1template_1_1_template_domain_creation_1_1_template_domain_creation_a0cb2e12c55e48701e2f927ab240bbbfd}{\+\_\+\+\_\+init\+\_\+\+\_\+}} (self, params)
+\item 
+\doxymbox{\hyperlink{classpvade_1_1geometry_1_1template_1_1_template_domain_creation_1_1_template_domain_creation_a8128156e3993544dc2852aafb6f28106}{build}} (self, params)
+\item 
+\doxymbox{\hyperlink{classpvade_1_1geometry_1_1template_1_1_template_domain_creation_1_1_template_domain_creation_a23633a446558be6fb861b69d58317eff}{set\+\_\+length\+\_\+scales}} (self, params, domain\+\_\+markers)
+\item 
+\doxymbox{\hyperlink{classpvade_1_1geometry_1_1template_1_1_template_domain_creation_1_1_template_domain_creation_a477bd7662d834780ade08b72cd34cb5d}{mark\+\_\+surfaces}} (self, params, domain\+\_\+markers)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\doxymbox{\hyperlink{classpvade_1_1geometry_1_1template_1_1_template_domain_creation_1_1_template_domain_creation_a7b6de9bf6c9803709fa1fc5faa5fbc21}{comm}} = params.\+comm
+\item 
+int \doxymbox{\hyperlink{classpvade_1_1geometry_1_1template_1_1_template_domain_creation_1_1_template_domain_creation_abbad1c751ef372db73981f16e4582fa5}{rank}} = params.\+rank
+\item 
+\doxymbox{\hyperlink{classpvade_1_1geometry_1_1template_1_1_template_domain_creation_1_1_template_domain_creation_a8079a964a183b0bed265e9a3af12c54f}{num\+\_\+procs}} = params.\+num\+\_\+procs
+\item 
+\doxymbox{\hyperlink{classpvade_1_1geometry_1_1template_1_1_template_domain_creation_1_1_template_domain_creation_a8de79a9660dd37d1c970021aabb17fe5}{gmsh\+\_\+model}} = gmsh.\+model()
+\item 
+int \doxymbox{\hyperlink{classpvade_1_1geometry_1_1template_1_1_template_domain_creation_1_1_template_domain_creation_a4f950dc8dc9bea748d5326f0a29ef30d}{ndim}} = self.\+gmsh\+\_\+model.\+get\+\_\+dimension()
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\begin{DoxyVerb}This class creates the geometry used for a given example.
+Gmsh is used to create the computational domain
+\end{DoxyVerb}
+ 
+
+\label{classpvade_1_1geometry_1_1template_1_1_template_domain_creation_1_1_template_domain_creation_doc-constructors}
+\Hypertarget{classpvade_1_1geometry_1_1template_1_1_template_domain_creation_1_1_template_domain_creation_doc-constructors}
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{classpvade_1_1geometry_1_1template_1_1_template_domain_creation_1_1_template_domain_creation_a0cb2e12c55e48701e2f927ab240bbbfd}\index{pvade.geometry.template.TemplateDomainCreation.TemplateDomainCreation@{pvade.geometry.template.TemplateDomainCreation.TemplateDomainCreation}!\_\_init\_\_@{\_\_init\_\_}}
+\index{\_\_init\_\_@{\_\_init\_\_}!pvade.geometry.template.TemplateDomainCreation.TemplateDomainCreation@{pvade.geometry.template.TemplateDomainCreation.TemplateDomainCreation}}
+\doxysubsubsection{\texorpdfstring{\_\_init\_\_()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily \label{classpvade_1_1geometry_1_1template_1_1_template_domain_creation_1_1_template_domain_creation_a0cb2e12c55e48701e2f927ab240bbbfd} 
+pvade.\+geometry.\+template.\+Template\+Domain\+Creation.\+Template\+Domain\+Creation.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self}{, }\item[{}]{params}{}\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}The class is initialised here
+
+Args:
+    params (_type_): _description_
+\end{DoxyVerb}
+ 
+
+\label{classpvade_1_1geometry_1_1template_1_1_template_domain_creation_1_1_template_domain_creation_doc-func-members}
+\Hypertarget{classpvade_1_1geometry_1_1template_1_1_template_domain_creation_1_1_template_domain_creation_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{classpvade_1_1geometry_1_1template_1_1_template_domain_creation_1_1_template_domain_creation_a8128156e3993544dc2852aafb6f28106}\index{pvade.geometry.template.TemplateDomainCreation.TemplateDomainCreation@{pvade.geometry.template.TemplateDomainCreation.TemplateDomainCreation}!build@{build}}
+\index{build@{build}!pvade.geometry.template.TemplateDomainCreation.TemplateDomainCreation@{pvade.geometry.template.TemplateDomainCreation.TemplateDomainCreation}}
+\doxysubsubsection{\texorpdfstring{build()}{build()}}
+{\footnotesize\ttfamily \label{classpvade_1_1geometry_1_1template_1_1_template_domain_creation_1_1_template_domain_creation_a8128156e3993544dc2852aafb6f28106} 
+pvade.\+geometry.\+template.\+Template\+Domain\+Creation.\+Template\+Domain\+Creation.\+build (\begin{DoxyParamCaption}\item[{}]{self}{, }\item[{}]{params}{}\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}    panels: This function creates the computational domain for a 3d simulation involving N panels.
+    The panels are set at a distance apart, rotated at an angle theta and are elevated with a distance H from the ground.
+    panels2d: This function creates the computational domain for a 2d simulation involving N panels.
+    The panels are set at a distance apart, rotated at an angle theta and are elevated with a distance H from the ground.
+    cylinder3d: This function creates the computational domain for a flow around a 3D cylinder.
+    cylinder2d: This function creates the computational domain for a flow around a 2D cylinder.
+Returns:
+    The function returns gmsh.model which contains the geometric description of the computational domain
+\end{DoxyVerb}
+ \Hypertarget{classpvade_1_1geometry_1_1template_1_1_template_domain_creation_1_1_template_domain_creation_a477bd7662d834780ade08b72cd34cb5d}\index{pvade.geometry.template.TemplateDomainCreation.TemplateDomainCreation@{pvade.geometry.template.TemplateDomainCreation.TemplateDomainCreation}!mark\_surfaces@{mark\_surfaces}}
+\index{mark\_surfaces@{mark\_surfaces}!pvade.geometry.template.TemplateDomainCreation.TemplateDomainCreation@{pvade.geometry.template.TemplateDomainCreation.TemplateDomainCreation}}
+\doxysubsubsection{\texorpdfstring{mark\_surfaces()}{mark\_surfaces()}}
+{\footnotesize\ttfamily \label{classpvade_1_1geometry_1_1template_1_1_template_domain_creation_1_1_template_domain_creation_a477bd7662d834780ade08b72cd34cb5d} 
+pvade.\+geometry.\+template.\+Template\+Domain\+Creation.\+Template\+Domain\+Creation.\+mark\+\_\+surfaces (\begin{DoxyParamCaption}\item[{}]{self}{, }\item[{}]{params}{, }\item[{}]{domain\+\_\+markers}{}\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}This function call iterates over all boundaries and assigns tags for each boundary.
+The Tags are being used when appying boundary condition.
+\end{DoxyVerb}
+ \Hypertarget{classpvade_1_1geometry_1_1template_1_1_template_domain_creation_1_1_template_domain_creation_a23633a446558be6fb861b69d58317eff}\index{pvade.geometry.template.TemplateDomainCreation.TemplateDomainCreation@{pvade.geometry.template.TemplateDomainCreation.TemplateDomainCreation}!set\_length\_scales@{set\_length\_scales}}
+\index{set\_length\_scales@{set\_length\_scales}!pvade.geometry.template.TemplateDomainCreation.TemplateDomainCreation@{pvade.geometry.template.TemplateDomainCreation.TemplateDomainCreation}}
+\doxysubsubsection{\texorpdfstring{set\_length\_scales()}{set\_length\_scales()}}
+{\footnotesize\ttfamily \label{classpvade_1_1geometry_1_1template_1_1_template_domain_creation_1_1_template_domain_creation_a23633a446558be6fb861b69d58317eff} 
+pvade.\+geometry.\+template.\+Template\+Domain\+Creation.\+Template\+Domain\+Creation.\+set\+\_\+length\+\_\+scales (\begin{DoxyParamCaption}\item[{}]{self}{, }\item[{}]{params}{, }\item[{}]{domain\+\_\+markers}{}\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}This function call defines the characteristic length for the mesh in locations of interst
+LcMin,LcMax,DistMin and DistMax are used to create a refined mesh in specific locations
+which results in a high fidelity mesh without using a uniform element size in the whole mesh.
+\end{DoxyVerb}
+ 
+
+Reimplemented in \doxymbox{\hyperlink{classpvade_1_1geometry_1_1cylinder3d_1_1_domain_creation_1_1_domain_creation_a24ac9da5dd909970dc12feb2b5190cc0}{pvade.\+geometry.\+cylinder3d.\+Domain\+Creation.\+Domain\+Creation}}, \doxymbox{\hyperlink{classpvade_1_1geometry_1_1flag2d_1_1_domain_creation_1_1_domain_creation_a38d4e5277c0997e9f602ac7bc4a4b155}{pvade.\+geometry.\+flag2d.\+Domain\+Creation.\+Domain\+Creation}}, \doxymbox{\hyperlink{classpvade_1_1geometry_1_1heliostats3d_1_1_domain_creation_1_1_domain_creation_a6932c7dc6d60b46952e3804b5d84b013}{pvade.\+geometry.\+heliostats3d.\+Domain\+Creation.\+Domain\+Creation}}, \doxymbox{\hyperlink{classpvade_1_1geometry_1_1panels2d_1_1_domain_creation_1_1_domain_creation_a469fa37b1750abba57a69523722a7439}{pvade.\+geometry.\+panels2d.\+Domain\+Creation.\+Domain\+Creation}}, and \doxymbox{\hyperlink{classpvade_1_1geometry_1_1panels3d_1_1_domain_creation_1_1_domain_creation_a20de5dee69ae9ea4c310b861029b53a2}{pvade.\+geometry.\+panels3d.\+Domain\+Creation.\+Domain\+Creation}}.
+
+
+
+\label{classpvade_1_1geometry_1_1template_1_1_template_domain_creation_1_1_template_domain_creation_doc-variable-members}
+\Hypertarget{classpvade_1_1geometry_1_1template_1_1_template_domain_creation_1_1_template_domain_creation_doc-variable-members}
+\doxysubsection{Member Data Documentation}
+\Hypertarget{classpvade_1_1geometry_1_1template_1_1_template_domain_creation_1_1_template_domain_creation_a7b6de9bf6c9803709fa1fc5faa5fbc21}\index{pvade.geometry.template.TemplateDomainCreation.TemplateDomainCreation@{pvade.geometry.template.TemplateDomainCreation.TemplateDomainCreation}!comm@{comm}}
+\index{comm@{comm}!pvade.geometry.template.TemplateDomainCreation.TemplateDomainCreation@{pvade.geometry.template.TemplateDomainCreation.TemplateDomainCreation}}
+\doxysubsubsection{\texorpdfstring{comm}{comm}}
+{\footnotesize\ttfamily \label{classpvade_1_1geometry_1_1template_1_1_template_domain_creation_1_1_template_domain_creation_a7b6de9bf6c9803709fa1fc5faa5fbc21} 
+pvade.\+geometry.\+template.\+Template\+Domain\+Creation.\+Template\+Domain\+Creation.\+comm = params.\+comm}
+
+\Hypertarget{classpvade_1_1geometry_1_1template_1_1_template_domain_creation_1_1_template_domain_creation_a8de79a9660dd37d1c970021aabb17fe5}\index{pvade.geometry.template.TemplateDomainCreation.TemplateDomainCreation@{pvade.geometry.template.TemplateDomainCreation.TemplateDomainCreation}!gmsh\_model@{gmsh\_model}}
+\index{gmsh\_model@{gmsh\_model}!pvade.geometry.template.TemplateDomainCreation.TemplateDomainCreation@{pvade.geometry.template.TemplateDomainCreation.TemplateDomainCreation}}
+\doxysubsubsection{\texorpdfstring{gmsh\_model}{gmsh\_model}}
+{\footnotesize\ttfamily \label{classpvade_1_1geometry_1_1template_1_1_template_domain_creation_1_1_template_domain_creation_a8de79a9660dd37d1c970021aabb17fe5} 
+pvade.\+geometry.\+template.\+Template\+Domain\+Creation.\+Template\+Domain\+Creation.\+gmsh\+\_\+model = gmsh.\+model()}
+
+\Hypertarget{classpvade_1_1geometry_1_1template_1_1_template_domain_creation_1_1_template_domain_creation_a4f950dc8dc9bea748d5326f0a29ef30d}\index{pvade.geometry.template.TemplateDomainCreation.TemplateDomainCreation@{pvade.geometry.template.TemplateDomainCreation.TemplateDomainCreation}!ndim@{ndim}}
+\index{ndim@{ndim}!pvade.geometry.template.TemplateDomainCreation.TemplateDomainCreation@{pvade.geometry.template.TemplateDomainCreation.TemplateDomainCreation}}
+\doxysubsubsection{\texorpdfstring{ndim}{ndim}}
+{\footnotesize\ttfamily \label{classpvade_1_1geometry_1_1template_1_1_template_domain_creation_1_1_template_domain_creation_a4f950dc8dc9bea748d5326f0a29ef30d} 
+pvade.\+geometry.\+template.\+Template\+Domain\+Creation.\+Template\+Domain\+Creation.\+ndim = self.\+gmsh\+\_\+model.\+get\+\_\+dimension()}
+
+\Hypertarget{classpvade_1_1geometry_1_1template_1_1_template_domain_creation_1_1_template_domain_creation_a8079a964a183b0bed265e9a3af12c54f}\index{pvade.geometry.template.TemplateDomainCreation.TemplateDomainCreation@{pvade.geometry.template.TemplateDomainCreation.TemplateDomainCreation}!num\_procs@{num\_procs}}
+\index{num\_procs@{num\_procs}!pvade.geometry.template.TemplateDomainCreation.TemplateDomainCreation@{pvade.geometry.template.TemplateDomainCreation.TemplateDomainCreation}}
+\doxysubsubsection{\texorpdfstring{num\_procs}{num\_procs}}
+{\footnotesize\ttfamily \label{classpvade_1_1geometry_1_1template_1_1_template_domain_creation_1_1_template_domain_creation_a8079a964a183b0bed265e9a3af12c54f} 
+pvade.\+geometry.\+template.\+Template\+Domain\+Creation.\+Template\+Domain\+Creation.\+num\+\_\+procs = params.\+num\+\_\+procs}
+
+\Hypertarget{classpvade_1_1geometry_1_1template_1_1_template_domain_creation_1_1_template_domain_creation_abbad1c751ef372db73981f16e4582fa5}\index{pvade.geometry.template.TemplateDomainCreation.TemplateDomainCreation@{pvade.geometry.template.TemplateDomainCreation.TemplateDomainCreation}!rank@{rank}}
+\index{rank@{rank}!pvade.geometry.template.TemplateDomainCreation.TemplateDomainCreation@{pvade.geometry.template.TemplateDomainCreation.TemplateDomainCreation}}
+\doxysubsubsection{\texorpdfstring{rank}{rank}}
+{\footnotesize\ttfamily \label{classpvade_1_1geometry_1_1template_1_1_template_domain_creation_1_1_template_domain_creation_abbad1c751ef372db73981f16e4582fa5} 
+int pvade.\+geometry.\+template.\+Template\+Domain\+Creation.\+Template\+Domain\+Creation.\+rank = params.\+rank}
+
+
+
+The documentation for this class was generated from the following file:\+\begin{DoxyCompactItemize}
+\item 
+/\+\+Users/\+warsalan/\+work/\+pvade/\+main\+\_\+branch/\+\+PVade/\+pvade/\+geometry/\+template/\+\doxymbox{\hyperlink{_template_domain_creation_8py}{Template\+Domain\+Creation.\+py}}\end{DoxyCompactItemize}

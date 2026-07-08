@@ -1,0 +1,103 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.17.0" xml:lang="en-US">
+  <compounddef id="namespacetest__solve" kind="namespace" language="Python">
+    <compoundname>test_solve</compoundname>
+    <sectiondef kind="var">
+      <memberdef kind="variable" id="namespacetest__solve_1afe8f6971c948195be902d307b77f573e" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>test_solve.rootdir</definition>
+        <argsstring></argsstring>
+        <name>rootdir</name>
+        <qualifiedname>test_solve.rootdir</qualifiedname>
+        <initializer>=  os.getcwd()</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/tests/test_solve.py" line="18" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/tests/test_solve.py" bodystart="18" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="namespacetest__solve_1a3af6c423117a05142ae3e590427a71f7" prot="public" static="no" mutable="no">
+        <type>str</type>
+        <definition>str test_solve.input_path</definition>
+        <argsstring></argsstring>
+        <name>input_path</name>
+        <qualifiedname>test_solve.input_path</qualifiedname>
+        <initializer>=  <ref refid="namespacetest__solve_1afe8f6971c948195be902d307b77f573e" kindref="member">rootdir</ref> + &quot;/pvade/tests/input/yaml/&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/tests/test_solve.py" line="21" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/tests/test_solve.py" bodystart="21" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="namespacetest__solve_1afeb4df62f544988a6991362a6f2183c7" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int test_solve.solve_iter</definition>
+        <argsstring></argsstring>
+        <name>solve_iter</name>
+        <qualifiedname>test_solve.solve_iter</qualifiedname>
+        <initializer>=  10</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/tests/test_solve.py" line="23" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/tests/test_solve.py" bodystart="23" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="namespacetest__solve_1aa7abb51fc953afd5cc5a309d2d6326cc" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float test_solve.rtol</definition>
+        <argsstring></argsstring>
+        <name>rtol</name>
+        <qualifiedname>test_solve.rtol</qualifiedname>
+        <initializer>=  1.0e-1</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/tests/test_solve.py" line="25" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/tests/test_solve.py" bodystart="25" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="func">
+      <memberdef kind="function" id="namespacetest__solve_1ae6a63b3bd9744422ce0980ad9b0f4ff2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>test_flow_3dpanels</definition>
+        <argsstring>()</argsstring>
+        <name>test_flow_3dpanels</name>
+        <qualifiedname>test_solve.test_flow_3dpanels</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/tests/test_solve.py" line="29" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/tests/test_solve.py" bodystart="29" bodyend="79"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacetest__solve_1abc5ff84bf47aa14e9e256e3731388726" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>test_fsi2</definition>
+        <argsstring>()</argsstring>
+        <name>test_fsi2</name>
+        <qualifiedname>test_solve.test_fsi2</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/tests/test_solve.py" line="80" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/tests/test_solve.py" bodystart="80" bodyend="426"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/tests/test_solve.py" line="1" column="1"/>
+  </compounddef>
+</doxygen>
