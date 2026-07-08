@@ -1,5 +1,16 @@
-Examples
-=============
+Case Studies
+============
+
+This section collects end-to-end PVade simulation examples that demonstrate
+common workflows across fluid-only and fluid-structure interaction use cases.
+
+Each case study typically includes:
+
+- The physical setup and problem context
+- The relevant input file and key settings
+- Run instructions and expected outputs
+
+Use these pages as practical starting points when configuring a new case.
 
 .. toctree::
    :maxdepth: 1

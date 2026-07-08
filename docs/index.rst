@@ -49,6 +49,7 @@ Contents
    running_pvade
    hpc_jobs
    benchmark
+   how_to_cite_pvade
    examples/index
 
 
