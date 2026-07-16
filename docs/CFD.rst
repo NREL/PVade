@@ -4,12 +4,12 @@ Computational Fluid Dynamics (CFD)
 PVade solves incompressible flow using a fractional-step method in an
 Arbitrary Lagrangian-Eulerian (ALE) frame to account for moving meshes.
 
-Strong Form (ALE)
+Incompressible Navier-Stokes Equations
 -----------------
 
 For fluid velocity :math:`u`, pressure :math:`p`, density :math:`\rho`, and
-kinematic viscosity :math:`\nu`, the incompressible Navier-Stokes equations in
-ALE form are
+kinematic viscosity :math:`\nu`, the incompressible Navier-Stokes equations in strong form (ALE)
+form are
 
 .. math::
 
@@ -56,19 +56,19 @@ The method combines:
 - Adams-Bashforth treatment for convection
 - ALE convective velocity :math:`u-u_m`
 
-Thermal Extension
+Thermal Analysis
 -----------------
 
 When thermal analysis is enabled, PVade also solves an advection-diffusion
-equation for temperature :math:`\theta`:
+equation for temperature :math:`\theta` in Kelvin:
 
 .. math::
 
 	\frac{\partial \theta}{\partial t} + u\cdot\nabla\theta
 	- \alpha\nabla^2\theta = 0.
 
-For convection-dominated cases, SUPG stabilization is activated based on an
-approximate Peclet number threshold.
+Where :math:`\alpha` is the thermal diffusivity of the fluid in :math:`\text{m}^2/\text{s}`. For convection-dominated cases, SUPG stabilization is activated based on an
+approximate Péclet number threshold.
 
 Boundary Conditions
 -------------------

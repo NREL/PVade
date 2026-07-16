@@ -1,17 +1,17 @@
-Panels 2D
+PV Panels 2D
 =========
 
 This example runs a 2D fluid-structure simulation of a photovoltaic panel
 cross-section using the built-in ``panels2d`` geometry module.
 
-Panels 2D Workflow Overview
+PV Panels 2D Workflow Overview
 ---------------------------
 
 - 2D domain and mesh generation for a panel-in-flow setup
 - Coupled fluid and structural solves in a single run
 - Output of flow and structural fields for post-processing
 
-Panels 2D Input File
+PV Panels 2D Input File
 --------------------
 
 The reference input file is:
@@ -51,7 +51,7 @@ Selected parameters:
 		 poissons_ratio: 0.3
 		 bc_list: ["top"]
 
-Panels 2D Run Command
+PV Panels 2D Run Command
 ---------------------
 
 From the repository root:
@@ -60,7 +60,7 @@ From the repository root:
 
 	 conda run -n PVade python pvade_main.py --input examples/panels2d.yaml
 
-Panels 2D Expected Output
+PV Panels 2D Expected Output
 -------------------------
 
 Results are written under:
@@ -69,7 +69,7 @@ Results are written under:
 - ``output/panels2d/solution``
 - ``output/panels2d/logfile.log``
 
-Panels 2D Notes
+PV Panels 2D Notes
 ---------------
 
 - Set ``general.mesh_only: true`` to generate meshes without advancing the

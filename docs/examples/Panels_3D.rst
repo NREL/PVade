@@ -1,18 +1,18 @@
-Panels 3D
+PV Panels 3D
 =========
 
 This example runs a 3D panel case using the ``panels3d`` geometry module.
 It is a full fluid-structure setup with configurable inflow, panel mechanics,
 and array placement parameters.
 
-Panels 3D Workflow Overview
+PV Panels 3D Workflow Overview
 ---------------------------
 
 - 3D panel geometry and domain creation
 - Coupled CFD and structural analysis in one workflow
 - Transient outputs for aerodynamic loading and structural response
 
-Panels 3D Input File
+PV Panels 3D Input File
 --------------------
 
 The reference input file is:
@@ -57,7 +57,7 @@ Selected parameters:
 		 poissons_ratio: 0.3
 		 beta_relaxation: 0.5
 
-Panels 3D Run Command
+PV Panels 3D Run Command
 ---------------------
 
 From the repository root:
@@ -66,7 +66,7 @@ From the repository root:
 
 	 conda run -n PVade python pvade_main.py --input examples/panels3d.yaml
 
-Panels 3D Expected Output
+PV Panels 3D Expected Output
 -------------------------
 
 Results are written under:
@@ -75,7 +75,7 @@ Results are written under:
 - ``output/duramat_case_study/solution``
 - ``output/duramat_case_study/logfile.log``
 
-Panels 3D Notes
+PV Panels 3D Notes
 ---------------
 
 - To run a quick verification, reduce ``solver.t_final`` and optionally increase
