@@ -254,7 +254,9 @@ class Flow:
                 self.stabilizing = False
 
             if params.general.debug_flag:
-                _vprint(self.rank, "l_char = {:.2E}".format(params.domain.l_char), level=2)
+                _vprint(
+                    self.rank, "l_char = {:.2E}".format(params.domain.l_char), level=2
+                )
                 _vprint(self.rank, "alpha = {:.2E}".format(params.fluid.alpha), level=2)
 
             _vprint(self.rank, "Pe approx = {:.2E}".format(self.Pe_approx), level=1)
@@ -896,7 +898,11 @@ class Flow:
             if self.first_call_to_solver:
                 # No pressure boundary conditions applied,
                 # Therefore we need to remove the null space
-                _vprint(params.rank, "No pressure BC found, initializing null space", level=1)
+                _vprint(
+                    params.rank,
+                    "No pressure BC found, initializing null space",
+                    level=1,
+                )
 
                 self.nullspace = PETSc.NullSpace().create(
                     constant=True, comm=params.comm

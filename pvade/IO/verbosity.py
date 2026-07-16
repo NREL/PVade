@@ -10,7 +10,6 @@ variable and interpreted as:
 
 import os
 
-
 _VERBOSITY_PREFIX = "__PVADE_VERBOSITY_"
 
 
@@ -32,9 +31,7 @@ def get_verbosity_level(default=1):
         return max(0, int(default))
 
 
-def should_emit_terminal_message(
-    rank, message_type, verbosity_level, required_level=1
-):
+def should_emit_terminal_message(rank, message_type, verbosity_level, required_level=1):
     """Decide whether a message should be printed to terminal.
 
     Args:

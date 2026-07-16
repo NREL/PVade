@@ -228,20 +228,20 @@ class Structure:
     def update_v(self, a, u_old, v_old, a_old, dt, gamma, ufl=True):
         """Compute the new velocity using the Newmark update formula.
 
-                Delegates to :meth:`pvade.structure.ElasticityAnalysis.Elasticity.update_v`.
+        Delegates to :meth:`pvade.structure.ElasticityAnalysis.Elasticity.update_v`.
 
-                Args:
-                    a: Current acceleration field (UFL expression or NumPy array).
-                    u_old: Displacement at the previous time step (unused, kept for
-                        API consistency).
-                    v_old: Velocity at the previous time step.
-                    a_old: Acceleration at the previous time step.
-                    dt: Time step size (UFL constant or Python float).
-                    gamma: Newmark :math:`\\gamma` parameter.
-                    ufl (bool): ``True`` for UFL objects, ``False`` for plain floats.
+        Args:
+            a: Current acceleration field (UFL expression or NumPy array).
+            u_old: Displacement at the previous time step (unused, kept for
+                API consistency).
+            v_old: Velocity at the previous time step.
+            a_old: Acceleration at the previous time step.
+            dt: Time step size (UFL constant or Python float).
+            gamma: Newmark :math:`\\gamma` parameter.
+            ufl (bool): ``True`` for UFL objects, ``False`` for plain floats.
 
-                Returns:
-                    Updated velocity field.
+        Returns:
+            Updated velocity field.
         """
         if ufl:
             dt_ = dt
@@ -249,8 +249,7 @@ class Structure:
         else:
             dt_ = float(dt)
             gamma_ = float(gamma)
-        return v_old + dt_ * ((1 - gamma_) * a_old + gamma_ * a)    
-        
+        return v_old + dt_ * ((1 - gamma_) * a_old + gamma_ * a)
 
     def update_fields(self, u, u_old, v_old, a_old, dt, beta, gamma):
         """Update fields at the end of each time step."""

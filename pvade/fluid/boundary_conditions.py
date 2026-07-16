@@ -148,6 +148,7 @@ class InflowVelocity:
         inflow_t_final (float): The last time instant available in the inflow
             HDF5 file.
     """
+
     def __init__(self, ndim, params, current_time):
         """Inflow velocity object
 
@@ -456,8 +457,7 @@ def get_inflow_profile_function(domain, params, functionspace, current_time):
                 "WARNING: t_final ({:.2f} s) exceeds the final time in input inflow velocity file ({:.2f} s). "
                 "Simulation will fail at that point.".format(
                     params.solver.t_final, inflow_velocity.inflow_t_final
-                )
-                ,
+                ),
                 level=1,
             )
 

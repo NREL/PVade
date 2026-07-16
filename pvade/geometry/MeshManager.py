@@ -601,7 +601,9 @@ class FSIDomain:
 
         for sub_domain_name in sub_domain_list:
             try:
-                _vprint(self.rank, f"Beginning write of {sub_domain_name} mesh.", level=1)
+                _vprint(
+                    self.rank, f"Beginning write of {sub_domain_name} mesh.", level=1
+                )
 
                 # Get the fluid or structure object from self
                 sub_domain = getattr(self, sub_domain_name)
