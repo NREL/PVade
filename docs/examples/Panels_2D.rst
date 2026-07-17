@@ -1,7 +1,7 @@
 PV Panels 2D
 =========
 
-This example runs a 2D fluid-structure simulation of a photovoltaic panel
+This example runs a 2D fluid-structure simulation of a single-row photovoltaic panel
 cross-section using the built-in ``panels2d`` geometry module.
 
 PV Panels 2D Workflow Overview

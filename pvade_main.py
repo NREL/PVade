@@ -131,7 +131,7 @@ def main(input_file=None):
                 if domain.rank == 0 and not params.general.debug_mesh_motion_only:
                     pct_done = 100.0 * (k + 1) / params.solver.t_steps
                     summary_tokens = [
-                        f"t={current_time:.2f}/{params.solver.t_final:.2f}",
+                        f"t={current_time:.2f}/{params.solver.t_final:.2f}s",
                         f"step={k+1}/{params.solver.t_steps}",
                         f"{pct_done:.1f}%",
                         f"CFL={flow.cfl_max:.4f}",

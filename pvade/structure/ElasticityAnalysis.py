@@ -570,7 +570,7 @@ class Elasticity:
         #     ) * ufl.Identity(len(v))
 
         if self.first_call_to_solver:
-            _vprint(self.rank, "Starting Strutural Solution", level=1)
+            _vprint(self.rank, "Starting Structural Solution", level=1)
 
             self._assemble_system(params)
 

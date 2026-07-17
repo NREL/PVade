@@ -1,7 +1,7 @@
 PV Panels 3D
 =========
 
-This example runs a 3D panel case using the ``panels3d`` geometry module.
+This example runs a single-row 3D panel case using the ``panels3d`` geometry module.
 It is a full fluid-structure setup with configurable inflow, panel mechanics,
 and array placement parameters.
 
