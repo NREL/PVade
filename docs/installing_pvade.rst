@@ -11,18 +11,19 @@ For more information about FEniCSx please refer to https://github.com/FEniCS/dol
 In addition to FEniCSx, PVade uses multiple python packages as part of the pre- and post-processing steps. 
 PVade dependencies are included in environment.yaml. 
 
-In order to start using PVade, we can use Conda/Mamba for the creation of an environement containg all the necessary dependencies. 
+To get started using PVade, we can use Conda/Mamba for the creation of an environment containg all the necessary dependencies. 
 
-In order to obtain Mamba we can use the following ressource https://mamba.readthedocs.io/en/latest/installation/mamba-installation.html.
+In order to obtain Mamba we can use the following resource https://mamba.readthedocs.io/en/latest/installation/mamba-installation.html.
 
-In order to obtain Conda we can use the following ressource https://conda.io/projects/conda/en/latest/user-guide/install/index.html.
+As well as, using the following resource to obtain Conda https://conda.io/projects/conda/en/latest/user-guide/install/index.html.
 
 .. Note:: 
-   We recommand using Mamba for its fast installation of the environement. 
+   We recommend using Mamba for its fast installation of the environment. 
 
 
 
 Building Mamba Environment
+----------------------------
 
 To use this software, begin by creating a Conda environment using the provided ``environment.yaml`` file::
 
