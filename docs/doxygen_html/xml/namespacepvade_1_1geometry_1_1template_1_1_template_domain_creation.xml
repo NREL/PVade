@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.17.0" xml:lang="en-US">
+  <compounddef id="namespacepvade_1_1geometry_1_1template_1_1_template_domain_creation" kind="namespace" language="Python">
+    <compoundname>pvade::geometry::template::TemplateDomainCreation</compoundname>
+    <innerclass refid="classpvade_1_1geometry_1_1template_1_1_template_domain_creation_1_1_template_domain_creation" prot="public">pvade::geometry::template::TemplateDomainCreation::TemplateDomainCreation</innerclass>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/template/TemplateDomainCreation.py" line="1" column="1"/>
+  </compounddef>
+</doxygen>

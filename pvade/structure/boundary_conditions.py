@@ -1,9 +1,24 @@
+"""Boundary condition utilities for the structural mechanics solver.
+
+This module provides helper functions for identifying structural boundary
+entities and assembling Dirichlet boundary conditions on the structure mesh,
+including both surface-based BCs (fixed edges/faces) and line-based BCs
+(torque-tube and motor-mount connections along 1-D fixation lines).
+"""
+
 import dolfinx
 from petsc4py import PETSc
 
 import numpy as np
 
 import warnings
+from pvade.IO.verbosity import emit_verbosity_print
+
+
+def _vprint(rank, message, level=1):
+    """Rank-0 verbosity-aware print helper for structure BC messages."""
+    if rank == 0:
+        emit_verbosity_print(message, level=level)
 
 
 def get_facet_dofs_by_gmsh_tag(domain, functionspace, location):
@@ -55,8 +70,7 @@ def build_vel_bc_by_type(bc_type, domain, functionspace, bc_location):
         dolfinx.fem.dirichletbc: A dolfinx dirichlet boundary condition
     """
 
-    if domain.rank == 0:
-        print(f"Setting '{bc_type}' BC on {bc_location}")
+    _vprint(domain.rank, f"Setting '{bc_type}' BC on {bc_location}", level=1)
 
     if bc_type == "noslip":
         zero_vec = dolfinx.fem.Constant(
@@ -258,6 +272,25 @@ def build_pressure_boundary_conditions(domain, params, functionspace):
 
 
 def build_structure_boundary_conditions(domain, params, functionspace):
+    """Build all Dirichlet boundary conditions for the structure.
+
+    Applies zero-displacement constraints on all panel surface faces listed
+    in ``params.structure.bc_list``.  Optionally pins nodes along the torque
+    tube line (``params.structure.tube_connection``) and along motor-mount
+    lines (``params.structure.motor_connection``) using a collinearity test.
+
+    Args:
+        domain (:obj:`pvade.geometry.MeshManager.FSIDomain`): A Domain object
+            that holds the structure submesh and facet tags.
+        params (:obj:`pvade.IO.Parameters.SimParams`): A SimParams object
+            containing boundary condition settings and panel geometry.
+        functionspace (dolfinx.fem.FunctionSpace): The vector displacement
+            function space on which boundary conditions are applied.
+
+    Returns:
+        list[dolfinx.fem.DirichletBC]: A list of assembled Dirichlet boundary
+        condition objects ready to be passed to the nonlinear solver.
+    """
     facet_dim = domain.ndim - 1
     if domain.ndim == 2:
         zero_vec = dolfinx.fem.Constant(

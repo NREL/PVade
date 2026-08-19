@@ -13,7 +13,7 @@ def test_pvade_run(input_file, mesh_only, nprocs):
         "python",
         "-u",
         "pvade_main.py",
-        "--input",
+        "--examples",
         str(input_file.resolve()),
         "--solver.dt",
         "0.001",

@@ -1,0 +1,2273 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.17.0" xml:lang="en-US">
+  <compounddef id="classpvade_1_1fluid_1_1_flow_manager_1_1_flow" kind="class" language="Python" prot="public">
+    <compoundname>pvade::fluid::FlowManager::Flow</compoundname>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a3d92ee6f6d4c4679c2eca754ec53ebae" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.fluid.FlowManager.Flow::fluid_analysis</definition>
+        <argsstring></argsstring>
+        <name>fluid_analysis</name>
+        <qualifiedname>pvade.fluid.FlowManager.Flow.fluid_analysis</qualifiedname>
+        <initializer>=  params.general.fluid_analysis</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" line="86" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" bodystart="86" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a87e175767b359d9373f9467f00a9bf92" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.fluid.FlowManager.Flow::thermal_analysis</definition>
+        <argsstring></argsstring>
+        <name>thermal_analysis</name>
+        <qualifiedname>pvade.fluid.FlowManager.Flow.thermal_analysis</qualifiedname>
+        <initializer>=  params.general.thermal_analysis</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" line="87" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" bodystart="87" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1af815465a07a898102c789f4d3ac37d2d" prot="public" static="no" mutable="no">
+        <type>str</type>
+        <definition>str pvade.fluid.FlowManager.Flow::name</definition>
+        <argsstring></argsstring>
+        <name>name</name>
+        <qualifiedname>pvade.fluid.FlowManager.Flow.name</qualifiedname>
+        <initializer>=  &quot;fluid&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" line="89" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" bodystart="89" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1ae93b399034fd2950baa1b46c15c3774d" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.fluid.FlowManager.Flow::comm</definition>
+        <argsstring></argsstring>
+        <name>comm</name>
+        <qualifiedname>pvade.fluid.FlowManager.Flow.comm</qualifiedname>
+        <initializer>=  domain.comm</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" line="93" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" bodystart="93" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1af83bf90876c5921d98b51c5fcf9b1599" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>pvade.fluid.FlowManager.Flow::rank</definition>
+        <argsstring></argsstring>
+        <name>rank</name>
+        <qualifiedname>pvade.fluid.FlowManager.Flow.rank</qualifiedname>
+        <initializer>=  domain.rank</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" line="94" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" bodystart="94" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a8c50d7a2e639d7e5060d60e2302c495d" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.fluid.FlowManager.Flow::num_procs</definition>
+        <argsstring></argsstring>
+        <name>num_procs</name>
+        <qualifiedname>pvade.fluid.FlowManager.Flow.num_procs</qualifiedname>
+        <initializer>=  domain.num_procs</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" line="95" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" bodystart="95" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1afb2e076bea03878ee71267d5f71f2559" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.fluid.FlowManager.Flow::Q</definition>
+        <argsstring></argsstring>
+        <name>Q</name>
+        <qualifiedname>pvade.fluid.FlowManager.Flow.Q</qualifiedname>
+        <initializer>=  dolfinx.fem.FunctionSpace(domain.fluid.msh, P1)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" line="99" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" bodystart="99" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a6a7d4a2b4606b59e6d5a38400bb40d00" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.fluid.FlowManager.Flow::V</definition>
+        <argsstring></argsstring>
+        <name>V</name>
+        <qualifiedname>pvade.fluid.FlowManager.Flow.V</qualifiedname>
+        <initializer>=  dolfinx.fem.FunctionSpace(domain.fluid.msh, P2)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" line="103" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" bodystart="103" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1ab206a97cd3fbaebc674cbdc3ea3494ad" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.fluid.FlowManager.Flow::T</definition>
+        <argsstring></argsstring>
+        <name>T</name>
+        <qualifiedname>pvade.fluid.FlowManager.Flow.T</qualifiedname>
+        <initializer>=  dolfinx.fem.FunctionSpace(domain.fluid.msh, P3)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" line="107" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" bodystart="107" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a8a3eac5b0807ce3fc1bd0404e7647292" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.fluid.FlowManager.Flow::T_undeformed</definition>
+        <argsstring></argsstring>
+        <name>T_undeformed</name>
+        <qualifiedname>pvade.fluid.FlowManager.Flow.T_undeformed</qualifiedname>
+        <initializer>=  dolfinx.fem.FunctionSpace(
+                domain.fluid_undeformed.msh, P3
+            )</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" line="108" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" bodystart="108" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1aef369c2c1a2e7c1c31e95da2abc32e99" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.fluid.FlowManager.Flow::S</definition>
+        <argsstring></argsstring>
+        <name>S</name>
+        <qualifiedname>pvade.fluid.FlowManager.Flow.S</qualifiedname>
+        <initializer>=  dolfinx.fem.FunctionSpace(domain.fluid.msh, P1)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" line="114" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" bodystart="114" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a3cd97905c4c08eeffa53cc6b7896a2a0" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.fluid.FlowManager.Flow::DG</definition>
+        <argsstring></argsstring>
+        <name>DG</name>
+        <qualifiedname>pvade.fluid.FlowManager.Flow.DG</qualifiedname>
+        <initializer>=  dolfinx.fem.FunctionSpace(domain.fluid.msh, P4)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" line="118" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" bodystart="118" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a785029248dc6d8e984dc417cef123ef7" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool pvade.fluid.FlowManager.Flow::first_call_to_solver</definition>
+        <argsstring></argsstring>
+        <name>first_call_to_solver</name>
+        <qualifiedname>pvade.fluid.FlowManager.Flow.first_call_to_solver</qualifiedname>
+        <initializer>=  True</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" line="120" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" bodystart="120" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a497bd3485aa1d5af3ee14b2cfc8fbcfb" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool pvade.fluid.FlowManager.Flow::first_call_to_surface_pressure</definition>
+        <argsstring></argsstring>
+        <name>first_call_to_surface_pressure</name>
+        <qualifiedname>pvade.fluid.FlowManager.Flow.first_call_to_surface_pressure</qualifiedname>
+        <initializer>=  True</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" line="121" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" bodystart="121" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a0d316e11ea705d3ea29a1ff1e208ea2d" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int pvade.fluid.FlowManager.Flow::ndim</definition>
+        <argsstring></argsstring>
+        <name>ndim</name>
+        <qualifiedname>pvade.fluid.FlowManager.Flow.ndim</qualifiedname>
+        <initializer>=  domain.ndim</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" line="125" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" bodystart="125" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1ae462d6e9dece3f05989905df42065da7" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int pvade.fluid.FlowManager.Flow::facet_dim</definition>
+        <argsstring></argsstring>
+        <name>facet_dim</name>
+        <qualifiedname>pvade.fluid.FlowManager.Flow.facet_dim</qualifiedname>
+        <initializer>=  self.ndim - 1</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" line="126" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" bodystart="126" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1acfcee9adf457abc8326872d33dbc5ecd" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.fluid.FlowManager.Flow::hmin</definition>
+        <argsstring></argsstring>
+        <name>hmin</name>
+        <qualifiedname>pvade.fluid.FlowManager.Flow.hmin</qualifiedname>
+        <initializer>=  np.zeros(1)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" line="143" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" bodystart="143" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1ac6606676a8cc1ae285eefcae3f42ebec" prot="public" static="no" mutable="no">
+        <type>tuple</type>
+        <definition>tuple pvade.fluid.FlowManager.Flow::num_Q_dofs</definition>
+        <argsstring></argsstring>
+        <name>num_Q_dofs</name>
+        <qualifiedname>pvade.fluid.FlowManager.Flow.num_Q_dofs</qualifiedname>
+        <initializer>=  (
+                self.Q.dofmap.index_map_bs * self.Q.dofmap.index_map.size_global
+            )</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" line="158" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" bodystart="158" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a461e548d879d6d81543ac357df2430c5" prot="public" static="no" mutable="no">
+        <type>tuple</type>
+        <definition>tuple pvade.fluid.FlowManager.Flow::num_V_dofs</definition>
+        <argsstring></argsstring>
+        <name>num_V_dofs</name>
+        <qualifiedname>pvade.fluid.FlowManager.Flow.num_V_dofs</qualifiedname>
+        <initializer>=  (
+                self.V.dofmap.index_map_bs * self.V.dofmap.index_map.size_global
+            )</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" line="161" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" bodystart="161" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a4c2d8906ebe28ba010f330cc573890c7" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.fluid.FlowManager.Flow::bcu</definition>
+        <argsstring></argsstring>
+        <name>bcu</name>
+        <qualifiedname>pvade.fluid.FlowManager.Flow.bcu</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" line="186" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" bodystart="186" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a1e7cf76918d2911fe61ce5ff934d7852" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.fluid.FlowManager.Flow::inflow_profile</definition>
+        <argsstring></argsstring>
+        <name>inflow_profile</name>
+        <qualifiedname>pvade.fluid.FlowManager.Flow.inflow_profile</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" line="186" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" bodystart="186" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a425733d05c08287719a533249af1e997" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.fluid.FlowManager.Flow::inflow_velocity</definition>
+        <argsstring></argsstring>
+        <name>inflow_velocity</name>
+        <qualifiedname>pvade.fluid.FlowManager.Flow.inflow_velocity</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" line="186" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" bodystart="186" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1ae3e1522ff1732d85ad1d2750793c559a" prot="public" static="no" mutable="no">
+        <type>tuple</type>
+        <definition>pvade.fluid.FlowManager.Flow::upper_cells</definition>
+        <argsstring></argsstring>
+        <name>upper_cells</name>
+        <qualifiedname>pvade.fluid.FlowManager.Flow.upper_cells</qualifiedname>
+        <initializer>=  (
+            build_velocity_boundary_conditions(domain, params, self.V, current_time=0.0)
+        )</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" line="186" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" bodystart="186" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a6ed4b7f8b3cc69837cb8b9961720e17e" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.fluid.FlowManager.Flow::bcp</definition>
+        <argsstring></argsstring>
+        <name>bcp</name>
+        <qualifiedname>pvade.fluid.FlowManager.Flow.bcp</qualifiedname>
+        <initializer>=  build_pressure_boundary_conditions(domain, params, self.Q)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" line="190" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" bodystart="190" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a3c5350226de82de50accdebe491e08e4" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.fluid.FlowManager.Flow::bcT</definition>
+        <argsstring></argsstring>
+        <name>bcT</name>
+        <qualifiedname>pvade.fluid.FlowManager.Flow.bcT</qualifiedname>
+        <initializer>=  build_temperature_boundary_conditions(domain, params, self.S)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" line="197" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" bodystart="197" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1ac55a6cf94fe50993105b703d2d39b4b6" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.fluid.FlowManager.Flow::dpdx</definition>
+        <argsstring></argsstring>
+        <name>dpdx</name>
+        <qualifiedname>pvade.fluid.FlowManager.Flow.dpdx</qualifiedname>
+        <initializer>=  dolfinx.fem.Constant(domain.fluid.msh, (0.0, 0.0))</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" line="221" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" bodystart="221" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a84f036bcf92820d81dd33b1e2871bb0c" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.fluid.FlowManager.Flow::dt_c</definition>
+        <argsstring></argsstring>
+        <name>dt_c</name>
+        <qualifiedname>pvade.fluid.FlowManager.Flow.dt_c</qualifiedname>
+        <initializer>=  dolfinx.fem.Constant(domain.fluid.msh, (params.solver.dt))</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" line="224" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" bodystart="224" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a600cde920361dfe5501dacd30631fc22" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.fluid.FlowManager.Flow::rho_c</definition>
+        <argsstring></argsstring>
+        <name>rho_c</name>
+        <qualifiedname>pvade.fluid.FlowManager.Flow.rho_c</qualifiedname>
+        <initializer>=  dolfinx.fem.Constant(domain.fluid.msh, (params.fluid.rho))</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" line="225" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" bodystart="225" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1aa3e7c4bd7ad50e275ccafeb326e8c595" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.fluid.FlowManager.Flow::g</definition>
+        <argsstring></argsstring>
+        <name>g</name>
+        <qualifiedname>pvade.fluid.FlowManager.Flow.g</qualifiedname>
+        <initializer>=  dolfinx.fem.Constant(
+                    domain.fluid.msh, PETSc.ScalarType((0, params.fluid.g))
+                )</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" line="229" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" bodystart="229" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1acfb5b790243c0b1772f9199564690249" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.fluid.FlowManager.Flow::beta_c</definition>
+        <argsstring></argsstring>
+        <name>beta_c</name>
+        <qualifiedname>pvade.fluid.FlowManager.Flow.beta_c</qualifiedname>
+        <initializer>=  dolfinx.fem.Constant(
+                domain.fluid.msh, PETSc.ScalarType(params.fluid.beta)
+            )</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" line="236" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" bodystart="236" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a9af034e23aacfe747c49a7aadd2c7b55" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.fluid.FlowManager.Flow::alpha_c</definition>
+        <argsstring></argsstring>
+        <name>alpha_c</name>
+        <qualifiedname>pvade.fluid.FlowManager.Flow.alpha_c</qualifiedname>
+        <initializer>=  dolfinx.fem.Constant(
+                domain.fluid.msh, PETSc.ScalarType(params.fluid.alpha)
+            )</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" line="239" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" bodystart="239" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1ac7f8729c9397682a491729e539ce14d7" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.fluid.FlowManager.Flow::Pe_approx</definition>
+        <argsstring></argsstring>
+        <name>Pe_approx</name>
+        <qualifiedname>pvade.fluid.FlowManager.Flow.Pe_approx</qualifiedname>
+        <initializer>=  u_ref * params.domain.l_char / (2.0 * params.fluid.alpha)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" line="248" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" bodystart="248" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a48804905b8b3d8d1cb7f91b434040c85" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool pvade.fluid.FlowManager.Flow::stabilizing</definition>
+        <argsstring></argsstring>
+        <name>stabilizing</name>
+        <qualifiedname>pvade.fluid.FlowManager.Flow.stabilizing</qualifiedname>
+        <initializer>=  True</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" line="251" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" bodystart="251" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1ae8fdf3666b5cf7a9f45fa6c037366d9a" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.fluid.FlowManager.Flow::u</definition>
+        <argsstring></argsstring>
+        <name>u</name>
+        <qualifiedname>pvade.fluid.FlowManager.Flow.u</qualifiedname>
+        <initializer>=  ufl.TrialFunction(self.V)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" line="263" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" bodystart="263" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1ae29cea031e713f4af0de0e7c11c0abc3" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.fluid.FlowManager.Flow::v</definition>
+        <argsstring></argsstring>
+        <name>v</name>
+        <qualifiedname>pvade.fluid.FlowManager.Flow.v</qualifiedname>
+        <initializer>=  ufl.TestFunction(self.V)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" line="264" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" bodystart="264" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a9a7e12f08d8add1142a1f53325178104" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.fluid.FlowManager.Flow::p</definition>
+        <argsstring></argsstring>
+        <name>p</name>
+        <qualifiedname>pvade.fluid.FlowManager.Flow.p</qualifiedname>
+        <initializer>=  ufl.TrialFunction(self.Q)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" line="267" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" bodystart="267" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a58890e0a00f946edb082de0779132a16" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.fluid.FlowManager.Flow::q</definition>
+        <argsstring></argsstring>
+        <name>q</name>
+        <qualifiedname>pvade.fluid.FlowManager.Flow.q</qualifiedname>
+        <initializer>=  ufl.TestFunction(self.Q)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" line="268" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" bodystart="268" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1af8d1bc4ed3902518f4b8393436bf5ae0" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.fluid.FlowManager.Flow::u_k</definition>
+        <argsstring></argsstring>
+        <name>u_k</name>
+        <qualifiedname>pvade.fluid.FlowManager.Flow.u_k</qualifiedname>
+        <initializer>=  dolfinx.fem.Function(self.V, <ref refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1af815465a07a898102c789f4d3ac37d2d" kindref="member">name</ref>=&quot;velocity &quot;)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" line="271" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" bodystart="271" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1aec92a0408334079dcc1a35adba810e3c" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.fluid.FlowManager.Flow::u_k1</definition>
+        <argsstring></argsstring>
+        <name>u_k1</name>
+        <qualifiedname>pvade.fluid.FlowManager.Flow.u_k1</qualifiedname>
+        <initializer>=  dolfinx.fem.Function(self.V)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" line="272" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" bodystart="272" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a5ddee51ec783dda2fbe64cb5ad864947" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.fluid.FlowManager.Flow::u_k2</definition>
+        <argsstring></argsstring>
+        <name>u_k2</name>
+        <qualifiedname>pvade.fluid.FlowManager.Flow.u_k2</qualifiedname>
+        <initializer>=  dolfinx.fem.Function(self.V)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" line="273" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" bodystart="273" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1ae460604821e7895eb220987b4288fd14" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.fluid.FlowManager.Flow::theta</definition>
+        <argsstring></argsstring>
+        <name>theta</name>
+        <qualifiedname>pvade.fluid.FlowManager.Flow.theta</qualifiedname>
+        <initializer>=  ufl.TrialFunction(self.S)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" line="278" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" bodystart="278" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a41c80f8de0abfe05b1f847200efe59d5" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.fluid.FlowManager.Flow::s</definition>
+        <argsstring></argsstring>
+        <name>s</name>
+        <qualifiedname>pvade.fluid.FlowManager.Flow.s</qualifiedname>
+        <initializer>=  ufl.TestFunction(self.S)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" line="279" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" bodystart="279" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1aac4c345b174d117b5fad6ac07a9270f3" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.fluid.FlowManager.Flow::theta_k</definition>
+        <argsstring></argsstring>
+        <name>theta_k</name>
+        <qualifiedname>pvade.fluid.FlowManager.Flow.theta_k</qualifiedname>
+        <initializer>=  dolfinx.fem.Function(self.S, <ref refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1af815465a07a898102c789f4d3ac37d2d" kindref="member">name</ref>=&quot;temperature &quot;)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" line="280" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" bodystart="280" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1af404c5b82410414a92270fccfdfdf3f9" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.fluid.FlowManager.Flow::theta_k1</definition>
+        <argsstring></argsstring>
+        <name>theta_k1</name>
+        <qualifiedname>pvade.fluid.FlowManager.Flow.theta_k1</qualifiedname>
+        <initializer>=  dolfinx.fem.Function(self.S)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" line="281" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" bodystart="281" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1ac37f4e4e7858d5069e396ed5d11cb822" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.fluid.FlowManager.Flow::theta_r</definition>
+        <argsstring></argsstring>
+        <name>theta_r</name>
+        <qualifiedname>pvade.fluid.FlowManager.Flow.theta_r</qualifiedname>
+        <initializer>=  dolfinx.fem.Function(self.S)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" line="282" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" bodystart="282" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a8cbd4fde37fd771f0da01db0b4f80b66" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.fluid.FlowManager.Flow::mesh_vel</definition>
+        <argsstring></argsstring>
+        <name>mesh_vel</name>
+        <qualifiedname>pvade.fluid.FlowManager.Flow.mesh_vel</qualifiedname>
+        <initializer>=  dolfinx.fem.Function(self.V, <ref refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1af815465a07a898102c789f4d3ac37d2d" kindref="member">name</ref>=&quot;mesh_displacement&quot;)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" line="284" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" bodystart="284" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1aef6adc85442935cecaa72185ecbf8ffe" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.fluid.FlowManager.Flow::mesh_vel_old</definition>
+        <argsstring></argsstring>
+        <name>mesh_vel_old</name>
+        <qualifiedname>pvade.fluid.FlowManager.Flow.mesh_vel_old</qualifiedname>
+        <initializer>=  dolfinx.fem.Function(self.V)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" line="285" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" bodystart="285" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a311fb95b87c36ab67a3bf29ce49ba241" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.fluid.FlowManager.Flow::mesh_vel_bc</definition>
+        <argsstring></argsstring>
+        <name>mesh_vel_bc</name>
+        <qualifiedname>pvade.fluid.FlowManager.Flow.mesh_vel_bc</qualifiedname>
+        <initializer>=  dolfinx.fem.Function(self.V, <ref refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1af815465a07a898102c789f4d3ac37d2d" kindref="member">name</ref>=&quot;mesh_displacement_bc&quot;)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" line="286" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" bodystart="286" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1aaf97b1c7d8780461e476855538ce8485" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.fluid.FlowManager.Flow::mesh_vel_bc_old</definition>
+        <argsstring></argsstring>
+        <name>mesh_vel_bc_old</name>
+        <qualifiedname>pvade.fluid.FlowManager.Flow.mesh_vel_bc_old</qualifiedname>
+        <initializer>=  dolfinx.fem.Function(self.V)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" line="287" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" bodystart="287" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a015c059f504ac20af2ffc392bd0c89ea" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.fluid.FlowManager.Flow::p_k</definition>
+        <argsstring></argsstring>
+        <name>p_k</name>
+        <qualifiedname>pvade.fluid.FlowManager.Flow.p_k</qualifiedname>
+        <initializer>=  dolfinx.fem.Function(self.Q, <ref refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1af815465a07a898102c789f4d3ac37d2d" kindref="member">name</ref>=&quot;pressure&quot;)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" line="291" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" bodystart="291" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a488a8357af27126a578fcc70306f9f87" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.fluid.FlowManager.Flow::p_k1</definition>
+        <argsstring></argsstring>
+        <name>p_k1</name>
+        <qualifiedname>pvade.fluid.FlowManager.Flow.p_k1</qualifiedname>
+        <initializer>=  dolfinx.fem.Function(self.Q)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" line="292" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" bodystart="292" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a6fb2bd4c9c29ffc13eaec877681a93b0" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int pvade.fluid.FlowManager.Flow::nu_T</definition>
+        <argsstring></argsstring>
+        <name>nu_T</name>
+        <qualifiedname>pvade.fluid.FlowManager.Flow.nu_T</qualifiedname>
+        <initializer>=  Cs**2 * filter_scale**2 * strainMag</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" line="348" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" bodystart="348" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1add11cda4d3e58324f2a937057971106e" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float pvade.fluid.FlowManager.Flow::U_ALE</definition>
+        <argsstring></argsstring>
+        <name>U_ALE</name>
+        <qualifiedname>pvade.fluid.FlowManager.Flow.U_ALE</qualifiedname>
+        <initializer>=  0.5 * (self.mesh_vel + self.mesh_vel_old)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" line="399" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" bodystart="399" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a23b4fab7dc5f6e3f6defed8d141b85c8" prot="public" static="no" mutable="no">
+        <type>tuple</type>
+        <definition>tuple pvade.fluid.FlowManager.Flow::F1</definition>
+        <argsstring></argsstring>
+        <name>F1</name>
+        <qualifiedname>pvade.fluid.FlowManager.Flow.F1</qualifiedname>
+        <initializer>=  (
+            (1.0 / self.dt_c) * ufl.inner(self.u - self.u_k1, self.v) * ufl.dx
+            + ufl.inner(
+                ufl.dot(
+                    U_AB - self.U_ALE,
+                    ufl.nabla_grad(U_CN),
+                ),
+                self.v,
+            )
+            * ufl.dx
+            + (nu + self.nu_T) * ufl.inner(ufl.grad(U_CN), ufl.grad(self.v)) * ufl.dx
+            + (1.0 / self.rho_c) * ufl.inner(ufl.grad(self.p_k1), self.v) * ufl.dx
+            - (1.0 / self.rho_c) * ufl.inner(self.dpdx, self.v) * ufl.dx
+        )</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" line="410" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" bodystart="410" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1aa6ab4b080112c05c37ac45584fdd490c" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.fluid.FlowManager.Flow::a1</definition>
+        <argsstring></argsstring>
+        <name>a1</name>
+        <qualifiedname>pvade.fluid.FlowManager.Flow.a1</qualifiedname>
+        <initializer>=  dolfinx.fem.form(ufl.lhs(self.F1))</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" line="431" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" bodystart="431" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1ae155fdf3c999161c703d7f6518abceaa" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.fluid.FlowManager.Flow::L1</definition>
+        <argsstring></argsstring>
+        <name>L1</name>
+        <qualifiedname>pvade.fluid.FlowManager.Flow.L1</qualifiedname>
+        <initializer>=  dolfinx.fem.form(ufl.rhs(self.F1))</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" line="432" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" bodystart="432" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1ad31b19692515c7cd136acb5cb03a39cb" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.fluid.FlowManager.Flow::a2</definition>
+        <argsstring></argsstring>
+        <name>a2</name>
+        <qualifiedname>pvade.fluid.FlowManager.Flow.a2</qualifiedname>
+        <initializer>=  dolfinx.fem.form(
+            ufl.dot(ufl.nabla_grad(self.p), ufl.nabla_grad(self.q)) * ufl.dx
+        )</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" line="435" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" bodystart="435" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a6e927345a2b0b6f882ddde9cf237aa60" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.fluid.FlowManager.Flow::L2</definition>
+        <argsstring></argsstring>
+        <name>L2</name>
+        <qualifiedname>pvade.fluid.FlowManager.Flow.L2</qualifiedname>
+        <initializer>=  dolfinx.fem.form(
+            ufl.dot(ufl.nabla_grad(self.p_k1), ufl.nabla_grad(self.q)) * ufl.dx
+            - (self.rho_c / self.dt_c) * ufl.div(self.u_k) * self.q * ufl.dx
+        )</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" line="438" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" bodystart="438" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a2b91dd0c7e13c81538d2e383729ac6e9" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.fluid.FlowManager.Flow::a3</definition>
+        <argsstring></argsstring>
+        <name>a3</name>
+        <qualifiedname>pvade.fluid.FlowManager.Flow.a3</qualifiedname>
+        <initializer>=  dolfinx.fem.form(ufl.dot(self.u, self.v) * ufl.dx)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" line="444" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" bodystart="444" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a2b76056289f0b4ebae5514f0de464c4b" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.fluid.FlowManager.Flow::L3</definition>
+        <argsstring></argsstring>
+        <name>L3</name>
+        <qualifiedname>pvade.fluid.FlowManager.Flow.L3</qualifiedname>
+        <initializer>=  dolfinx.fem.form(
+            ufl.dot(self.u_k, self.v) * ufl.dx
+            - (self.dt_c / self.rho_c)
+            * ufl.dot(ufl.nabla_grad(self.p_k - self.p_k1), self.v)
+            * ufl.dx
+        )</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" line="445" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" bodystart="445" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1af8fdc128a50054828567640d589eb876" prot="public" static="no" mutable="no">
+        <type>tuple</type>
+        <definition>tuple pvade.fluid.FlowManager.Flow::r</definition>
+        <argsstring></argsstring>
+        <name>r</name>
+        <qualifiedname>pvade.fluid.FlowManager.Flow.r</qualifiedname>
+        <initializer>=  (
+                    (1.0 / self.dt_c) * (self.theta - self.theta_k1)
+                    + ufl.dot(self.u_k, ufl.nabla_grad(self.theta))
+                    - self.alpha_c * ufl.div(ufl.grad(self.theta))
+                )</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" line="454" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" bodystart="454" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a03b68df0739bebcb02e07d91802b0bf9" prot="public" static="no" mutable="no">
+        <type>tuple</type>
+        <definition>tuple pvade.fluid.FlowManager.Flow::F4</definition>
+        <argsstring></argsstring>
+        <name>F4</name>
+        <qualifiedname>pvade.fluid.FlowManager.Flow.F4</qualifiedname>
+        <initializer>=  (
+                (1.0 / self.dt_c)
+                * ufl.inner(self.theta - self.theta_k1, self.s)
+                * ufl.dx  # <ref refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1ae460604821e7895eb220987b4288fd14" kindref="member">theta</ref> = unknown, T_n = temp from previous timestep
+                + self.alpha_c
+                * ufl.inner(ufl.nabla_grad(self.theta), ufl.nabla_grad(self.s))
+                * ufl.dx
+                + ufl.inner(ufl.dot(self.u_k, ufl.nabla_grad(self.theta)), self.s)
+                * ufl.dx  # todo: subtract mesh vel from this and from residual
+            )</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" line="461" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" bodystart="461" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a90a3d71a274ead03d652028068b0a827" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.fluid.FlowManager.Flow::a4</definition>
+        <argsstring></argsstring>
+        <name>a4</name>
+        <qualifiedname>pvade.fluid.FlowManager.Flow.a4</qualifiedname>
+        <initializer>=  dolfinx.fem.form(ufl.lhs(self.F4))</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" line="482" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" bodystart="482" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1aecb8540f3a73da8dce307bcba7682d0a" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.fluid.FlowManager.Flow::L4</definition>
+        <argsstring></argsstring>
+        <name>L4</name>
+        <qualifiedname>pvade.fluid.FlowManager.Flow.L4</qualifiedname>
+        <initializer>=  dolfinx.fem.form(ufl.rhs(self.F4))</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" line="483" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" bodystart="483" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a9fc9ae81a6b86a234cf81e4e2ad7bbfc" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.fluid.FlowManager.Flow::panel_stress</definition>
+        <argsstring></argsstring>
+        <name>panel_stress</name>
+        <qualifiedname>pvade.fluid.FlowManager.Flow.panel_stress</qualifiedname>
+        <initializer>=  dolfinx.fem.Function(self.T)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" line="486" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" bodystart="486" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a858cf1d8892c0ee0bbd0714af0fc2991" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.fluid.FlowManager.Flow::panel_stress_undeformed</definition>
+        <argsstring></argsstring>
+        <name>panel_stress_undeformed</name>
+        <qualifiedname>pvade.fluid.FlowManager.Flow.panel_stress_undeformed</qualifiedname>
+        <initializer>=  dolfinx.fem.Function(self.T_undeformed)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" line="487" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" bodystart="487" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a75f9b97f7dea37d0437aed65bcdd46a1" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.fluid.FlowManager.Flow::stress</definition>
+        <argsstring></argsstring>
+        <name>stress</name>
+        <qualifiedname>pvade.fluid.FlowManager.Flow.stress</qualifiedname>
+        <initializer>=  sigma(self.u_k, self.p_k, nu + self.nu_T, self.rho_c)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" line="488" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" bodystart="488" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a84badbf265b079bd44ea62f89f58f866" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.fluid.FlowManager.Flow::n</definition>
+        <argsstring></argsstring>
+        <name>n</name>
+        <qualifiedname>pvade.fluid.FlowManager.Flow.n</qualifiedname>
+        <initializer>=  ufl.FacetNormal(domain.fluid.msh)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" line="491" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" bodystart="491" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a42c307d82c81b5bbd9ddfc3827266f5c" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.fluid.FlowManager.Flow::traction</definition>
+        <argsstring></argsstring>
+        <name>traction</name>
+        <qualifiedname>pvade.fluid.FlowManager.Flow.traction</qualifiedname>
+        <initializer>=  ufl.dot(self.stress, -self.n)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" line="494" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" bodystart="494" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a48e7516c92bab48401ae9ed5b70c7293" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.fluid.FlowManager.Flow::a5</definition>
+        <argsstring></argsstring>
+        <name>a5</name>
+        <qualifiedname>pvade.fluid.FlowManager.Flow.a5</qualifiedname>
+        <initializer>=  dolfinx.fem.form(
+            ufl.inner(ufl.TrialFunction(self.T), ufl.TestFunction(self.T)) * ufl.dx
+        )</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" line="498" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" bodystart="498" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a25a81975606d85bf8e6194125a4b8026" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.fluid.FlowManager.Flow::L5</definition>
+        <argsstring></argsstring>
+        <name>L5</name>
+        <qualifiedname>pvade.fluid.FlowManager.Flow.L5</qualifiedname>
+        <initializer>=  dolfinx.fem.form(
+            ufl.inner(self.stress, ufl.TestFunction(self.T)) * ufl.dx
+        )</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" line="501" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" bodystart="501" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a20e160be10e11b2880578b43018448d5" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.fluid.FlowManager.Flow::cfl_vec</definition>
+        <argsstring></argsstring>
+        <name>cfl_vec</name>
+        <qualifiedname>pvade.fluid.FlowManager.Flow.cfl_vec</qualifiedname>
+        <initializer>=  dolfinx.fem.Function(self.DG)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" line="509" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" bodystart="509" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a5bd5e9bfd52d247263b3544269440845" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.fluid.FlowManager.Flow::a6</definition>
+        <argsstring></argsstring>
+        <name>a6</name>
+        <qualifiedname>pvade.fluid.FlowManager.Flow.a6</qualifiedname>
+        <initializer>=  dolfinx.fem.form(
+            ufl.inner(ufl.TrialFunction(self.DG), ufl.TestFunction(self.DG)) * ufl.dx
+        )</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" line="510" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" bodystart="510" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1aa202b4e97208c021faf7a69a715f99b8" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.fluid.FlowManager.Flow::L6</definition>
+        <argsstring></argsstring>
+        <name>L6</name>
+        <qualifiedname>pvade.fluid.FlowManager.Flow.L6</qualifiedname>
+        <initializer>=  dolfinx.fem.form(
+            ufl.inner(cfl_form, ufl.TestFunction(self.DG)) * ufl.dx
+        )</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" line="513" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" bodystart="513" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a2ce7b4bb20489c7c6f0e51e29aee44c4" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.fluid.FlowManager.Flow::flux_plane</definition>
+        <argsstring></argsstring>
+        <name>flux_plane</name>
+        <qualifiedname>pvade.fluid.FlowManager.Flow.flux_plane</qualifiedname>
+        <initializer>=  dolfinx.fem.Function(
+            self.V
+        )</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" line="521" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" bodystart="521" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a73181bd2d18cd30276c8ada2e34b5b34" prot="public" static="no" mutable="no">
+        <type>list</type>
+        <definition>list pvade.fluid.FlowManager.Flow::dpdx_history</definition>
+        <argsstring></argsstring>
+        <name>dpdx_history</name>
+        <qualifiedname>pvade.fluid.FlowManager.Flow.dpdx_history</qualifiedname>
+        <initializer>=  [0.0]</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" line="551" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" bodystart="551" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1af2df911dcd50ac759488270dbc031785" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.fluid.FlowManager.Flow::all_interior_V_dofs</definition>
+        <argsstring></argsstring>
+        <name>all_interior_V_dofs</name>
+        <qualifiedname>pvade.fluid.FlowManager.Flow.all_interior_V_dofs</qualifiedname>
+        <initializer>=  dolfinx.fem.locate_dofs_topological(
+            self.V, self.facet_dim, all_interior_facets
+        )</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" line="574" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" bodystart="574" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a7573382749d323d62d32e86cb7159ca5" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.fluid.FlowManager.Flow::zero_vec</definition>
+        <argsstring></argsstring>
+        <name>zero_vec</name>
+        <qualifiedname>pvade.fluid.FlowManager.Flow.zero_vec</qualifiedname>
+        <initializer>=  dolfinx.fem.Constant(
+            domain.fluid.msh, PETSc.ScalarType((0.0, 0.0, 0.0))
+        )</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" line="578" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" bodystart="578" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a09022717c53c249d99a85b57c86534a8" prot="public" static="no" mutable="no">
+        <type>list</type>
+        <definition>list pvade.fluid.FlowManager.Flow::integrated_force_x_form</definition>
+        <argsstring></argsstring>
+        <name>integrated_force_x_form</name>
+        <qualifiedname>pvade.fluid.FlowManager.Flow.integrated_force_x_form</qualifiedname>
+        <initializer>=  []</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" line="586" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" bodystart="586" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1ac9b03d6704a30f145f130f1d7d405111" prot="public" static="no" mutable="no">
+        <type>list</type>
+        <definition>list pvade.fluid.FlowManager.Flow::integrated_force_y_form</definition>
+        <argsstring></argsstring>
+        <name>integrated_force_y_form</name>
+        <qualifiedname>pvade.fluid.FlowManager.Flow.integrated_force_y_form</qualifiedname>
+        <initializer>=  []</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" line="587" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" bodystart="587" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1ac6ed25dec800bf25ffb47f06d03c6c69" prot="public" static="no" mutable="no">
+        <type>list</type>
+        <definition>list pvade.fluid.FlowManager.Flow::integrated_force_z_form</definition>
+        <argsstring></argsstring>
+        <name>integrated_force_z_form</name>
+        <qualifiedname>pvade.fluid.FlowManager.Flow.integrated_force_z_form</qualifiedname>
+        <initializer>=  []</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" line="588" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" bodystart="588" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1aa6649203282ba11829d3ae0c525332be" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.fluid.FlowManager.Flow::A1</definition>
+        <argsstring></argsstring>
+        <name>A1</name>
+        <qualifiedname>pvade.fluid.FlowManager.Flow.A1</qualifiedname>
+        <initializer>=  dolfinx.fem.petsc.assemble_matrix(self.a1, bcs=self.bcu)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" line="686" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" bodystart="686" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a679422a138050d7f6ad9463624f37fc5" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.fluid.FlowManager.Flow::A2</definition>
+        <argsstring></argsstring>
+        <name>A2</name>
+        <qualifiedname>pvade.fluid.FlowManager.Flow.A2</qualifiedname>
+        <initializer>=  dolfinx.fem.petsc.assemble_matrix(self.a2, bcs=self.bcp)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" line="687" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" bodystart="687" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1ae74ac2ab09c0e20578561b6f35ae9c32" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.fluid.FlowManager.Flow::A3</definition>
+        <argsstring></argsstring>
+        <name>A3</name>
+        <qualifiedname>pvade.fluid.FlowManager.Flow.A3</qualifiedname>
+        <initializer>=  dolfinx.fem.petsc.assemble_matrix(self.a3)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" line="688" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" bodystart="688" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1aaf7575cbc1bf5134e387ef203ecbcc9b" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.fluid.FlowManager.Flow::A4</definition>
+        <argsstring></argsstring>
+        <name>A4</name>
+        <qualifiedname>pvade.fluid.FlowManager.Flow.A4</qualifiedname>
+        <initializer>=  dolfinx.fem.petsc.assemble_matrix(self.a4, bcs=self.bcT)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" line="690" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" bodystart="690" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a51d374aa3d6e5d2d6002d1faef959284" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.fluid.FlowManager.Flow::A5</definition>
+        <argsstring></argsstring>
+        <name>A5</name>
+        <qualifiedname>pvade.fluid.FlowManager.Flow.A5</qualifiedname>
+        <initializer>=  dolfinx.fem.petsc.assemble_matrix(self.a5)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" line="691" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" bodystart="691" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a4db460cc6fcc288aba7b52d76b004cd6" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.fluid.FlowManager.Flow::A6</definition>
+        <argsstring></argsstring>
+        <name>A6</name>
+        <qualifiedname>pvade.fluid.FlowManager.Flow.A6</qualifiedname>
+        <initializer>=  dolfinx.fem.petsc.assemble_matrix(self.a6)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" line="692" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" bodystart="692" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a4e0b4179758c0190363d8780747bb69f" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.fluid.FlowManager.Flow::b1</definition>
+        <argsstring></argsstring>
+        <name>b1</name>
+        <qualifiedname>pvade.fluid.FlowManager.Flow.b1</qualifiedname>
+        <initializer>=  dolfinx.fem.petsc.assemble_vector(self.L1)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" line="702" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" bodystart="702" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1aac6bc991b874206f7c4467f51ccab71d" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.fluid.FlowManager.Flow::b2</definition>
+        <argsstring></argsstring>
+        <name>b2</name>
+        <qualifiedname>pvade.fluid.FlowManager.Flow.b2</qualifiedname>
+        <initializer>=  dolfinx.fem.petsc.assemble_vector(self.L2)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" line="703" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" bodystart="703" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1add4c5d273366c793ba44c4fabdf644d1" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.fluid.FlowManager.Flow::b3</definition>
+        <argsstring></argsstring>
+        <name>b3</name>
+        <qualifiedname>pvade.fluid.FlowManager.Flow.b3</qualifiedname>
+        <initializer>=  dolfinx.fem.petsc.assemble_vector(self.L3)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" line="704" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" bodystart="704" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1adab8a4219bcfe36c2cd452a0853565ac" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.fluid.FlowManager.Flow::b4</definition>
+        <argsstring></argsstring>
+        <name>b4</name>
+        <qualifiedname>pvade.fluid.FlowManager.Flow.b4</qualifiedname>
+        <initializer>=  dolfinx.fem.petsc.assemble_vector(self.L4)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" line="706" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" bodystart="706" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a18d36fc25a2d69e6c2b508101f9af2e6" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.fluid.FlowManager.Flow::b5</definition>
+        <argsstring></argsstring>
+        <name>b5</name>
+        <qualifiedname>pvade.fluid.FlowManager.Flow.b5</qualifiedname>
+        <initializer>=  dolfinx.fem.petsc.assemble_vector(self.L5)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" line="707" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" bodystart="707" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a0374043c73cd492a2699452b86a80352" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.fluid.FlowManager.Flow::b6</definition>
+        <argsstring></argsstring>
+        <name>b6</name>
+        <qualifiedname>pvade.fluid.FlowManager.Flow.b6</qualifiedname>
+        <initializer>=  dolfinx.fem.petsc.assemble_vector(self.L6)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" line="708" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" bodystart="708" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a82976bcbb9494c3e388cb80895fb38ec" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.fluid.FlowManager.Flow::solver_1</definition>
+        <argsstring></argsstring>
+        <name>solver_1</name>
+        <qualifiedname>pvade.fluid.FlowManager.Flow.solver_1</qualifiedname>
+        <initializer>=  PETSc.KSP().create(self.comm)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" line="710" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" bodystart="710" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1ac6de5a8176648f0ed1fea5ba73e6ecbf" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.fluid.FlowManager.Flow::solver_2</definition>
+        <argsstring></argsstring>
+        <name>solver_2</name>
+        <qualifiedname>pvade.fluid.FlowManager.Flow.solver_2</qualifiedname>
+        <initializer>=  PETSc.KSP().create(self.comm)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" line="716" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" bodystart="716" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a7ce2e451dd888cd03aa1235588d7477f" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.fluid.FlowManager.Flow::solver_3</definition>
+        <argsstring></argsstring>
+        <name>solver_3</name>
+        <qualifiedname>pvade.fluid.FlowManager.Flow.solver_3</qualifiedname>
+        <initializer>=  PETSc.KSP().create(self.comm)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" line="722" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" bodystart="722" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a7a3b151b4668d0181dddd8543153dc12" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.fluid.FlowManager.Flow::solver_4</definition>
+        <argsstring></argsstring>
+        <name>solver_4</name>
+        <qualifiedname>pvade.fluid.FlowManager.Flow.solver_4</qualifiedname>
+        <initializer>=  PETSc.KSP().create(self.comm)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" line="729" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" bodystart="729" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1addbd2cce8f32aa2b29a015779543a751" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.fluid.FlowManager.Flow::solver_5</definition>
+        <argsstring></argsstring>
+        <name>solver_5</name>
+        <qualifiedname>pvade.fluid.FlowManager.Flow.solver_5</qualifiedname>
+        <initializer>=  PETSc.KSP().create(self.comm)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" line="735" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" bodystart="735" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a663739d96a942572f174adcdbdfc1d1b" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.fluid.FlowManager.Flow::solver_6</definition>
+        <argsstring></argsstring>
+        <name>solver_6</name>
+        <qualifiedname>pvade.fluid.FlowManager.Flow.solver_6</qualifiedname>
+        <initializer>=  PETSc.KSP().create(self.comm)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" line="741" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" bodystart="741" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a8353ec846d7fd4b25fb0207f322570be" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.fluid.FlowManager.Flow::nullspace</definition>
+        <argsstring></argsstring>
+        <name>nullspace</name>
+        <qualifiedname>pvade.fluid.FlowManager.Flow.nullspace</qualifiedname>
+        <initializer>=  PETSc.NullSpace().create(
+                    constant=True, <ref refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1ae93b399034fd2950baa1b46c15c3774d" kindref="member">comm</ref>=params.comm
+                )</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" line="901" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" bodystart="901" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a1bf4833befd9b1ea9c463df3a56a3019" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.fluid.FlowManager.Flow::theta_max</definition>
+        <argsstring></argsstring>
+        <name>theta_max</name>
+        <qualifiedname>pvade.fluid.FlowManager.Flow.theta_max</qualifiedname>
+        <initializer>=  np.zeros(1)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" line="978" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" bodystart="978" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1ade734da5731e35e321a90d4107505c83" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.fluid.FlowManager.Flow::cfl_max</definition>
+        <argsstring></argsstring>
+        <name>cfl_max</name>
+        <qualifiedname>pvade.fluid.FlowManager.Flow.cfl_max</qualifiedname>
+        <initializer>=  np.zeros(1, dtype=np.float64)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" line="1051" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" bodystart="1051" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a34233dddcc77855770ea6880ca8a53b1" prot="public" static="no" mutable="no">
+        <type>list</type>
+        <definition>list pvade.fluid.FlowManager.Flow::integrated_force_x</definition>
+        <argsstring></argsstring>
+        <name>integrated_force_x</name>
+        <qualifiedname>pvade.fluid.FlowManager.Flow.integrated_force_x</qualifiedname>
+        <initializer>=  []</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" line="1059" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" bodystart="1059" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1afb3c48c32fd8193aa7f4b1dedbf4980b" prot="public" static="no" mutable="no">
+        <type>list</type>
+        <definition>list pvade.fluid.FlowManager.Flow::integrated_force_y</definition>
+        <argsstring></argsstring>
+        <name>integrated_force_y</name>
+        <qualifiedname>pvade.fluid.FlowManager.Flow.integrated_force_y</qualifiedname>
+        <initializer>=  []</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" line="1060" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" bodystart="1060" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a94a32715f40af77bfd3be17af1498316" prot="public" static="no" mutable="no">
+        <type>list</type>
+        <definition>list pvade.fluid.FlowManager.Flow::integrated_force_z</definition>
+        <argsstring></argsstring>
+        <name>integrated_force_z</name>
+        <qualifiedname>pvade.fluid.FlowManager.Flow.integrated_force_z</qualifiedname>
+        <initializer>=  []</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" line="1061" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" bodystart="1061" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1af8df5dead5f6f076ec69350fdcc29de2" prot="public" static="no" mutable="no">
+        <type>tuple</type>
+        <definition>pvade.fluid.FlowManager.Flow::lift_and_drag_filename</definition>
+        <argsstring></argsstring>
+        <name>lift_and_drag_filename</name>
+        <qualifiedname>pvade.fluid.FlowManager.Flow.lift_and_drag_filename</qualifiedname>
+        <initializer>=  (
+                    f&quot;{params.general.output_dir_sol}/lift_and_drag.csv&quot;
+                )</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" line="1104" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" bodystart="1104" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a6be5aa01ef906d87ff3239c3ee5ff545" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>pvade.fluid.FlowManager.Flow.__init__</definition>
+        <argsstring>(self, domain, params)</argsstring>
+        <name>__init__</name>
+        <qualifiedname>pvade.fluid.FlowManager.Flow.__init__</qualifiedname>
+        <param>
+          <type>self</type>
+          <defname>self</defname>
+        </param>
+        <param>
+          <type>domain</type>
+          <defname>domain</defname>
+        </param>
+        <param>
+          <type>params</type>
+          <defname>params</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><verbatim>Initialize the fluid solver
+
+This method initialize the Flow object, namely, it creates all the
+necessary function spaces on the mesh, initializes key counting and
+boolean variables and records certain characteristic quantities like
+the minimum cell size and the number of degrees of freedom attributed
+to both the pressure and velocity function spaces.
+
+Args:
+    domain (:obj:`pvade.geometry.MeshManager.Domain`): A Domain object
+</verbatim> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" line="72" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" bodystart="72" bodyend="170"/>
+      </memberdef>
+      <memberdef kind="function" id="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1af8e4d3fea94279f378aa776472aa3b50" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>pvade.fluid.FlowManager.Flow.build_boundary_conditions</definition>
+        <argsstring>(self, domain, params)</argsstring>
+        <name>build_boundary_conditions</name>
+        <qualifiedname>pvade.fluid.FlowManager.Flow.build_boundary_conditions</qualifiedname>
+        <param>
+          <type>self</type>
+          <defname>self</defname>
+        </param>
+        <param>
+          <type>domain</type>
+          <defname>domain</defname>
+        </param>
+        <param>
+          <type>params</type>
+          <defname>params</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><verbatim>Build the boundary conditions
+
+A method to manage the building of boundary conditions, including the
+steps of identifying entities on the boundary, marking those degrees
+of freedom either by the identified facets or a gmsh marker function,
+and finally assembling a list of Boundary objects that enforce the
+correct value.
+
+Args:
+    domain (:obj:`pvade.geometry.MeshManager.Domain`): A Domain object
+    params (:obj:`pvade.Parameters.SimParams`): A SimParams object
+</verbatim> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" line="171" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" bodystart="171" bodyend="201"/>
+      </memberdef>
+      <memberdef kind="function" id="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1ae1f61abbd382547d002824bfd057f20e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>pvade.fluid.FlowManager.Flow.build_forms</definition>
+        <argsstring>(self, domain, params)</argsstring>
+        <name>build_forms</name>
+        <qualifiedname>pvade.fluid.FlowManager.Flow.build_forms</qualifiedname>
+        <param>
+          <type>self</type>
+          <defname>self</defname>
+        </param>
+        <param>
+          <type>domain</type>
+          <defname>domain</defname>
+        </param>
+        <param>
+          <type>params</type>
+          <defname>params</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><verbatim>Builds all variational statements
+
+This method creates all the functions, expressions, and variational
+forms that will be needed for the numerical solution of Navier Stokes
+using a fractional step method. This includes the calculation of a
+tentative velocity, the calculation of the change in pressure
+required to correct the tentative velocity to enforce continuity, and
+the update to the velocity field to reflect this change in
+pressure.
+
+Args:
+    domain (:obj:`pvade.geometry.MeshManager.Domain`): A Domain object
+    params (:obj:`pvade.Parameters.SimParams`): A SimParams object
+</verbatim> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" line="202" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" bodystart="202" bodyend="672"/>
+      </memberdef>
+      <memberdef kind="function" id="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a065a7470c36f8de504725c9428749615" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>pvade.fluid.FlowManager.Flow.solve</definition>
+        <argsstring>(self, domain, params, current_time)</argsstring>
+        <name>solve</name>
+        <qualifiedname>pvade.fluid.FlowManager.Flow.solve</qualifiedname>
+        <param>
+          <type>self</type>
+          <defname>self</defname>
+        </param>
+        <param>
+          <type>domain</type>
+          <defname>domain</defname>
+        </param>
+        <param>
+          <type>params</type>
+          <defname>params</defname>
+        </param>
+        <param>
+          <type>current_time</type>
+          <defname>current_time</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><verbatim>Solve for a single timestep advancement
+
+Here we perform the three-step solution process (tentative velocity,
+pressure correction, velocity update) to advance the fluid simulation
+a single timestep. Additionally, we calculate the new CFL number
+associated with the latest velocity solution.
+
+Args:
+    params (:obj:`pvade.Parameters.SimParams`): A SimParams object
+</verbatim> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" line="747" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" bodystart="747" bodyend="838"/>
+      </memberdef>
+      <memberdef kind="function" id="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1ae63cd88a8a509eef6d70903395c7effe" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>pvade.fluid.FlowManager.Flow.compute_cfl</definition>
+        <argsstring>(self)</argsstring>
+        <name>compute_cfl</name>
+        <qualifiedname>pvade.fluid.FlowManager.Flow.compute_cfl</qualifiedname>
+        <param>
+          <type>self</type>
+          <defname>self</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><verbatim>Solve for the CFL number
+
+Using the velocity, timestep size, and cell sizes, we calculate a CFL
+number at every mesh cell. From that, we select the single highest
+value of CFL number and record it for the purposes of monitoring
+simulation stability.
+
+Args:
+    None
+</verbatim> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" line="1008" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" bodystart="1008" bodyend="1056"/>
+      </memberdef>
+      <memberdef kind="function" id="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1ab41a9ca029f30a15ffd8d5d121fff101" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>pvade.fluid.FlowManager.Flow.compute_lift_and_drag</definition>
+        <argsstring>(self, params, current_time)</argsstring>
+        <name>compute_lift_and_drag</name>
+        <qualifiedname>pvade.fluid.FlowManager.Flow.compute_lift_and_drag</qualifiedname>
+        <param>
+          <type>self</type>
+          <defname>self</defname>
+        </param>
+        <param>
+          <type>params</type>
+          <defname>params</defname>
+        </param>
+        <param>
+          <type>current_time</type>
+          <defname>current_time</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" line="1057" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" bodystart="1057" bodyend="1181"/>
+      </memberdef>
+      <memberdef kind="function" id="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a077051e530518bd246cd81fe0dce2e59" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>pvade.fluid.FlowManager.Flow.compute_pressure_drop_between_points</definition>
+        <argsstring>(self, domain, params)</argsstring>
+        <name>compute_pressure_drop_between_points</name>
+        <qualifiedname>pvade.fluid.FlowManager.Flow.compute_pressure_drop_between_points</qualifiedname>
+        <param>
+          <type>self</type>
+          <defname>self</defname>
+        </param>
+        <param>
+          <type>domain</type>
+          <defname>domain</defname>
+        </param>
+        <param>
+          <type>params</type>
+          <defname>params</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" line="1182" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" bodystart="1182" bodyend="1229"/>
+      </memberdef>
+      <memberdef kind="function" id="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a2a086d1967fab26f676d3efa427c6539" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>pvade.fluid.FlowManager.Flow.adjust_dpdx_for_constant_flux</definition>
+        <argsstring>(self)</argsstring>
+        <name>adjust_dpdx_for_constant_flux</name>
+        <qualifiedname>pvade.fluid.FlowManager.Flow.adjust_dpdx_for_constant_flux</qualifiedname>
+        <param>
+          <type>self</type>
+          <defname>self</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><verbatim>Adjust the forcing term, ``dpdx``, to maintain flowrate
+
+Here we calculate what the value of the dolfinx.fem.constant driving
+pressure/force, ``dpdx``, should be adjusted to to maintain a
+dolfinx.fem.constant flux through the domain. This is a useful option if
+performing a periodic simulation in which the flux will slowly decay
+due to viscous dissipation. The amount of change in ``dpdx`` is
+calculated by comparing the current flux to the flux measured in the
+initial condition and then employing a PID controller to adjust the
+driving force to seek the target defined by the initial condition.
+
+Args:
+    None
+</verbatim> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" line="1230" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" bodystart="1230" bodyend="1300"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="protected-func">
+      <memberdef kind="function" id="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a166f66c8e74adb190ce681ba53e6c595" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>pvade.fluid.FlowManager.Flow._assemble_system</definition>
+        <argsstring>(self, params)</argsstring>
+        <name>_assemble_system</name>
+        <qualifiedname>pvade.fluid.FlowManager.Flow._assemble_system</qualifiedname>
+        <param>
+          <type>self</type>
+          <defname>self</defname>
+        </param>
+        <param>
+          <type>params</type>
+          <defname>params</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><verbatim>Pre-assemble all LHS matrices and RHS vectors
+
+Here we pre-assemble all the forms corresponding to the left-hand side
+matrices and right-hand side vectors once outside the time loop. This
+will enable us to re-use certain features like the sparsity pattern
+during the timestepping without any modification of the function
+calls.
+
+Args:
+    params (:obj:`pvade.Parameters.SimParams`): A SimParams object
+</verbatim> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" line="673" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" bodystart="673" bodyend="746"/>
+      </memberdef>
+      <memberdef kind="function" id="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a0aac3afac8843fcda761ff822836274e" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>pvade.fluid.FlowManager.Flow._solver_step_1</definition>
+        <argsstring>(self, params)</argsstring>
+        <name>_solver_step_1</name>
+        <qualifiedname>pvade.fluid.FlowManager.Flow._solver_step_1</qualifiedname>
+        <param>
+          <type>self</type>
+          <defname>self</defname>
+        </param>
+        <param>
+          <type>params</type>
+          <defname>params</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><verbatim>Solve step 1: tentative velocity
+
+Here we calculate the tentative velocity which, not guaranteed to be
+divergence free.
+
+Args:
+    params (:obj:`pvade.Parameters.SimParams`): A SimParams object
+</verbatim> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" line="839" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" bodystart="839" bodyend="870"/>
+      </memberdef>
+      <memberdef kind="function" id="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1ae251861e34685fe3e8b71ee572b3814d" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>pvade.fluid.FlowManager.Flow._solver_step_2</definition>
+        <argsstring>(self, params)</argsstring>
+        <name>_solver_step_2</name>
+        <qualifiedname>pvade.fluid.FlowManager.Flow._solver_step_2</qualifiedname>
+        <param>
+          <type>self</type>
+          <defname>self</defname>
+        </param>
+        <param>
+          <type>params</type>
+          <defname>params</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><verbatim>Solve step 2: pressure correction
+
+Here we calculate the pressure field that would be required to correct
+the tentative velocity such that it is divergence free.
+
+Args:
+    params (:obj:`pvade.Parameters.SimParams`): A SimParams object
+</verbatim> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" line="871" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" bodystart="871" bodyend="918"/>
+      </memberdef>
+      <memberdef kind="function" id="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1ab504d1daa4ddc6c0d18ccaf3ff06d440" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>pvade.fluid.FlowManager.Flow._solver_step_3</definition>
+        <argsstring>(self, params)</argsstring>
+        <name>_solver_step_3</name>
+        <qualifiedname>pvade.fluid.FlowManager.Flow._solver_step_3</qualifiedname>
+        <param>
+          <type>self</type>
+          <defname>self</defname>
+        </param>
+        <param>
+          <type>params</type>
+          <defname>params</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><verbatim>Solve step 3: velocity update
+
+Here we update the tentative velocity with the effect of the modified,
+continuity-enforcing pressure field.
+
+Args:
+    params (:obj:`pvade.Parameters.SimParams`): A SimParams object
+</verbatim> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" line="919" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" bodystart="919" bodyend="946"/>
+      </memberdef>
+      <memberdef kind="function" id="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a65e4f1ff97aebfdf40f7f92347802e87" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>pvade.fluid.FlowManager.Flow._solver_step_4</definition>
+        <argsstring>(self, params)</argsstring>
+        <name>_solver_step_4</name>
+        <qualifiedname>pvade.fluid.FlowManager.Flow._solver_step_4</qualifiedname>
+        <param>
+          <type>self</type>
+          <defname>self</defname>
+        </param>
+        <param>
+          <type>params</type>
+          <defname>params</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><verbatim>Solve step 4: Solves for temperature using the advection-diffusion equation
+
+Args:
+    params (:obj:`pvade.Parameters.SimParams`): A SimParams object
+</verbatim> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" line="947" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" bodystart="947" bodyend="981"/>
+      </memberdef>
+      <memberdef kind="function" id="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a5f8f9dda8642c8768734b03536314b52" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>pvade.fluid.FlowManager.Flow._solver_step_5</definition>
+        <argsstring>(self, params)</argsstring>
+        <name>_solver_step_5</name>
+        <qualifiedname>pvade.fluid.FlowManager.Flow._solver_step_5</qualifiedname>
+        <param>
+          <type>self</type>
+          <defname>self</defname>
+        </param>
+        <param>
+          <type>params</type>
+          <defname>params</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><verbatim>Solve step 5: Projects stress onto a tensor function space
+
+Args:
+    params (:obj:`pvade.Parameters.SimParams`): A SimParams object
+</verbatim> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" line="982" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" bodystart="982" bodyend="1007"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><verbatim>Incompressible Navier–Stokes fluid solver.
+
+Implements the IPCS fractional-step method on an ALE mesh.  On each time
+step the solver computes a tentative velocity, a pressure correction
+(to enforce incompressibility), a corrected velocity, and optionally a
+temperature field.  The class also computes integrated aerodynamic forces
+on immersed panels, CFL numbers, and pressure drops.
+
+Attributes:
+    comm: MPI communicator shared by all PVade objects.
+    rank (int): Rank of this MPI process.
+    num_procs (int): Total number of MPI processes.
+    fluid_analysis (bool): Flag indicating whether a fluid analysis is
+        being performed.
+    thermal_analysis (bool): Flag indicating whether the energy equation
+        is solved.
+    name (str): Human-readable identifier (always ``&quot;fluid&quot;``).
+    Q (dolfinx.fem.FunctionSpace): Scalar Lagrange P1 pressure space.
+    V (dolfinx.fem.FunctionSpace): Vector Lagrange P2 velocity space.
+    T (dolfinx.fem.FunctionSpace): Tensor Lagrange P2 stress space on the
+        deformed fluid mesh.
+    T_undeformed (dolfinx.fem.FunctionSpace): Tensor Lagrange P2 stress
+        space on the reference (undeformed) fluid mesh.
+    S (dolfinx.fem.FunctionSpace): Scalar Lagrange P1 temperature space
+        (only when *thermal_analysis* is ``True``).
+    DG (dolfinx.fem.FunctionSpace): Discontinuous Galerkin P0 space used
+        for CFL field storage.
+    first_call_to_solver (bool): Flag indicating the first solver call
+        (triggers one-time assembly).
+    ndim (int): Spatial dimension of the fluid problem.
+    facet_dim (int): Facet dimension (``ndim - 1``).
+    hmin (float): Global minimum cell diameter across all MPI ranks.
+    num_Q_dofs (int): Global number of pressure DOFs.
+    num_V_dofs (int): Global number of velocity DOFs.
+</verbatim> </para>
+    </detaileddescription>
+    <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" line="35" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/FlowManager.py" bodystart="35" bodyend="1300"/>
+    <listofallmembers>
+      <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a6be5aa01ef906d87ff3239c3ee5ff545" prot="public" virt="non-virtual"><scope>pvade::fluid::FlowManager::Flow</scope><name>__init__</name></member>
+      <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a166f66c8e74adb190ce681ba53e6c595" prot="protected" virt="non-virtual"><scope>pvade::fluid::FlowManager::Flow</scope><name>_assemble_system</name></member>
+      <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a0aac3afac8843fcda761ff822836274e" prot="protected" virt="non-virtual"><scope>pvade::fluid::FlowManager::Flow</scope><name>_solver_step_1</name></member>
+      <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1ae251861e34685fe3e8b71ee572b3814d" prot="protected" virt="non-virtual"><scope>pvade::fluid::FlowManager::Flow</scope><name>_solver_step_2</name></member>
+      <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1ab504d1daa4ddc6c0d18ccaf3ff06d440" prot="protected" virt="non-virtual"><scope>pvade::fluid::FlowManager::Flow</scope><name>_solver_step_3</name></member>
+      <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a65e4f1ff97aebfdf40f7f92347802e87" prot="protected" virt="non-virtual"><scope>pvade::fluid::FlowManager::Flow</scope><name>_solver_step_4</name></member>
+      <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a5f8f9dda8642c8768734b03536314b52" prot="protected" virt="non-virtual"><scope>pvade::fluid::FlowManager::Flow</scope><name>_solver_step_5</name></member>
+      <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1aa6649203282ba11829d3ae0c525332be" prot="public" virt="non-virtual"><scope>pvade::fluid::FlowManager::Flow</scope><name>A1</name></member>
+      <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1aa6ab4b080112c05c37ac45584fdd490c" prot="public" virt="non-virtual"><scope>pvade::fluid::FlowManager::Flow</scope><name>a1</name></member>
+      <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a679422a138050d7f6ad9463624f37fc5" prot="public" virt="non-virtual"><scope>pvade::fluid::FlowManager::Flow</scope><name>A2</name></member>
+      <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1ad31b19692515c7cd136acb5cb03a39cb" prot="public" virt="non-virtual"><scope>pvade::fluid::FlowManager::Flow</scope><name>a2</name></member>
+      <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1ae74ac2ab09c0e20578561b6f35ae9c32" prot="public" virt="non-virtual"><scope>pvade::fluid::FlowManager::Flow</scope><name>A3</name></member>
+      <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a2b91dd0c7e13c81538d2e383729ac6e9" prot="public" virt="non-virtual"><scope>pvade::fluid::FlowManager::Flow</scope><name>a3</name></member>
+      <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1aaf7575cbc1bf5134e387ef203ecbcc9b" prot="public" virt="non-virtual"><scope>pvade::fluid::FlowManager::Flow</scope><name>A4</name></member>
+      <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a90a3d71a274ead03d652028068b0a827" prot="public" virt="non-virtual"><scope>pvade::fluid::FlowManager::Flow</scope><name>a4</name></member>
+      <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a51d374aa3d6e5d2d6002d1faef959284" prot="public" virt="non-virtual"><scope>pvade::fluid::FlowManager::Flow</scope><name>A5</name></member>
+      <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a48e7516c92bab48401ae9ed5b70c7293" prot="public" virt="non-virtual"><scope>pvade::fluid::FlowManager::Flow</scope><name>a5</name></member>
+      <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a4db460cc6fcc288aba7b52d76b004cd6" prot="public" virt="non-virtual"><scope>pvade::fluid::FlowManager::Flow</scope><name>A6</name></member>
+      <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a5bd5e9bfd52d247263b3544269440845" prot="public" virt="non-virtual"><scope>pvade::fluid::FlowManager::Flow</scope><name>a6</name></member>
+      <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a2a086d1967fab26f676d3efa427c6539" prot="public" virt="non-virtual"><scope>pvade::fluid::FlowManager::Flow</scope><name>adjust_dpdx_for_constant_flux</name></member>
+      <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1af2df911dcd50ac759488270dbc031785" prot="public" virt="non-virtual"><scope>pvade::fluid::FlowManager::Flow</scope><name>all_interior_V_dofs</name></member>
+      <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a9af034e23aacfe747c49a7aadd2c7b55" prot="public" virt="non-virtual"><scope>pvade::fluid::FlowManager::Flow</scope><name>alpha_c</name></member>
+      <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a4e0b4179758c0190363d8780747bb69f" prot="public" virt="non-virtual"><scope>pvade::fluid::FlowManager::Flow</scope><name>b1</name></member>
+      <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1aac6bc991b874206f7c4467f51ccab71d" prot="public" virt="non-virtual"><scope>pvade::fluid::FlowManager::Flow</scope><name>b2</name></member>
+      <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1add4c5d273366c793ba44c4fabdf644d1" prot="public" virt="non-virtual"><scope>pvade::fluid::FlowManager::Flow</scope><name>b3</name></member>
+      <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1adab8a4219bcfe36c2cd452a0853565ac" prot="public" virt="non-virtual"><scope>pvade::fluid::FlowManager::Flow</scope><name>b4</name></member>
+      <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a18d36fc25a2d69e6c2b508101f9af2e6" prot="public" virt="non-virtual"><scope>pvade::fluid::FlowManager::Flow</scope><name>b5</name></member>
+      <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a0374043c73cd492a2699452b86a80352" prot="public" virt="non-virtual"><scope>pvade::fluid::FlowManager::Flow</scope><name>b6</name></member>
+      <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a6ed4b7f8b3cc69837cb8b9961720e17e" prot="public" virt="non-virtual"><scope>pvade::fluid::FlowManager::Flow</scope><name>bcp</name></member>
+      <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a3c5350226de82de50accdebe491e08e4" prot="public" virt="non-virtual"><scope>pvade::fluid::FlowManager::Flow</scope><name>bcT</name></member>
+      <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a4c2d8906ebe28ba010f330cc573890c7" prot="public" virt="non-virtual"><scope>pvade::fluid::FlowManager::Flow</scope><name>bcu</name></member>
+      <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1acfb5b790243c0b1772f9199564690249" prot="public" virt="non-virtual"><scope>pvade::fluid::FlowManager::Flow</scope><name>beta_c</name></member>
+      <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1af8e4d3fea94279f378aa776472aa3b50" prot="public" virt="non-virtual"><scope>pvade::fluid::FlowManager::Flow</scope><name>build_boundary_conditions</name></member>
+      <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1ae1f61abbd382547d002824bfd057f20e" prot="public" virt="non-virtual"><scope>pvade::fluid::FlowManager::Flow</scope><name>build_forms</name></member>
+      <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1ade734da5731e35e321a90d4107505c83" prot="public" virt="non-virtual"><scope>pvade::fluid::FlowManager::Flow</scope><name>cfl_max</name></member>
+      <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a20e160be10e11b2880578b43018448d5" prot="public" virt="non-virtual"><scope>pvade::fluid::FlowManager::Flow</scope><name>cfl_vec</name></member>
+      <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1ae93b399034fd2950baa1b46c15c3774d" prot="public" virt="non-virtual"><scope>pvade::fluid::FlowManager::Flow</scope><name>comm</name></member>
+      <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1ae63cd88a8a509eef6d70903395c7effe" prot="public" virt="non-virtual"><scope>pvade::fluid::FlowManager::Flow</scope><name>compute_cfl</name></member>
+      <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1ab41a9ca029f30a15ffd8d5d121fff101" prot="public" virt="non-virtual"><scope>pvade::fluid::FlowManager::Flow</scope><name>compute_lift_and_drag</name></member>
+      <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a077051e530518bd246cd81fe0dce2e59" prot="public" virt="non-virtual"><scope>pvade::fluid::FlowManager::Flow</scope><name>compute_pressure_drop_between_points</name></member>
+      <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a3cd97905c4c08eeffa53cc6b7896a2a0" prot="public" virt="non-virtual"><scope>pvade::fluid::FlowManager::Flow</scope><name>DG</name></member>
+      <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1ac55a6cf94fe50993105b703d2d39b4b6" prot="public" virt="non-virtual"><scope>pvade::fluid::FlowManager::Flow</scope><name>dpdx</name></member>
+      <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a73181bd2d18cd30276c8ada2e34b5b34" prot="public" virt="non-virtual"><scope>pvade::fluid::FlowManager::Flow</scope><name>dpdx_history</name></member>
+      <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a84f036bcf92820d81dd33b1e2871bb0c" prot="public" virt="non-virtual"><scope>pvade::fluid::FlowManager::Flow</scope><name>dt_c</name></member>
+      <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a23b4fab7dc5f6e3f6defed8d141b85c8" prot="public" virt="non-virtual"><scope>pvade::fluid::FlowManager::Flow</scope><name>F1</name></member>
+      <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a03b68df0739bebcb02e07d91802b0bf9" prot="public" virt="non-virtual"><scope>pvade::fluid::FlowManager::Flow</scope><name>F4</name></member>
+      <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1ae462d6e9dece3f05989905df42065da7" prot="public" virt="non-virtual"><scope>pvade::fluid::FlowManager::Flow</scope><name>facet_dim</name></member>
+      <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a785029248dc6d8e984dc417cef123ef7" prot="public" virt="non-virtual"><scope>pvade::fluid::FlowManager::Flow</scope><name>first_call_to_solver</name></member>
+      <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a497bd3485aa1d5af3ee14b2cfc8fbcfb" prot="public" virt="non-virtual"><scope>pvade::fluid::FlowManager::Flow</scope><name>first_call_to_surface_pressure</name></member>
+      <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a3d92ee6f6d4c4679c2eca754ec53ebae" prot="public" virt="non-virtual"><scope>pvade::fluid::FlowManager::Flow</scope><name>fluid_analysis</name></member>
+      <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a2ce7b4bb20489c7c6f0e51e29aee44c4" prot="public" virt="non-virtual"><scope>pvade::fluid::FlowManager::Flow</scope><name>flux_plane</name></member>
+      <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1aa3e7c4bd7ad50e275ccafeb326e8c595" prot="public" virt="non-virtual"><scope>pvade::fluid::FlowManager::Flow</scope><name>g</name></member>
+      <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1acfcee9adf457abc8326872d33dbc5ecd" prot="public" virt="non-virtual"><scope>pvade::fluid::FlowManager::Flow</scope><name>hmin</name></member>
+      <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a1e7cf76918d2911fe61ce5ff934d7852" prot="public" virt="non-virtual"><scope>pvade::fluid::FlowManager::Flow</scope><name>inflow_profile</name></member>
+      <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a425733d05c08287719a533249af1e997" prot="public" virt="non-virtual"><scope>pvade::fluid::FlowManager::Flow</scope><name>inflow_velocity</name></member>
+      <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a34233dddcc77855770ea6880ca8a53b1" prot="public" virt="non-virtual"><scope>pvade::fluid::FlowManager::Flow</scope><name>integrated_force_x</name></member>
+      <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a09022717c53c249d99a85b57c86534a8" prot="public" virt="non-virtual"><scope>pvade::fluid::FlowManager::Flow</scope><name>integrated_force_x_form</name></member>
+      <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1afb3c48c32fd8193aa7f4b1dedbf4980b" prot="public" virt="non-virtual"><scope>pvade::fluid::FlowManager::Flow</scope><name>integrated_force_y</name></member>
+      <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1ac9b03d6704a30f145f130f1d7d405111" prot="public" virt="non-virtual"><scope>pvade::fluid::FlowManager::Flow</scope><name>integrated_force_y_form</name></member>
+      <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a94a32715f40af77bfd3be17af1498316" prot="public" virt="non-virtual"><scope>pvade::fluid::FlowManager::Flow</scope><name>integrated_force_z</name></member>
+      <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1ac6ed25dec800bf25ffb47f06d03c6c69" prot="public" virt="non-virtual"><scope>pvade::fluid::FlowManager::Flow</scope><name>integrated_force_z_form</name></member>
+      <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1ae155fdf3c999161c703d7f6518abceaa" prot="public" virt="non-virtual"><scope>pvade::fluid::FlowManager::Flow</scope><name>L1</name></member>
+      <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a6e927345a2b0b6f882ddde9cf237aa60" prot="public" virt="non-virtual"><scope>pvade::fluid::FlowManager::Flow</scope><name>L2</name></member>
+      <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a2b76056289f0b4ebae5514f0de464c4b" prot="public" virt="non-virtual"><scope>pvade::fluid::FlowManager::Flow</scope><name>L3</name></member>
+      <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1aecb8540f3a73da8dce307bcba7682d0a" prot="public" virt="non-virtual"><scope>pvade::fluid::FlowManager::Flow</scope><name>L4</name></member>
+      <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a25a81975606d85bf8e6194125a4b8026" prot="public" virt="non-virtual"><scope>pvade::fluid::FlowManager::Flow</scope><name>L5</name></member>
+      <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1aa202b4e97208c021faf7a69a715f99b8" prot="public" virt="non-virtual"><scope>pvade::fluid::FlowManager::Flow</scope><name>L6</name></member>
+      <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1af8df5dead5f6f076ec69350fdcc29de2" prot="public" virt="non-virtual"><scope>pvade::fluid::FlowManager::Flow</scope><name>lift_and_drag_filename</name></member>
+      <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a8cbd4fde37fd771f0da01db0b4f80b66" prot="public" virt="non-virtual"><scope>pvade::fluid::FlowManager::Flow</scope><name>mesh_vel</name></member>
+      <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a311fb95b87c36ab67a3bf29ce49ba241" prot="public" virt="non-virtual"><scope>pvade::fluid::FlowManager::Flow</scope><name>mesh_vel_bc</name></member>
+      <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1aaf97b1c7d8780461e476855538ce8485" prot="public" virt="non-virtual"><scope>pvade::fluid::FlowManager::Flow</scope><name>mesh_vel_bc_old</name></member>
+      <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1aef6adc85442935cecaa72185ecbf8ffe" prot="public" virt="non-virtual"><scope>pvade::fluid::FlowManager::Flow</scope><name>mesh_vel_old</name></member>
+      <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a84badbf265b079bd44ea62f89f58f866" prot="public" virt="non-virtual"><scope>pvade::fluid::FlowManager::Flow</scope><name>n</name></member>
+      <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1af815465a07a898102c789f4d3ac37d2d" prot="public" virt="non-virtual"><scope>pvade::fluid::FlowManager::Flow</scope><name>name</name></member>
+      <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a0d316e11ea705d3ea29a1ff1e208ea2d" prot="public" virt="non-virtual"><scope>pvade::fluid::FlowManager::Flow</scope><name>ndim</name></member>
+      <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a6fb2bd4c9c29ffc13eaec877681a93b0" prot="public" virt="non-virtual"><scope>pvade::fluid::FlowManager::Flow</scope><name>nu_T</name></member>
+      <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a8353ec846d7fd4b25fb0207f322570be" prot="public" virt="non-virtual"><scope>pvade::fluid::FlowManager::Flow</scope><name>nullspace</name></member>
+      <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a8c50d7a2e639d7e5060d60e2302c495d" prot="public" virt="non-virtual"><scope>pvade::fluid::FlowManager::Flow</scope><name>num_procs</name></member>
+      <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1ac6606676a8cc1ae285eefcae3f42ebec" prot="public" virt="non-virtual"><scope>pvade::fluid::FlowManager::Flow</scope><name>num_Q_dofs</name></member>
+      <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a461e548d879d6d81543ac357df2430c5" prot="public" virt="non-virtual"><scope>pvade::fluid::FlowManager::Flow</scope><name>num_V_dofs</name></member>
+      <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a9a7e12f08d8add1142a1f53325178104" prot="public" virt="non-virtual"><scope>pvade::fluid::FlowManager::Flow</scope><name>p</name></member>
+      <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a015c059f504ac20af2ffc392bd0c89ea" prot="public" virt="non-virtual"><scope>pvade::fluid::FlowManager::Flow</scope><name>p_k</name></member>
+      <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a488a8357af27126a578fcc70306f9f87" prot="public" virt="non-virtual"><scope>pvade::fluid::FlowManager::Flow</scope><name>p_k1</name></member>
+      <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a9fc9ae81a6b86a234cf81e4e2ad7bbfc" prot="public" virt="non-virtual"><scope>pvade::fluid::FlowManager::Flow</scope><name>panel_stress</name></member>
+      <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a858cf1d8892c0ee0bbd0714af0fc2991" prot="public" virt="non-virtual"><scope>pvade::fluid::FlowManager::Flow</scope><name>panel_stress_undeformed</name></member>
+      <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1ac7f8729c9397682a491729e539ce14d7" prot="public" virt="non-virtual"><scope>pvade::fluid::FlowManager::Flow</scope><name>Pe_approx</name></member>
+      <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1afb2e076bea03878ee71267d5f71f2559" prot="public" virt="non-virtual"><scope>pvade::fluid::FlowManager::Flow</scope><name>Q</name></member>
+      <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a58890e0a00f946edb082de0779132a16" prot="public" virt="non-virtual"><scope>pvade::fluid::FlowManager::Flow</scope><name>q</name></member>
+      <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1af8fdc128a50054828567640d589eb876" prot="public" virt="non-virtual"><scope>pvade::fluid::FlowManager::Flow</scope><name>r</name></member>
+      <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1af83bf90876c5921d98b51c5fcf9b1599" prot="public" virt="non-virtual"><scope>pvade::fluid::FlowManager::Flow</scope><name>rank</name></member>
+      <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a600cde920361dfe5501dacd30631fc22" prot="public" virt="non-virtual"><scope>pvade::fluid::FlowManager::Flow</scope><name>rho_c</name></member>
+      <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1aef369c2c1a2e7c1c31e95da2abc32e99" prot="public" virt="non-virtual"><scope>pvade::fluid::FlowManager::Flow</scope><name>S</name></member>
+      <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a41c80f8de0abfe05b1f847200efe59d5" prot="public" virt="non-virtual"><scope>pvade::fluid::FlowManager::Flow</scope><name>s</name></member>
+      <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a065a7470c36f8de504725c9428749615" prot="public" virt="non-virtual"><scope>pvade::fluid::FlowManager::Flow</scope><name>solve</name></member>
+      <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a82976bcbb9494c3e388cb80895fb38ec" prot="public" virt="non-virtual"><scope>pvade::fluid::FlowManager::Flow</scope><name>solver_1</name></member>
+      <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1ac6de5a8176648f0ed1fea5ba73e6ecbf" prot="public" virt="non-virtual"><scope>pvade::fluid::FlowManager::Flow</scope><name>solver_2</name></member>
+      <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a7ce2e451dd888cd03aa1235588d7477f" prot="public" virt="non-virtual"><scope>pvade::fluid::FlowManager::Flow</scope><name>solver_3</name></member>
+      <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a7a3b151b4668d0181dddd8543153dc12" prot="public" virt="non-virtual"><scope>pvade::fluid::FlowManager::Flow</scope><name>solver_4</name></member>
+      <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1addbd2cce8f32aa2b29a015779543a751" prot="public" virt="non-virtual"><scope>pvade::fluid::FlowManager::Flow</scope><name>solver_5</name></member>
+      <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a663739d96a942572f174adcdbdfc1d1b" prot="public" virt="non-virtual"><scope>pvade::fluid::FlowManager::Flow</scope><name>solver_6</name></member>
+      <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a48804905b8b3d8d1cb7f91b434040c85" prot="public" virt="non-virtual"><scope>pvade::fluid::FlowManager::Flow</scope><name>stabilizing</name></member>
+      <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a75f9b97f7dea37d0437aed65bcdd46a1" prot="public" virt="non-virtual"><scope>pvade::fluid::FlowManager::Flow</scope><name>stress</name></member>
+      <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1ab206a97cd3fbaebc674cbdc3ea3494ad" prot="public" virt="non-virtual"><scope>pvade::fluid::FlowManager::Flow</scope><name>T</name></member>
+      <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a8a3eac5b0807ce3fc1bd0404e7647292" prot="public" virt="non-virtual"><scope>pvade::fluid::FlowManager::Flow</scope><name>T_undeformed</name></member>
+      <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a87e175767b359d9373f9467f00a9bf92" prot="public" virt="non-virtual"><scope>pvade::fluid::FlowManager::Flow</scope><name>thermal_analysis</name></member>
+      <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1ae460604821e7895eb220987b4288fd14" prot="public" virt="non-virtual"><scope>pvade::fluid::FlowManager::Flow</scope><name>theta</name></member>
+      <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1aac4c345b174d117b5fad6ac07a9270f3" prot="public" virt="non-virtual"><scope>pvade::fluid::FlowManager::Flow</scope><name>theta_k</name></member>
+      <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1af404c5b82410414a92270fccfdfdf3f9" prot="public" virt="non-virtual"><scope>pvade::fluid::FlowManager::Flow</scope><name>theta_k1</name></member>
+      <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a1bf4833befd9b1ea9c463df3a56a3019" prot="public" virt="non-virtual"><scope>pvade::fluid::FlowManager::Flow</scope><name>theta_max</name></member>
+      <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1ac37f4e4e7858d5069e396ed5d11cb822" prot="public" virt="non-virtual"><scope>pvade::fluid::FlowManager::Flow</scope><name>theta_r</name></member>
+      <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a42c307d82c81b5bbd9ddfc3827266f5c" prot="public" virt="non-virtual"><scope>pvade::fluid::FlowManager::Flow</scope><name>traction</name></member>
+      <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1ae8fdf3666b5cf7a9f45fa6c037366d9a" prot="public" virt="non-virtual"><scope>pvade::fluid::FlowManager::Flow</scope><name>u</name></member>
+      <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1add11cda4d3e58324f2a937057971106e" prot="public" virt="non-virtual"><scope>pvade::fluid::FlowManager::Flow</scope><name>U_ALE</name></member>
+      <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1af8d1bc4ed3902518f4b8393436bf5ae0" prot="public" virt="non-virtual"><scope>pvade::fluid::FlowManager::Flow</scope><name>u_k</name></member>
+      <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1aec92a0408334079dcc1a35adba810e3c" prot="public" virt="non-virtual"><scope>pvade::fluid::FlowManager::Flow</scope><name>u_k1</name></member>
+      <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a5ddee51ec783dda2fbe64cb5ad864947" prot="public" virt="non-virtual"><scope>pvade::fluid::FlowManager::Flow</scope><name>u_k2</name></member>
+      <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1ae3e1522ff1732d85ad1d2750793c559a" prot="public" virt="non-virtual"><scope>pvade::fluid::FlowManager::Flow</scope><name>upper_cells</name></member>
+      <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a6a7d4a2b4606b59e6d5a38400bb40d00" prot="public" virt="non-virtual"><scope>pvade::fluid::FlowManager::Flow</scope><name>V</name></member>
+      <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1ae29cea031e713f4af0de0e7c11c0abc3" prot="public" virt="non-virtual"><scope>pvade::fluid::FlowManager::Flow</scope><name>v</name></member>
+      <member refid="classpvade_1_1fluid_1_1_flow_manager_1_1_flow_1a7573382749d323d62d32e86cb7159ca5" prot="public" virt="non-virtual"><scope>pvade::fluid::FlowManager::Flow</scope><name>zero_vec</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

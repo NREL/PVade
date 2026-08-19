@@ -1,0 +1,94 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.17.0" xml:lang="en-US">
+  <compounddef id="namespacetest___parameters" kind="namespace" language="Python">
+    <compoundname>test_Parameters</compoundname>
+    <sectiondef kind="var">
+      <memberdef kind="variable" id="namespacetest___parameters_1a8bcbdf7e352abe7f6867b36299d72951" prot="public" static="no" mutable="no">
+        <type>str</type>
+        <definition>str test_Parameters.filename</definition>
+        <argsstring></argsstring>
+        <name>filename</name>
+        <qualifiedname>test_Parameters.filename</qualifiedname>
+        <initializer>=  &quot;pvade/tests/input/yaml/test_inputs.yaml&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/tests/test_Parameters.py" line="6" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/tests/test_Parameters.py" bodystart="6" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="func">
+      <memberdef kind="function" id="namespacetest___parameters_1aede8b9c3d20f6cd773b4c9773949a434" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>create_params</definition>
+        <argsstring>()</argsstring>
+        <name>create_params</name>
+        <qualifiedname>test_Parameters.create_params</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/tests/test_Parameters.py" line="10" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/tests/test_Parameters.py" bodystart="10" bodyend="32"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacetest___parameters_1a8ab0aa6ae6aef089c7086722d6c99ed9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>create_bad_params</definition>
+        <argsstring>()</argsstring>
+        <name>create_bad_params</name>
+        <qualifiedname>test_Parameters.create_bad_params</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/tests/test_Parameters.py" line="33" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/tests/test_Parameters.py" bodystart="33" bodyend="47"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacetest___parameters_1adccb01ecad52a0649fbb1aefac3b8c06" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>test_parameters</definition>
+        <argsstring>(create_params)</argsstring>
+        <name>test_parameters</name>
+        <qualifiedname>test_Parameters.test_parameters</qualifiedname>
+        <param>
+          <type><ref refid="namespacetest___parameters_1aede8b9c3d20f6cd773b4c9773949a434" kindref="member">create_params</ref></type>
+          <defname>create_params</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/tests/test_Parameters.py" line="48" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/tests/test_Parameters.py" bodystart="48" bodyend="59"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacetest___parameters_1a02f77544c98f711f8cfcef91fba1cabf" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>test_bad_parameters</definition>
+        <argsstring>(create_bad_params)</argsstring>
+        <name>test_bad_parameters</name>
+        <qualifiedname>test_Parameters.test_bad_parameters</qualifiedname>
+        <param>
+          <type><ref refid="namespacetest___parameters_1a8ab0aa6ae6aef089c7086722d6c99ed9" kindref="member">create_bad_params</ref></type>
+          <defname>create_bad_params</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/tests/test_Parameters.py" line="60" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/tests/test_Parameters.py" bodystart="60" bodyend="63"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/tests/test_Parameters.py" line="1" column="1"/>
+  </compounddef>
+</doxygen>

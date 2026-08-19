@@ -1,0 +1,267 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.17.0" xml:lang="en-US">
+  <compounddef id="classpvade_1_1_i_o_1_1_data_stream_1_1_data_stream" kind="class" language="Python" prot="public">
+    <compoundname>pvade::IO::DataStream::DataStream</compoundname>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="classpvade_1_1_i_o_1_1_data_stream_1_1_data_stream_1a65af4f3d725f01ff77cef47c7f648e9a" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.IO.DataStream.DataStream::comm</definition>
+        <argsstring></argsstring>
+        <name>comm</name>
+        <qualifiedname>pvade.IO.DataStream.DataStream.comm</qualifiedname>
+        <initializer>=  params.comm</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/IO/DataStream.py" line="136" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/IO/DataStream.py" bodystart="136" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1_i_o_1_1_data_stream_1_1_data_stream_1abdfaa8040a8f384d6ab9bf067ec921ab" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.IO.DataStream.DataStream::rank</definition>
+        <argsstring></argsstring>
+        <name>rank</name>
+        <qualifiedname>pvade.IO.DataStream.DataStream.rank</qualifiedname>
+        <initializer>=  params.rank</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/IO/DataStream.py" line="137" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/IO/DataStream.py" bodystart="137" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1_i_o_1_1_data_stream_1_1_data_stream_1a32af17c45f863d525c1908ebee3d5c32" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.IO.DataStream.DataStream::num_procs</definition>
+        <argsstring></argsstring>
+        <name>num_procs</name>
+        <qualifiedname>pvade.IO.DataStream.DataStream.num_procs</qualifiedname>
+        <initializer>=  params.num_procs</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/IO/DataStream.py" line="138" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/IO/DataStream.py" bodystart="138" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1_i_o_1_1_data_stream_1_1_data_stream_1ab3ccc8ff8969e26038cab0c5d39a8eb6" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.IO.DataStream.DataStream::ndim</definition>
+        <argsstring></argsstring>
+        <name>ndim</name>
+        <qualifiedname>pvade.IO.DataStream.DataStream.ndim</qualifiedname>
+        <initializer>=  domain.fluid.msh.topology.dim</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/IO/DataStream.py" line="139" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/IO/DataStream.py" bodystart="139" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1_i_o_1_1_data_stream_1_1_data_stream_1a9d676100ac6eab813cbba05a668d0e44" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.IO.DataStream.DataStream::thermal_analysis</definition>
+        <argsstring></argsstring>
+        <name>thermal_analysis</name>
+        <qualifiedname>pvade.IO.DataStream.DataStream.thermal_analysis</qualifiedname>
+        <initializer>=  params.general.thermal_analysis</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/IO/DataStream.py" line="140" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/IO/DataStream.py" bodystart="140" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1_i_o_1_1_data_stream_1_1_data_stream_1a5d77523c7869cbe9ef5a6cef9199e748" prot="public" static="no" mutable="no">
+        <type>tuple</type>
+        <definition>pvade.IO.DataStream.DataStream::results_filename_fluid</definition>
+        <argsstring></argsstring>
+        <name>results_filename_fluid</name>
+        <qualifiedname>pvade.IO.DataStream.DataStream.results_filename_fluid</qualifiedname>
+        <initializer>=  (
+                f&quot;{params.general.output_dir_sol}/solution_fluid.xdmf&quot;
+            )</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/IO/DataStream.py" line="144" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/IO/DataStream.py" bodystart="144" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1_i_o_1_1_data_stream_1_1_data_stream_1af46cff73741888659fb588d00e722814" prot="public" static="no" mutable="no">
+        <type>tuple</type>
+        <definition>pvade.IO.DataStream.DataStream::results_filename_structure</definition>
+        <argsstring></argsstring>
+        <name>results_filename_structure</name>
+        <qualifiedname>pvade.IO.DataStream.DataStream.results_filename_structure</qualifiedname>
+        <initializer>=  (
+                f&quot;{params.general.output_dir_sol}/solution_structure.xdmf&quot;
+            )</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/IO/DataStream.py" line="163" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/IO/DataStream.py" bodystart="163" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1_i_o_1_1_data_stream_1_1_data_stream_1aca24411cdf74ec8e66978a0ec50037f5" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.IO.DataStream.DataStream::prob_k_nominal</definition>
+        <argsstring></argsstring>
+        <name>prob_k_nominal</name>
+        <qualifiedname>pvade.IO.DataStream.DataStream.prob_k_nominal</qualifiedname>
+        <initializer>=  dolfinx.fem.petsc.LinearProblem(
+                ufl.lhs(structure.elasticity.k_nominal_proj),
+                ufl.rhs(structure.elasticity.k_nominal_proj),
+                bcs=[],
+                petsc_options=petsc_options,
+            )</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/IO/DataStream.py" line="170" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/IO/DataStream.py" bodystart="170" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1_i_o_1_1_data_stream_1_1_data_stream_1aa85e7c687cff35830aef2023e2d62a00" prot="public" static="no" mutable="no">
+        <type>str</type>
+        <definition>pvade.IO.DataStream.DataStream::log_filename_structure</definition>
+        <argsstring></argsstring>
+        <name>log_filename_structure</name>
+        <qualifiedname>pvade.IO.DataStream.DataStream.log_filename_structure</qualifiedname>
+        <initializer>=  f&quot;{params.general.output_dir_sol}/log_str.txt&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/IO/DataStream.py" line="194" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/IO/DataStream.py" bodystart="194" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classpvade_1_1_i_o_1_1_data_stream_1_1_data_stream_1a2d90d61e73828841fd50bad7b5922a78" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>pvade.IO.DataStream.DataStream.__init__</definition>
+        <argsstring>(self, domain, flow, structure=None, params=None)</argsstring>
+        <name>__init__</name>
+        <qualifiedname>pvade.IO.DataStream.DataStream.__init__</qualifiedname>
+        <param>
+          <type>self</type>
+          <defname>self</defname>
+        </param>
+        <param>
+          <type>domain</type>
+          <defname>domain</defname>
+        </param>
+        <param>
+          <type>flow</type>
+          <defname>flow</defname>
+        </param>
+        <param>
+          <type><ref refid="namespacepvade_1_1structure" kindref="compound">structure</ref></type>
+          <defname>structure</defname>
+          <defval>None</defval>
+        </param>
+        <param>
+          <type>params</type>
+          <defname>params</defname>
+          <defval>None</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><verbatim>Initialize the DataStream object
+
+This initializes an object that manages the I/O for all of PVade.
+
+Args:
+    domain (:obj:`pvade.geometry.MeshManager.Domain`): A Domain object
+    flow (:obj:`pvade.fluid.FlowManager.Flow`): A Flow object
+    params (:obj:`pvade.Parameters.SimParams`): A SimParams object
+</verbatim> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/IO/DataStream.py" line="124" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/IO/DataStream.py" bodystart="124" bodyend="245"/>
+      </memberdef>
+      <memberdef kind="function" id="classpvade_1_1_i_o_1_1_data_stream_1_1_data_stream_1ae9e9928fe2853f960c702e5b10ac3540" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>pvade.IO.DataStream.DataStream.save_XDMF_files</definition>
+        <argsstring>(self, fsi_object, domain, tt)</argsstring>
+        <name>save_XDMF_files</name>
+        <qualifiedname>pvade.IO.DataStream.DataStream.save_XDMF_files</qualifiedname>
+        <param>
+          <type>self</type>
+          <defname>self</defname>
+        </param>
+        <param>
+          <type>fsi_object</type>
+          <defname>fsi_object</defname>
+        </param>
+        <param>
+          <type>domain</type>
+          <defname>domain</defname>
+        </param>
+        <param>
+          <type>tt</type>
+          <defname>tt</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><verbatim>Write additional timestep to XDMF file
+
+This function appends the state of the flow at time `tt` to an existing XDMF file.
+
+Args:
+    flow (:obj:`pvade.fluid.FlowManager.Flow`): A Flow object
+    tt (float): The time at which the current solution exists
+</verbatim> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/IO/DataStream.py" line="246" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/IO/DataStream.py" bodystart="246" bodyend="287"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><verbatim>Input/Output and file writing class
+
+This class manages the generation and updating of the saved xdmf files
+from each run along with command line outputs and log files.
+
+Attributes:
+    comm (MPI Communicator): An MPI communicator used by all PVade objects
+    ndim (int): The number of dimensions in the problem
+    num_procs (int): The total number of processors being used to solve the problem
+    rank (int): A unique ID for each process in the range `[0, 1, ..., num_procs-1]`
+    results_filename_fluid (str): The full path to the directory in which all saved files will be written.
+</verbatim> </para>
+    </detaileddescription>
+    <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/IO/DataStream.py" line="109" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/IO/DataStream.py" bodystart="109" bodyend="305"/>
+    <listofallmembers>
+      <member refid="classpvade_1_1_i_o_1_1_data_stream_1_1_data_stream_1a2d90d61e73828841fd50bad7b5922a78" prot="public" virt="non-virtual"><scope>pvade::IO::DataStream::DataStream</scope><name>__init__</name></member>
+      <member refid="classpvade_1_1_i_o_1_1_data_stream_1_1_data_stream_1a65af4f3d725f01ff77cef47c7f648e9a" prot="public" virt="non-virtual"><scope>pvade::IO::DataStream::DataStream</scope><name>comm</name></member>
+      <member refid="classpvade_1_1_i_o_1_1_data_stream_1_1_data_stream_1aa85e7c687cff35830aef2023e2d62a00" prot="public" virt="non-virtual"><scope>pvade::IO::DataStream::DataStream</scope><name>log_filename_structure</name></member>
+      <member refid="classpvade_1_1_i_o_1_1_data_stream_1_1_data_stream_1ab3ccc8ff8969e26038cab0c5d39a8eb6" prot="public" virt="non-virtual"><scope>pvade::IO::DataStream::DataStream</scope><name>ndim</name></member>
+      <member refid="classpvade_1_1_i_o_1_1_data_stream_1_1_data_stream_1a32af17c45f863d525c1908ebee3d5c32" prot="public" virt="non-virtual"><scope>pvade::IO::DataStream::DataStream</scope><name>num_procs</name></member>
+      <member refid="classpvade_1_1_i_o_1_1_data_stream_1_1_data_stream_1aca24411cdf74ec8e66978a0ec50037f5" prot="public" virt="non-virtual"><scope>pvade::IO::DataStream::DataStream</scope><name>prob_k_nominal</name></member>
+      <member refid="classpvade_1_1_i_o_1_1_data_stream_1_1_data_stream_1abdfaa8040a8f384d6ab9bf067ec921ab" prot="public" virt="non-virtual"><scope>pvade::IO::DataStream::DataStream</scope><name>rank</name></member>
+      <member refid="classpvade_1_1_i_o_1_1_data_stream_1_1_data_stream_1a5d77523c7869cbe9ef5a6cef9199e748" prot="public" virt="non-virtual"><scope>pvade::IO::DataStream::DataStream</scope><name>results_filename_fluid</name></member>
+      <member refid="classpvade_1_1_i_o_1_1_data_stream_1_1_data_stream_1af46cff73741888659fb588d00e722814" prot="public" virt="non-virtual"><scope>pvade::IO::DataStream::DataStream</scope><name>results_filename_structure</name></member>
+      <member refid="classpvade_1_1_i_o_1_1_data_stream_1_1_data_stream_1ae9e9928fe2853f960c702e5b10ac3540" prot="public" virt="non-virtual"><scope>pvade::IO::DataStream::DataStream</scope><name>save_XDMF_files</name></member>
+      <member refid="classpvade_1_1_i_o_1_1_data_stream_1_1_data_stream_1a9d676100ac6eab813cbba05a668d0e44" prot="public" virt="non-virtual"><scope>pvade::IO::DataStream::DataStream</scope><name>thermal_analysis</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

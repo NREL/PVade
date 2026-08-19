@@ -1,0 +1,296 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.17.0" xml:lang="en-US">
+  <compounddef id="namespacepvade_1_1fluid_1_1boundary__conditions" kind="namespace" language="Python">
+    <compoundname>pvade::fluid::boundary_conditions</compoundname>
+    <innerclass refid="classpvade_1_1fluid_1_1boundary__conditions_1_1_inflow_velocity" prot="public">pvade::fluid::boundary_conditions::InflowVelocity</innerclass>
+    <sectiondef kind="func">
+      <memberdef kind="function" id="namespacepvade_1_1fluid_1_1boundary__conditions_1a9539bb7cfd79da86137d9c228f6b4634" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>_vprint</definition>
+        <argsstring>(rank, message, level=1)</argsstring>
+        <name>_vprint</name>
+        <qualifiedname>pvade.fluid.boundary_conditions._vprint</qualifiedname>
+        <param>
+          <type>rank</type>
+          <defname>rank</defname>
+        </param>
+        <param>
+          <type>message</type>
+          <defname>message</defname>
+        </param>
+        <param>
+          <type>level</type>
+          <defname>level</defname>
+          <defval>1</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><verbatim>Rank-0 verbosity-aware print helper for boundary-condition messages.</verbatim> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/boundary_conditions.py" line="21" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/boundary_conditions.py" bodystart="21" bodyend="26"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacepvade_1_1fluid_1_1boundary__conditions_1a564af8b53fc7c85edb8f4b100b147dd7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>get_facet_dofs_by_gmsh_tag</definition>
+        <argsstring>(domain, functionspace, location)</argsstring>
+        <name>get_facet_dofs_by_gmsh_tag</name>
+        <qualifiedname>pvade.fluid.boundary_conditions.get_facet_dofs_by_gmsh_tag</qualifiedname>
+        <param>
+          <type>domain</type>
+          <defname>domain</defname>
+        </param>
+        <param>
+          <type>functionspace</type>
+          <defname>functionspace</defname>
+        </param>
+        <param>
+          <type>location</type>
+          <defname>location</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><verbatim>Associate degrees of freedom with marker functions
+
+This function uses the marker information in the gmsh specification to
+find the corresponding degrees of freedom for use in the actual
+boundary condition specification. Note that this method does not
+require access to the facet information computed with
+``_locate_boundary_entities``.
+
+Args:
+    domain (:obj:`pvade.geometry.MeshManager.Domain`): A Domain object
+    functionspace (dolfinx.fem.FunctionSpace): The dolfinx function space on which the boundary condition will be applied
+    location (str, int): A string identifier of the boundary condition location, e.g., &quot;x_min&quot; or the equivalent integer tag, e.g., 1
+
+Returns:
+    list: A list of the degrees of freedom associated with this tag and functionspace
+</verbatim> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/boundary_conditions.py" line="27" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/boundary_conditions.py" bodystart="27" bodyend="72"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacepvade_1_1fluid_1_1boundary__conditions_1a588b091db900dbb2121dec159ce5ad48" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>build_vel_bc_by_type</definition>
+        <argsstring>(bc_type, domain, functionspace, bc_location)</argsstring>
+        <name>build_vel_bc_by_type</name>
+        <qualifiedname>pvade.fluid.boundary_conditions.build_vel_bc_by_type</qualifiedname>
+        <param>
+          <type>bc_type</type>
+          <defname>bc_type</defname>
+        </param>
+        <param>
+          <type>domain</type>
+          <defname>domain</defname>
+        </param>
+        <param>
+          <type>functionspace</type>
+          <defname>functionspace</defname>
+        </param>
+        <param>
+          <type>bc_location</type>
+          <defname>bc_location</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><verbatim>Build a dirichlet bc
+
+Args:
+    bc_type (str): The type of simple boundary condition to apply, &quot;slip&quot; or &quot;noslip&quot;
+    domain (:obj:`pvade.geometry.MeshManager.Domain`): A Domain object
+    functionspace (dolfinx.fem.FunctionSpace): The dolfinx function space on which the boundary condition will be applied
+    bc_location (str, int): A string identifier of the boundary condition location, e.g., &quot;x_min&quot; or the equivalent integer tag, e.g., 1
+
+Returns:
+    dolfinx.fem.dirichletbc: A dolfinx dirichlet boundary condition
+</verbatim> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/boundary_conditions.py" line="73" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/boundary_conditions.py" bodystart="73" bodyend="124"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacepvade_1_1fluid_1_1boundary__conditions_1a5d8dd48ba4e9e70cc6ce6c036d4986d1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>get_inflow_profile_function</definition>
+        <argsstring>(domain, params, functionspace, current_time)</argsstring>
+        <name>get_inflow_profile_function</name>
+        <qualifiedname>pvade.fluid.boundary_conditions.get_inflow_profile_function</qualifiedname>
+        <param>
+          <type>domain</type>
+          <defname>domain</defname>
+        </param>
+        <param>
+          <type>params</type>
+          <defname>params</defname>
+        </param>
+        <param>
+          <type>functionspace</type>
+          <defname>functionspace</defname>
+        </param>
+        <param>
+          <type>current_time</type>
+          <defname>current_time</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><verbatim>Build a DOLFINx function object containing the inflow velocity field.
+
+Constructs a :class:`dolfinx.fem.Function` on *functionspace* and
+populates it with the inflow velocity profile prescribed by
+``params.fluid.velocity_profile_type``. For the log-law profile, the
+velocity is set to zero below the surface-layer height (``d0 + z0``) to
+avoid logarithm singularities.
+
+Args:
+    domain (:obj:`pvade.geometry.MeshManager.FSIDomain`): The domain
+        object, used to access the fluid mesh and MPI communicator.
+    params (:obj:`pvade.IO.Parameters.SimParams`): A SimParams object.
+    functionspace (dolfinx.fem.FunctionSpace): The velocity function space
+        on which the inflow profile is interpolated.
+    current_time (float): The simulation time at which the inflow profile
+        is evaluated (relevant for ``&quot;specified_from_file&quot;``).
+
+Returns:
+    tuple:
+        - **inflow_function** (*dolfinx.fem.Function*): The interpolated
+          inflow velocity field.
+        - **inflow_velocity** (:class:`InflowVelocity`): The callable
+          object used for interpolation.
+        - **upper_cells** (*np.ndarray or None*): Mesh cell indices above
+          the surface-layer roughness height (only non-``None`` for the
+          log-law profile).
+</verbatim> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/boundary_conditions.py" line="350" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/boundary_conditions.py" bodystart="350" bodyend="466"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacepvade_1_1fluid_1_1boundary__conditions_1acfcdc48ec13d45da65dd49ac2fb54fd2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>build_velocity_boundary_conditions</definition>
+        <argsstring>(domain, params, functionspace, current_time)</argsstring>
+        <name>build_velocity_boundary_conditions</name>
+        <qualifiedname>pvade.fluid.boundary_conditions.build_velocity_boundary_conditions</qualifiedname>
+        <param>
+          <type>domain</type>
+          <defname>domain</defname>
+        </param>
+        <param>
+          <type>params</type>
+          <defname>params</defname>
+        </param>
+        <param>
+          <type>functionspace</type>
+          <defname>functionspace</defname>
+        </param>
+        <param>
+          <type>current_time</type>
+          <defname>current_time</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><verbatim>Build all boundary conditions on velocity
+
+This method builds all the boundary conditions associated with velocity and stores in a list, ``bcu``.
+
+Args:
+    domain (:obj:`pvade.geometry.MeshManager.Domain`): A Domain object
+    params (:obj:`pvade.Parameters.SimParams`): A SimParams object
+</verbatim> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/boundary_conditions.py" line="467" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/boundary_conditions.py" bodystart="467" bodyend="552"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacepvade_1_1fluid_1_1boundary__conditions_1a173fe6f5aa2a50cbdba1f49e878b9c0b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>build_pressure_boundary_conditions</definition>
+        <argsstring>(domain, params, functionspace)</argsstring>
+        <name>build_pressure_boundary_conditions</name>
+        <qualifiedname>pvade.fluid.boundary_conditions.build_pressure_boundary_conditions</qualifiedname>
+        <param>
+          <type>domain</type>
+          <defname>domain</defname>
+        </param>
+        <param>
+          <type>params</type>
+          <defname>params</defname>
+        </param>
+        <param>
+          <type>functionspace</type>
+          <defname>functionspace</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><verbatim>Build all boundary conditions on pressure
+
+This method builds all the boundary conditions associated with pressure and stores in a list, ``bcp``.
+
+Args:
+    domain (:obj:`pvade.geometry.MeshManager.Domain`): A Domain object
+    params (:obj:`pvade.Parameters.SimParams`): A SimParams object
+</verbatim> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/boundary_conditions.py" line="553" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/boundary_conditions.py" bodystart="553" bodyend="572"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacepvade_1_1fluid_1_1boundary__conditions_1ac58e07957c8c88f475742fc1246a7ff8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>build_temperature_boundary_conditions</definition>
+        <argsstring>(domain, params, functionspace)</argsstring>
+        <name>build_temperature_boundary_conditions</name>
+        <qualifiedname>pvade.fluid.boundary_conditions.build_temperature_boundary_conditions</qualifiedname>
+        <param>
+          <type>domain</type>
+          <defname>domain</defname>
+        </param>
+        <param>
+          <type>params</type>
+          <defname>params</defname>
+        </param>
+        <param>
+          <type>functionspace</type>
+          <defname>functionspace</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><verbatim>Build all boundary conditions on temperature
+
+This method builds all the boundary conditions associated with temperature and stores in a list, ``bcT``.
+
+Args:
+    domain (:obj:`pvade.geometry.MeshManager.Domain`): A Domain object
+    params (:obj:`pvade.Parameters.SimParams`): A SimParams object
+</verbatim> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/boundary_conditions.py" line="573" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/boundary_conditions.py" bodystart="573" bodyend="689"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><verbatim>Boundary condition utilities for the incompressible Navier–Stokes solver.
+
+This module provides functions and classes for building Dirichlet boundary
+conditions on velocity, pressure, and temperature fields.  It also contains
+:class:`InflowVelocity`, a callable class that evaluates user-selected inflow
+profiles (uniform, parabolic, log-law, or from a pre-computed HDF5 file) at
+any spatial position and simulation time.
+</verbatim> </para>
+    </detaileddescription>
+    <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/boundary_conditions.py" line="1" column="1"/>
+  </compounddef>
+</doxygen>

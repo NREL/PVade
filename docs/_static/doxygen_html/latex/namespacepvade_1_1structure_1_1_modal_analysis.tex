@@ -1,0 +1,36 @@
+\doxysection{pvade.\+structure.\+Modal\+Analysis Namespace Reference}
+\hypertarget{namespacepvade_1_1structure_1_1_modal_analysis}{}\label{namespacepvade_1_1structure_1_1_modal_analysis}\index{pvade.structure.ModalAnalysis@{pvade.structure.ModalAnalysis}}
+\doxysubsubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \doxymbox{\hyperlink{classpvade_1_1structure_1_1_modal_analysis_1_1_modal_analysis}{Modal\+Analysis}}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\doxymbox{\hyperlink{namespacepvade_1_1structure_1_1_modal_analysis_a9539bb7cfd79da86137d9c228f6b4634}{\+\_\+vprint}} (rank, message, level=1)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\begin{DoxyVerb}Modal (eigenvalue) analysis for structural mechanics.
+
+This module provides the :class:`ModalAnalysis` class, which assembles the
+structural mass and stiffness matrices and solves the generalised eigenvalue
+problem to obtain natural frequencies and mode shapes.  It shares the same
+time-integration infrastructure as :class:`~pvade.structure.ElasticityAnalysis.Elasticity`
+but is intended for free-vibration studies rather than time-domain forcing.
+\end{DoxyVerb}
+ 
+
+\label{namespacepvade_1_1structure_1_1_modal_analysis_doc-func-members}
+\Hypertarget{namespacepvade_1_1structure_1_1_modal_analysis_doc-func-members}
+\doxysubsection{Function Documentation}
+\Hypertarget{namespacepvade_1_1structure_1_1_modal_analysis_a9539bb7cfd79da86137d9c228f6b4634}\index{pvade.structure.ModalAnalysis@{pvade.structure.ModalAnalysis}!\_vprint@{\_vprint}}
+\index{\_vprint@{\_vprint}!pvade.structure.ModalAnalysis@{pvade.structure.ModalAnalysis}}
+\doxysubsubsection{\texorpdfstring{\_vprint()}{\_vprint()}}
+{\footnotesize\ttfamily \label{namespacepvade_1_1structure_1_1_modal_analysis_a9539bb7cfd79da86137d9c228f6b4634} 
+\+\_\+vprint (\begin{DoxyParamCaption}\item[{}]{rank}{, }\item[{}]{message}{, }\item[{}]{level}{ = {\ttfamily 1}}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [protected]}}
+
+\begin{DoxyVerb}Rank-0 verbosity-aware print helper for modal analysis messages.\end{DoxyVerb}
+ 

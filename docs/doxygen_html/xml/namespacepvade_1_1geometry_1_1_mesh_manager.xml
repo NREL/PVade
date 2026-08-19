@@ -1,0 +1,55 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.17.0" xml:lang="en-US">
+  <compounddef id="namespacepvade_1_1geometry_1_1_mesh_manager" kind="namespace" language="Python">
+    <compoundname>pvade::geometry::MeshManager</compoundname>
+    <innerclass refid="classpvade_1_1geometry_1_1_mesh_manager_1_1_f_s_i_domain" prot="public">pvade::geometry::MeshManager::FSIDomain</innerclass>
+    <sectiondef kind="func">
+      <memberdef kind="function" id="namespacepvade_1_1geometry_1_1_mesh_manager_1a9539bb7cfd79da86137d9c228f6b4634" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>_vprint</definition>
+        <argsstring>(rank, message, level=1)</argsstring>
+        <name>_vprint</name>
+        <qualifiedname>pvade.geometry.MeshManager._vprint</qualifiedname>
+        <param>
+          <type>rank</type>
+          <defname>rank</defname>
+        </param>
+        <param>
+          <type>message</type>
+          <defname>message</defname>
+        </param>
+        <param>
+          <type>level</type>
+          <defname>level</defname>
+          <defval>1</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><verbatim>Rank-0 verbosity-aware print helper for mesh manager messages.</verbatim> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/MeshManager.py" line="32" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/MeshManager.py" bodystart="32" bodyend="38"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><verbatim>Computational domain construction and mesh management.
+
+This module provides the :class:`FSIDomain` class, which orchestrates the
+entire geometry-to-mesh pipeline:
+
+1. Builds the CAD geometry by delegating to a problem-specific
+    ``DomainCreation`` module selected at runtime.
+2. Marks fluid and structural surface/volume regions with integer tags.
+3. Generates the mesh with Gmsh.
+4. Distributes the mesh across MPI ranks via DOLFINx.
+5. Extracts fluid and structure submeshes from the parent mesh using cell tags.
+6. Transfers facet tags to each submesh for boundary-condition assignment.
+</verbatim> </para>
+    </detaileddescription>
+    <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/MeshManager.py" line="1" column="1"/>
+  </compounddef>
+</doxygen>

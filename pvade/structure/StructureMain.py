@@ -1,4 +1,12 @@
-"""Summary"""
+"""Top-level structural mechanics manager.
+
+This module provides the :class:`Structure` class, which acts as a facade
+that coordinates the structural analysis pipeline: it owns the
+:class:`~pvade.structure.ElasticityAnalysis.Elasticity` physics object,
+sets up function spaces and boundary conditions, delegates variational form
+assembly, and exposes a single :meth:`Structure.solve` entry point used
+by the FSI coupling loop.
+"""
 
 import dolfinx
 import ufl
@@ -15,11 +23,47 @@ from importlib import import_module
 
 from pvade.structure.boundary_conditions import build_structure_boundary_conditions
 from pvade.structure.ElasticityAnalysis import Elasticity
+from pvade.IO.verbosity import emit_verbosity_print
 from contextlib import ExitStack
 
 
+def _vprint(rank, message, level=1):
+    """Rank-0 verbosity-aware print helper for structure messages."""
+    if rank == 0:
+        emit_verbosity_print(message, level=level)
+
+
 class Structure:
-    """This class solves the CFD problem"""
+    """Top-level structural mechanics coordinator.
+
+    ``Structure`` wraps the lower-level
+    :class:`~pvade.structure.ElasticityAnalysis.Elasticity` solver and adds
+    mesh-topology bookkeeping (minimum cell size, dimension information) and
+    material property storage.  It is the object that the FSI loop interacts
+    with directly.
+
+    Attributes:
+        comm: MPI communicator shared by all PVade objects.
+        rank (int): Rank of this MPI process.
+        num_procs (int): Total number of MPI processes.
+        structural_analysis (bool): Flag indicating whether a structural
+            analysis is being performed (read from *params*).
+        name (str): Human-readable identifier (always ``"structure"``).
+        elasticity (:obj:`pvade.structure.ElasticityAnalysis.Elasticity`):
+            The underlying nonlinear elasticity physics object.
+        ndim (int): Topological dimension of the structure mesh.
+        facet_dim (int): Facet dimension (``ndim - 1``).
+        hmin (float): Global minimum cell diameter across all MPI ranks.
+        num_V_dofs (int): Global number of displacement DOFs (delegated from
+            ``elasticity``).
+        rho (dolfinx.fem.Constant): Mass density :math:`\\rho`.
+        E (float): Young's modulus.
+        poissons_ratio (float): Poisson's ratio.
+        lame_mu (float): Lamé shear modulus :math:`\\mu`.
+        lame_lambda (float): Lamé first parameter :math:`\\lambda`.
+        north_east_corner_dofs (np.ndarray): DOF indices for the probe point
+            at the north-east corner of the first panel.
+    """
 
     def __init__(self, domain, params):
         """Initialize the fluid solver
@@ -61,7 +105,7 @@ class Structure:
         else:
             hmin_local = np.inf
 
-        print(hmin_local)
+        _vprint(self.rank, f"hmin_local={hmin_local:.6e}", level=2)
         self.hmin = np.zeros(1)
         self.hmin = self.comm.allreduce(hmin_local, op=MPI.MIN)
 
@@ -71,9 +115,8 @@ class Structure:
         # self.hmin = self.hmin[0]
 
         self.num_V_dofs = self.elasticity.num_V_dofs
-        if self.rank == 0:
-            print(f"hmin on structure = {self.hmin}")
-            print(f"Total num dofs on structure = {self.num_V_dofs}")
+        _vprint(self.rank, f"hmin on structure = {self.hmin}", level=1)
+        _vprint(self.rank, f"Total num dofs on structure = {self.num_V_dofs}", level=1)
 
         # Mass density
         self.rho = dolfinx.fem.Constant(
@@ -90,10 +133,11 @@ class Structure:
             / ((1.0 + self.poissons_ratio) * (1.0 - 2.0 * self.poissons_ratio))
         )
 
-        if self.rank == 0:
-            print(
-                f"mu = {self.lame_mu} lambda = {self.lame_lambda} E = {self.E} nu = {self.poissons_ratio} density = {self.rho.value}"
-            )
+        _vprint(
+            self.rank,
+            f"mu = {self.lame_mu} lambda = {self.lame_lambda} E = {self.E} nu = {self.poissons_ratio} density = {self.rho.value}",
+            level=1,
+        )
 
         def _north_east_corner(x):
             eps = 1.0e-6
@@ -151,6 +195,22 @@ class Structure:
         self.bc = self.elasticity.build_boundary_conditions(domain, params)
 
     def update_a(self, u, u_old, v_old, a_old, dt, beta, ufl=True):
+        """Compute the new acceleration using the Newmark update formula.
+
+        Delegates to :meth:`pvade.structure.ElasticityAnalysis.Elasticity.update_a`.
+
+        Args:
+            u: Current displacement field (UFL expression or NumPy array).
+            u_old: Displacement at the previous time step.
+            v_old: Velocity at the previous time step.
+            a_old: Acceleration at the previous time step.
+            dt: Time step size (UFL constant or Python float).
+            beta: Newmark :math:`\\beta` parameter.
+            ufl (bool): ``True`` for UFL objects, ``False`` for plain floats.
+
+        Returns:
+            Updated acceleration field.
+        """
         # Update formula for acceleration
         # a = 1/(2*beta)*((u - u0 - v0*dt)/(0.5*dt*dt) - (1-2*beta)*a0)
         if ufl:
@@ -166,6 +226,23 @@ class Structure:
     # Update formula for velocity
     # v = dt * ((1-gamma)*a0 + gamma*a) + v0
     def update_v(self, a, u_old, v_old, a_old, dt, gamma, ufl=True):
+        """Compute the new velocity using the Newmark update formula.
+
+        Delegates to :meth:`pvade.structure.ElasticityAnalysis.Elasticity.update_v`.
+
+        Args:
+            a: Current acceleration field (UFL expression or NumPy array).
+            u_old: Displacement at the previous time step (unused, kept for
+                API consistency).
+            v_old: Velocity at the previous time step.
+            a_old: Acceleration at the previous time step.
+            dt: Time step size (UFL constant or Python float).
+            gamma: Newmark :math:`\\gamma` parameter.
+            ufl (bool): ``True`` for UFL objects, ``False`` for plain floats.
+
+        Returns:
+            Updated velocity field.
+        """
         if ufl:
             dt_ = dt
             gamma_ = gamma
@@ -187,6 +264,16 @@ class Structure:
         u_old.x.array[:] = u_vec
 
     def avg(self, x_old, x_new, alpha):
+        """Return the generalized-alpha weighted average of two fields.
+
+        Args:
+            x_old: Field value at the previous time step.
+            x_new: Field value at the current time step.
+            alpha: Weighting parameter.
+
+        Returns:
+            Weighted average of ``x_old`` and ``x_new``.
+        """
         return alpha * x_old + (1 - alpha) * x_new
 
     def build_forms(self, domain, params):
@@ -316,5 +403,14 @@ class Structure:
         return PETSc.NullSpace().create(vectors=ns)
 
     def solve(self, params, dataIO):
+        """Advance the structural solution by one time step.
+
+        Delegates to :meth:`pvade.structure.ElasticityAnalysis.Elasticity.solve`.
+
+        Args:
+            params (:obj:`pvade.IO.Parameters.SimParams`): A SimParams object.
+            dataIO (:obj:`pvade.IO.DataStream.DataStream`): The DataStream
+                I/O object.
+        """
 
         self.elasticity.solve(params, dataIO, self)

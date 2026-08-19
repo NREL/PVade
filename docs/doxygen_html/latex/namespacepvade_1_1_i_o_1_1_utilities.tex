@@ -1,0 +1,62 @@
+\doxysection{pvade.\+IO.\+Utilities Namespace Reference}
+\hypertarget{namespacepvade_1_1_i_o_1_1_utilities}{}\label{namespacepvade_1_1_i_o_1_1_utilities}\index{pvade.IO.Utilities@{pvade.IO.Utilities}}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\doxymbox{\hyperlink{namespacepvade_1_1_i_o_1_1_utilities_a24e6feac0ef61fd17d790182f2c4edd6}{get\+\_\+input\+\_\+file}} ()
+\item 
+\doxymbox{\hyperlink{namespacepvade_1_1_i_o_1_1_utilities_ad2be3b45996c64e3ad178ef7f0523a44}{write\+\_\+metrics}} (flow, prof\+\_\+filename="{}profiling.\+txt"{})
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\begin{DoxyVerb}Command-line and profiling utility functions for PVade.
+
+This module contains lightweight helpers for parsing the input-file path
+from the command line (:func:`get_input_file`) and for extracting solver
+timing metrics from a profiling output file (:func:`write_metrics`).
+\end{DoxyVerb}
+ 
+
+\label{namespacepvade_1_1_i_o_1_1_utilities_doc-func-members}
+\Hypertarget{namespacepvade_1_1_i_o_1_1_utilities_doc-func-members}
+\doxysubsection{Function Documentation}
+\Hypertarget{namespacepvade_1_1_i_o_1_1_utilities_a24e6feac0ef61fd17d790182f2c4edd6}\index{pvade.IO.Utilities@{pvade.IO.Utilities}!get\_input\_file@{get\_input\_file}}
+\index{get\_input\_file@{get\_input\_file}!pvade.IO.Utilities@{pvade.IO.Utilities}}
+\doxysubsubsection{\texorpdfstring{get\_input\_file()}{get\_input\_file()}}
+{\footnotesize\ttfamily \label{namespacepvade_1_1_i_o_1_1_utilities_a24e6feac0ef61fd17d790182f2c4edd6} 
+get\+\_\+input\+\_\+file (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Parse the path to the PVade input YAML file from the command line.
+
+Reads the ``--input_file`` argument from ``sys.argv`` and verifies that
+a value was supplied.  Raises a :class:`ValueError` when no input file
+is specified.
+
+Returns:
+    str: The full path to the input YAML file as provided on the command
+    line.
+
+Raises:
+    ValueError: If ``--input_file`` is not provided or is ``None``.
+\end{DoxyVerb}
+ \Hypertarget{namespacepvade_1_1_i_o_1_1_utilities_ad2be3b45996c64e3ad178ef7f0523a44}\index{pvade.IO.Utilities@{pvade.IO.Utilities}!write\_metrics@{write\_metrics}}
+\index{write\_metrics@{write\_metrics}!pvade.IO.Utilities@{pvade.IO.Utilities}}
+\doxysubsubsection{\texorpdfstring{write\_metrics()}{write\_metrics()}}
+{\footnotesize\ttfamily \label{namespacepvade_1_1_i_o_1_1_utilities_ad2be3b45996c64e3ad178ef7f0523a44} 
+write\+\_\+metrics (\begin{DoxyParamCaption}\item[{}]{flow}{, }\item[{}]{prof\+\_\+filename}{ = {\ttfamily "{}profiling.txt"{}}}\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Print solver timing metrics extracted from a profiling output file.
+
+Reads the profiling file produced by ``cProfile`` or a similar tool and
+searches for lines matching known solver-step identifiers.  Prints the
+total time, per-call time, and call count for the main solve step as well
+as individual IPCS sub-steps and mesh I/O operations.
+
+Args:
+    flow (:obj:`pvade.fluid.FlowManager.Flow`): The Flow object; metrics
+        are only printed when ``flow.fluid_analysis`` is ``True``.
+    prof_filename (str, optional): Path to the profiling output file.
+        Defaults to ``"profiling.txt"``.
+\end{DoxyVerb}
+ 

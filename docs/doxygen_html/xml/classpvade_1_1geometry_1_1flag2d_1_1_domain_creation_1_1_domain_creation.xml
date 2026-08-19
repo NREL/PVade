@@ -1,0 +1,208 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.17.0" xml:lang="en-US">
+  <compounddef id="classpvade_1_1geometry_1_1flag2d_1_1_domain_creation_1_1_domain_creation" kind="class" language="Python" prot="public">
+    <compoundname>pvade::geometry::flag2d::DomainCreation::DomainCreation</compoundname>
+    <basecompoundref refid="classpvade_1_1geometry_1_1template_1_1_template_domain_creation_1_1_template_domain_creation" prot="public" virt="non-virtual">pvade.geometry.template.TemplateDomainCreation.TemplateDomainCreation</basecompoundref>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="classpvade_1_1geometry_1_1flag2d_1_1_domain_creation_1_1_domain_creation_1aec5cc043f5af49025a8626b864dd8b75" prot="public" static="no" mutable="no">
+        <type>dict</type>
+        <definition>dict pvade.geometry.flag2d.DomainCreation.DomainCreation::domain_markers</definition>
+        <argsstring></argsstring>
+        <name>domain_markers</name>
+        <qualifiedname>pvade.geometry.flag2d.DomainCreation.DomainCreation.domain_markers</qualifiedname>
+        <initializer>=  {}</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/flag2d/DomainCreation.py" line="36" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/flag2d/DomainCreation.py" bodystart="36" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classpvade_1_1geometry_1_1flag2d_1_1_domain_creation_1_1_domain_creation_1a8bba254bb2d1ed5d78307acc88aa4da3" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade.geometry.flag2d.DomainCreation.DomainCreation::numpy_pt_total_array</definition>
+        <argsstring></argsstring>
+        <name>numpy_pt_total_array</name>
+        <qualifiedname>pvade.geometry.flag2d.DomainCreation.DomainCreation.numpy_pt_total_array</qualifiedname>
+        <initializer>=  np.zeros((1, 6)) + np.nan</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/flag2d/DomainCreation.py" line="61" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/flag2d/DomainCreation.py" bodystart="61" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classpvade_1_1geometry_1_1flag2d_1_1_domain_creation_1_1_domain_creation_1a22441e4b790e7569c41f5fb409021353" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>pvade.geometry.flag2d.DomainCreation.DomainCreation.__init__</definition>
+        <argsstring>(self, params)</argsstring>
+        <name>__init__</name>
+        <qualifiedname>pvade.geometry.flag2d.DomainCreation.DomainCreation.__init__</qualifiedname>
+        <param>
+          <type>self</type>
+          <defname>self</defname>
+        </param>
+        <param>
+          <type>params</type>
+          <defname>params</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><verbatim>Initialize the DomainCreation object
+ This initializes an object that creates the computational domain.
+
+Args:
+    params (:obj:`pvade.Parameters.SimParams`): A SimParams object
+</verbatim> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/flag2d/DomainCreation.py" line="22" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/flag2d/DomainCreation.py" bodystart="22" bodyend="30"/>
+      </memberdef>
+      <memberdef kind="function" id="classpvade_1_1geometry_1_1flag2d_1_1_domain_creation_1_1_domain_creation_1ab3bfdc5fb5b1a3baa9420af156005d50" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>pvade.geometry.flag2d.DomainCreation.DomainCreation.build_FSI</definition>
+        <argsstring>(self, params)</argsstring>
+        <name>build_FSI</name>
+        <qualifiedname>pvade.geometry.flag2d.DomainCreation.DomainCreation.build_FSI</qualifiedname>
+        <param>
+          <type>self</type>
+          <defname>self</defname>
+        </param>
+        <param>
+          <type>params</type>
+          <defname>params</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><verbatim>This function creates the computational domain for a flow around a 2D cylinder.
+
+Returns:
+    The function returns gmsh.model which contains the geometric description of the computational domain
+</verbatim> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/flag2d/DomainCreation.py" line="53" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/flag2d/DomainCreation.py" bodystart="53" bodyend="174"/>
+      </memberdef>
+      <memberdef kind="function" id="classpvade_1_1geometry_1_1flag2d_1_1_domain_creation_1_1_domain_creation_1a38d4e5277c0997e9f602ac7bc4a4b155" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>pvade.geometry.flag2d.DomainCreation.DomainCreation.set_length_scales</definition>
+        <argsstring>(self, params, domain_markers)</argsstring>
+        <name>set_length_scales</name>
+        <qualifiedname>pvade.geometry.flag2d.DomainCreation.DomainCreation.set_length_scales</qualifiedname>
+        <reimplements refid="classpvade_1_1geometry_1_1template_1_1_template_domain_creation_1_1_template_domain_creation_1a23633a446558be6fb861b69d58317eff">set_length_scales</reimplements>
+        <param>
+          <type>self</type>
+          <defname>self</defname>
+        </param>
+        <param>
+          <type>params</type>
+          <defname>params</defname>
+        </param>
+        <param>
+          <type><ref refid="classpvade_1_1geometry_1_1flag2d_1_1_domain_creation_1_1_domain_creation_1aec5cc043f5af49025a8626b864dd8b75" kindref="member">domain_markers</ref></type>
+          <defname>domain_markers</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><verbatim>This function call defines the characteristic length for the mesh in locations of interst
+LcMin,LcMax,DistMin and DistMax are used to create a refined mesh in specific locations
+which results in a high fidelity mesh without using a uniform element size in the whole mesh.
+</verbatim> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/flag2d/DomainCreation.py" line="175" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/flag2d/DomainCreation.py" bodystart="175" bodyend="206"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="protected-func">
+      <memberdef kind="function" id="classpvade_1_1geometry_1_1flag2d_1_1_domain_creation_1_1_domain_creation_1af9a5228bfa630519ab185890a3ce2056" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>pvade.geometry.flag2d.DomainCreation.DomainCreation._add_to_domain_markers</definition>
+        <argsstring>(self, marker_name, gmsh_tags, entity_type)</argsstring>
+        <name>_add_to_domain_markers</name>
+        <qualifiedname>pvade.geometry.flag2d.DomainCreation.DomainCreation._add_to_domain_markers</qualifiedname>
+        <param>
+          <type>self</type>
+          <defname>self</defname>
+        </param>
+        <param>
+          <type>marker_name</type>
+          <defname>marker_name</defname>
+        </param>
+        <param>
+          <type>gmsh_tags</type>
+          <defname>gmsh_tags</defname>
+        </param>
+        <param>
+          <type>entity_type</type>
+          <defname>entity_type</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/flag2d/DomainCreation.py" line="31" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/flag2d/DomainCreation.py" bodystart="31" bodyend="52"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><verbatim>_summary_ test
+
+Args:
+    TemplateDomainCreation (_type_): _description_
+</verbatim> </para>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="1">
+        <label>pvade.geometry.flag2d.DomainCreation.DomainCreation</label>
+        <link refid="classpvade_1_1geometry_1_1flag2d_1_1_domain_creation_1_1_domain_creation"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>pvade.geometry.template.TemplateDomainCreation.TemplateDomainCreation</label>
+        <link refid="classpvade_1_1geometry_1_1template_1_1_template_domain_creation_1_1_template_domain_creation"/>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="1">
+        <label>pvade.geometry.flag2d.DomainCreation.DomainCreation</label>
+        <link refid="classpvade_1_1geometry_1_1flag2d_1_1_domain_creation_1_1_domain_creation"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>pvade.geometry.template.TemplateDomainCreation.TemplateDomainCreation</label>
+        <link refid="classpvade_1_1geometry_1_1template_1_1_template_domain_creation_1_1_template_domain_creation"/>
+      </node>
+    </collaborationgraph>
+    <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/flag2d/DomainCreation.py" line="15" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/flag2d/DomainCreation.py" bodystart="15" bodyend="206"/>
+    <listofallmembers>
+      <member refid="classpvade_1_1geometry_1_1flag2d_1_1_domain_creation_1_1_domain_creation_1a22441e4b790e7569c41f5fb409021353" prot="public" virt="non-virtual"><scope>pvade::geometry::flag2d::DomainCreation::DomainCreation</scope><name>__init__</name></member>
+      <member refid="classpvade_1_1geometry_1_1flag2d_1_1_domain_creation_1_1_domain_creation_1af9a5228bfa630519ab185890a3ce2056" prot="protected" virt="non-virtual"><scope>pvade::geometry::flag2d::DomainCreation::DomainCreation</scope><name>_add_to_domain_markers</name></member>
+      <member refid="classpvade_1_1geometry_1_1template_1_1_template_domain_creation_1_1_template_domain_creation_1a8128156e3993544dc2852aafb6f28106" prot="public" virt="non-virtual"><scope>pvade::geometry::flag2d::DomainCreation::DomainCreation</scope><name>build</name></member>
+      <member refid="classpvade_1_1geometry_1_1flag2d_1_1_domain_creation_1_1_domain_creation_1ab3bfdc5fb5b1a3baa9420af156005d50" prot="public" virt="non-virtual"><scope>pvade::geometry::flag2d::DomainCreation::DomainCreation</scope><name>build_FSI</name></member>
+      <member refid="classpvade_1_1geometry_1_1template_1_1_template_domain_creation_1_1_template_domain_creation_1a7b6de9bf6c9803709fa1fc5faa5fbc21" prot="public" virt="non-virtual"><scope>pvade::geometry::flag2d::DomainCreation::DomainCreation</scope><name>comm</name></member>
+      <member refid="classpvade_1_1geometry_1_1flag2d_1_1_domain_creation_1_1_domain_creation_1aec5cc043f5af49025a8626b864dd8b75" prot="public" virt="non-virtual"><scope>pvade::geometry::flag2d::DomainCreation::DomainCreation</scope><name>domain_markers</name></member>
+      <member refid="classpvade_1_1geometry_1_1template_1_1_template_domain_creation_1_1_template_domain_creation_1a8de79a9660dd37d1c970021aabb17fe5" prot="public" virt="non-virtual"><scope>pvade::geometry::flag2d::DomainCreation::DomainCreation</scope><name>gmsh_model</name></member>
+      <member refid="classpvade_1_1geometry_1_1template_1_1_template_domain_creation_1_1_template_domain_creation_1a477bd7662d834780ade08b72cd34cb5d" prot="public" virt="non-virtual"><scope>pvade::geometry::flag2d::DomainCreation::DomainCreation</scope><name>mark_surfaces</name></member>
+      <member refid="classpvade_1_1geometry_1_1template_1_1_template_domain_creation_1_1_template_domain_creation_1a4f950dc8dc9bea748d5326f0a29ef30d" prot="public" virt="non-virtual"><scope>pvade::geometry::flag2d::DomainCreation::DomainCreation</scope><name>ndim</name></member>
+      <member refid="classpvade_1_1geometry_1_1template_1_1_template_domain_creation_1_1_template_domain_creation_1a8079a964a183b0bed265e9a3af12c54f" prot="public" virt="non-virtual"><scope>pvade::geometry::flag2d::DomainCreation::DomainCreation</scope><name>num_procs</name></member>
+      <member refid="classpvade_1_1geometry_1_1flag2d_1_1_domain_creation_1_1_domain_creation_1a8bba254bb2d1ed5d78307acc88aa4da3" prot="public" virt="non-virtual"><scope>pvade::geometry::flag2d::DomainCreation::DomainCreation</scope><name>numpy_pt_total_array</name></member>
+      <member refid="classpvade_1_1geometry_1_1template_1_1_template_domain_creation_1_1_template_domain_creation_1abbad1c751ef372db73981f16e4582fa5" prot="public" virt="non-virtual"><scope>pvade::geometry::flag2d::DomainCreation::DomainCreation</scope><name>rank</name></member>
+      <member refid="classpvade_1_1geometry_1_1flag2d_1_1_domain_creation_1_1_domain_creation_1a38d4e5277c0997e9f602ac7bc4a4b155" prot="public" virt="non-virtual"><scope>pvade::geometry::flag2d::DomainCreation::DomainCreation</scope><name>set_length_scales</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

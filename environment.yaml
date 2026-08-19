@@ -12,13 +12,13 @@ dependencies:
   - jsonschema
   - jupyter
   - matplotlib
-  # - meshio
   - numba
   - pandas
   - pytest
   - python-gmsh
   - pyyaml
   - scipy
+  - setuptools=80.9.0 
   - snakeviz
   - sphinx
   - tqdm

@@ -1,0 +1,162 @@
+\doxysection{pvade.\+fluid.\+boundary\+\_\+conditions Namespace Reference}
+\hypertarget{namespacepvade_1_1fluid_1_1boundary__conditions}{}\label{namespacepvade_1_1fluid_1_1boundary__conditions}\index{pvade.fluid.boundary\_conditions@{pvade.fluid.boundary\_conditions}}
+\doxysubsubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \doxymbox{\hyperlink{classpvade_1_1fluid_1_1boundary__conditions_1_1_inflow_velocity}{Inflow\+Velocity}}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\doxymbox{\hyperlink{namespacepvade_1_1fluid_1_1boundary__conditions_a9539bb7cfd79da86137d9c228f6b4634}{\+\_\+vprint}} (rank, message, level=1)
+\item 
+\doxymbox{\hyperlink{namespacepvade_1_1fluid_1_1boundary__conditions_a564af8b53fc7c85edb8f4b100b147dd7}{get\+\_\+facet\+\_\+dofs\+\_\+by\+\_\+gmsh\+\_\+tag}} (domain, functionspace, location)
+\item 
+\doxymbox{\hyperlink{namespacepvade_1_1fluid_1_1boundary__conditions_a588b091db900dbb2121dec159ce5ad48}{build\+\_\+vel\+\_\+bc\+\_\+by\+\_\+type}} (bc\+\_\+type, domain, functionspace, bc\+\_\+location)
+\item 
+\doxymbox{\hyperlink{namespacepvade_1_1fluid_1_1boundary__conditions_a5d8dd48ba4e9e70cc6ce6c036d4986d1}{get\+\_\+inflow\+\_\+profile\+\_\+function}} (domain, params, functionspace, current\+\_\+time)
+\item 
+\doxymbox{\hyperlink{namespacepvade_1_1fluid_1_1boundary__conditions_acfcdc48ec13d45da65dd49ac2fb54fd2}{build\+\_\+velocity\+\_\+boundary\+\_\+conditions}} (domain, params, functionspace, current\+\_\+time)
+\item 
+\doxymbox{\hyperlink{namespacepvade_1_1fluid_1_1boundary__conditions_a173fe6f5aa2a50cbdba1f49e878b9c0b}{build\+\_\+pressure\+\_\+boundary\+\_\+conditions}} (domain, params, functionspace)
+\item 
+\doxymbox{\hyperlink{namespacepvade_1_1fluid_1_1boundary__conditions_ac58e07957c8c88f475742fc1246a7ff8}{build\+\_\+temperature\+\_\+boundary\+\_\+conditions}} (domain, params, functionspace)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\begin{DoxyVerb}Boundary condition utilities for the incompressible Navier–Stokes solver.
+
+This module provides functions and classes for building Dirichlet boundary
+conditions on velocity, pressure, and temperature fields.  It also contains
+:class:`InflowVelocity`, a callable class that evaluates user-selected inflow
+profiles (uniform, parabolic, log-law, or from a pre-computed HDF5 file) at
+any spatial position and simulation time.
+\end{DoxyVerb}
+ 
+
+\label{namespacepvade_1_1fluid_1_1boundary__conditions_doc-func-members}
+\Hypertarget{namespacepvade_1_1fluid_1_1boundary__conditions_doc-func-members}
+\doxysubsection{Function Documentation}
+\Hypertarget{namespacepvade_1_1fluid_1_1boundary__conditions_a9539bb7cfd79da86137d9c228f6b4634}\index{pvade.fluid.boundary\_conditions@{pvade.fluid.boundary\_conditions}!\_vprint@{\_vprint}}
+\index{\_vprint@{\_vprint}!pvade.fluid.boundary\_conditions@{pvade.fluid.boundary\_conditions}}
+\doxysubsubsection{\texorpdfstring{\_vprint()}{\_vprint()}}
+{\footnotesize\ttfamily \label{namespacepvade_1_1fluid_1_1boundary__conditions_a9539bb7cfd79da86137d9c228f6b4634} 
+\+\_\+vprint (\begin{DoxyParamCaption}\item[{}]{rank}{, }\item[{}]{message}{, }\item[{}]{level}{ = {\ttfamily 1}}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [protected]}}
+
+\begin{DoxyVerb}Rank-0 verbosity-aware print helper for boundary-condition messages.\end{DoxyVerb}
+ \Hypertarget{namespacepvade_1_1fluid_1_1boundary__conditions_a173fe6f5aa2a50cbdba1f49e878b9c0b}\index{pvade.fluid.boundary\_conditions@{pvade.fluid.boundary\_conditions}!build\_pressure\_boundary\_conditions@{build\_pressure\_boundary\_conditions}}
+\index{build\_pressure\_boundary\_conditions@{build\_pressure\_boundary\_conditions}!pvade.fluid.boundary\_conditions@{pvade.fluid.boundary\_conditions}}
+\doxysubsubsection{\texorpdfstring{build\_pressure\_boundary\_conditions()}{build\_pressure\_boundary\_conditions()}}
+{\footnotesize\ttfamily \label{namespacepvade_1_1fluid_1_1boundary__conditions_a173fe6f5aa2a50cbdba1f49e878b9c0b} 
+build\+\_\+pressure\+\_\+boundary\+\_\+conditions (\begin{DoxyParamCaption}\item[{}]{domain}{, }\item[{}]{params}{, }\item[{}]{functionspace}{}\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Build all boundary conditions on pressure
+
+This method builds all the boundary conditions associated with pressure and stores in a list, ``bcp``.
+
+Args:
+    domain (:obj:`pvade.geometry.MeshManager.Domain`): A Domain object
+    params (:obj:`pvade.Parameters.SimParams`): A SimParams object
+\end{DoxyVerb}
+ \Hypertarget{namespacepvade_1_1fluid_1_1boundary__conditions_ac58e07957c8c88f475742fc1246a7ff8}\index{pvade.fluid.boundary\_conditions@{pvade.fluid.boundary\_conditions}!build\_temperature\_boundary\_conditions@{build\_temperature\_boundary\_conditions}}
+\index{build\_temperature\_boundary\_conditions@{build\_temperature\_boundary\_conditions}!pvade.fluid.boundary\_conditions@{pvade.fluid.boundary\_conditions}}
+\doxysubsubsection{\texorpdfstring{build\_temperature\_boundary\_conditions()}{build\_temperature\_boundary\_conditions()}}
+{\footnotesize\ttfamily \label{namespacepvade_1_1fluid_1_1boundary__conditions_ac58e07957c8c88f475742fc1246a7ff8} 
+build\+\_\+temperature\+\_\+boundary\+\_\+conditions (\begin{DoxyParamCaption}\item[{}]{domain}{, }\item[{}]{params}{, }\item[{}]{functionspace}{}\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Build all boundary conditions on temperature
+
+This method builds all the boundary conditions associated with temperature and stores in a list, ``bcT``.
+
+Args:
+    domain (:obj:`pvade.geometry.MeshManager.Domain`): A Domain object
+    params (:obj:`pvade.Parameters.SimParams`): A SimParams object
+\end{DoxyVerb}
+ \Hypertarget{namespacepvade_1_1fluid_1_1boundary__conditions_a588b091db900dbb2121dec159ce5ad48}\index{pvade.fluid.boundary\_conditions@{pvade.fluid.boundary\_conditions}!build\_vel\_bc\_by\_type@{build\_vel\_bc\_by\_type}}
+\index{build\_vel\_bc\_by\_type@{build\_vel\_bc\_by\_type}!pvade.fluid.boundary\_conditions@{pvade.fluid.boundary\_conditions}}
+\doxysubsubsection{\texorpdfstring{build\_vel\_bc\_by\_type()}{build\_vel\_bc\_by\_type()}}
+{\footnotesize\ttfamily \label{namespacepvade_1_1fluid_1_1boundary__conditions_a588b091db900dbb2121dec159ce5ad48} 
+build\+\_\+vel\+\_\+bc\+\_\+by\+\_\+type (\begin{DoxyParamCaption}\item[{}]{bc\+\_\+type}{, }\item[{}]{domain}{, }\item[{}]{functionspace}{, }\item[{}]{bc\+\_\+location}{}\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Build a dirichlet bc
+
+Args:
+    bc_type (str): The type of simple boundary condition to apply, "slip" or "noslip"
+    domain (:obj:`pvade.geometry.MeshManager.Domain`): A Domain object
+    functionspace (dolfinx.fem.FunctionSpace): The dolfinx function space on which the boundary condition will be applied
+    bc_location (str, int): A string identifier of the boundary condition location, e.g., "x_min" or the equivalent integer tag, e.g., 1
+
+Returns:
+    dolfinx.fem.dirichletbc: A dolfinx dirichlet boundary condition
+\end{DoxyVerb}
+ \Hypertarget{namespacepvade_1_1fluid_1_1boundary__conditions_acfcdc48ec13d45da65dd49ac2fb54fd2}\index{pvade.fluid.boundary\_conditions@{pvade.fluid.boundary\_conditions}!build\_velocity\_boundary\_conditions@{build\_velocity\_boundary\_conditions}}
+\index{build\_velocity\_boundary\_conditions@{build\_velocity\_boundary\_conditions}!pvade.fluid.boundary\_conditions@{pvade.fluid.boundary\_conditions}}
+\doxysubsubsection{\texorpdfstring{build\_velocity\_boundary\_conditions()}{build\_velocity\_boundary\_conditions()}}
+{\footnotesize\ttfamily \label{namespacepvade_1_1fluid_1_1boundary__conditions_acfcdc48ec13d45da65dd49ac2fb54fd2} 
+build\+\_\+velocity\+\_\+boundary\+\_\+conditions (\begin{DoxyParamCaption}\item[{}]{domain}{, }\item[{}]{params}{, }\item[{}]{functionspace}{, }\item[{}]{current\+\_\+time}{}\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Build all boundary conditions on velocity
+
+This method builds all the boundary conditions associated with velocity and stores in a list, ``bcu``.
+
+Args:
+    domain (:obj:`pvade.geometry.MeshManager.Domain`): A Domain object
+    params (:obj:`pvade.Parameters.SimParams`): A SimParams object
+\end{DoxyVerb}
+ \Hypertarget{namespacepvade_1_1fluid_1_1boundary__conditions_a564af8b53fc7c85edb8f4b100b147dd7}\index{pvade.fluid.boundary\_conditions@{pvade.fluid.boundary\_conditions}!get\_facet\_dofs\_by\_gmsh\_tag@{get\_facet\_dofs\_by\_gmsh\_tag}}
+\index{get\_facet\_dofs\_by\_gmsh\_tag@{get\_facet\_dofs\_by\_gmsh\_tag}!pvade.fluid.boundary\_conditions@{pvade.fluid.boundary\_conditions}}
+\doxysubsubsection{\texorpdfstring{get\_facet\_dofs\_by\_gmsh\_tag()}{get\_facet\_dofs\_by\_gmsh\_tag()}}
+{\footnotesize\ttfamily \label{namespacepvade_1_1fluid_1_1boundary__conditions_a564af8b53fc7c85edb8f4b100b147dd7} 
+get\+\_\+facet\+\_\+dofs\+\_\+by\+\_\+gmsh\+\_\+tag (\begin{DoxyParamCaption}\item[{}]{domain}{, }\item[{}]{functionspace}{, }\item[{}]{location}{}\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Associate degrees of freedom with marker functions
+
+This function uses the marker information in the gmsh specification to
+find the corresponding degrees of freedom for use in the actual
+boundary condition specification. Note that this method does not
+require access to the facet information computed with
+``_locate_boundary_entities``.
+
+Args:
+    domain (:obj:`pvade.geometry.MeshManager.Domain`): A Domain object
+    functionspace (dolfinx.fem.FunctionSpace): The dolfinx function space on which the boundary condition will be applied
+    location (str, int): A string identifier of the boundary condition location, e.g., "x_min" or the equivalent integer tag, e.g., 1
+
+Returns:
+    list: A list of the degrees of freedom associated with this tag and functionspace
+\end{DoxyVerb}
+ \Hypertarget{namespacepvade_1_1fluid_1_1boundary__conditions_a5d8dd48ba4e9e70cc6ce6c036d4986d1}\index{pvade.fluid.boundary\_conditions@{pvade.fluid.boundary\_conditions}!get\_inflow\_profile\_function@{get\_inflow\_profile\_function}}
+\index{get\_inflow\_profile\_function@{get\_inflow\_profile\_function}!pvade.fluid.boundary\_conditions@{pvade.fluid.boundary\_conditions}}
+\doxysubsubsection{\texorpdfstring{get\_inflow\_profile\_function()}{get\_inflow\_profile\_function()}}
+{\footnotesize\ttfamily \label{namespacepvade_1_1fluid_1_1boundary__conditions_a5d8dd48ba4e9e70cc6ce6c036d4986d1} 
+get\+\_\+inflow\+\_\+profile\+\_\+function (\begin{DoxyParamCaption}\item[{}]{domain}{, }\item[{}]{params}{, }\item[{}]{functionspace}{, }\item[{}]{current\+\_\+time}{}\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Build a DOLFINx function object containing the inflow velocity field.
+
+Constructs a :class:`dolfinx.fem.Function` on *functionspace* and
+populates it with the inflow velocity profile prescribed by
+``params.fluid.velocity_profile_type``. For the log-law profile, the
+velocity is set to zero below the surface-layer height (``d0 + z0``) to
+avoid logarithm singularities.
+
+Args:
+    domain (:obj:`pvade.geometry.MeshManager.FSIDomain`): The domain
+        object, used to access the fluid mesh and MPI communicator.
+    params (:obj:`pvade.IO.Parameters.SimParams`): A SimParams object.
+    functionspace (dolfinx.fem.FunctionSpace): The velocity function space
+        on which the inflow profile is interpolated.
+    current_time (float): The simulation time at which the inflow profile
+        is evaluated (relevant for ``"specified_from_file"``).
+
+Returns:
+    tuple:
+        - **inflow_function** (*dolfinx.fem.Function*): The interpolated
+          inflow velocity field.
+        - **inflow_velocity** (:class:`InflowVelocity`): The callable
+          object used for interpolation.
+        - **upper_cells** (*np.ndarray or None*): Mesh cell indices above
+          the surface-layer roughness height (only non-``None`` for the
+          log-law profile).
+\end{DoxyVerb}
+ 

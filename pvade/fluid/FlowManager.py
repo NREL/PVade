@@ -1,4 +1,11 @@
-"""Summary"""
+"""Incompressible Navier–Stokes fluid solver (fractional-step / IPCS method).
+
+This module provides the :class:`Flow` class, which assembles and solves the
+incompressible Navier–Stokes equations on an ALE (Arbitrary Lagrangian–Eulerian)
+mesh using the three-step Incremental Pressure Correction Scheme (IPCS).  An
+optional energy equation (advection–diffusion with SUPG stabilisation) handles
+buoyancy-driven or thermally-stratified flows.
+"""
 
 import dolfinx
 import ufl
@@ -16,10 +23,51 @@ from pvade.fluid.boundary_conditions import (
     build_pressure_boundary_conditions,
     build_temperature_boundary_conditions,
 )
+from pvade.IO.verbosity import emit_verbosity_print
+
+
+def _vprint(rank, message, level=1):
+    """Rank-0 verbosity-aware print helper for fluid solver messages."""
+    if rank == 0:
+        emit_verbosity_print(message, level=level)
 
 
 class Flow:
-    """This class solves the CFD problem"""
+    """Incompressible Navier–Stokes fluid solver.
+
+    Implements the IPCS fractional-step method on an ALE mesh.  On each time
+    step the solver computes a tentative velocity, a pressure correction
+    (to enforce incompressibility), a corrected velocity, and optionally a
+    temperature field.  The class also computes integrated aerodynamic forces
+    on immersed panels, CFL numbers, and pressure drops.
+
+    Attributes:
+        comm: MPI communicator shared by all PVade objects.
+        rank (int): Rank of this MPI process.
+        num_procs (int): Total number of MPI processes.
+        fluid_analysis (bool): Flag indicating whether a fluid analysis is
+            being performed.
+        thermal_analysis (bool): Flag indicating whether the energy equation
+            is solved.
+        name (str): Human-readable identifier (always ``"fluid"``).
+        Q (dolfinx.fem.FunctionSpace): Scalar Lagrange P1 pressure space.
+        V (dolfinx.fem.FunctionSpace): Vector Lagrange P2 velocity space.
+        T (dolfinx.fem.FunctionSpace): Tensor Lagrange P2 stress space on the
+            deformed fluid mesh.
+        T_undeformed (dolfinx.fem.FunctionSpace): Tensor Lagrange P2 stress
+            space on the reference (undeformed) fluid mesh.
+        S (dolfinx.fem.FunctionSpace): Scalar Lagrange P1 temperature space
+            (only when *thermal_analysis* is ``True``).
+        DG (dolfinx.fem.FunctionSpace): Discontinuous Galerkin P0 space used
+            for CFL field storage.
+        first_call_to_solver (bool): Flag indicating the first solver call
+            (triggers one-time assembly).
+        ndim (int): Spatial dimension of the fluid problem.
+        facet_dim (int): Facet dimension (``ndim - 1``).
+        hmin (float): Global minimum cell diameter across all MPI ranks.
+        num_Q_dofs (int): Global number of pressure DOFs.
+        num_V_dofs (int): Global number of velocity DOFs.
+    """
 
     def __init__(self, domain, params):
         """Initialize the fluid solver
@@ -91,7 +139,7 @@ class Flow:
             else:
                 hmin_local = np.inf
 
-            print(hmin_local)
+            _vprint(self.rank, f"hmin_local={hmin_local:.6e}", level=2)
             self.hmin = np.zeros(1)
             self.hmin = self.comm.allreduce(hmin_local, op=MPI.MIN)
 
@@ -114,8 +162,11 @@ class Flow:
                 self.V.dofmap.index_map_bs * self.V.dofmap.index_map.size_global
             )
 
-            if self.rank == 0:
-                print(f"Total num dofs on fluid= {self.num_Q_dofs + self.num_V_dofs}")
+            _vprint(
+                self.rank,
+                f"Total num dofs on fluid= {self.num_Q_dofs + self.num_V_dofs}",
+                level=1,
+            )
 
     def build_boundary_conditions(self, domain, params):
         """Build the boundary conditions
@@ -198,17 +249,17 @@ class Flow:
 
             if self.Pe_approx > 1.0:
                 self.stabilizing = True
-                if self.rank == 0:
-                    print("Pe > 1, so SUPG stabilization applied")
+                _vprint(self.rank, "Pe > 1, so SUPG stabilization applied", level=1)
             else:
                 self.stabilizing = False
 
-            if self.rank == 0:
-                if params.general.debug_flag:
-                    print("l_char = {:.2E}".format(params.domain.l_char))
-                    print("alpha = {:.2E}".format(params.fluid.alpha))
+            if params.general.debug_flag:
+                _vprint(
+                    self.rank, "l_char = {:.2E}".format(params.domain.l_char), level=2
+                )
+                _vprint(self.rank, "alpha = {:.2E}".format(params.fluid.alpha), level=2)
 
-                print("Pe approx = {:.2E}".format(self.Pe_approx))
+            _vprint(self.rank, "Pe approx = {:.2E}".format(self.Pe_approx), level=1)
 
         # Define trial and test functions for velocity
         self.u = ufl.TrialFunction(self.V)
@@ -252,8 +303,7 @@ class Flow:
             self.u_k2.interpolate(self.inflow_profile)
             self.u_k.interpolate(self.inflow_profile)
 
-            if self.rank == 0:
-                print("Initialized BC at the inlet")
+            _vprint(self.rank, "Initialized BC at the inlet", level=1)
             # print(min(abs(self.u_k.x.array[:] - self.inflow_profile.x.array[:])))
 
             # flags = []
@@ -722,7 +772,11 @@ class Flow:
             else:
                 self.inflow_profile.interpolate(self.inflow_velocity)
             if self.rank == 0 and params.general.debug_flag:
-                print("applied inflow BC at current time: ", current_time)
+                _vprint(
+                    self.rank,
+                    f"applied inflow BC at current time: {current_time}",
+                    level=2,
+                )
 
         if (
             params.fluid.velocity_profile_type == "specified_from_file"
@@ -735,8 +789,7 @@ class Flow:
             )
 
         if self.first_call_to_solver:
-            if self.rank == 0:
-                print("Starting Fluid Solution")
+            _vprint(self.rank, "Starting Fluid Solution", level=1)
 
             self.bcu.append(
                 dolfinx.fem.dirichletbc(self.mesh_vel, self.all_interior_V_dofs)
@@ -845,8 +898,11 @@ class Flow:
             if self.first_call_to_solver:
                 # No pressure boundary conditions applied,
                 # Therefore we need to remove the null space
-                if params.rank == 0:
-                    print("No pressure BC found, initializing null space")
+                _vprint(
+                    params.rank,
+                    "No pressure BC found, initializing null space",
+                    level=1,
+                )
 
                 self.nullspace = PETSc.NullSpace().create(
                     constant=True, comm=params.comm
@@ -1068,10 +1124,12 @@ class Flow:
             if params.fluid.velocity_profile_type == "specified_from_file":
                 u_ref = self.inflow_velocity.u_ref
                 if params.general.debug_flag == True:
-                    print(
+                    _vprint(
+                        self.rank,
                         "using calc u_ref ({} m/s) instead of input/default u_ref ({} m/s)".format(
                             self.inflow_velocity.u_ref, params.fluid.u_ref
-                        )
+                        ),
+                        level=2,
                     )
             else:
                 u_ref = params.fluid.u_ref
@@ -1242,6 +1300,6 @@ class Flow:
         self.dpdx_history.append(dpdx_val)
 
         if dpdx_val < 0.0:
-            print("WARNING: dpdx_val = %f" % (dpdx_val))
+            _vprint(self.rank, "WARNING: dpdx_val = %f" % (dpdx_val), level=1)
 
         self.dpdx.assign(dolfinx.fem.Constant((dpdx_val, 0.0, 0.0)))

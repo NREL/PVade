@@ -1,0 +1,16 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.17.0" xml:lang="en-US">
+  <compounddef id="dir_ac52a288030165f20214d6bcf5a78283" kind="dir">
+    <compoundname>/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure</compoundname>
+    <innerfile refid="structure_2____init_____8py">__init__.py</innerfile>
+    <innerfile refid="structure_2boundary__conditions_8py">boundary_conditions.py</innerfile>
+    <innerfile refid="_elasticity_analysis_8py">ElasticityAnalysis.py</innerfile>
+    <innerfile refid="_modal_analysis_8py">ModalAnalysis.py</innerfile>
+    <innerfile refid="_structure_main_8py">StructureMain.py</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/structure/"/>
+  </compounddef>
+</doxygen>

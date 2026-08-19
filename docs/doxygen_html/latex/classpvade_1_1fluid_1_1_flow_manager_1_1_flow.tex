@@ -1,0 +1,1323 @@
+\doxysection{pvade.\+fluid.\+Flow\+Manager.\+Flow Class Reference}
+\hypertarget{classpvade_1_1fluid_1_1_flow_manager_1_1_flow}{}\label{classpvade_1_1fluid_1_1_flow_manager_1_1_flow}\index{pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\doxymbox{\hyperlink{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a6be5aa01ef906d87ff3239c3ee5ff545}{\+\_\+\+\_\+init\+\_\+\+\_\+}} (self, domain, params)
+\item 
+\doxymbox{\hyperlink{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_af8e4d3fea94279f378aa776472aa3b50}{build\+\_\+boundary\+\_\+conditions}} (self, domain, params)
+\item 
+\doxymbox{\hyperlink{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_ae1f61abbd382547d002824bfd057f20e}{build\+\_\+forms}} (self, domain, params)
+\item 
+\doxymbox{\hyperlink{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a065a7470c36f8de504725c9428749615}{solve}} (self, domain, params, current\+\_\+time)
+\item 
+\doxymbox{\hyperlink{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_ae63cd88a8a509eef6d70903395c7effe}{compute\+\_\+cfl}} (self)
+\item 
+\doxymbox{\hyperlink{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_ab41a9ca029f30a15ffd8d5d121fff101}{compute\+\_\+lift\+\_\+and\+\_\+drag}} (self, params, current\+\_\+time)
+\item 
+\doxymbox{\hyperlink{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a077051e530518bd246cd81fe0dce2e59}{compute\+\_\+pressure\+\_\+drop\+\_\+between\+\_\+points}} (self, domain, params)
+\item 
+\doxymbox{\hyperlink{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a2a086d1967fab26f676d3efa427c6539}{adjust\+\_\+dpdx\+\_\+for\+\_\+constant\+\_\+flux}} (self)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\doxymbox{\hyperlink{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a3d92ee6f6d4c4679c2eca754ec53ebae}{fluid\+\_\+analysis}} = params.\+general.\+fluid\+\_\+analysis
+\item 
+\doxymbox{\hyperlink{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a87e175767b359d9373f9467f00a9bf92}{thermal\+\_\+analysis}} = params.\+general.\+thermal\+\_\+analysis
+\item 
+str \doxymbox{\hyperlink{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_af815465a07a898102c789f4d3ac37d2d}{name}} = "{}fluid"{}
+\item 
+\doxymbox{\hyperlink{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_ae93b399034fd2950baa1b46c15c3774d}{comm}} = domain.\+comm
+\item 
+int \doxymbox{\hyperlink{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_af83bf90876c5921d98b51c5fcf9b1599}{rank}} = domain.\+rank
+\item 
+\doxymbox{\hyperlink{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a8c50d7a2e639d7e5060d60e2302c495d}{num\+\_\+procs}} = domain.\+num\+\_\+procs
+\item 
+\doxymbox{\hyperlink{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_afb2e076bea03878ee71267d5f71f2559}{Q}} = dolfinx.\+fem.\+Function\+Space(domain.\+fluid.\+msh, P1)
+\item 
+\doxymbox{\hyperlink{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a6a7d4a2b4606b59e6d5a38400bb40d00}{V}} = dolfinx.\+fem.\+Function\+Space(domain.\+fluid.\+msh, P2)
+\item 
+\doxymbox{\hyperlink{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_ab206a97cd3fbaebc674cbdc3ea3494ad}{T}} = dolfinx.\+fem.\+Function\+Space(domain.\+fluid.\+msh, P3)
+\item 
+\doxymbox{\hyperlink{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a8a3eac5b0807ce3fc1bd0404e7647292}{T\+\_\+undeformed}}
+\item 
+\doxymbox{\hyperlink{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_aef369c2c1a2e7c1c31e95da2abc32e99}{S}} = dolfinx.\+fem.\+Function\+Space(domain.\+fluid.\+msh, P1)
+\item 
+\doxymbox{\hyperlink{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a3cd97905c4c08eeffa53cc6b7896a2a0}{DG}} = dolfinx.\+fem.\+Function\+Space(domain.\+fluid.\+msh, P4)
+\item 
+bool \doxymbox{\hyperlink{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a785029248dc6d8e984dc417cef123ef7}{first\+\_\+call\+\_\+to\+\_\+solver}} = True
+\item 
+bool \doxymbox{\hyperlink{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a497bd3485aa1d5af3ee14b2cfc8fbcfb}{first\+\_\+call\+\_\+to\+\_\+surface\+\_\+pressure}} = True
+\item 
+int \doxymbox{\hyperlink{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a0d316e11ea705d3ea29a1ff1e208ea2d}{ndim}} = domain.\+ndim
+\item 
+int \doxymbox{\hyperlink{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_ae462d6e9dece3f05989905df42065da7}{facet\+\_\+dim}} = self.\+ndim -\/ 1
+\item 
+\doxymbox{\hyperlink{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_acfcee9adf457abc8326872d33dbc5ecd}{hmin}} = np.\+zeros(1)
+\item 
+tuple \doxymbox{\hyperlink{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_ac6606676a8cc1ae285eefcae3f42ebec}{num\+\_\+\+Q\+\_\+dofs}}
+\item 
+tuple \doxymbox{\hyperlink{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a461e548d879d6d81543ac357df2430c5}{num\+\_\+\+V\+\_\+dofs}}
+\item 
+\doxymbox{\hyperlink{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a4c2d8906ebe28ba010f330cc573890c7}{bcu}}
+\item 
+\doxymbox{\hyperlink{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a1e7cf76918d2911fe61ce5ff934d7852}{inflow\+\_\+profile}}
+\item 
+\doxymbox{\hyperlink{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a425733d05c08287719a533249af1e997}{inflow\+\_\+velocity}}
+\item 
+tuple \doxymbox{\hyperlink{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_ae3e1522ff1732d85ad1d2750793c559a}{upper\+\_\+cells}}
+\item 
+\doxymbox{\hyperlink{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a6ed4b7f8b3cc69837cb8b9961720e17e}{bcp}} = build\+\_\+pressure\+\_\+boundary\+\_\+conditions(domain, params, self.\+Q)
+\item 
+\doxymbox{\hyperlink{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a3c5350226de82de50accdebe491e08e4}{bcT}} = build\+\_\+temperature\+\_\+boundary\+\_\+conditions(domain, params, self.\+S)
+\item 
+\doxymbox{\hyperlink{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_ac55a6cf94fe50993105b703d2d39b4b6}{dpdx}} = dolfinx.\+fem.\+Constant(domain.\+fluid.\+msh, (0.\+0, 0.\+0))
+\item 
+\doxymbox{\hyperlink{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a84f036bcf92820d81dd33b1e2871bb0c}{dt\+\_\+c}} = dolfinx.\+fem.\+Constant(domain.\+fluid.\+msh, (params.\+solver.\+dt))
+\item 
+\doxymbox{\hyperlink{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a600cde920361dfe5501dacd30631fc22}{rho\+\_\+c}} = dolfinx.\+fem.\+Constant(domain.\+fluid.\+msh, (params.\+fluid.\+rho))
+\item 
+\doxymbox{\hyperlink{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_aa3e7c4bd7ad50e275ccafeb326e8c595}{g}}
+\item 
+\doxymbox{\hyperlink{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_acfb5b790243c0b1772f9199564690249}{beta\+\_\+c}}
+\item 
+\doxymbox{\hyperlink{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a9af034e23aacfe747c49a7aadd2c7b55}{alpha\+\_\+c}}
+\item 
+\doxymbox{\hyperlink{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_ac7f8729c9397682a491729e539ce14d7}{Pe\+\_\+approx}} = u\+\_\+ref \texorpdfstring{$\ast$}{*} params.\+domain.\+l\+\_\+char /\+ (2.\+0 \texorpdfstring{$\ast$}{*} params.\+fluid.\+alpha)
+\item 
+bool \doxymbox{\hyperlink{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a48804905b8b3d8d1cb7f91b434040c85}{stabilizing}} = True
+\item 
+\doxymbox{\hyperlink{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_ae8fdf3666b5cf7a9f45fa6c037366d9a}{u}} = ufl.\+Trial\+Function(self.\+V)
+\item 
+\doxymbox{\hyperlink{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_ae29cea031e713f4af0de0e7c11c0abc3}{v}} = ufl.\+Test\+Function(self.\+V)
+\item 
+\doxymbox{\hyperlink{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a9a7e12f08d8add1142a1f53325178104}{p}} = ufl.\+Trial\+Function(self.\+Q)
+\item 
+\doxymbox{\hyperlink{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a58890e0a00f946edb082de0779132a16}{q}} = ufl.\+Test\+Function(self.\+Q)
+\item 
+\doxymbox{\hyperlink{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_af8d1bc4ed3902518f4b8393436bf5ae0}{u\+\_\+k}} = dolfinx.\+fem.\+Function(self.\+V, \doxymbox{\hyperlink{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_af815465a07a898102c789f4d3ac37d2d}{name}}="{}velocity "{})
+\item 
+\doxymbox{\hyperlink{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_aec92a0408334079dcc1a35adba810e3c}{u\+\_\+k1}} = dolfinx.\+fem.\+Function(self.\+V)
+\item 
+\doxymbox{\hyperlink{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a5ddee51ec783dda2fbe64cb5ad864947}{u\+\_\+k2}} = dolfinx.\+fem.\+Function(self.\+V)
+\item 
+\doxymbox{\hyperlink{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_ae460604821e7895eb220987b4288fd14}{theta}} = ufl.\+Trial\+Function(self.\+S)
+\item 
+\doxymbox{\hyperlink{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a41c80f8de0abfe05b1f847200efe59d5}{s}} = ufl.\+Test\+Function(self.\+S)
+\item 
+\doxymbox{\hyperlink{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_aac4c345b174d117b5fad6ac07a9270f3}{theta\+\_\+k}} = dolfinx.\+fem.\+Function(self.\+S, \doxymbox{\hyperlink{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_af815465a07a898102c789f4d3ac37d2d}{name}}="{}temperature "{})
+\item 
+\doxymbox{\hyperlink{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_af404c5b82410414a92270fccfdfdf3f9}{theta\+\_\+k1}} = dolfinx.\+fem.\+Function(self.\+S)
+\item 
+\doxymbox{\hyperlink{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_ac37f4e4e7858d5069e396ed5d11cb822}{theta\+\_\+r}} = dolfinx.\+fem.\+Function(self.\+S)
+\item 
+\doxymbox{\hyperlink{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a8cbd4fde37fd771f0da01db0b4f80b66}{mesh\+\_\+vel}} = dolfinx.\+fem.\+Function(self.\+V, \doxymbox{\hyperlink{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_af815465a07a898102c789f4d3ac37d2d}{name}}="{}mesh\+\_\+displacement"{})
+\item 
+\doxymbox{\hyperlink{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_aef6adc85442935cecaa72185ecbf8ffe}{mesh\+\_\+vel\+\_\+old}} = dolfinx.\+fem.\+Function(self.\+V)
+\item 
+\doxymbox{\hyperlink{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a311fb95b87c36ab67a3bf29ce49ba241}{mesh\+\_\+vel\+\_\+bc}} = dolfinx.\+fem.\+Function(self.\+V, \doxymbox{\hyperlink{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_af815465a07a898102c789f4d3ac37d2d}{name}}="{}mesh\+\_\+displacement\+\_\+bc"{})
+\item 
+\doxymbox{\hyperlink{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_aaf97b1c7d8780461e476855538ce8485}{mesh\+\_\+vel\+\_\+bc\+\_\+old}} = dolfinx.\+fem.\+Function(self.\+V)
+\item 
+\doxymbox{\hyperlink{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a015c059f504ac20af2ffc392bd0c89ea}{p\+\_\+k}} = dolfinx.\+fem.\+Function(self.\+Q, \doxymbox{\hyperlink{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_af815465a07a898102c789f4d3ac37d2d}{name}}="{}pressure"{})
+\item 
+\doxymbox{\hyperlink{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a488a8357af27126a578fcc70306f9f87}{p\+\_\+k1}} = dolfinx.\+fem.\+Function(self.\+Q)
+\item 
+int \doxymbox{\hyperlink{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a6fb2bd4c9c29ffc13eaec877681a93b0}{nu\+\_\+T}} = Cs\texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}2 \texorpdfstring{$\ast$}{*} filter\+\_\+scale\texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}2 \texorpdfstring{$\ast$}{*} strain\+Mag
+\item 
+float \doxymbox{\hyperlink{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_add11cda4d3e58324f2a937057971106e}{U\+\_\+\+ALE}} = 0.\+5 \texorpdfstring{$\ast$}{*} (self.\+mesh\+\_\+vel + self.\+mesh\+\_\+vel\+\_\+old)
+\item 
+tuple \doxymbox{\hyperlink{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a23b4fab7dc5f6e3f6defed8d141b85c8}{F1}}
+\item 
+\doxymbox{\hyperlink{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_aa6ab4b080112c05c37ac45584fdd490c}{a1}} = dolfinx.\+fem.\+form(ufl.\+lhs(self.\+F1))
+\item 
+\doxymbox{\hyperlink{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_ae155fdf3c999161c703d7f6518abceaa}{L1}} = dolfinx.\+fem.\+form(ufl.\+rhs(self.\+F1))
+\item 
+\doxymbox{\hyperlink{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_ad31b19692515c7cd136acb5cb03a39cb}{a2}}
+\item 
+\doxymbox{\hyperlink{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a6e927345a2b0b6f882ddde9cf237aa60}{L2}}
+\item 
+\doxymbox{\hyperlink{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a2b91dd0c7e13c81538d2e383729ac6e9}{a3}} = dolfinx.\+fem.\+form(ufl.\+dot(self.\+u, self.\+v) \texorpdfstring{$\ast$}{*} ufl.\+dx)
+\item 
+\doxymbox{\hyperlink{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a2b76056289f0b4ebae5514f0de464c4b}{L3}}
+\item 
+tuple \doxymbox{\hyperlink{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_af8fdc128a50054828567640d589eb876}{r}}
+\item 
+tuple \doxymbox{\hyperlink{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a03b68df0739bebcb02e07d91802b0bf9}{F4}}
+\item 
+\doxymbox{\hyperlink{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a90a3d71a274ead03d652028068b0a827}{a4}} = dolfinx.\+fem.\+form(ufl.\+lhs(self.\+F4))
+\item 
+\doxymbox{\hyperlink{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_aecb8540f3a73da8dce307bcba7682d0a}{L4}} = dolfinx.\+fem.\+form(ufl.\+rhs(self.\+F4))
+\item 
+\doxymbox{\hyperlink{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a9fc9ae81a6b86a234cf81e4e2ad7bbfc}{panel\+\_\+stress}} = dolfinx.\+fem.\+Function(self.\+T)
+\item 
+\doxymbox{\hyperlink{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a858cf1d8892c0ee0bbd0714af0fc2991}{panel\+\_\+stress\+\_\+undeformed}} = dolfinx.\+fem.\+Function(self.\+T\+\_\+undeformed)
+\item 
+\doxymbox{\hyperlink{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a75f9b97f7dea37d0437aed65bcdd46a1}{stress}} = sigma(self.\+u\+\_\+k, self.\+p\+\_\+k, nu + self.\+nu\+\_\+T, self.\+rho\+\_\+c)
+\item 
+\doxymbox{\hyperlink{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a84badbf265b079bd44ea62f89f58f866}{n}} = ufl.\+Facet\+Normal(domain.\+fluid.\+msh)
+\item 
+\doxymbox{\hyperlink{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a42c307d82c81b5bbd9ddfc3827266f5c}{traction}} = ufl.\+dot(self.\+stress, -\/self.\+n)
+\item 
+\doxymbox{\hyperlink{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a48e7516c92bab48401ae9ed5b70c7293}{a5}}
+\item 
+\doxymbox{\hyperlink{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a25a81975606d85bf8e6194125a4b8026}{L5}}
+\item 
+\doxymbox{\hyperlink{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a20e160be10e11b2880578b43018448d5}{cfl\+\_\+vec}} = dolfinx.\+fem.\+Function(self.\+DG)
+\item 
+\doxymbox{\hyperlink{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a5bd5e9bfd52d247263b3544269440845}{a6}}
+\item 
+\doxymbox{\hyperlink{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_aa202b4e97208c021faf7a69a715f99b8}{L6}}
+\item 
+\doxymbox{\hyperlink{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a2ce7b4bb20489c7c6f0e51e29aee44c4}{flux\+\_\+plane}}
+\item 
+list \doxymbox{\hyperlink{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a73181bd2d18cd30276c8ada2e34b5b34}{dpdx\+\_\+history}} = \+[0.\+0]\+
+\item 
+\doxymbox{\hyperlink{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_af2df911dcd50ac759488270dbc031785}{all\+\_\+interior\+\_\+\+V\+\_\+dofs}}
+\item 
+\doxymbox{\hyperlink{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a7573382749d323d62d32e86cb7159ca5}{zero\+\_\+vec}}
+\item 
+list \doxymbox{\hyperlink{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a09022717c53c249d99a85b57c86534a8}{integrated\+\_\+force\+\_\+x\+\_\+form}} = \+[$\,$]\+
+\item 
+list \doxymbox{\hyperlink{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_ac9b03d6704a30f145f130f1d7d405111}{integrated\+\_\+force\+\_\+y\+\_\+form}} = \+[$\,$]\+
+\item 
+list \doxymbox{\hyperlink{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_ac6ed25dec800bf25ffb47f06d03c6c69}{integrated\+\_\+force\+\_\+z\+\_\+form}} = \+[$\,$]\+
+\item 
+\doxymbox{\hyperlink{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_aa6649203282ba11829d3ae0c525332be}{A1}} = dolfinx.\+fem.\+petsc.\+assemble\+\_\+matrix(self.\+a1, bcs=self.\+bcu)
+\item 
+\doxymbox{\hyperlink{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a679422a138050d7f6ad9463624f37fc5}{A2}} = dolfinx.\+fem.\+petsc.\+assemble\+\_\+matrix(self.\+a2, bcs=self.\+bcp)
+\item 
+\doxymbox{\hyperlink{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_ae74ac2ab09c0e20578561b6f35ae9c32}{A3}} = dolfinx.\+fem.\+petsc.\+assemble\+\_\+matrix(self.\+a3)
+\item 
+\doxymbox{\hyperlink{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_aaf7575cbc1bf5134e387ef203ecbcc9b}{A4}} = dolfinx.\+fem.\+petsc.\+assemble\+\_\+matrix(self.\+a4, bcs=self.\+bcT)
+\item 
+\doxymbox{\hyperlink{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a51d374aa3d6e5d2d6002d1faef959284}{A5}} = dolfinx.\+fem.\+petsc.\+assemble\+\_\+matrix(self.\+a5)
+\item 
+\doxymbox{\hyperlink{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a4db460cc6fcc288aba7b52d76b004cd6}{A6}} = dolfinx.\+fem.\+petsc.\+assemble\+\_\+matrix(self.\+a6)
+\item 
+\doxymbox{\hyperlink{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a4e0b4179758c0190363d8780747bb69f}{b1}} = dolfinx.\+fem.\+petsc.\+assemble\+\_\+vector(self.\+L1)
+\item 
+\doxymbox{\hyperlink{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_aac6bc991b874206f7c4467f51ccab71d}{b2}} = dolfinx.\+fem.\+petsc.\+assemble\+\_\+vector(self.\+L2)
+\item 
+\doxymbox{\hyperlink{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_add4c5d273366c793ba44c4fabdf644d1}{b3}} = dolfinx.\+fem.\+petsc.\+assemble\+\_\+vector(self.\+L3)
+\item 
+\doxymbox{\hyperlink{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_adab8a4219bcfe36c2cd452a0853565ac}{b4}} = dolfinx.\+fem.\+petsc.\+assemble\+\_\+vector(self.\+L4)
+\item 
+\doxymbox{\hyperlink{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a18d36fc25a2d69e6c2b508101f9af2e6}{b5}} = dolfinx.\+fem.\+petsc.\+assemble\+\_\+vector(self.\+L5)
+\item 
+\doxymbox{\hyperlink{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a0374043c73cd492a2699452b86a80352}{b6}} = dolfinx.\+fem.\+petsc.\+assemble\+\_\+vector(self.\+L6)
+\item 
+\doxymbox{\hyperlink{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a82976bcbb9494c3e388cb80895fb38ec}{solver\+\_\+1}} = PETSc.\+KSP().create(self.\+comm)
+\item 
+\doxymbox{\hyperlink{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_ac6de5a8176648f0ed1fea5ba73e6ecbf}{solver\+\_\+2}} = PETSc.\+KSP().create(self.\+comm)
+\item 
+\doxymbox{\hyperlink{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a7ce2e451dd888cd03aa1235588d7477f}{solver\+\_\+3}} = PETSc.\+KSP().create(self.\+comm)
+\item 
+\doxymbox{\hyperlink{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a7a3b151b4668d0181dddd8543153dc12}{solver\+\_\+4}} = PETSc.\+KSP().create(self.\+comm)
+\item 
+\doxymbox{\hyperlink{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_addbd2cce8f32aa2b29a015779543a751}{solver\+\_\+5}} = PETSc.\+KSP().create(self.\+comm)
+\item 
+\doxymbox{\hyperlink{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a663739d96a942572f174adcdbdfc1d1b}{solver\+\_\+6}} = PETSc.\+KSP().create(self.\+comm)
+\item 
+\doxymbox{\hyperlink{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a8353ec846d7fd4b25fb0207f322570be}{nullspace}}
+\item 
+\doxymbox{\hyperlink{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a1bf4833befd9b1ea9c463df3a56a3019}{theta\+\_\+max}} = np.\+zeros(1)
+\item 
+\doxymbox{\hyperlink{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_ade734da5731e35e321a90d4107505c83}{cfl\+\_\+max}} = np.\+zeros(1, dtype=np.\+float64)
+\item 
+list \doxymbox{\hyperlink{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a34233dddcc77855770ea6880ca8a53b1}{integrated\+\_\+force\+\_\+x}} = \+[$\,$]\+
+\item 
+list \doxymbox{\hyperlink{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_afb3c48c32fd8193aa7f4b1dedbf4980b}{integrated\+\_\+force\+\_\+y}} = \+[$\,$]\+
+\item 
+list \doxymbox{\hyperlink{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a94a32715f40af77bfd3be17af1498316}{integrated\+\_\+force\+\_\+z}} = \+[$\,$]\+
+\item 
+tuple \doxymbox{\hyperlink{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_af8df5dead5f6f076ec69350fdcc29de2}{lift\+\_\+and\+\_\+drag\+\_\+filename}}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Protected Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\doxymbox{\hyperlink{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a166f66c8e74adb190ce681ba53e6c595}{\+\_\+assemble\+\_\+system}} (self, params)
+\item 
+\doxymbox{\hyperlink{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a0aac3afac8843fcda761ff822836274e}{\+\_\+solver\+\_\+step\+\_\+1}} (self, params)
+\item 
+\doxymbox{\hyperlink{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_ae251861e34685fe3e8b71ee572b3814d}{\+\_\+solver\+\_\+step\+\_\+2}} (self, params)
+\item 
+\doxymbox{\hyperlink{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_ab504d1daa4ddc6c0d18ccaf3ff06d440}{\+\_\+solver\+\_\+step\+\_\+3}} (self, params)
+\item 
+\doxymbox{\hyperlink{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a65e4f1ff97aebfdf40f7f92347802e87}{\+\_\+solver\+\_\+step\+\_\+4}} (self, params)
+\item 
+\doxymbox{\hyperlink{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a5f8f9dda8642c8768734b03536314b52}{\+\_\+solver\+\_\+step\+\_\+5}} (self, params)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\begin{DoxyVerb}Incompressible Navier–Stokes fluid solver.
+
+Implements the IPCS fractional-step method on an ALE mesh.  On each time
+step the solver computes a tentative velocity, a pressure correction
+(to enforce incompressibility), a corrected velocity, and optionally a
+temperature field.  The class also computes integrated aerodynamic forces
+on immersed panels, CFL numbers, and pressure drops.
+
+Attributes:
+    comm: MPI communicator shared by all PVade objects.
+    rank (int): Rank of this MPI process.
+    num_procs (int): Total number of MPI processes.
+    fluid_analysis (bool): Flag indicating whether a fluid analysis is
+        being performed.
+    thermal_analysis (bool): Flag indicating whether the energy equation
+        is solved.
+    name (str): Human-readable identifier (always ``"fluid"``).
+    Q (dolfinx.fem.FunctionSpace): Scalar Lagrange P1 pressure space.
+    V (dolfinx.fem.FunctionSpace): Vector Lagrange P2 velocity space.
+    T (dolfinx.fem.FunctionSpace): Tensor Lagrange P2 stress space on the
+        deformed fluid mesh.
+    T_undeformed (dolfinx.fem.FunctionSpace): Tensor Lagrange P2 stress
+        space on the reference (undeformed) fluid mesh.
+    S (dolfinx.fem.FunctionSpace): Scalar Lagrange P1 temperature space
+        (only when *thermal_analysis* is ``True``).
+    DG (dolfinx.fem.FunctionSpace): Discontinuous Galerkin P0 space used
+        for CFL field storage.
+    first_call_to_solver (bool): Flag indicating the first solver call
+        (triggers one-time assembly).
+    ndim (int): Spatial dimension of the fluid problem.
+    facet_dim (int): Facet dimension (``ndim - 1``).
+    hmin (float): Global minimum cell diameter across all MPI ranks.
+    num_Q_dofs (int): Global number of pressure DOFs.
+    num_V_dofs (int): Global number of velocity DOFs.
+\end{DoxyVerb}
+ 
+
+\label{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_doc-constructors}
+\Hypertarget{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_doc-constructors}
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a6be5aa01ef906d87ff3239c3ee5ff545}\index{pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}!\_\_init\_\_@{\_\_init\_\_}}
+\index{\_\_init\_\_@{\_\_init\_\_}!pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}}
+\doxysubsubsection{\texorpdfstring{\_\_init\_\_()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily \label{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a6be5aa01ef906d87ff3239c3ee5ff545} 
+pvade.\+fluid.\+Flow\+Manager.\+Flow.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self}{, }\item[{}]{domain}{, }\item[{}]{params}{}\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Initialize the fluid solver
+
+This method initialize the Flow object, namely, it creates all the
+necessary function spaces on the mesh, initializes key counting and
+boolean variables and records certain characteristic quantities like
+the minimum cell size and the number of degrees of freedom attributed
+to both the pressure and velocity function spaces.
+
+Args:
+    domain (:obj:`pvade.geometry.MeshManager.Domain`): A Domain object
+\end{DoxyVerb}
+ 
+
+\label{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_doc-func-members}
+\Hypertarget{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a166f66c8e74adb190ce681ba53e6c595}\index{pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}!\_assemble\_system@{\_assemble\_system}}
+\index{\_assemble\_system@{\_assemble\_system}!pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}}
+\doxysubsubsection{\texorpdfstring{\_assemble\_system()}{\_assemble\_system()}}
+{\footnotesize\ttfamily \label{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a166f66c8e74adb190ce681ba53e6c595} 
+pvade.\+fluid.\+Flow\+Manager.\+Flow.\+\_\+assemble\+\_\+system (\begin{DoxyParamCaption}\item[{}]{self}{, }\item[{}]{params}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [protected]}}
+
+\begin{DoxyVerb}Pre-assemble all LHS matrices and RHS vectors
+
+Here we pre-assemble all the forms corresponding to the left-hand side
+matrices and right-hand side vectors once outside the time loop. This
+will enable us to re-use certain features like the sparsity pattern
+during the timestepping without any modification of the function
+calls.
+
+Args:
+    params (:obj:`pvade.Parameters.SimParams`): A SimParams object
+\end{DoxyVerb}
+ \Hypertarget{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a0aac3afac8843fcda761ff822836274e}\index{pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}!\_solver\_step\_1@{\_solver\_step\_1}}
+\index{\_solver\_step\_1@{\_solver\_step\_1}!pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}}
+\doxysubsubsection{\texorpdfstring{\_solver\_step\_1()}{\_solver\_step\_1()}}
+{\footnotesize\ttfamily \label{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a0aac3afac8843fcda761ff822836274e} 
+pvade.\+fluid.\+Flow\+Manager.\+Flow.\+\_\+solver\+\_\+step\+\_\+1 (\begin{DoxyParamCaption}\item[{}]{self}{, }\item[{}]{params}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [protected]}}
+
+\begin{DoxyVerb}Solve step 1: tentative velocity
+
+Here we calculate the tentative velocity which, not guaranteed to be
+divergence free.
+
+Args:
+    params (:obj:`pvade.Parameters.SimParams`): A SimParams object
+\end{DoxyVerb}
+ \Hypertarget{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_ae251861e34685fe3e8b71ee572b3814d}\index{pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}!\_solver\_step\_2@{\_solver\_step\_2}}
+\index{\_solver\_step\_2@{\_solver\_step\_2}!pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}}
+\doxysubsubsection{\texorpdfstring{\_solver\_step\_2()}{\_solver\_step\_2()}}
+{\footnotesize\ttfamily \label{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_ae251861e34685fe3e8b71ee572b3814d} 
+pvade.\+fluid.\+Flow\+Manager.\+Flow.\+\_\+solver\+\_\+step\+\_\+2 (\begin{DoxyParamCaption}\item[{}]{self}{, }\item[{}]{params}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [protected]}}
+
+\begin{DoxyVerb}Solve step 2: pressure correction
+
+Here we calculate the pressure field that would be required to correct
+the tentative velocity such that it is divergence free.
+
+Args:
+    params (:obj:`pvade.Parameters.SimParams`): A SimParams object
+\end{DoxyVerb}
+ \Hypertarget{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_ab504d1daa4ddc6c0d18ccaf3ff06d440}\index{pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}!\_solver\_step\_3@{\_solver\_step\_3}}
+\index{\_solver\_step\_3@{\_solver\_step\_3}!pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}}
+\doxysubsubsection{\texorpdfstring{\_solver\_step\_3()}{\_solver\_step\_3()}}
+{\footnotesize\ttfamily \label{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_ab504d1daa4ddc6c0d18ccaf3ff06d440} 
+pvade.\+fluid.\+Flow\+Manager.\+Flow.\+\_\+solver\+\_\+step\+\_\+3 (\begin{DoxyParamCaption}\item[{}]{self}{, }\item[{}]{params}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [protected]}}
+
+\begin{DoxyVerb}Solve step 3: velocity update
+
+Here we update the tentative velocity with the effect of the modified,
+continuity-enforcing pressure field.
+
+Args:
+    params (:obj:`pvade.Parameters.SimParams`): A SimParams object
+\end{DoxyVerb}
+ \Hypertarget{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a65e4f1ff97aebfdf40f7f92347802e87}\index{pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}!\_solver\_step\_4@{\_solver\_step\_4}}
+\index{\_solver\_step\_4@{\_solver\_step\_4}!pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}}
+\doxysubsubsection{\texorpdfstring{\_solver\_step\_4()}{\_solver\_step\_4()}}
+{\footnotesize\ttfamily \label{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a65e4f1ff97aebfdf40f7f92347802e87} 
+pvade.\+fluid.\+Flow\+Manager.\+Flow.\+\_\+solver\+\_\+step\+\_\+4 (\begin{DoxyParamCaption}\item[{}]{self}{, }\item[{}]{params}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [protected]}}
+
+\begin{DoxyVerb}Solve step 4: Solves for temperature using the advection-diffusion equation
+
+Args:
+    params (:obj:`pvade.Parameters.SimParams`): A SimParams object
+\end{DoxyVerb}
+ \Hypertarget{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a5f8f9dda8642c8768734b03536314b52}\index{pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}!\_solver\_step\_5@{\_solver\_step\_5}}
+\index{\_solver\_step\_5@{\_solver\_step\_5}!pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}}
+\doxysubsubsection{\texorpdfstring{\_solver\_step\_5()}{\_solver\_step\_5()}}
+{\footnotesize\ttfamily \label{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a5f8f9dda8642c8768734b03536314b52} 
+pvade.\+fluid.\+Flow\+Manager.\+Flow.\+\_\+solver\+\_\+step\+\_\+5 (\begin{DoxyParamCaption}\item[{}]{self}{, }\item[{}]{params}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [protected]}}
+
+\begin{DoxyVerb}Solve step 5: Projects stress onto a tensor function space
+
+Args:
+    params (:obj:`pvade.Parameters.SimParams`): A SimParams object
+\end{DoxyVerb}
+ \Hypertarget{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a2a086d1967fab26f676d3efa427c6539}\index{pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}!adjust\_dpdx\_for\_constant\_flux@{adjust\_dpdx\_for\_constant\_flux}}
+\index{adjust\_dpdx\_for\_constant\_flux@{adjust\_dpdx\_for\_constant\_flux}!pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}}
+\doxysubsubsection{\texorpdfstring{adjust\_dpdx\_for\_constant\_flux()}{adjust\_dpdx\_for\_constant\_flux()}}
+{\footnotesize\ttfamily \label{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a2a086d1967fab26f676d3efa427c6539} 
+pvade.\+fluid.\+Flow\+Manager.\+Flow.\+adjust\+\_\+dpdx\+\_\+for\+\_\+constant\+\_\+flux (\begin{DoxyParamCaption}\item[{}]{self}{}\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Adjust the forcing term, ``dpdx``, to maintain flowrate
+
+Here we calculate what the value of the dolfinx.fem.constant driving
+pressure/force, ``dpdx``, should be adjusted to to maintain a
+dolfinx.fem.constant flux through the domain. This is a useful option if
+performing a periodic simulation in which the flux will slowly decay
+due to viscous dissipation. The amount of change in ``dpdx`` is
+calculated by comparing the current flux to the flux measured in the
+initial condition and then employing a PID controller to adjust the
+driving force to seek the target defined by the initial condition.
+
+Args:
+    None
+\end{DoxyVerb}
+ \Hypertarget{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_af8e4d3fea94279f378aa776472aa3b50}\index{pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}!build\_boundary\_conditions@{build\_boundary\_conditions}}
+\index{build\_boundary\_conditions@{build\_boundary\_conditions}!pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}}
+\doxysubsubsection{\texorpdfstring{build\_boundary\_conditions()}{build\_boundary\_conditions()}}
+{\footnotesize\ttfamily \label{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_af8e4d3fea94279f378aa776472aa3b50} 
+pvade.\+fluid.\+Flow\+Manager.\+Flow.\+build\+\_\+boundary\+\_\+conditions (\begin{DoxyParamCaption}\item[{}]{self}{, }\item[{}]{domain}{, }\item[{}]{params}{}\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Build the boundary conditions
+
+A method to manage the building of boundary conditions, including the
+steps of identifying entities on the boundary, marking those degrees
+of freedom either by the identified facets or a gmsh marker function,
+and finally assembling a list of Boundary objects that enforce the
+correct value.
+
+Args:
+    domain (:obj:`pvade.geometry.MeshManager.Domain`): A Domain object
+    params (:obj:`pvade.Parameters.SimParams`): A SimParams object
+\end{DoxyVerb}
+ \Hypertarget{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_ae1f61abbd382547d002824bfd057f20e}\index{pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}!build\_forms@{build\_forms}}
+\index{build\_forms@{build\_forms}!pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}}
+\doxysubsubsection{\texorpdfstring{build\_forms()}{build\_forms()}}
+{\footnotesize\ttfamily \label{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_ae1f61abbd382547d002824bfd057f20e} 
+pvade.\+fluid.\+Flow\+Manager.\+Flow.\+build\+\_\+forms (\begin{DoxyParamCaption}\item[{}]{self}{, }\item[{}]{domain}{, }\item[{}]{params}{}\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Builds all variational statements
+
+This method creates all the functions, expressions, and variational
+forms that will be needed for the numerical solution of Navier Stokes
+using a fractional step method. This includes the calculation of a
+tentative velocity, the calculation of the change in pressure
+required to correct the tentative velocity to enforce continuity, and
+the update to the velocity field to reflect this change in
+pressure.
+
+Args:
+    domain (:obj:`pvade.geometry.MeshManager.Domain`): A Domain object
+    params (:obj:`pvade.Parameters.SimParams`): A SimParams object
+\end{DoxyVerb}
+ \Hypertarget{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_ae63cd88a8a509eef6d70903395c7effe}\index{pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}!compute\_cfl@{compute\_cfl}}
+\index{compute\_cfl@{compute\_cfl}!pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}}
+\doxysubsubsection{\texorpdfstring{compute\_cfl()}{compute\_cfl()}}
+{\footnotesize\ttfamily \label{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_ae63cd88a8a509eef6d70903395c7effe} 
+pvade.\+fluid.\+Flow\+Manager.\+Flow.\+compute\+\_\+cfl (\begin{DoxyParamCaption}\item[{}]{self}{}\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Solve for the CFL number
+
+Using the velocity, timestep size, and cell sizes, we calculate a CFL
+number at every mesh cell. From that, we select the single highest
+value of CFL number and record it for the purposes of monitoring
+simulation stability.
+
+Args:
+    None
+\end{DoxyVerb}
+ \Hypertarget{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_ab41a9ca029f30a15ffd8d5d121fff101}\index{pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}!compute\_lift\_and\_drag@{compute\_lift\_and\_drag}}
+\index{compute\_lift\_and\_drag@{compute\_lift\_and\_drag}!pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}}
+\doxysubsubsection{\texorpdfstring{compute\_lift\_and\_drag()}{compute\_lift\_and\_drag()}}
+{\footnotesize\ttfamily \label{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_ab41a9ca029f30a15ffd8d5d121fff101} 
+pvade.\+fluid.\+Flow\+Manager.\+Flow.\+compute\+\_\+lift\+\_\+and\+\_\+drag (\begin{DoxyParamCaption}\item[{}]{self}{, }\item[{}]{params}{, }\item[{}]{current\+\_\+time}{}\end{DoxyParamCaption})}
+
+\Hypertarget{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a077051e530518bd246cd81fe0dce2e59}\index{pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}!compute\_pressure\_drop\_between\_points@{compute\_pressure\_drop\_between\_points}}
+\index{compute\_pressure\_drop\_between\_points@{compute\_pressure\_drop\_between\_points}!pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}}
+\doxysubsubsection{\texorpdfstring{compute\_pressure\_drop\_between\_points()}{compute\_pressure\_drop\_between\_points()}}
+{\footnotesize\ttfamily \label{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a077051e530518bd246cd81fe0dce2e59} 
+pvade.\+fluid.\+Flow\+Manager.\+Flow.\+compute\+\_\+pressure\+\_\+drop\+\_\+between\+\_\+points (\begin{DoxyParamCaption}\item[{}]{self}{, }\item[{}]{domain}{, }\item[{}]{params}{}\end{DoxyParamCaption})}
+
+\Hypertarget{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a065a7470c36f8de504725c9428749615}\index{pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}!solve@{solve}}
+\index{solve@{solve}!pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}}
+\doxysubsubsection{\texorpdfstring{solve()}{solve()}}
+{\footnotesize\ttfamily \label{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a065a7470c36f8de504725c9428749615} 
+pvade.\+fluid.\+Flow\+Manager.\+Flow.\+solve (\begin{DoxyParamCaption}\item[{}]{self}{, }\item[{}]{domain}{, }\item[{}]{params}{, }\item[{}]{current\+\_\+time}{}\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Solve for a single timestep advancement
+
+Here we perform the three-step solution process (tentative velocity,
+pressure correction, velocity update) to advance the fluid simulation
+a single timestep. Additionally, we calculate the new CFL number
+associated with the latest velocity solution.
+
+Args:
+    params (:obj:`pvade.Parameters.SimParams`): A SimParams object
+\end{DoxyVerb}
+ 
+
+\label{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_doc-variable-members}
+\Hypertarget{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_doc-variable-members}
+\doxysubsection{Member Data Documentation}
+\Hypertarget{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_aa6649203282ba11829d3ae0c525332be}\index{pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}!A1@{A1}}
+\index{A1@{A1}!pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}}
+\doxysubsubsection{\texorpdfstring{A1}{A1}}
+{\footnotesize\ttfamily \label{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_aa6649203282ba11829d3ae0c525332be} 
+pvade.\+fluid.\+Flow\+Manager.\+Flow.\+A1 = dolfinx.\+fem.\+petsc.\+assemble\+\_\+matrix(self.\+a1, bcs=self.\+bcu)}
+
+\Hypertarget{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_aa6ab4b080112c05c37ac45584fdd490c}\index{pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}!a1@{a1}}
+\index{a1@{a1}!pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}}
+\doxysubsubsection{\texorpdfstring{a1}{a1}}
+{\footnotesize\ttfamily \label{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_aa6ab4b080112c05c37ac45584fdd490c} 
+pvade.\+fluid.\+Flow\+Manager.\+Flow.\+a1 = dolfinx.\+fem.\+form(ufl.\+lhs(self.\+F1))}
+
+\Hypertarget{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a679422a138050d7f6ad9463624f37fc5}\index{pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}!A2@{A2}}
+\index{A2@{A2}!pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}}
+\doxysubsubsection{\texorpdfstring{A2}{A2}}
+{\footnotesize\ttfamily \label{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a679422a138050d7f6ad9463624f37fc5} 
+pvade.\+fluid.\+Flow\+Manager.\+Flow.\+A2 = dolfinx.\+fem.\+petsc.\+assemble\+\_\+matrix(self.\+a2, bcs=self.\+bcp)}
+
+\Hypertarget{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_ad31b19692515c7cd136acb5cb03a39cb}\index{pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}!a2@{a2}}
+\index{a2@{a2}!pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}}
+\doxysubsubsection{\texorpdfstring{a2}{a2}}
+{\footnotesize\ttfamily \label{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_ad31b19692515c7cd136acb5cb03a39cb} 
+pvade.\+fluid.\+Flow\+Manager.\+Flow.\+a2}
+
+{\bfseries Initial value:\+}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{=\ \ dolfinx.fem.form(}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ ufl.dot(ufl.nabla\_grad(self.p),\ ufl.nabla\_grad(self.q))\ *\ ufl.dx}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ )}
+
+\end{DoxyCode}
+\Hypertarget{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_ae74ac2ab09c0e20578561b6f35ae9c32}\index{pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}!A3@{A3}}
+\index{A3@{A3}!pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}}
+\doxysubsubsection{\texorpdfstring{A3}{A3}}
+{\footnotesize\ttfamily \label{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_ae74ac2ab09c0e20578561b6f35ae9c32} 
+pvade.\+fluid.\+Flow\+Manager.\+Flow.\+A3 = dolfinx.\+fem.\+petsc.\+assemble\+\_\+matrix(self.\+a3)}
+
+\Hypertarget{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a2b91dd0c7e13c81538d2e383729ac6e9}\index{pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}!a3@{a3}}
+\index{a3@{a3}!pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}}
+\doxysubsubsection{\texorpdfstring{a3}{a3}}
+{\footnotesize\ttfamily \label{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a2b91dd0c7e13c81538d2e383729ac6e9} 
+pvade.\+fluid.\+Flow\+Manager.\+Flow.\+a3 = dolfinx.\+fem.\+form(ufl.\+dot(self.\+u, self.\+v) \texorpdfstring{$\ast$}{*} ufl.\+dx)}
+
+\Hypertarget{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_aaf7575cbc1bf5134e387ef203ecbcc9b}\index{pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}!A4@{A4}}
+\index{A4@{A4}!pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}}
+\doxysubsubsection{\texorpdfstring{A4}{A4}}
+{\footnotesize\ttfamily \label{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_aaf7575cbc1bf5134e387ef203ecbcc9b} 
+pvade.\+fluid.\+Flow\+Manager.\+Flow.\+A4 = dolfinx.\+fem.\+petsc.\+assemble\+\_\+matrix(self.\+a4, bcs=self.\+bcT)}
+
+\Hypertarget{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a90a3d71a274ead03d652028068b0a827}\index{pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}!a4@{a4}}
+\index{a4@{a4}!pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}}
+\doxysubsubsection{\texorpdfstring{a4}{a4}}
+{\footnotesize\ttfamily \label{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a90a3d71a274ead03d652028068b0a827} 
+pvade.\+fluid.\+Flow\+Manager.\+Flow.\+a4 = dolfinx.\+fem.\+form(ufl.\+lhs(self.\+F4))}
+
+\Hypertarget{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a51d374aa3d6e5d2d6002d1faef959284}\index{pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}!A5@{A5}}
+\index{A5@{A5}!pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}}
+\doxysubsubsection{\texorpdfstring{A5}{A5}}
+{\footnotesize\ttfamily \label{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a51d374aa3d6e5d2d6002d1faef959284} 
+pvade.\+fluid.\+Flow\+Manager.\+Flow.\+A5 = dolfinx.\+fem.\+petsc.\+assemble\+\_\+matrix(self.\+a5)}
+
+\Hypertarget{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a48e7516c92bab48401ae9ed5b70c7293}\index{pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}!a5@{a5}}
+\index{a5@{a5}!pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}}
+\doxysubsubsection{\texorpdfstring{a5}{a5}}
+{\footnotesize\ttfamily \label{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a48e7516c92bab48401ae9ed5b70c7293} 
+pvade.\+fluid.\+Flow\+Manager.\+Flow.\+a5}
+
+{\bfseries Initial value:\+}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{=\ \ dolfinx.fem.form(}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ ufl.inner(ufl.TrialFunction(self.T),\ ufl.TestFunction(self.T))\ *\ ufl.dx}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ )}
+
+\end{DoxyCode}
+\Hypertarget{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a4db460cc6fcc288aba7b52d76b004cd6}\index{pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}!A6@{A6}}
+\index{A6@{A6}!pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}}
+\doxysubsubsection{\texorpdfstring{A6}{A6}}
+{\footnotesize\ttfamily \label{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a4db460cc6fcc288aba7b52d76b004cd6} 
+pvade.\+fluid.\+Flow\+Manager.\+Flow.\+A6 = dolfinx.\+fem.\+petsc.\+assemble\+\_\+matrix(self.\+a6)}
+
+\Hypertarget{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a5bd5e9bfd52d247263b3544269440845}\index{pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}!a6@{a6}}
+\index{a6@{a6}!pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}}
+\doxysubsubsection{\texorpdfstring{a6}{a6}}
+{\footnotesize\ttfamily \label{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a5bd5e9bfd52d247263b3544269440845} 
+pvade.\+fluid.\+Flow\+Manager.\+Flow.\+a6}
+
+{\bfseries Initial value:\+}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{=\ \ dolfinx.fem.form(}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ ufl.inner(ufl.TrialFunction(self.DG),\ ufl.TestFunction(self.DG))\ *\ ufl.dx}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ )}
+
+\end{DoxyCode}
+\Hypertarget{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_af2df911dcd50ac759488270dbc031785}\index{pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}!all\_interior\_V\_dofs@{all\_interior\_V\_dofs}}
+\index{all\_interior\_V\_dofs@{all\_interior\_V\_dofs}!pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}}
+\doxysubsubsection{\texorpdfstring{all\_interior\_V\_dofs}{all\_interior\_V\_dofs}}
+{\footnotesize\ttfamily \label{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_af2df911dcd50ac759488270dbc031785} 
+pvade.\+fluid.\+Flow\+Manager.\+Flow.\+all\+\_\+interior\+\_\+\+V\+\_\+dofs}
+
+{\bfseries Initial value:\+}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{=\ \ dolfinx.fem.locate\_dofs\_topological(}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ self.V,\ self.facet\_dim,\ all\_interior\_facets}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ )}
+
+\end{DoxyCode}
+\Hypertarget{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a9af034e23aacfe747c49a7aadd2c7b55}\index{pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}!alpha\_c@{alpha\_c}}
+\index{alpha\_c@{alpha\_c}!pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}}
+\doxysubsubsection{\texorpdfstring{alpha\_c}{alpha\_c}}
+{\footnotesize\ttfamily \label{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a9af034e23aacfe747c49a7aadd2c7b55} 
+pvade.\+fluid.\+Flow\+Manager.\+Flow.\+alpha\+\_\+c}
+
+{\bfseries Initial value:\+}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{=\ \ dolfinx.fem.Constant(}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ domain.fluid.msh,\ PETSc.ScalarType(params.fluid.alpha)}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ )}
+
+\end{DoxyCode}
+\Hypertarget{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a4e0b4179758c0190363d8780747bb69f}\index{pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}!b1@{b1}}
+\index{b1@{b1}!pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}}
+\doxysubsubsection{\texorpdfstring{b1}{b1}}
+{\footnotesize\ttfamily \label{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a4e0b4179758c0190363d8780747bb69f} 
+pvade.\+fluid.\+Flow\+Manager.\+Flow.\+b1 = dolfinx.\+fem.\+petsc.\+assemble\+\_\+vector(self.\+L1)}
+
+\Hypertarget{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_aac6bc991b874206f7c4467f51ccab71d}\index{pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}!b2@{b2}}
+\index{b2@{b2}!pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}}
+\doxysubsubsection{\texorpdfstring{b2}{b2}}
+{\footnotesize\ttfamily \label{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_aac6bc991b874206f7c4467f51ccab71d} 
+pvade.\+fluid.\+Flow\+Manager.\+Flow.\+b2 = dolfinx.\+fem.\+petsc.\+assemble\+\_\+vector(self.\+L2)}
+
+\Hypertarget{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_add4c5d273366c793ba44c4fabdf644d1}\index{pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}!b3@{b3}}
+\index{b3@{b3}!pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}}
+\doxysubsubsection{\texorpdfstring{b3}{b3}}
+{\footnotesize\ttfamily \label{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_add4c5d273366c793ba44c4fabdf644d1} 
+pvade.\+fluid.\+Flow\+Manager.\+Flow.\+b3 = dolfinx.\+fem.\+petsc.\+assemble\+\_\+vector(self.\+L3)}
+
+\Hypertarget{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_adab8a4219bcfe36c2cd452a0853565ac}\index{pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}!b4@{b4}}
+\index{b4@{b4}!pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}}
+\doxysubsubsection{\texorpdfstring{b4}{b4}}
+{\footnotesize\ttfamily \label{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_adab8a4219bcfe36c2cd452a0853565ac} 
+pvade.\+fluid.\+Flow\+Manager.\+Flow.\+b4 = dolfinx.\+fem.\+petsc.\+assemble\+\_\+vector(self.\+L4)}
+
+\Hypertarget{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a18d36fc25a2d69e6c2b508101f9af2e6}\index{pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}!b5@{b5}}
+\index{b5@{b5}!pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}}
+\doxysubsubsection{\texorpdfstring{b5}{b5}}
+{\footnotesize\ttfamily \label{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a18d36fc25a2d69e6c2b508101f9af2e6} 
+pvade.\+fluid.\+Flow\+Manager.\+Flow.\+b5 = dolfinx.\+fem.\+petsc.\+assemble\+\_\+vector(self.\+L5)}
+
+\Hypertarget{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a0374043c73cd492a2699452b86a80352}\index{pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}!b6@{b6}}
+\index{b6@{b6}!pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}}
+\doxysubsubsection{\texorpdfstring{b6}{b6}}
+{\footnotesize\ttfamily \label{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a0374043c73cd492a2699452b86a80352} 
+pvade.\+fluid.\+Flow\+Manager.\+Flow.\+b6 = dolfinx.\+fem.\+petsc.\+assemble\+\_\+vector(self.\+L6)}
+
+\Hypertarget{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a6ed4b7f8b3cc69837cb8b9961720e17e}\index{pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}!bcp@{bcp}}
+\index{bcp@{bcp}!pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}}
+\doxysubsubsection{\texorpdfstring{bcp}{bcp}}
+{\footnotesize\ttfamily \label{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a6ed4b7f8b3cc69837cb8b9961720e17e} 
+pvade.\+fluid.\+Flow\+Manager.\+Flow.\+bcp = build\+\_\+pressure\+\_\+boundary\+\_\+conditions(domain, params, self.\+Q)}
+
+\Hypertarget{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a3c5350226de82de50accdebe491e08e4}\index{pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}!bcT@{bcT}}
+\index{bcT@{bcT}!pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}}
+\doxysubsubsection{\texorpdfstring{bcT}{bcT}}
+{\footnotesize\ttfamily \label{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a3c5350226de82de50accdebe491e08e4} 
+pvade.\+fluid.\+Flow\+Manager.\+Flow.\+bcT = build\+\_\+temperature\+\_\+boundary\+\_\+conditions(domain, params, self.\+S)}
+
+\Hypertarget{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a4c2d8906ebe28ba010f330cc573890c7}\index{pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}!bcu@{bcu}}
+\index{bcu@{bcu}!pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}}
+\doxysubsubsection{\texorpdfstring{bcu}{bcu}}
+{\footnotesize\ttfamily \label{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a4c2d8906ebe28ba010f330cc573890c7} 
+pvade.\+fluid.\+Flow\+Manager.\+Flow.\+bcu}
+
+\Hypertarget{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_acfb5b790243c0b1772f9199564690249}\index{pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}!beta\_c@{beta\_c}}
+\index{beta\_c@{beta\_c}!pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}}
+\doxysubsubsection{\texorpdfstring{beta\_c}{beta\_c}}
+{\footnotesize\ttfamily \label{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_acfb5b790243c0b1772f9199564690249} 
+pvade.\+fluid.\+Flow\+Manager.\+Flow.\+beta\+\_\+c}
+
+{\bfseries Initial value:\+}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{=\ \ dolfinx.fem.Constant(}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ domain.fluid.msh,\ PETSc.ScalarType(params.fluid.beta)}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ )}
+
+\end{DoxyCode}
+\Hypertarget{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_ade734da5731e35e321a90d4107505c83}\index{pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}!cfl\_max@{cfl\_max}}
+\index{cfl\_max@{cfl\_max}!pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}}
+\doxysubsubsection{\texorpdfstring{cfl\_max}{cfl\_max}}
+{\footnotesize\ttfamily \label{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_ade734da5731e35e321a90d4107505c83} 
+pvade.\+fluid.\+Flow\+Manager.\+Flow.\+cfl\+\_\+max = np.\+zeros(1, dtype=np.\+float64)}
+
+\Hypertarget{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a20e160be10e11b2880578b43018448d5}\index{pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}!cfl\_vec@{cfl\_vec}}
+\index{cfl\_vec@{cfl\_vec}!pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}}
+\doxysubsubsection{\texorpdfstring{cfl\_vec}{cfl\_vec}}
+{\footnotesize\ttfamily \label{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a20e160be10e11b2880578b43018448d5} 
+pvade.\+fluid.\+Flow\+Manager.\+Flow.\+cfl\+\_\+vec = dolfinx.\+fem.\+Function(self.\+DG)}
+
+\Hypertarget{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_ae93b399034fd2950baa1b46c15c3774d}\index{pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}!comm@{comm}}
+\index{comm@{comm}!pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}}
+\doxysubsubsection{\texorpdfstring{comm}{comm}}
+{\footnotesize\ttfamily \label{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_ae93b399034fd2950baa1b46c15c3774d} 
+pvade.\+fluid.\+Flow\+Manager.\+Flow.\+comm = domain.\+comm}
+
+\Hypertarget{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a3cd97905c4c08eeffa53cc6b7896a2a0}\index{pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}!DG@{DG}}
+\index{DG@{DG}!pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}}
+\doxysubsubsection{\texorpdfstring{DG}{DG}}
+{\footnotesize\ttfamily \label{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a3cd97905c4c08eeffa53cc6b7896a2a0} 
+pvade.\+fluid.\+Flow\+Manager.\+Flow.\+DG = dolfinx.\+fem.\+Function\+Space(domain.\+fluid.\+msh, P4)}
+
+\Hypertarget{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_ac55a6cf94fe50993105b703d2d39b4b6}\index{pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}!dpdx@{dpdx}}
+\index{dpdx@{dpdx}!pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}}
+\doxysubsubsection{\texorpdfstring{dpdx}{dpdx}}
+{\footnotesize\ttfamily \label{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_ac55a6cf94fe50993105b703d2d39b4b6} 
+pvade.\+fluid.\+Flow\+Manager.\+Flow.\+dpdx = dolfinx.\+fem.\+Constant(domain.\+fluid.\+msh, (0.\+0, 0.\+0))}
+
+\Hypertarget{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a73181bd2d18cd30276c8ada2e34b5b34}\index{pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}!dpdx\_history@{dpdx\_history}}
+\index{dpdx\_history@{dpdx\_history}!pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}}
+\doxysubsubsection{\texorpdfstring{dpdx\_history}{dpdx\_history}}
+{\footnotesize\ttfamily \label{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a73181bd2d18cd30276c8ada2e34b5b34} 
+list pvade.\+fluid.\+Flow\+Manager.\+Flow.\+dpdx\+\_\+history = \+[0.\+0]\+}
+
+\Hypertarget{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a84f036bcf92820d81dd33b1e2871bb0c}\index{pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}!dt\_c@{dt\_c}}
+\index{dt\_c@{dt\_c}!pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}}
+\doxysubsubsection{\texorpdfstring{dt\_c}{dt\_c}}
+{\footnotesize\ttfamily \label{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a84f036bcf92820d81dd33b1e2871bb0c} 
+pvade.\+fluid.\+Flow\+Manager.\+Flow.\+dt\+\_\+c = dolfinx.\+fem.\+Constant(domain.\+fluid.\+msh, (params.\+solver.\+dt))}
+
+\Hypertarget{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a23b4fab7dc5f6e3f6defed8d141b85c8}\index{pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}!F1@{F1}}
+\index{F1@{F1}!pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}}
+\doxysubsubsection{\texorpdfstring{F1}{F1}}
+{\footnotesize\ttfamily \label{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a23b4fab7dc5f6e3f6defed8d141b85c8} 
+tuple pvade.\+fluid.\+Flow\+Manager.\+Flow.\+F1}
+
+{\bfseries Initial value:\+}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{=\ \ (}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ (1.0\ /\ self.dt\_c)\ *\ ufl.inner(self.u\ -\/\ self.u\_k1,\ self.v)\ *\ ufl.dx}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ +\ ufl.inner(}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ufl.dot(}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ U\_AB\ -\/\ self.U\_ALE,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ufl.nabla\_grad(U\_CN),}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ),}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ self.v,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ )}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ *\ ufl.dx}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ +\ (nu\ +\ self.nu\_T)\ *\ ufl.inner(ufl.grad(U\_CN),\ ufl.grad(self.v))\ *\ ufl.dx}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ +\ (1.0\ /\ self.rho\_c)\ *\ ufl.inner(ufl.grad(self.p\_k1),\ self.v)\ *\ ufl.dx}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ -\/\ (1.0\ /\ self.rho\_c)\ *\ ufl.inner(self.dpdx,\ self.v)\ *\ ufl.dx}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ )}
+
+\end{DoxyCode}
+\Hypertarget{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a03b68df0739bebcb02e07d91802b0bf9}\index{pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}!F4@{F4}}
+\index{F4@{F4}!pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}}
+\doxysubsubsection{\texorpdfstring{F4}{F4}}
+{\footnotesize\ttfamily \label{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a03b68df0739bebcb02e07d91802b0bf9} 
+tuple pvade.\+fluid.\+Flow\+Manager.\+Flow.\+F4}
+
+{\bfseries Initial value:\+}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{=\ \ (}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (1.0\ /\ self.dt\_c)}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *\ ufl.inner(self.theta\ -\/\ self.theta\_k1,\ self.s)}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *\ ufl.dx\ \ \textcolor{comment}{\#\ theta\ =\ unknown,\ T\_n\ =\ temp\ from\ previous\ timestep}}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ +\ self.alpha\_c}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *\ ufl.inner(ufl.nabla\_grad(self.theta),\ ufl.nabla\_grad(self.s))}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *\ ufl.dx}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ +\ ufl.inner(ufl.dot(self.u\_k,\ ufl.nabla\_grad(self.theta)),\ self.s)}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *\ ufl.dx\ \ \textcolor{comment}{\#\ todo:\ subtract\ mesh\ vel\ from\ this\ and\ from\ residual}}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ )}
+
+\end{DoxyCode}
+\Hypertarget{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_ae462d6e9dece3f05989905df42065da7}\index{pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}!facet\_dim@{facet\_dim}}
+\index{facet\_dim@{facet\_dim}!pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}}
+\doxysubsubsection{\texorpdfstring{facet\_dim}{facet\_dim}}
+{\footnotesize\ttfamily \label{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_ae462d6e9dece3f05989905df42065da7} 
+int pvade.\+fluid.\+Flow\+Manager.\+Flow.\+facet\+\_\+dim = self.\+ndim -\/ 1}
+
+\Hypertarget{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a785029248dc6d8e984dc417cef123ef7}\index{pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}!first\_call\_to\_solver@{first\_call\_to\_solver}}
+\index{first\_call\_to\_solver@{first\_call\_to\_solver}!pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}}
+\doxysubsubsection{\texorpdfstring{first\_call\_to\_solver}{first\_call\_to\_solver}}
+{\footnotesize\ttfamily \label{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a785029248dc6d8e984dc417cef123ef7} 
+bool pvade.\+fluid.\+Flow\+Manager.\+Flow.\+first\+\_\+call\+\_\+to\+\_\+solver = True}
+
+\Hypertarget{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a497bd3485aa1d5af3ee14b2cfc8fbcfb}\index{pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}!first\_call\_to\_surface\_pressure@{first\_call\_to\_surface\_pressure}}
+\index{first\_call\_to\_surface\_pressure@{first\_call\_to\_surface\_pressure}!pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}}
+\doxysubsubsection{\texorpdfstring{first\_call\_to\_surface\_pressure}{first\_call\_to\_surface\_pressure}}
+{\footnotesize\ttfamily \label{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a497bd3485aa1d5af3ee14b2cfc8fbcfb} 
+bool pvade.\+fluid.\+Flow\+Manager.\+Flow.\+first\+\_\+call\+\_\+to\+\_\+surface\+\_\+pressure = True}
+
+\Hypertarget{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a3d92ee6f6d4c4679c2eca754ec53ebae}\index{pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}!fluid\_analysis@{fluid\_analysis}}
+\index{fluid\_analysis@{fluid\_analysis}!pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}}
+\doxysubsubsection{\texorpdfstring{fluid\_analysis}{fluid\_analysis}}
+{\footnotesize\ttfamily \label{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a3d92ee6f6d4c4679c2eca754ec53ebae} 
+pvade.\+fluid.\+Flow\+Manager.\+Flow.\+fluid\+\_\+analysis = params.\+general.\+fluid\+\_\+analysis}
+
+\Hypertarget{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a2ce7b4bb20489c7c6f0e51e29aee44c4}\index{pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}!flux\_plane@{flux\_plane}}
+\index{flux\_plane@{flux\_plane}!pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}}
+\doxysubsubsection{\texorpdfstring{flux\_plane}{flux\_plane}}
+{\footnotesize\ttfamily \label{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a2ce7b4bb20489c7c6f0e51e29aee44c4} 
+pvade.\+fluid.\+Flow\+Manager.\+Flow.\+flux\+\_\+plane}
+
+{\bfseries Initial value:\+}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{=\ \ dolfinx.fem.Function(}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ self.V}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ )}
+
+\end{DoxyCode}
+\Hypertarget{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_aa3e7c4bd7ad50e275ccafeb326e8c595}\index{pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}!g@{g}}
+\index{g@{g}!pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}}
+\doxysubsubsection{\texorpdfstring{g}{g}}
+{\footnotesize\ttfamily \label{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_aa3e7c4bd7ad50e275ccafeb326e8c595} 
+pvade.\+fluid.\+Flow\+Manager.\+Flow.\+g}
+
+{\bfseries Initial value:\+}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{=\ \ dolfinx.fem.Constant(}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ domain.fluid.msh,\ PETSc.ScalarType((0,\ params.fluid.g))}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ )}
+
+\end{DoxyCode}
+\Hypertarget{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_acfcee9adf457abc8326872d33dbc5ecd}\index{pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}!hmin@{hmin}}
+\index{hmin@{hmin}!pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}}
+\doxysubsubsection{\texorpdfstring{hmin}{hmin}}
+{\footnotesize\ttfamily \label{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_acfcee9adf457abc8326872d33dbc5ecd} 
+pvade.\+fluid.\+Flow\+Manager.\+Flow.\+hmin = np.\+zeros(1)}
+
+\Hypertarget{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a1e7cf76918d2911fe61ce5ff934d7852}\index{pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}!inflow\_profile@{inflow\_profile}}
+\index{inflow\_profile@{inflow\_profile}!pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}}
+\doxysubsubsection{\texorpdfstring{inflow\_profile}{inflow\_profile}}
+{\footnotesize\ttfamily \label{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a1e7cf76918d2911fe61ce5ff934d7852} 
+pvade.\+fluid.\+Flow\+Manager.\+Flow.\+inflow\+\_\+profile}
+
+\Hypertarget{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a425733d05c08287719a533249af1e997}\index{pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}!inflow\_velocity@{inflow\_velocity}}
+\index{inflow\_velocity@{inflow\_velocity}!pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}}
+\doxysubsubsection{\texorpdfstring{inflow\_velocity}{inflow\_velocity}}
+{\footnotesize\ttfamily \label{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a425733d05c08287719a533249af1e997} 
+pvade.\+fluid.\+Flow\+Manager.\+Flow.\+inflow\+\_\+velocity}
+
+\Hypertarget{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a34233dddcc77855770ea6880ca8a53b1}\index{pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}!integrated\_force\_x@{integrated\_force\_x}}
+\index{integrated\_force\_x@{integrated\_force\_x}!pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}}
+\doxysubsubsection{\texorpdfstring{integrated\_force\_x}{integrated\_force\_x}}
+{\footnotesize\ttfamily \label{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a34233dddcc77855770ea6880ca8a53b1} 
+list pvade.\+fluid.\+Flow\+Manager.\+Flow.\+integrated\+\_\+force\+\_\+x = \+[$\,$]\+}
+
+\Hypertarget{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a09022717c53c249d99a85b57c86534a8}\index{pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}!integrated\_force\_x\_form@{integrated\_force\_x\_form}}
+\index{integrated\_force\_x\_form@{integrated\_force\_x\_form}!pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}}
+\doxysubsubsection{\texorpdfstring{integrated\_force\_x\_form}{integrated\_force\_x\_form}}
+{\footnotesize\ttfamily \label{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a09022717c53c249d99a85b57c86534a8} 
+list pvade.\+fluid.\+Flow\+Manager.\+Flow.\+integrated\+\_\+force\+\_\+x\+\_\+form = \+[$\,$]\+}
+
+\Hypertarget{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_afb3c48c32fd8193aa7f4b1dedbf4980b}\index{pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}!integrated\_force\_y@{integrated\_force\_y}}
+\index{integrated\_force\_y@{integrated\_force\_y}!pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}}
+\doxysubsubsection{\texorpdfstring{integrated\_force\_y}{integrated\_force\_y}}
+{\footnotesize\ttfamily \label{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_afb3c48c32fd8193aa7f4b1dedbf4980b} 
+list pvade.\+fluid.\+Flow\+Manager.\+Flow.\+integrated\+\_\+force\+\_\+y = \+[$\,$]\+}
+
+\Hypertarget{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_ac9b03d6704a30f145f130f1d7d405111}\index{pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}!integrated\_force\_y\_form@{integrated\_force\_y\_form}}
+\index{integrated\_force\_y\_form@{integrated\_force\_y\_form}!pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}}
+\doxysubsubsection{\texorpdfstring{integrated\_force\_y\_form}{integrated\_force\_y\_form}}
+{\footnotesize\ttfamily \label{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_ac9b03d6704a30f145f130f1d7d405111} 
+list pvade.\+fluid.\+Flow\+Manager.\+Flow.\+integrated\+\_\+force\+\_\+y\+\_\+form = \+[$\,$]\+}
+
+\Hypertarget{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a94a32715f40af77bfd3be17af1498316}\index{pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}!integrated\_force\_z@{integrated\_force\_z}}
+\index{integrated\_force\_z@{integrated\_force\_z}!pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}}
+\doxysubsubsection{\texorpdfstring{integrated\_force\_z}{integrated\_force\_z}}
+{\footnotesize\ttfamily \label{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a94a32715f40af77bfd3be17af1498316} 
+list pvade.\+fluid.\+Flow\+Manager.\+Flow.\+integrated\+\_\+force\+\_\+z = \+[$\,$]\+}
+
+\Hypertarget{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_ac6ed25dec800bf25ffb47f06d03c6c69}\index{pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}!integrated\_force\_z\_form@{integrated\_force\_z\_form}}
+\index{integrated\_force\_z\_form@{integrated\_force\_z\_form}!pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}}
+\doxysubsubsection{\texorpdfstring{integrated\_force\_z\_form}{integrated\_force\_z\_form}}
+{\footnotesize\ttfamily \label{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_ac6ed25dec800bf25ffb47f06d03c6c69} 
+list pvade.\+fluid.\+Flow\+Manager.\+Flow.\+integrated\+\_\+force\+\_\+z\+\_\+form = \+[$\,$]\+}
+
+\Hypertarget{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_ae155fdf3c999161c703d7f6518abceaa}\index{pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}!L1@{L1}}
+\index{L1@{L1}!pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}}
+\doxysubsubsection{\texorpdfstring{L1}{L1}}
+{\footnotesize\ttfamily \label{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_ae155fdf3c999161c703d7f6518abceaa} 
+pvade.\+fluid.\+Flow\+Manager.\+Flow.\+L1 = dolfinx.\+fem.\+form(ufl.\+rhs(self.\+F1))}
+
+\Hypertarget{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a6e927345a2b0b6f882ddde9cf237aa60}\index{pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}!L2@{L2}}
+\index{L2@{L2}!pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}}
+\doxysubsubsection{\texorpdfstring{L2}{L2}}
+{\footnotesize\ttfamily \label{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a6e927345a2b0b6f882ddde9cf237aa60} 
+pvade.\+fluid.\+Flow\+Manager.\+Flow.\+L2}
+
+{\bfseries Initial value:\+}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{=\ \ dolfinx.fem.form(}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ ufl.dot(ufl.nabla\_grad(self.p\_k1),\ ufl.nabla\_grad(self.q))\ *\ ufl.dx}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ -\/\ (self.rho\_c\ /\ self.dt\_c)\ *\ ufl.div(self.u\_k)\ *\ self.q\ *\ ufl.dx}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ )}
+
+\end{DoxyCode}
+\Hypertarget{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a2b76056289f0b4ebae5514f0de464c4b}\index{pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}!L3@{L3}}
+\index{L3@{L3}!pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}}
+\doxysubsubsection{\texorpdfstring{L3}{L3}}
+{\footnotesize\ttfamily \label{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a2b76056289f0b4ebae5514f0de464c4b} 
+pvade.\+fluid.\+Flow\+Manager.\+Flow.\+L3}
+
+{\bfseries Initial value:\+}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{=\ \ dolfinx.fem.form(}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ ufl.dot(self.u\_k,\ self.v)\ *\ ufl.dx}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ -\/\ (self.dt\_c\ /\ self.rho\_c)}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ *\ ufl.dot(ufl.nabla\_grad(self.p\_k\ -\/\ self.p\_k1),\ self.v)}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ *\ ufl.dx}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ )}
+
+\end{DoxyCode}
+\Hypertarget{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_aecb8540f3a73da8dce307bcba7682d0a}\index{pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}!L4@{L4}}
+\index{L4@{L4}!pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}}
+\doxysubsubsection{\texorpdfstring{L4}{L4}}
+{\footnotesize\ttfamily \label{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_aecb8540f3a73da8dce307bcba7682d0a} 
+pvade.\+fluid.\+Flow\+Manager.\+Flow.\+L4 = dolfinx.\+fem.\+form(ufl.\+rhs(self.\+F4))}
+
+\Hypertarget{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a25a81975606d85bf8e6194125a4b8026}\index{pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}!L5@{L5}}
+\index{L5@{L5}!pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}}
+\doxysubsubsection{\texorpdfstring{L5}{L5}}
+{\footnotesize\ttfamily \label{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a25a81975606d85bf8e6194125a4b8026} 
+pvade.\+fluid.\+Flow\+Manager.\+Flow.\+L5}
+
+{\bfseries Initial value:\+}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{=\ \ dolfinx.fem.form(}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ ufl.inner(self.stress,\ ufl.TestFunction(self.T))\ *\ ufl.dx}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ )}
+
+\end{DoxyCode}
+\Hypertarget{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_aa202b4e97208c021faf7a69a715f99b8}\index{pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}!L6@{L6}}
+\index{L6@{L6}!pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}}
+\doxysubsubsection{\texorpdfstring{L6}{L6}}
+{\footnotesize\ttfamily \label{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_aa202b4e97208c021faf7a69a715f99b8} 
+pvade.\+fluid.\+Flow\+Manager.\+Flow.\+L6}
+
+{\bfseries Initial value:\+}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{=\ \ dolfinx.fem.form(}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ ufl.inner(cfl\_form,\ ufl.TestFunction(self.DG))\ *\ ufl.dx}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ )}
+
+\end{DoxyCode}
+\Hypertarget{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_af8df5dead5f6f076ec69350fdcc29de2}\index{pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}!lift\_and\_drag\_filename@{lift\_and\_drag\_filename}}
+\index{lift\_and\_drag\_filename@{lift\_and\_drag\_filename}!pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}}
+\doxysubsubsection{\texorpdfstring{lift\_and\_drag\_filename}{lift\_and\_drag\_filename}}
+{\footnotesize\ttfamily \label{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_af8df5dead5f6f076ec69350fdcc29de2} 
+pvade.\+fluid.\+Flow\+Manager.\+Flow.\+lift\+\_\+and\+\_\+drag\+\_\+filename}
+
+{\bfseries Initial value:\+}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{=\ \ (}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ f\textcolor{stringliteral}{"{}\{params.general.output\_dir\_sol\}/lift\_and\_drag.csv"{}}}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ )}
+
+\end{DoxyCode}
+\Hypertarget{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a8cbd4fde37fd771f0da01db0b4f80b66}\index{pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}!mesh\_vel@{mesh\_vel}}
+\index{mesh\_vel@{mesh\_vel}!pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}}
+\doxysubsubsection{\texorpdfstring{mesh\_vel}{mesh\_vel}}
+{\footnotesize\ttfamily \label{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a8cbd4fde37fd771f0da01db0b4f80b66} 
+pvade.\+fluid.\+Flow\+Manager.\+Flow.\+mesh\+\_\+vel = dolfinx.\+fem.\+Function(self.\+V, \doxymbox{\hyperlink{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_af815465a07a898102c789f4d3ac37d2d}{name}}="{}mesh\+\_\+displacement"{})}
+
+\Hypertarget{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a311fb95b87c36ab67a3bf29ce49ba241}\index{pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}!mesh\_vel\_bc@{mesh\_vel\_bc}}
+\index{mesh\_vel\_bc@{mesh\_vel\_bc}!pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}}
+\doxysubsubsection{\texorpdfstring{mesh\_vel\_bc}{mesh\_vel\_bc}}
+{\footnotesize\ttfamily \label{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a311fb95b87c36ab67a3bf29ce49ba241} 
+pvade.\+fluid.\+Flow\+Manager.\+Flow.\+mesh\+\_\+vel\+\_\+bc = dolfinx.\+fem.\+Function(self.\+V, \doxymbox{\hyperlink{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_af815465a07a898102c789f4d3ac37d2d}{name}}="{}mesh\+\_\+displacement\+\_\+bc"{})}
+
+\Hypertarget{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_aaf97b1c7d8780461e476855538ce8485}\index{pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}!mesh\_vel\_bc\_old@{mesh\_vel\_bc\_old}}
+\index{mesh\_vel\_bc\_old@{mesh\_vel\_bc\_old}!pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}}
+\doxysubsubsection{\texorpdfstring{mesh\_vel\_bc\_old}{mesh\_vel\_bc\_old}}
+{\footnotesize\ttfamily \label{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_aaf97b1c7d8780461e476855538ce8485} 
+pvade.\+fluid.\+Flow\+Manager.\+Flow.\+mesh\+\_\+vel\+\_\+bc\+\_\+old = dolfinx.\+fem.\+Function(self.\+V)}
+
+\Hypertarget{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_aef6adc85442935cecaa72185ecbf8ffe}\index{pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}!mesh\_vel\_old@{mesh\_vel\_old}}
+\index{mesh\_vel\_old@{mesh\_vel\_old}!pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}}
+\doxysubsubsection{\texorpdfstring{mesh\_vel\_old}{mesh\_vel\_old}}
+{\footnotesize\ttfamily \label{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_aef6adc85442935cecaa72185ecbf8ffe} 
+pvade.\+fluid.\+Flow\+Manager.\+Flow.\+mesh\+\_\+vel\+\_\+old = dolfinx.\+fem.\+Function(self.\+V)}
+
+\Hypertarget{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a84badbf265b079bd44ea62f89f58f866}\index{pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}!n@{n}}
+\index{n@{n}!pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}}
+\doxysubsubsection{\texorpdfstring{n}{n}}
+{\footnotesize\ttfamily \label{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a84badbf265b079bd44ea62f89f58f866} 
+pvade.\+fluid.\+Flow\+Manager.\+Flow.\+n = ufl.\+Facet\+Normal(domain.\+fluid.\+msh)}
+
+\Hypertarget{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_af815465a07a898102c789f4d3ac37d2d}\index{pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}!name@{name}}
+\index{name@{name}!pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}}
+\doxysubsubsection{\texorpdfstring{name}{name}}
+{\footnotesize\ttfamily \label{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_af815465a07a898102c789f4d3ac37d2d} 
+str pvade.\+fluid.\+Flow\+Manager.\+Flow.\+name = "{}fluid"{}}
+
+\Hypertarget{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a0d316e11ea705d3ea29a1ff1e208ea2d}\index{pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}!ndim@{ndim}}
+\index{ndim@{ndim}!pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}}
+\doxysubsubsection{\texorpdfstring{ndim}{ndim}}
+{\footnotesize\ttfamily \label{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a0d316e11ea705d3ea29a1ff1e208ea2d} 
+int pvade.\+fluid.\+Flow\+Manager.\+Flow.\+ndim = domain.\+ndim}
+
+\Hypertarget{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a6fb2bd4c9c29ffc13eaec877681a93b0}\index{pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}!nu\_T@{nu\_T}}
+\index{nu\_T@{nu\_T}!pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}}
+\doxysubsubsection{\texorpdfstring{nu\_T}{nu\_T}}
+{\footnotesize\ttfamily \label{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a6fb2bd4c9c29ffc13eaec877681a93b0} 
+int pvade.\+fluid.\+Flow\+Manager.\+Flow.\+nu\+\_\+T = Cs\texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}2 \texorpdfstring{$\ast$}{*} filter\+\_\+scale\texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}2 \texorpdfstring{$\ast$}{*} strain\+Mag}
+
+\Hypertarget{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a8353ec846d7fd4b25fb0207f322570be}\index{pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}!nullspace@{nullspace}}
+\index{nullspace@{nullspace}!pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}}
+\doxysubsubsection{\texorpdfstring{nullspace}{nullspace}}
+{\footnotesize\ttfamily \label{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a8353ec846d7fd4b25fb0207f322570be} 
+pvade.\+fluid.\+Flow\+Manager.\+Flow.\+nullspace}
+
+{\bfseries Initial value:\+}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{=\ \ PETSc.NullSpace().create(}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ constant=\textcolor{keyword}{True},\ comm=params.comm}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ )}
+
+\end{DoxyCode}
+\Hypertarget{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a8c50d7a2e639d7e5060d60e2302c495d}\index{pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}!num\_procs@{num\_procs}}
+\index{num\_procs@{num\_procs}!pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}}
+\doxysubsubsection{\texorpdfstring{num\_procs}{num\_procs}}
+{\footnotesize\ttfamily \label{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a8c50d7a2e639d7e5060d60e2302c495d} 
+pvade.\+fluid.\+Flow\+Manager.\+Flow.\+num\+\_\+procs = domain.\+num\+\_\+procs}
+
+\Hypertarget{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_ac6606676a8cc1ae285eefcae3f42ebec}\index{pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}!num\_Q\_dofs@{num\_Q\_dofs}}
+\index{num\_Q\_dofs@{num\_Q\_dofs}!pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}}
+\doxysubsubsection{\texorpdfstring{num\_Q\_dofs}{num\_Q\_dofs}}
+{\footnotesize\ttfamily \label{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_ac6606676a8cc1ae285eefcae3f42ebec} 
+tuple pvade.\+fluid.\+Flow\+Manager.\+Flow.\+num\+\_\+\+Q\+\_\+dofs}
+
+{\bfseries Initial value:\+}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{=\ \ (}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ self.Q.dofmap.index\_map\_bs\ *\ self.Q.dofmap.index\_map.size\_global}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ )}
+
+\end{DoxyCode}
+\Hypertarget{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a461e548d879d6d81543ac357df2430c5}\index{pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}!num\_V\_dofs@{num\_V\_dofs}}
+\index{num\_V\_dofs@{num\_V\_dofs}!pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}}
+\doxysubsubsection{\texorpdfstring{num\_V\_dofs}{num\_V\_dofs}}
+{\footnotesize\ttfamily \label{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a461e548d879d6d81543ac357df2430c5} 
+tuple pvade.\+fluid.\+Flow\+Manager.\+Flow.\+num\+\_\+\+V\+\_\+dofs}
+
+{\bfseries Initial value:\+}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{=\ \ (}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ self.V.dofmap.index\_map\_bs\ *\ self.V.dofmap.index\_map.size\_global}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ )}
+
+\end{DoxyCode}
+\Hypertarget{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a9a7e12f08d8add1142a1f53325178104}\index{pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}!p@{p}}
+\index{p@{p}!pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}}
+\doxysubsubsection{\texorpdfstring{p}{p}}
+{\footnotesize\ttfamily \label{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a9a7e12f08d8add1142a1f53325178104} 
+pvade.\+fluid.\+Flow\+Manager.\+Flow.\+p = ufl.\+Trial\+Function(self.\+Q)}
+
+\Hypertarget{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a015c059f504ac20af2ffc392bd0c89ea}\index{pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}!p\_k@{p\_k}}
+\index{p\_k@{p\_k}!pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}}
+\doxysubsubsection{\texorpdfstring{p\_k}{p\_k}}
+{\footnotesize\ttfamily \label{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a015c059f504ac20af2ffc392bd0c89ea} 
+pvade.\+fluid.\+Flow\+Manager.\+Flow.\+p\+\_\+k = dolfinx.\+fem.\+Function(self.\+Q, \doxymbox{\hyperlink{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_af815465a07a898102c789f4d3ac37d2d}{name}}="{}pressure"{})}
+
+\Hypertarget{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a488a8357af27126a578fcc70306f9f87}\index{pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}!p\_k1@{p\_k1}}
+\index{p\_k1@{p\_k1}!pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}}
+\doxysubsubsection{\texorpdfstring{p\_k1}{p\_k1}}
+{\footnotesize\ttfamily \label{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a488a8357af27126a578fcc70306f9f87} 
+pvade.\+fluid.\+Flow\+Manager.\+Flow.\+p\+\_\+k1 = dolfinx.\+fem.\+Function(self.\+Q)}
+
+\Hypertarget{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a9fc9ae81a6b86a234cf81e4e2ad7bbfc}\index{pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}!panel\_stress@{panel\_stress}}
+\index{panel\_stress@{panel\_stress}!pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}}
+\doxysubsubsection{\texorpdfstring{panel\_stress}{panel\_stress}}
+{\footnotesize\ttfamily \label{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a9fc9ae81a6b86a234cf81e4e2ad7bbfc} 
+pvade.\+fluid.\+Flow\+Manager.\+Flow.\+panel\+\_\+stress = dolfinx.\+fem.\+Function(self.\+T)}
+
+\Hypertarget{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a858cf1d8892c0ee0bbd0714af0fc2991}\index{pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}!panel\_stress\_undeformed@{panel\_stress\_undeformed}}
+\index{panel\_stress\_undeformed@{panel\_stress\_undeformed}!pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}}
+\doxysubsubsection{\texorpdfstring{panel\_stress\_undeformed}{panel\_stress\_undeformed}}
+{\footnotesize\ttfamily \label{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a858cf1d8892c0ee0bbd0714af0fc2991} 
+pvade.\+fluid.\+Flow\+Manager.\+Flow.\+panel\+\_\+stress\+\_\+undeformed = dolfinx.\+fem.\+Function(self.\+T\+\_\+undeformed)}
+
+\Hypertarget{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_ac7f8729c9397682a491729e539ce14d7}\index{pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}!Pe\_approx@{Pe\_approx}}
+\index{Pe\_approx@{Pe\_approx}!pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}}
+\doxysubsubsection{\texorpdfstring{Pe\_approx}{Pe\_approx}}
+{\footnotesize\ttfamily \label{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_ac7f8729c9397682a491729e539ce14d7} 
+pvade.\+fluid.\+Flow\+Manager.\+Flow.\+Pe\+\_\+approx = u\+\_\+ref \texorpdfstring{$\ast$}{*} params.\+domain.\+l\+\_\+char /\+ (2.\+0 \texorpdfstring{$\ast$}{*} params.\+fluid.\+alpha)}
+
+\Hypertarget{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_afb2e076bea03878ee71267d5f71f2559}\index{pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}!Q@{Q}}
+\index{Q@{Q}!pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}}
+\doxysubsubsection{\texorpdfstring{Q}{Q}}
+{\footnotesize\ttfamily \label{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_afb2e076bea03878ee71267d5f71f2559} 
+pvade.\+fluid.\+Flow\+Manager.\+Flow.\+Q = dolfinx.\+fem.\+Function\+Space(domain.\+fluid.\+msh, P1)}
+
+\Hypertarget{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a58890e0a00f946edb082de0779132a16}\index{pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}!q@{q}}
+\index{q@{q}!pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}}
+\doxysubsubsection{\texorpdfstring{q}{q}}
+{\footnotesize\ttfamily \label{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a58890e0a00f946edb082de0779132a16} 
+pvade.\+fluid.\+Flow\+Manager.\+Flow.\+q = ufl.\+Test\+Function(self.\+Q)}
+
+\Hypertarget{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_af8fdc128a50054828567640d589eb876}\index{pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}!r@{r}}
+\index{r@{r}!pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}}
+\doxysubsubsection{\texorpdfstring{r}{r}}
+{\footnotesize\ttfamily \label{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_af8fdc128a50054828567640d589eb876} 
+tuple pvade.\+fluid.\+Flow\+Manager.\+Flow.\+r}
+
+{\bfseries Initial value:\+}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{=\ \ (}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (1.0\ /\ self.dt\_c)\ *\ (self.theta\ -\/\ self.theta\_k1)}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ +\ ufl.dot(self.u\_k,\ ufl.nabla\_grad(self.theta))}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ -\/\ self.alpha\_c\ *\ ufl.div(ufl.grad(self.theta))}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ )}
+
+\end{DoxyCode}
+\Hypertarget{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_af83bf90876c5921d98b51c5fcf9b1599}\index{pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}!rank@{rank}}
+\index{rank@{rank}!pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}}
+\doxysubsubsection{\texorpdfstring{rank}{rank}}
+{\footnotesize\ttfamily \label{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_af83bf90876c5921d98b51c5fcf9b1599} 
+pvade.\+fluid.\+Flow\+Manager.\+Flow.\+rank = domain.\+rank}
+
+\Hypertarget{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a600cde920361dfe5501dacd30631fc22}\index{pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}!rho\_c@{rho\_c}}
+\index{rho\_c@{rho\_c}!pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}}
+\doxysubsubsection{\texorpdfstring{rho\_c}{rho\_c}}
+{\footnotesize\ttfamily \label{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a600cde920361dfe5501dacd30631fc22} 
+pvade.\+fluid.\+Flow\+Manager.\+Flow.\+rho\+\_\+c = dolfinx.\+fem.\+Constant(domain.\+fluid.\+msh, (params.\+fluid.\+rho))}
+
+\Hypertarget{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_aef369c2c1a2e7c1c31e95da2abc32e99}\index{pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}!S@{S}}
+\index{S@{S}!pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}}
+\doxysubsubsection{\texorpdfstring{S}{S}}
+{\footnotesize\ttfamily \label{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_aef369c2c1a2e7c1c31e95da2abc32e99} 
+pvade.\+fluid.\+Flow\+Manager.\+Flow.\+S = dolfinx.\+fem.\+Function\+Space(domain.\+fluid.\+msh, P1)}
+
+\Hypertarget{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a41c80f8de0abfe05b1f847200efe59d5}\index{pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}!s@{s}}
+\index{s@{s}!pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}}
+\doxysubsubsection{\texorpdfstring{s}{s}}
+{\footnotesize\ttfamily \label{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a41c80f8de0abfe05b1f847200efe59d5} 
+pvade.\+fluid.\+Flow\+Manager.\+Flow.\+s = ufl.\+Test\+Function(self.\+S)}
+
+\Hypertarget{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a82976bcbb9494c3e388cb80895fb38ec}\index{pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}!solver\_1@{solver\_1}}
+\index{solver\_1@{solver\_1}!pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}}
+\doxysubsubsection{\texorpdfstring{solver\_1}{solver\_1}}
+{\footnotesize\ttfamily \label{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a82976bcbb9494c3e388cb80895fb38ec} 
+pvade.\+fluid.\+Flow\+Manager.\+Flow.\+solver\+\_\+1 = PETSc.\+KSP().create(self.\+comm)}
+
+\Hypertarget{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_ac6de5a8176648f0ed1fea5ba73e6ecbf}\index{pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}!solver\_2@{solver\_2}}
+\index{solver\_2@{solver\_2}!pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}}
+\doxysubsubsection{\texorpdfstring{solver\_2}{solver\_2}}
+{\footnotesize\ttfamily \label{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_ac6de5a8176648f0ed1fea5ba73e6ecbf} 
+pvade.\+fluid.\+Flow\+Manager.\+Flow.\+solver\+\_\+2 = PETSc.\+KSP().create(self.\+comm)}
+
+\Hypertarget{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a7ce2e451dd888cd03aa1235588d7477f}\index{pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}!solver\_3@{solver\_3}}
+\index{solver\_3@{solver\_3}!pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}}
+\doxysubsubsection{\texorpdfstring{solver\_3}{solver\_3}}
+{\footnotesize\ttfamily \label{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a7ce2e451dd888cd03aa1235588d7477f} 
+pvade.\+fluid.\+Flow\+Manager.\+Flow.\+solver\+\_\+3 = PETSc.\+KSP().create(self.\+comm)}
+
+\Hypertarget{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a7a3b151b4668d0181dddd8543153dc12}\index{pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}!solver\_4@{solver\_4}}
+\index{solver\_4@{solver\_4}!pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}}
+\doxysubsubsection{\texorpdfstring{solver\_4}{solver\_4}}
+{\footnotesize\ttfamily \label{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a7a3b151b4668d0181dddd8543153dc12} 
+pvade.\+fluid.\+Flow\+Manager.\+Flow.\+solver\+\_\+4 = PETSc.\+KSP().create(self.\+comm)}
+
+\Hypertarget{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_addbd2cce8f32aa2b29a015779543a751}\index{pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}!solver\_5@{solver\_5}}
+\index{solver\_5@{solver\_5}!pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}}
+\doxysubsubsection{\texorpdfstring{solver\_5}{solver\_5}}
+{\footnotesize\ttfamily \label{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_addbd2cce8f32aa2b29a015779543a751} 
+pvade.\+fluid.\+Flow\+Manager.\+Flow.\+solver\+\_\+5 = PETSc.\+KSP().create(self.\+comm)}
+
+\Hypertarget{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a663739d96a942572f174adcdbdfc1d1b}\index{pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}!solver\_6@{solver\_6}}
+\index{solver\_6@{solver\_6}!pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}}
+\doxysubsubsection{\texorpdfstring{solver\_6}{solver\_6}}
+{\footnotesize\ttfamily \label{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a663739d96a942572f174adcdbdfc1d1b} 
+pvade.\+fluid.\+Flow\+Manager.\+Flow.\+solver\+\_\+6 = PETSc.\+KSP().create(self.\+comm)}
+
+\Hypertarget{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a48804905b8b3d8d1cb7f91b434040c85}\index{pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}!stabilizing@{stabilizing}}
+\index{stabilizing@{stabilizing}!pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}}
+\doxysubsubsection{\texorpdfstring{stabilizing}{stabilizing}}
+{\footnotesize\ttfamily \label{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a48804905b8b3d8d1cb7f91b434040c85} 
+bool pvade.\+fluid.\+Flow\+Manager.\+Flow.\+stabilizing = True}
+
+\Hypertarget{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a75f9b97f7dea37d0437aed65bcdd46a1}\index{pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}!stress@{stress}}
+\index{stress@{stress}!pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}}
+\doxysubsubsection{\texorpdfstring{stress}{stress}}
+{\footnotesize\ttfamily \label{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a75f9b97f7dea37d0437aed65bcdd46a1} 
+pvade.\+fluid.\+Flow\+Manager.\+Flow.\+stress = sigma(self.\+u\+\_\+k, self.\+p\+\_\+k, nu + self.\+nu\+\_\+T, self.\+rho\+\_\+c)}
+
+\Hypertarget{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_ab206a97cd3fbaebc674cbdc3ea3494ad}\index{pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}!T@{T}}
+\index{T@{T}!pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}}
+\doxysubsubsection{\texorpdfstring{T}{T}}
+{\footnotesize\ttfamily \label{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_ab206a97cd3fbaebc674cbdc3ea3494ad} 
+pvade.\+fluid.\+Flow\+Manager.\+Flow.\+T = dolfinx.\+fem.\+Function\+Space(domain.\+fluid.\+msh, P3)}
+
+\Hypertarget{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a8a3eac5b0807ce3fc1bd0404e7647292}\index{pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}!T\_undeformed@{T\_undeformed}}
+\index{T\_undeformed@{T\_undeformed}!pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}}
+\doxysubsubsection{\texorpdfstring{T\_undeformed}{T\_undeformed}}
+{\footnotesize\ttfamily \label{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a8a3eac5b0807ce3fc1bd0404e7647292} 
+pvade.\+fluid.\+Flow\+Manager.\+Flow.\+T\+\_\+undeformed}
+
+{\bfseries Initial value:\+}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{=\ \ dolfinx.fem.FunctionSpace(}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ domain.fluid\_undeformed.msh,\ P3}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ )}
+
+\end{DoxyCode}
+\Hypertarget{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a87e175767b359d9373f9467f00a9bf92}\index{pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}!thermal\_analysis@{thermal\_analysis}}
+\index{thermal\_analysis@{thermal\_analysis}!pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}}
+\doxysubsubsection{\texorpdfstring{thermal\_analysis}{thermal\_analysis}}
+{\footnotesize\ttfamily \label{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a87e175767b359d9373f9467f00a9bf92} 
+pvade.\+fluid.\+Flow\+Manager.\+Flow.\+thermal\+\_\+analysis = params.\+general.\+thermal\+\_\+analysis}
+
+\Hypertarget{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_ae460604821e7895eb220987b4288fd14}\index{pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}!theta@{theta}}
+\index{theta@{theta}!pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}}
+\doxysubsubsection{\texorpdfstring{theta}{theta}}
+{\footnotesize\ttfamily \label{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_ae460604821e7895eb220987b4288fd14} 
+pvade.\+fluid.\+Flow\+Manager.\+Flow.\+theta = ufl.\+Trial\+Function(self.\+S)}
+
+\Hypertarget{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_aac4c345b174d117b5fad6ac07a9270f3}\index{pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}!theta\_k@{theta\_k}}
+\index{theta\_k@{theta\_k}!pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}}
+\doxysubsubsection{\texorpdfstring{theta\_k}{theta\_k}}
+{\footnotesize\ttfamily \label{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_aac4c345b174d117b5fad6ac07a9270f3} 
+pvade.\+fluid.\+Flow\+Manager.\+Flow.\+theta\+\_\+k = dolfinx.\+fem.\+Function(self.\+S, \doxymbox{\hyperlink{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_af815465a07a898102c789f4d3ac37d2d}{name}}="{}temperature "{})}
+
+\Hypertarget{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_af404c5b82410414a92270fccfdfdf3f9}\index{pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}!theta\_k1@{theta\_k1}}
+\index{theta\_k1@{theta\_k1}!pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}}
+\doxysubsubsection{\texorpdfstring{theta\_k1}{theta\_k1}}
+{\footnotesize\ttfamily \label{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_af404c5b82410414a92270fccfdfdf3f9} 
+pvade.\+fluid.\+Flow\+Manager.\+Flow.\+theta\+\_\+k1 = dolfinx.\+fem.\+Function(self.\+S)}
+
+\Hypertarget{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a1bf4833befd9b1ea9c463df3a56a3019}\index{pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}!theta\_max@{theta\_max}}
+\index{theta\_max@{theta\_max}!pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}}
+\doxysubsubsection{\texorpdfstring{theta\_max}{theta\_max}}
+{\footnotesize\ttfamily \label{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a1bf4833befd9b1ea9c463df3a56a3019} 
+pvade.\+fluid.\+Flow\+Manager.\+Flow.\+theta\+\_\+max = np.\+zeros(1)}
+
+\Hypertarget{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_ac37f4e4e7858d5069e396ed5d11cb822}\index{pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}!theta\_r@{theta\_r}}
+\index{theta\_r@{theta\_r}!pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}}
+\doxysubsubsection{\texorpdfstring{theta\_r}{theta\_r}}
+{\footnotesize\ttfamily \label{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_ac37f4e4e7858d5069e396ed5d11cb822} 
+pvade.\+fluid.\+Flow\+Manager.\+Flow.\+theta\+\_\+r = dolfinx.\+fem.\+Function(self.\+S)}
+
+\Hypertarget{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a42c307d82c81b5bbd9ddfc3827266f5c}\index{pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}!traction@{traction}}
+\index{traction@{traction}!pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}}
+\doxysubsubsection{\texorpdfstring{traction}{traction}}
+{\footnotesize\ttfamily \label{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a42c307d82c81b5bbd9ddfc3827266f5c} 
+pvade.\+fluid.\+Flow\+Manager.\+Flow.\+traction = ufl.\+dot(self.\+stress, -\/self.\+n)}
+
+\Hypertarget{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_ae8fdf3666b5cf7a9f45fa6c037366d9a}\index{pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}!u@{u}}
+\index{u@{u}!pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}}
+\doxysubsubsection{\texorpdfstring{u}{u}}
+{\footnotesize\ttfamily \label{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_ae8fdf3666b5cf7a9f45fa6c037366d9a} 
+pvade.\+fluid.\+Flow\+Manager.\+Flow.\+u = ufl.\+Trial\+Function(self.\+V)}
+
+\Hypertarget{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_add11cda4d3e58324f2a937057971106e}\index{pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}!U\_ALE@{U\_ALE}}
+\index{U\_ALE@{U\_ALE}!pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}}
+\doxysubsubsection{\texorpdfstring{U\_ALE}{U\_ALE}}
+{\footnotesize\ttfamily \label{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_add11cda4d3e58324f2a937057971106e} 
+float pvade.\+fluid.\+Flow\+Manager.\+Flow.\+U\+\_\+\+ALE = 0.\+5 \texorpdfstring{$\ast$}{*} (self.\+mesh\+\_\+vel + self.\+mesh\+\_\+vel\+\_\+old)}
+
+\Hypertarget{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_af8d1bc4ed3902518f4b8393436bf5ae0}\index{pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}!u\_k@{u\_k}}
+\index{u\_k@{u\_k}!pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}}
+\doxysubsubsection{\texorpdfstring{u\_k}{u\_k}}
+{\footnotesize\ttfamily \label{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_af8d1bc4ed3902518f4b8393436bf5ae0} 
+pvade.\+fluid.\+Flow\+Manager.\+Flow.\+u\+\_\+k = dolfinx.\+fem.\+Function(self.\+V, \doxymbox{\hyperlink{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_af815465a07a898102c789f4d3ac37d2d}{name}}="{}velocity "{})}
+
+\Hypertarget{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_aec92a0408334079dcc1a35adba810e3c}\index{pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}!u\_k1@{u\_k1}}
+\index{u\_k1@{u\_k1}!pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}}
+\doxysubsubsection{\texorpdfstring{u\_k1}{u\_k1}}
+{\footnotesize\ttfamily \label{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_aec92a0408334079dcc1a35adba810e3c} 
+pvade.\+fluid.\+Flow\+Manager.\+Flow.\+u\+\_\+k1 = dolfinx.\+fem.\+Function(self.\+V)}
+
+\Hypertarget{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a5ddee51ec783dda2fbe64cb5ad864947}\index{pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}!u\_k2@{u\_k2}}
+\index{u\_k2@{u\_k2}!pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}}
+\doxysubsubsection{\texorpdfstring{u\_k2}{u\_k2}}
+{\footnotesize\ttfamily \label{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a5ddee51ec783dda2fbe64cb5ad864947} 
+pvade.\+fluid.\+Flow\+Manager.\+Flow.\+u\+\_\+k2 = dolfinx.\+fem.\+Function(self.\+V)}
+
+\Hypertarget{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_ae3e1522ff1732d85ad1d2750793c559a}\index{pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}!upper\_cells@{upper\_cells}}
+\index{upper\_cells@{upper\_cells}!pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}}
+\doxysubsubsection{\texorpdfstring{upper\_cells}{upper\_cells}}
+{\footnotesize\ttfamily \label{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_ae3e1522ff1732d85ad1d2750793c559a} 
+pvade.\+fluid.\+Flow\+Manager.\+Flow.\+upper\+\_\+cells}
+
+{\bfseries Initial value:\+}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{=\ \ (}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ build\_velocity\_boundary\_conditions(domain,\ params,\ self.V,\ current\_time=0.0)}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ )}
+
+\end{DoxyCode}
+\Hypertarget{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a6a7d4a2b4606b59e6d5a38400bb40d00}\index{pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}!V@{V}}
+\index{V@{V}!pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}}
+\doxysubsubsection{\texorpdfstring{V}{V}}
+{\footnotesize\ttfamily \label{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a6a7d4a2b4606b59e6d5a38400bb40d00} 
+pvade.\+fluid.\+Flow\+Manager.\+Flow.\+V = dolfinx.\+fem.\+Function\+Space(domain.\+fluid.\+msh, P2)}
+
+\Hypertarget{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_ae29cea031e713f4af0de0e7c11c0abc3}\index{pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}!v@{v}}
+\index{v@{v}!pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}}
+\doxysubsubsection{\texorpdfstring{v}{v}}
+{\footnotesize\ttfamily \label{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_ae29cea031e713f4af0de0e7c11c0abc3} 
+pvade.\+fluid.\+Flow\+Manager.\+Flow.\+v = ufl.\+Test\+Function(self.\+V)}
+
+\Hypertarget{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a7573382749d323d62d32e86cb7159ca5}\index{pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}!zero\_vec@{zero\_vec}}
+\index{zero\_vec@{zero\_vec}!pvade.fluid.FlowManager.Flow@{pvade.fluid.FlowManager.Flow}}
+\doxysubsubsection{\texorpdfstring{zero\_vec}{zero\_vec}}
+{\footnotesize\ttfamily \label{classpvade_1_1fluid_1_1_flow_manager_1_1_flow_a7573382749d323d62d32e86cb7159ca5} 
+pvade.\+fluid.\+Flow\+Manager.\+Flow.\+zero\+\_\+vec}
+
+{\bfseries Initial value:\+}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{=\ \ dolfinx.fem.Constant(}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ domain.fluid.msh,\ PETSc.ScalarType((0.0,\ 0.0,\ 0.0))}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ )}
+
+\end{DoxyCode}
+
+
+The documentation for this class was generated from the following file:\+\begin{DoxyCompactItemize}
+\item 
+/\+\+Users/\+warsalan/\+work/\+pvade/\+main\+\_\+branch/\+\+PVade/\+pvade/\+fluid/\+\doxymbox{\hyperlink{_flow_manager_8py}{Flow\+Manager.\+py}}\end{DoxyCompactItemize}

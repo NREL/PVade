@@ -1,7 +1,28 @@
+"""Command-line and profiling utility functions for PVade.
+
+This module contains lightweight helpers for parsing the input-file path
+from the command line (:func:`get_input_file`) and for extracting solver
+timing metrics from a profiling output file (:func:`write_metrics`).
+"""
+
 import argparse
+from pvade.IO.verbosity import get_verbosity_level
 
 
 def get_input_file():
+    """Parse the path to the PVade input YAML file from the command line.
+
+    Reads the ``--input_file`` argument from ``sys.argv`` and verifies that
+    a value was supplied.  Raises a :class:`ValueError` when no input file
+    is specified.
+
+    Returns:
+        str: The full path to the input YAML file as provided on the command
+        line.
+
+    Raises:
+        ValueError: If ``--input_file`` is not provided or is ``None``.
+    """
     parser = argparse.ArgumentParser()
 
     parser.add_argument(
@@ -24,11 +45,30 @@ def get_input_file():
 
 
 def write_metrics(flow, prof_filename="profiling.txt"):
+    """Print solver timing metrics extracted from a profiling output file.
+
+    Reads the profiling file produced by ``cProfile`` or a similar tool and
+    searches for lines matching known solver-step identifiers.  Prints the
+    total time, per-call time, and call count for the main solve step as well
+    as individual IPCS sub-steps and mesh I/O operations.
+
+    Args:
+        flow (:obj:`pvade.fluid.FlowManager.Flow`): The Flow object; metrics
+            are only printed when ``flow.fluid_analysis`` is ``True``.
+        prof_filename (str, optional): Path to the profiling output file.
+            Defaults to ``"profiling.txt"``.
+    """
+    verbosity_level = get_verbosity_level()
+
+    if verbosity_level <= 0:
+        return
+
     with open(prof_filename, "r") as output_file:
         if flow.fluid_analysis == True:
             # solver_line = [line for line in output_file if "(solve)" in line]
             solver_line = [line for line in output_file if "(solve)" in line]
-            print(solver_line)
+            if verbosity_level >= 2:
+                print(solver_line)
             solver_line = solver_line[0].split()
             print(
                 "solve: total time = ",
@@ -43,7 +83,8 @@ def write_metrics(flow, prof_filename="profiling.txt"):
         if flow.fluid_analysis == True:
             # solver_line = [line for line in output_file if "(solve)" in line]
             solver1_line = [line for line in output_file_1 if "_solver_step_1" in line]
-            print(solver1_line)
+            if verbosity_level >= 2:
+                print(solver1_line)
             solver1_line = solver1_line[0].split()
             print(
                 "solver 1: total time = ",
@@ -57,7 +98,8 @@ def write_metrics(flow, prof_filename="profiling.txt"):
     with open(prof_filename, "r") as output_file:
         if flow.fluid_analysis == True:
             solver2_line = [line for line in output_file if "_solver_step_2" in line]
-            print(solver2_line)
+            if verbosity_level >= 2:
+                print(solver2_line)
             solver2_line = solver2_line[0].split()
             print(
                 "solver 2: total time = ",
@@ -71,7 +113,8 @@ def write_metrics(flow, prof_filename="profiling.txt"):
     with open(prof_filename, "r") as output_file:
         if flow.fluid_analysis == True:
             solver3_line = [line for line in output_file if "_solver_step_3" in line]
-            print(solver3_line)
+            if verbosity_level >= 2:
+                print(solver3_line)
             solver3_line = solver3_line[0].split()
             print(
                 "solver 3: total time = ",

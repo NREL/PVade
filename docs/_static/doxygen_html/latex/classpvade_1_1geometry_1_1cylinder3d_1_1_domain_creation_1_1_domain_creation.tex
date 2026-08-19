@@ -1,0 +1,147 @@
+\doxysection{pvade.\+geometry.\+cylinder3d.\+Domain\+Creation.\+Domain\+Creation Class Reference}
+\hypertarget{classpvade_1_1geometry_1_1cylinder3d_1_1_domain_creation_1_1_domain_creation}{}\label{classpvade_1_1geometry_1_1cylinder3d_1_1_domain_creation_1_1_domain_creation}\index{pvade.geometry.cylinder3d.DomainCreation.DomainCreation@{pvade.geometry.cylinder3d.DomainCreation.DomainCreation}}
+Inheritance diagram for pvade.\+geometry.\+cylinder3d.\+Domain\+Creation.\+Domain\+Creation:\+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{classpvade_1_1geometry_1_1cylinder3d_1_1_domain_creation_1_1_domain_creation}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\doxymbox{\hyperlink{classpvade_1_1geometry_1_1cylinder3d_1_1_domain_creation_1_1_domain_creation_a004ba99de0f9afae04d6e15c412c4387}{\+\_\+\+\_\+init\+\_\+\+\_\+}} (self, params)
+\item 
+\doxymbox{\hyperlink{classpvade_1_1geometry_1_1cylinder3d_1_1_domain_creation_1_1_domain_creation_ab644c4b9ae1f22c0e97c554792beb53b}{build\+\_\+\+FSI}} (self, params)
+\item 
+\doxymbox{\hyperlink{classpvade_1_1geometry_1_1cylinder3d_1_1_domain_creation_1_1_domain_creation_a24ac9da5dd909970dc12feb2b5190cc0}{set\+\_\+length\+\_\+scales}} (self, params, domain\+\_\+markers)
+\end{DoxyCompactItemize}
+\doxysubsection*{Public Member Functions inherited from \doxymbox{\hyperlink{classpvade_1_1geometry_1_1template_1_1_template_domain_creation_1_1_template_domain_creation}{pvade.\+geometry.\+template.\+Template\+Domain\+Creation.\+Template\+Domain\+Creation}}}
+\begin{DoxyCompactItemize}
+\item 
+\doxymbox{\hyperlink{classpvade_1_1geometry_1_1template_1_1_template_domain_creation_1_1_template_domain_creation_a0cb2e12c55e48701e2f927ab240bbbfd}{\+\_\+\+\_\+init\+\_\+\+\_\+}} (self, params)
+\item 
+\doxymbox{\hyperlink{classpvade_1_1geometry_1_1template_1_1_template_domain_creation_1_1_template_domain_creation_a8128156e3993544dc2852aafb6f28106}{build}} (self, params)
+\item 
+\doxymbox{\hyperlink{classpvade_1_1geometry_1_1template_1_1_template_domain_creation_1_1_template_domain_creation_a477bd7662d834780ade08b72cd34cb5d}{mark\+\_\+surfaces}} (self, params, domain\+\_\+markers)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\doxymbox{\hyperlink{classpvade_1_1geometry_1_1cylinder3d_1_1_domain_creation_1_1_domain_creation_a943fd2aa949f98d210da86297b977a64}{x\+\_\+span}} = params.\+domain.\+x\+\_\+max -\/ params.\+domain.\+x\+\_\+min
+\item 
+\doxymbox{\hyperlink{classpvade_1_1geometry_1_1cylinder3d_1_1_domain_creation_1_1_domain_creation_a601b88f426171770c1d780c9038aa38b}{y\+\_\+span}} = params.\+domain.\+y\+\_\+max -\/ params.\+domain.\+y\+\_\+min
+\item 
+\doxymbox{\hyperlink{classpvade_1_1geometry_1_1cylinder3d_1_1_domain_creation_1_1_domain_creation_a240b531bedd25af79d4caaea48b3c809}{z\+\_\+span}} = params.\+domain.\+z\+\_\+max -\/ params.\+domain.\+z\+\_\+min
+\item 
+float \doxymbox{\hyperlink{classpvade_1_1geometry_1_1cylinder3d_1_1_domain_creation_1_1_domain_creation_afabac8097c74f171ca30a5f68edf83ca}{cyld\+\_\+radius}} = 0.\+05
+\item 
+\doxymbox{\hyperlink{classpvade_1_1geometry_1_1cylinder3d_1_1_domain_creation_1_1_domain_creation_a77388eada1cb326d937f262aaf79f50f}{numpy\+\_\+pt\+\_\+total\+\_\+array}} = np.\+zeros((3, 6))
+\end{DoxyCompactItemize}
+\doxysubsection*{Public Attributes inherited from \doxymbox{\hyperlink{classpvade_1_1geometry_1_1template_1_1_template_domain_creation_1_1_template_domain_creation}{pvade.\+geometry.\+template.\+Template\+Domain\+Creation.\+Template\+Domain\+Creation}}}
+\begin{DoxyCompactItemize}
+\item 
+\doxymbox{\hyperlink{classpvade_1_1geometry_1_1template_1_1_template_domain_creation_1_1_template_domain_creation_a7b6de9bf6c9803709fa1fc5faa5fbc21}{comm}} = params.\+comm
+\item 
+int \doxymbox{\hyperlink{classpvade_1_1geometry_1_1template_1_1_template_domain_creation_1_1_template_domain_creation_abbad1c751ef372db73981f16e4582fa5}{rank}} = params.\+rank
+\item 
+\doxymbox{\hyperlink{classpvade_1_1geometry_1_1template_1_1_template_domain_creation_1_1_template_domain_creation_a8079a964a183b0bed265e9a3af12c54f}{num\+\_\+procs}} = params.\+num\+\_\+procs
+\item 
+\doxymbox{\hyperlink{classpvade_1_1geometry_1_1template_1_1_template_domain_creation_1_1_template_domain_creation_a8de79a9660dd37d1c970021aabb17fe5}{gmsh\+\_\+model}} = gmsh.\+model()
+\item 
+int \doxymbox{\hyperlink{classpvade_1_1geometry_1_1template_1_1_template_domain_creation_1_1_template_domain_creation_a4f950dc8dc9bea748d5326f0a29ef30d}{ndim}} = self.\+gmsh\+\_\+model.\+get\+\_\+dimension()
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\begin{DoxyVerb}_summary_ test
+
+Args:
+    TemplateDomainCreation (_type_): _description_
+\end{DoxyVerb}
+ 
+
+\label{classpvade_1_1geometry_1_1cylinder3d_1_1_domain_creation_1_1_domain_creation_doc-constructors}
+\Hypertarget{classpvade_1_1geometry_1_1cylinder3d_1_1_domain_creation_1_1_domain_creation_doc-constructors}
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{classpvade_1_1geometry_1_1cylinder3d_1_1_domain_creation_1_1_domain_creation_a004ba99de0f9afae04d6e15c412c4387}\index{pvade.geometry.cylinder3d.DomainCreation.DomainCreation@{pvade.geometry.cylinder3d.DomainCreation.DomainCreation}!\_\_init\_\_@{\_\_init\_\_}}
+\index{\_\_init\_\_@{\_\_init\_\_}!pvade.geometry.cylinder3d.DomainCreation.DomainCreation@{pvade.geometry.cylinder3d.DomainCreation.DomainCreation}}
+\doxysubsubsection{\texorpdfstring{\_\_init\_\_()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily \label{classpvade_1_1geometry_1_1cylinder3d_1_1_domain_creation_1_1_domain_creation_a004ba99de0f9afae04d6e15c412c4387} 
+pvade.\+geometry.\+cylinder3d.\+Domain\+Creation.\+Domain\+Creation.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self}{, }\item[{}]{params}{}\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Initialize the DomainCreation object
+ This initializes an object that creates the computational domain.
+
+Args:
+    params (:obj:`pvade.Parameters.SimParams`): A SimParams object
+\end{DoxyVerb}
+ 
+
+\label{classpvade_1_1geometry_1_1cylinder3d_1_1_domain_creation_1_1_domain_creation_doc-func-members}
+\Hypertarget{classpvade_1_1geometry_1_1cylinder3d_1_1_domain_creation_1_1_domain_creation_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{classpvade_1_1geometry_1_1cylinder3d_1_1_domain_creation_1_1_domain_creation_ab644c4b9ae1f22c0e97c554792beb53b}\index{pvade.geometry.cylinder3d.DomainCreation.DomainCreation@{pvade.geometry.cylinder3d.DomainCreation.DomainCreation}!build\_FSI@{build\_FSI}}
+\index{build\_FSI@{build\_FSI}!pvade.geometry.cylinder3d.DomainCreation.DomainCreation@{pvade.geometry.cylinder3d.DomainCreation.DomainCreation}}
+\doxysubsubsection{\texorpdfstring{build\_FSI()}{build\_FSI()}}
+{\footnotesize\ttfamily \label{classpvade_1_1geometry_1_1cylinder3d_1_1_domain_creation_1_1_domain_creation_ab644c4b9ae1f22c0e97c554792beb53b} 
+pvade.\+geometry.\+cylinder3d.\+Domain\+Creation.\+Domain\+Creation.\+build\+\_\+\+FSI (\begin{DoxyParamCaption}\item[{}]{self}{, }\item[{}]{params}{}\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}This function creates the computational domain for a flow around a 3D cylinder.
+
+Returns:
+    The function returns gmsh.model which contains the geometric description of the computational domain
+\end{DoxyVerb}
+ \Hypertarget{classpvade_1_1geometry_1_1cylinder3d_1_1_domain_creation_1_1_domain_creation_a24ac9da5dd909970dc12feb2b5190cc0}\index{pvade.geometry.cylinder3d.DomainCreation.DomainCreation@{pvade.geometry.cylinder3d.DomainCreation.DomainCreation}!set\_length\_scales@{set\_length\_scales}}
+\index{set\_length\_scales@{set\_length\_scales}!pvade.geometry.cylinder3d.DomainCreation.DomainCreation@{pvade.geometry.cylinder3d.DomainCreation.DomainCreation}}
+\doxysubsubsection{\texorpdfstring{set\_length\_scales()}{set\_length\_scales()}}
+{\footnotesize\ttfamily \label{classpvade_1_1geometry_1_1cylinder3d_1_1_domain_creation_1_1_domain_creation_a24ac9da5dd909970dc12feb2b5190cc0} 
+pvade.\+geometry.\+cylinder3d.\+Domain\+Creation.\+Domain\+Creation.\+set\+\_\+length\+\_\+scales (\begin{DoxyParamCaption}\item[{}]{self}{, }\item[{}]{params}{, }\item[{}]{domain\+\_\+markers}{}\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}This function call defines the characteristic length for the mesh in locations of interst
+LcMin,LcMax,DistMin and DistMax are used to create a refined mesh in specific locations
+which results in a high fidelity mesh without using a uniform element size in the whole mesh.
+\end{DoxyVerb}
+ 
+
+Reimplemented from \doxymbox{\hyperlink{classpvade_1_1geometry_1_1template_1_1_template_domain_creation_1_1_template_domain_creation_a23633a446558be6fb861b69d58317eff}{pvade.\+geometry.\+template.\+Template\+Domain\+Creation.\+Template\+Domain\+Creation}}.
+
+
+
+\label{classpvade_1_1geometry_1_1cylinder3d_1_1_domain_creation_1_1_domain_creation_doc-variable-members}
+\Hypertarget{classpvade_1_1geometry_1_1cylinder3d_1_1_domain_creation_1_1_domain_creation_doc-variable-members}
+\doxysubsection{Member Data Documentation}
+\Hypertarget{classpvade_1_1geometry_1_1cylinder3d_1_1_domain_creation_1_1_domain_creation_afabac8097c74f171ca30a5f68edf83ca}\index{pvade.geometry.cylinder3d.DomainCreation.DomainCreation@{pvade.geometry.cylinder3d.DomainCreation.DomainCreation}!cyld\_radius@{cyld\_radius}}
+\index{cyld\_radius@{cyld\_radius}!pvade.geometry.cylinder3d.DomainCreation.DomainCreation@{pvade.geometry.cylinder3d.DomainCreation.DomainCreation}}
+\doxysubsubsection{\texorpdfstring{cyld\_radius}{cyld\_radius}}
+{\footnotesize\ttfamily \label{classpvade_1_1geometry_1_1cylinder3d_1_1_domain_creation_1_1_domain_creation_afabac8097c74f171ca30a5f68edf83ca} 
+pvade.\+geometry.\+cylinder3d.\+Domain\+Creation.\+Domain\+Creation.\+cyld\+\_\+radius = 0.\+05}
+
+\Hypertarget{classpvade_1_1geometry_1_1cylinder3d_1_1_domain_creation_1_1_domain_creation_a77388eada1cb326d937f262aaf79f50f}\index{pvade.geometry.cylinder3d.DomainCreation.DomainCreation@{pvade.geometry.cylinder3d.DomainCreation.DomainCreation}!numpy\_pt\_total\_array@{numpy\_pt\_total\_array}}
+\index{numpy\_pt\_total\_array@{numpy\_pt\_total\_array}!pvade.geometry.cylinder3d.DomainCreation.DomainCreation@{pvade.geometry.cylinder3d.DomainCreation.DomainCreation}}
+\doxysubsubsection{\texorpdfstring{numpy\_pt\_total\_array}{numpy\_pt\_total\_array}}
+{\footnotesize\ttfamily \label{classpvade_1_1geometry_1_1cylinder3d_1_1_domain_creation_1_1_domain_creation_a77388eada1cb326d937f262aaf79f50f} 
+pvade.\+geometry.\+cylinder3d.\+Domain\+Creation.\+Domain\+Creation.\+numpy\+\_\+pt\+\_\+total\+\_\+array = np.\+zeros((3, 6))}
+
+\Hypertarget{classpvade_1_1geometry_1_1cylinder3d_1_1_domain_creation_1_1_domain_creation_a943fd2aa949f98d210da86297b977a64}\index{pvade.geometry.cylinder3d.DomainCreation.DomainCreation@{pvade.geometry.cylinder3d.DomainCreation.DomainCreation}!x\_span@{x\_span}}
+\index{x\_span@{x\_span}!pvade.geometry.cylinder3d.DomainCreation.DomainCreation@{pvade.geometry.cylinder3d.DomainCreation.DomainCreation}}
+\doxysubsubsection{\texorpdfstring{x\_span}{x\_span}}
+{\footnotesize\ttfamily \label{classpvade_1_1geometry_1_1cylinder3d_1_1_domain_creation_1_1_domain_creation_a943fd2aa949f98d210da86297b977a64} 
+pvade.\+geometry.\+cylinder3d.\+Domain\+Creation.\+Domain\+Creation.\+x\+\_\+span = params.\+domain.\+x\+\_\+max -\/ params.\+domain.\+x\+\_\+min}
+
+\Hypertarget{classpvade_1_1geometry_1_1cylinder3d_1_1_domain_creation_1_1_domain_creation_a601b88f426171770c1d780c9038aa38b}\index{pvade.geometry.cylinder3d.DomainCreation.DomainCreation@{pvade.geometry.cylinder3d.DomainCreation.DomainCreation}!y\_span@{y\_span}}
+\index{y\_span@{y\_span}!pvade.geometry.cylinder3d.DomainCreation.DomainCreation@{pvade.geometry.cylinder3d.DomainCreation.DomainCreation}}
+\doxysubsubsection{\texorpdfstring{y\_span}{y\_span}}
+{\footnotesize\ttfamily \label{classpvade_1_1geometry_1_1cylinder3d_1_1_domain_creation_1_1_domain_creation_a601b88f426171770c1d780c9038aa38b} 
+pvade.\+geometry.\+cylinder3d.\+Domain\+Creation.\+Domain\+Creation.\+y\+\_\+span = params.\+domain.\+y\+\_\+max -\/ params.\+domain.\+y\+\_\+min}
+
+\Hypertarget{classpvade_1_1geometry_1_1cylinder3d_1_1_domain_creation_1_1_domain_creation_a240b531bedd25af79d4caaea48b3c809}\index{pvade.geometry.cylinder3d.DomainCreation.DomainCreation@{pvade.geometry.cylinder3d.DomainCreation.DomainCreation}!z\_span@{z\_span}}
+\index{z\_span@{z\_span}!pvade.geometry.cylinder3d.DomainCreation.DomainCreation@{pvade.geometry.cylinder3d.DomainCreation.DomainCreation}}
+\doxysubsubsection{\texorpdfstring{z\_span}{z\_span}}
+{\footnotesize\ttfamily \label{classpvade_1_1geometry_1_1cylinder3d_1_1_domain_creation_1_1_domain_creation_a240b531bedd25af79d4caaea48b3c809} 
+pvade.\+geometry.\+cylinder3d.\+Domain\+Creation.\+Domain\+Creation.\+z\+\_\+span = params.\+domain.\+z\+\_\+max -\/ params.\+domain.\+z\+\_\+min}
+
+
+
+The documentation for this class was generated from the following file:\+\begin{DoxyCompactItemize}
+\item 
+/\+\+Users/\+warsalan/\+work/\+pvade/\+main\+\_\+branch/\+\+PVade/\+pvade/\+geometry/\+cylinder3d/\+\doxymbox{\hyperlink{cylinder3d_2_domain_creation_8py}{Domain\+Creation.\+py}}\end{DoxyCompactItemize}

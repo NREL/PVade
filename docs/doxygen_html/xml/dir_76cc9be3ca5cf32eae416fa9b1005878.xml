@@ -1,0 +1,14 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.17.0" xml:lang="en-US">
+  <compounddef id="dir_76cc9be3ca5cf32eae416fa9b1005878" kind="dir">
+    <compoundname>/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid</compoundname>
+    <innerfile refid="fluid_2____init_____8py">__init__.py</innerfile>
+    <innerfile refid="fluid_2boundary__conditions_8py">boundary_conditions.py</innerfile>
+    <innerfile refid="_flow_manager_8py">FlowManager.py</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/fluid/"/>
+  </compounddef>
+</doxygen>

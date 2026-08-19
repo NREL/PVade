@@ -1,0 +1,74 @@
+\doxysection{pvade.\+structure.\+boundary\+\_\+conditions.\+Inflow\+Velocity Class Reference}
+\hypertarget{classpvade_1_1structure_1_1boundary__conditions_1_1_inflow_velocity}{}\label{classpvade_1_1structure_1_1boundary__conditions_1_1_inflow_velocity}\index{pvade.structure.boundary\_conditions.InflowVelocity@{pvade.structure.boundary\_conditions.InflowVelocity}}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\doxymbox{\hyperlink{classpvade_1_1structure_1_1boundary__conditions_1_1_inflow_velocity_a35a504641fbf4d994d120c1b958d8c1a}{\+\_\+\+\_\+init\+\_\+\+\_\+}} (self, geom\+\_\+dim, params)
+\item 
+\doxymbox{\hyperlink{classpvade_1_1structure_1_1boundary__conditions_1_1_inflow_velocity_a290c3533a25770fc07abf2e1b8b41a1d}{\+\_\+\+\_\+call\+\_\+\+\_\+}} (self, x)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\doxymbox{\hyperlink{classpvade_1_1structure_1_1boundary__conditions_1_1_inflow_velocity_abfbf5ce48da81542e2e214326763754b}{geom\+\_\+dim}} = geom\+\_\+dim
+\item 
+\doxymbox{\hyperlink{classpvade_1_1structure_1_1boundary__conditions_1_1_inflow_velocity_ac0ead32c07617e3c37b4706b66d586aa}{params}} = params
+\end{DoxyCompactItemize}
+
+
+\label{classpvade_1_1structure_1_1boundary__conditions_1_1_inflow_velocity_doc-constructors}
+\Hypertarget{classpvade_1_1structure_1_1boundary__conditions_1_1_inflow_velocity_doc-constructors}
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{classpvade_1_1structure_1_1boundary__conditions_1_1_inflow_velocity_a35a504641fbf4d994d120c1b958d8c1a}\index{pvade.structure.boundary\_conditions.InflowVelocity@{pvade.structure.boundary\_conditions.InflowVelocity}!\_\_init\_\_@{\_\_init\_\_}}
+\index{\_\_init\_\_@{\_\_init\_\_}!pvade.structure.boundary\_conditions.InflowVelocity@{pvade.structure.boundary\_conditions.InflowVelocity}}
+\doxysubsubsection{\texorpdfstring{\_\_init\_\_()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily \label{classpvade_1_1structure_1_1boundary__conditions_1_1_inflow_velocity_a35a504641fbf4d994d120c1b958d8c1a} 
+pvade.\+structure.\+boundary\+\_\+conditions.\+Inflow\+Velocity.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self}{, }\item[{}]{geom\+\_\+dim}{, }\item[{}]{params}{}\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Inflow velocity object
+
+Args:
+    geom_dim (int): The geometric dimension (as opposed to the topological dimension, usually this is 3)
+    params (:obj:`pvade.Parameters.SimParams`): A SimParams object
+\end{DoxyVerb}
+ 
+
+\label{classpvade_1_1structure_1_1boundary__conditions_1_1_inflow_velocity_doc-func-members}
+\Hypertarget{classpvade_1_1structure_1_1boundary__conditions_1_1_inflow_velocity_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{classpvade_1_1structure_1_1boundary__conditions_1_1_inflow_velocity_a290c3533a25770fc07abf2e1b8b41a1d}\index{pvade.structure.boundary\_conditions.InflowVelocity@{pvade.structure.boundary\_conditions.InflowVelocity}!\_\_call\_\_@{\_\_call\_\_}}
+\index{\_\_call\_\_@{\_\_call\_\_}!pvade.structure.boundary\_conditions.InflowVelocity@{pvade.structure.boundary\_conditions.InflowVelocity}}
+\doxysubsubsection{\texorpdfstring{\_\_call\_\_()}{\_\_call\_\_()}}
+{\footnotesize\ttfamily \label{classpvade_1_1structure_1_1boundary__conditions_1_1_inflow_velocity_a290c3533a25770fc07abf2e1b8b41a1d} 
+pvade.\+structure.\+boundary\+\_\+conditions.\+Inflow\+Velocity.\+\_\+\+\_\+call\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self}{, }\item[{}]{x}{}\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Define an inflow expression for use as boundary condition
+
+Args:
+    x (np.ndarray): Array of coordinates
+
+Returns:
+    np.ndarray: Value of velocity at each coordinate in input array
+\end{DoxyVerb}
+ 
+
+\label{classpvade_1_1structure_1_1boundary__conditions_1_1_inflow_velocity_doc-variable-members}
+\Hypertarget{classpvade_1_1structure_1_1boundary__conditions_1_1_inflow_velocity_doc-variable-members}
+\doxysubsection{Member Data Documentation}
+\Hypertarget{classpvade_1_1structure_1_1boundary__conditions_1_1_inflow_velocity_abfbf5ce48da81542e2e214326763754b}\index{pvade.structure.boundary\_conditions.InflowVelocity@{pvade.structure.boundary\_conditions.InflowVelocity}!geom\_dim@{geom\_dim}}
+\index{geom\_dim@{geom\_dim}!pvade.structure.boundary\_conditions.InflowVelocity@{pvade.structure.boundary\_conditions.InflowVelocity}}
+\doxysubsubsection{\texorpdfstring{geom\_dim}{geom\_dim}}
+{\footnotesize\ttfamily \label{classpvade_1_1structure_1_1boundary__conditions_1_1_inflow_velocity_abfbf5ce48da81542e2e214326763754b} 
+pvade.\+structure.\+boundary\+\_\+conditions.\+Inflow\+Velocity.\+geom\+\_\+dim = geom\+\_\+dim}
+
+\Hypertarget{classpvade_1_1structure_1_1boundary__conditions_1_1_inflow_velocity_ac0ead32c07617e3c37b4706b66d586aa}\index{pvade.structure.boundary\_conditions.InflowVelocity@{pvade.structure.boundary\_conditions.InflowVelocity}!params@{params}}
+\index{params@{params}!pvade.structure.boundary\_conditions.InflowVelocity@{pvade.structure.boundary\_conditions.InflowVelocity}}
+\doxysubsubsection{\texorpdfstring{params}{params}}
+{\footnotesize\ttfamily \label{classpvade_1_1structure_1_1boundary__conditions_1_1_inflow_velocity_ac0ead32c07617e3c37b4706b66d586aa} 
+pvade.\+structure.\+boundary\+\_\+conditions.\+Inflow\+Velocity.\+params = params}
+
+
+
+The documentation for this class was generated from the following file:\+\begin{DoxyCompactItemize}
+\item 
+/\+\+Users/\+warsalan/\+work/\+pvade/\+main\+\_\+branch/\+\+PVade/\+pvade/\+structure/\+\doxymbox{\hyperlink{structure_2boundary__conditions_8py}{boundary\+\_\+conditions.\+py}}\end{DoxyCompactItemize}

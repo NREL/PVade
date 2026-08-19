@@ -1,3 +1,14 @@
+"""Input/output utilities for PVade simulations.
+
+This module provides:
+
+* :func:`start_print_and_log` – redirect ``stdout`` and ``stderr`` to a log
+    file while still echoing output to the terminal.
+* :class:`DataStream` – manages XDMF solution files, writing initial and
+    per-timestep snapshots of velocity, pressure, displacement, stress, and
+    optional temperature fields.
+"""
+
 import dolfinx
 import ufl
 import sys
@@ -5,12 +16,29 @@ import sys
 import numpy as np
 
 from datetime import datetime
+from pvade.IO.verbosity import (
+    get_verbosity_level,
+    should_emit_terminal_message,
+    parse_verbosity_print,
+)
 
 # from dolfinx.fem import create_nonmatching_meshes_interpolation_data
 # import logging
 
 
 def start_print_and_log(rank, logfile_name):
+    """Redirect ``stdout`` and ``stderr`` to a timestamped log file.
+
+    Replaces the process ``sys.stdout`` and ``sys.stderr`` with
+    :class:`PrintAndLog` instances that tee output to both the terminal and
+    the file *logfile_name*.  The log file is initialised as an empty file
+    before redirection begins.
+
+    Args:
+        rank (int): MPI rank of the calling process.
+        logfile_name (str): Full path to the log file that will be created (or
+            overwritten if it already exists).
+    """
 
     class PrintAndLog:
         """
@@ -22,6 +50,7 @@ def start_print_and_log(rank, logfile_name):
             self.logfile_name = logfile_name
             self.rank = rank
             self.message_type = message_type
+            self.verbosity_level = get_verbosity_level()
 
             if message_type == "INFO":
                 self.terminal = sys.__stdout__
@@ -40,16 +69,29 @@ def start_print_and_log(rank, logfile_name):
             # so we omit this check for now.
             if len(cleaned_message) > 0:
 
-                cleaned_message += "\n"
+                required_level, cleaned_message = parse_verbosity_print(cleaned_message)
 
-                self.terminal.write(f"{cleaned_message}")
+                terminal_message = cleaned_message
+                if self.verbosity_level >= 2 and self.message_type == "INFO":
+                    terminal_message = f"[rank {self.rank}] {terminal_message}"
+
+                if should_emit_terminal_message(
+                    self.rank,
+                    self.message_type,
+                    self.verbosity_level,
+                    required_level=required_level,
+                ):
+                    self.terminal.write(f"{terminal_message}\n")
+
                 timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
                 with open(self.logfile_name, "a") as fp:
-                    fp.write(f"{timestamp} [{self.message_type}] {cleaned_message}")
+                    fp.write(
+                        f"{timestamp} [rank {self.rank}] [{self.message_type}] {cleaned_message}\n"
+                    )
 
         def flush(self):
-            # Dummy method
+            """Flush the output stream (no-op; required by the file-like interface)."""
             pass
 
     with open(logfile_name, "w") as fp:

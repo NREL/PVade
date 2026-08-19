@@ -1,0 +1,214 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.17.0" xml:lang="en-US">
+  <compounddef id="namespacepvade__main" kind="namespace" language="Python">
+    <compoundname>pvade_main</compoundname>
+    <sectiondef kind="var">
+      <memberdef kind="variable" id="namespacepvade__main_1a98b3f0c2e985d334aaedbb34b07b02e6" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade_main.message</definition>
+        <argsstring></argsstring>
+        <name>message</name>
+        <qualifiedname>pvade_main.message</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade_main.py" line="6" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade_main.py" bodystart="6" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="namespacepvade__main_1a8628499c6841f4e739159a971d55b626" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade_main.category</definition>
+        <argsstring></argsstring>
+        <name>category</name>
+        <qualifiedname>pvade_main.category</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade_main.py" line="7" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade_main.py" bodystart="7" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="namespacepvade__main_1a59f421a04dd355ecb453feb49515ea07" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade_main.module</definition>
+        <argsstring></argsstring>
+        <name>module</name>
+        <qualifiedname>pvade_main.module</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade_main.py" line="8" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade_main.py" bodystart="8" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="namespacepvade__main_1a6ccb1aafc2fec7b95368e191a6b9089a" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade_main.profiler</definition>
+        <argsstring></argsstring>
+        <name>profiler</name>
+        <qualifiedname>pvade_main.profiler</qualifiedname>
+        <initializer>=  cProfile.Profile()</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade_main.py" line="212" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade_main.py" bodystart="212" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="namespacepvade__main_1a44e72d22fc1eb2203a9b4b0ac3254b2c" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade_main.params</definition>
+        <argsstring></argsstring>
+        <name>params</name>
+        <qualifiedname>pvade_main.params</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade_main.py" line="214" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade_main.py" bodystart="214" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="namespacepvade__main_1a6f8cc740c4b4718fe881521e7bed3204" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade_main.structure</definition>
+        <argsstring></argsstring>
+        <name>structure</name>
+        <qualifiedname>pvade_main.structure</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade_main.py" line="214" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade_main.py" bodystart="214" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="namespacepvade__main_1a23bd95147586c9e1679ec7b01105c1e4" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade_main.flow</definition>
+        <argsstring></argsstring>
+        <name>flow</name>
+        <qualifiedname>pvade_main.flow</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade_main.py" line="214" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade_main.py" bodystart="214" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="namespacepvade__main_1a6ca3ed13a67d01ac421ac8504722c28f" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade_main.prof_filename</definition>
+        <argsstring></argsstring>
+        <name>prof_filename</name>
+        <qualifiedname>pvade_main.prof_filename</qualifiedname>
+        <initializer>=  os.path.join(params.general.output_dir, &quot;profiling.prof&quot;)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade_main.py" line="218" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade_main.py" bodystart="218" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="namespacepvade__main_1a577ab18562760bb22fbab19d7ca75944" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade_main.prof_txt_filename</definition>
+        <argsstring></argsstring>
+        <name>prof_txt_filename</name>
+        <qualifiedname>pvade_main.prof_txt_filename</qualifiedname>
+        <initializer>=  os.path.join(params.general.output_dir, &quot;profiling.txt&quot;)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade_main.py" line="221" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade_main.py" bodystart="221" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="namespacepvade__main_1a0bebe70c4fd254233da4fb6fd2d3b088" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade_main.stdout</definition>
+        <argsstring></argsstring>
+        <name>stdout</name>
+        <qualifiedname>pvade_main.stdout</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade_main.py" line="224" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade_main.py" bodystart="224" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="namespacepvade__main_1aee6780d36581c0ea1f318d1a653558ac" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>pvade_main.sort</definition>
+        <argsstring></argsstring>
+        <name>sort</name>
+        <qualifiedname>pvade_main.sort</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade_main.py" line="225" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade_main.py" bodystart="225" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="func">
+      <memberdef kind="function" id="namespacepvade__main_1a746aa1cfed2434651a62e342bab17cf3" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>_print_rank0</definition>
+        <argsstring>(rank, message)</argsstring>
+        <name>_print_rank0</name>
+        <qualifiedname>pvade_main._print_rank0</qualifiedname>
+        <param>
+          <type>rank</type>
+          <defname>rank</defname>
+        </param>
+        <param>
+          <type><ref refid="namespacepvade__main_1a98b3f0c2e985d334aaedbb34b07b02e6" kindref="member">message</ref></type>
+          <defname>message</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><verbatim>Print only from MPI rank 0 to avoid duplicated terminal output.</verbatim> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade_main.py" line="31" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade_main.py" bodystart="31" bodyend="36"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacepvade__main_1a35c43a3473708044cfd7563db6e2168c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>main</definition>
+        <argsstring>(input_file=None)</argsstring>
+        <name>main</name>
+        <qualifiedname>pvade_main.main</qualifiedname>
+        <param>
+          <type>input_file</type>
+          <defname>input_file</defname>
+          <defval>None</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade_main.py" line="37" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade_main.py" bodystart="37" bodyend="210"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade_main.py" line="1" column="1"/>
+  </compounddef>
+</doxygen>

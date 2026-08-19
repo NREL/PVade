@@ -1,0 +1,81 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.17.0" xml:lang="en-US">
+  <compounddef id="namespacetest__input__files" kind="namespace" language="Python">
+    <compoundname>test_input_files</compoundname>
+    <sectiondef kind="var">
+      <memberdef kind="variable" id="namespacetest__input__files_1a1ce4009ba432fb8fdb81daf53beb04da" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>test_input_files.rootdir</definition>
+        <argsstring></argsstring>
+        <name>rootdir</name>
+        <qualifiedname>test_input_files.rootdir</qualifiedname>
+        <initializer>=  os.getcwd()</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/tests/test_input_files.py" line="9" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/tests/test_input_files.py" bodystart="9" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="namespacetest__input__files_1a7756abdd21c587660271685d1e6a435c" prot="public" static="no" mutable="no">
+        <type>list</type>
+        <definition>list test_input_files.list_of_test_files</definition>
+        <argsstring></argsstring>
+        <name>list_of_test_files</name>
+        <qualifiedname>test_input_files.list_of_test_files</qualifiedname>
+        <initializer>=  []</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/tests/test_input_files.py" line="46" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/tests/test_input_files.py" bodystart="46" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="func">
+      <memberdef kind="function" id="namespacetest__input__files_1a5d8627880a1768cc7ea525e4e0ca09df" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>launch_sim</definition>
+        <argsstring>(test_file)</argsstring>
+        <name>launch_sim</name>
+        <qualifiedname>test_input_files.launch_sim</qualifiedname>
+        <param>
+          <type>test_file</type>
+          <defname>test_file</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/tests/test_input_files.py" line="17" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/tests/test_input_files.py" bodystart="17" bodyend="45"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacetest__input__files_1ac3dcfe572677b1ee20f77327ebdb601a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>test_launch_with_different_input_files</definition>
+        <argsstring>(test_file)</argsstring>
+        <name>test_launch_with_different_input_files</name>
+        <qualifiedname>test_input_files.test_launch_with_different_input_files</qualifiedname>
+        <param>
+          <type>test_file</type>
+          <defname>test_file</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/tests/test_input_files.py" line="64" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/tests/test_input_files.py" bodystart="64" bodyend="75"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/tests/test_input_files.py" line="1" column="1"/>
+  </compounddef>
+</doxygen>

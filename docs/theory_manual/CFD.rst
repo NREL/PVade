@@ -1,2 +1,0 @@
-Navier-Stokes equation
-=======================

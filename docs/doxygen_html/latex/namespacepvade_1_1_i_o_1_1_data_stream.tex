@@ -1,0 +1,96 @@
+\doxysection{pvade.\+IO.\+Data\+Stream Namespace Reference}
+\hypertarget{namespacepvade_1_1_i_o_1_1_data_stream}{}\label{namespacepvade_1_1_i_o_1_1_data_stream}\index{pvade.IO.DataStream@{pvade.IO.DataStream}}
+\doxysubsubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \doxymbox{\hyperlink{classpvade_1_1_i_o_1_1_data_stream_1_1_data_stream}{Data\+Stream}}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\doxymbox{\hyperlink{namespacepvade_1_1_i_o_1_1_data_stream_a582216c53558e501e9a1142a57871b58}{start\+\_\+print\+\_\+and\+\_\+log}} (rank, logfile\+\_\+name)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+\doxymbox{\hyperlink{namespacepvade_1_1_i_o_1_1_data_stream_a09149bba83b883eade9baeb760bf8768}{logfile\+\_\+name}} = logfile\+\_\+name
+\item 
+\doxymbox{\hyperlink{namespacepvade_1_1_i_o_1_1_data_stream_ad0d87705dd71a580c40154000fb42a15}{rank}} = rank
+\item 
+\doxymbox{\hyperlink{namespacepvade_1_1_i_o_1_1_data_stream_ab48e31a8a1bb2487f8ff033bf9071da4}{message\+\_\+type}} = message\+\_\+type
+\item 
+\doxymbox{\hyperlink{namespacepvade_1_1_i_o_1_1_data_stream_af630a866b00ccebb5f89b2575bf716ec}{verbosity\+\_\+level}} = get\+\_\+verbosity\+\_\+level()
+\item 
+\doxymbox{\hyperlink{namespacepvade_1_1_i_o_1_1_data_stream_a8f73924c5e07959d329fa71e6eab3d16}{terminal}} = sys.\+\_\+\+\_\+stdout\+\_\+\+\_\+
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\begin{DoxyVerb}Input/output utilities for PVade simulations.
+
+This module provides:
+
+* :func:`start_print_and_log` – redirect ``stdout`` and ``stderr`` to a log
+    file while still echoing output to the terminal.
+* :class:`DataStream` – manages XDMF solution files, writing initial and
+    per-timestep snapshots of velocity, pressure, displacement, stress, and
+    optional temperature fields.
+\end{DoxyVerb}
+ 
+
+\label{namespacepvade_1_1_i_o_1_1_data_stream_doc-func-members}
+\Hypertarget{namespacepvade_1_1_i_o_1_1_data_stream_doc-func-members}
+\doxysubsection{Function Documentation}
+\Hypertarget{namespacepvade_1_1_i_o_1_1_data_stream_a582216c53558e501e9a1142a57871b58}\index{pvade.IO.DataStream@{pvade.IO.DataStream}!start\_print\_and\_log@{start\_print\_and\_log}}
+\index{start\_print\_and\_log@{start\_print\_and\_log}!pvade.IO.DataStream@{pvade.IO.DataStream}}
+\doxysubsubsection{\texorpdfstring{start\_print\_and\_log()}{start\_print\_and\_log()}}
+{\footnotesize\ttfamily \label{namespacepvade_1_1_i_o_1_1_data_stream_a582216c53558e501e9a1142a57871b58} 
+start\+\_\+print\+\_\+and\+\_\+log (\begin{DoxyParamCaption}\item[{}]{rank}{, }\item[{}]{logfile\+\_\+name}{}\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Redirect ``stdout`` and ``stderr`` to a timestamped log file.
+
+Replaces the process ``sys.stdout`` and ``sys.stderr`` with
+:class:`PrintAndLog` instances that tee output to both the terminal and
+the file *logfile_name*.  The log file is initialised as an empty file
+before redirection begins.
+
+Args:
+    rank (int): MPI rank of the calling process.
+    logfile_name (str): Full path to the log file that will be created (or
+        overwritten if it already exists).
+\end{DoxyVerb}
+ 
+
+\label{namespacepvade_1_1_i_o_1_1_data_stream_doc-var-members}
+\Hypertarget{namespacepvade_1_1_i_o_1_1_data_stream_doc-var-members}
+\doxysubsection{Variable Documentation}
+\Hypertarget{namespacepvade_1_1_i_o_1_1_data_stream_a09149bba83b883eade9baeb760bf8768}\index{pvade.IO.DataStream@{pvade.IO.DataStream}!logfile\_name@{logfile\_name}}
+\index{logfile\_name@{logfile\_name}!pvade.IO.DataStream@{pvade.IO.DataStream}}
+\doxysubsubsection{\texorpdfstring{logfile\_name}{logfile\_name}}
+{\footnotesize\ttfamily \label{namespacepvade_1_1_i_o_1_1_data_stream_a09149bba83b883eade9baeb760bf8768} 
+pvade.\+IO.\+Data\+Stream.\+logfile\+\_\+name = logfile\+\_\+name}
+
+\Hypertarget{namespacepvade_1_1_i_o_1_1_data_stream_ab48e31a8a1bb2487f8ff033bf9071da4}\index{pvade.IO.DataStream@{pvade.IO.DataStream}!message\_type@{message\_type}}
+\index{message\_type@{message\_type}!pvade.IO.DataStream@{pvade.IO.DataStream}}
+\doxysubsubsection{\texorpdfstring{message\_type}{message\_type}}
+{\footnotesize\ttfamily \label{namespacepvade_1_1_i_o_1_1_data_stream_ab48e31a8a1bb2487f8ff033bf9071da4} 
+pvade.\+IO.\+Data\+Stream.\+message\+\_\+type = message\+\_\+type}
+
+\Hypertarget{namespacepvade_1_1_i_o_1_1_data_stream_ad0d87705dd71a580c40154000fb42a15}\index{pvade.IO.DataStream@{pvade.IO.DataStream}!rank@{rank}}
+\index{rank@{rank}!pvade.IO.DataStream@{pvade.IO.DataStream}}
+\doxysubsubsection{\texorpdfstring{rank}{rank}}
+{\footnotesize\ttfamily \label{namespacepvade_1_1_i_o_1_1_data_stream_ad0d87705dd71a580c40154000fb42a15} 
+pvade.\+IO.\+Data\+Stream.\+rank = rank}
+
+\Hypertarget{namespacepvade_1_1_i_o_1_1_data_stream_a8f73924c5e07959d329fa71e6eab3d16}\index{pvade.IO.DataStream@{pvade.IO.DataStream}!terminal@{terminal}}
+\index{terminal@{terminal}!pvade.IO.DataStream@{pvade.IO.DataStream}}
+\doxysubsubsection{\texorpdfstring{terminal}{terminal}}
+{\footnotesize\ttfamily \label{namespacepvade_1_1_i_o_1_1_data_stream_a8f73924c5e07959d329fa71e6eab3d16} 
+pvade.\+IO.\+Data\+Stream.\+terminal = sys.\+\_\+\+\_\+stdout\+\_\+\+\_\+}
+
+\Hypertarget{namespacepvade_1_1_i_o_1_1_data_stream_af630a866b00ccebb5f89b2575bf716ec}\index{pvade.IO.DataStream@{pvade.IO.DataStream}!verbosity\_level@{verbosity\_level}}
+\index{verbosity\_level@{verbosity\_level}!pvade.IO.DataStream@{pvade.IO.DataStream}}
+\doxysubsubsection{\texorpdfstring{verbosity\_level}{verbosity\_level}}
+{\footnotesize\ttfamily \label{namespacepvade_1_1_i_o_1_1_data_stream_af630a866b00ccebb5f89b2575bf716ec} 
+pvade.\+IO.\+Data\+Stream.\+verbosity\+\_\+level = get\+\_\+verbosity\+\_\+level()}
+

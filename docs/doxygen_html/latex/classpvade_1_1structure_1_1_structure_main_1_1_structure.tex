@@ -1,0 +1,429 @@
+\doxysection{pvade.\+structure.\+Structure\+Main.\+Structure Class Reference}
+\hypertarget{classpvade_1_1structure_1_1_structure_main_1_1_structure}{}\label{classpvade_1_1structure_1_1_structure_main_1_1_structure}\index{pvade.structure.StructureMain.Structure@{pvade.structure.StructureMain.Structure}}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\doxymbox{\hyperlink{classpvade_1_1structure_1_1_structure_main_1_1_structure_ad53c5f9221ec153abe804a4ec07c57bf}{\+\_\+\+\_\+init\+\_\+\+\_\+}} (self, domain, params)
+\item 
+\doxymbox{\hyperlink{classpvade_1_1structure_1_1_structure_main_1_1_structure_a953d987d5da67bea424afd188db01b74}{build\+\_\+boundary\+\_\+conditions}} (self, domain, params)
+\item 
+\doxymbox{\hyperlink{classpvade_1_1structure_1_1_structure_main_1_1_structure_a41260c0c1bd9b07b6eb59556aab01038}{update\+\_\+a}} (self, u, u\+\_\+old, v\+\_\+old, a\+\_\+old, dt, beta, ufl=True)
+\item 
+\doxymbox{\hyperlink{classpvade_1_1structure_1_1_structure_main_1_1_structure_ab5a8711b75642992ee99a3b3423364b2}{update\+\_\+v}} (self, a, u\+\_\+old, v\+\_\+old, a\+\_\+old, dt, gamma, ufl=True)
+\item 
+\doxymbox{\hyperlink{classpvade_1_1structure_1_1_structure_main_1_1_structure_a651969606b881e92aec0fee6878f6300}{update\+\_\+fields}} (self, u, u\+\_\+old, v\+\_\+old, a\+\_\+old, dt, beta, gamma)
+\item 
+\doxymbox{\hyperlink{classpvade_1_1structure_1_1_structure_main_1_1_structure_a61265f699a59dcaca4f5f6f3bbc2ac75}{avg}} (self, x\+\_\+old, x\+\_\+new, alpha)
+\item 
+\doxymbox{\hyperlink{classpvade_1_1structure_1_1_structure_main_1_1_structure_ab72c7f582f6303ceb2d0b946d663b55a}{build\+\_\+forms}} (self, domain, params)
+\item 
+\doxymbox{\hyperlink{classpvade_1_1structure_1_1_structure_main_1_1_structure_a9d81ac7cd7484eabff7a9c4ba1a47a51}{build\+\_\+nullspace}} (self, V)
+\item 
+\doxymbox{\hyperlink{classpvade_1_1structure_1_1_structure_main_1_1_structure_a39b78a7464556f9edcb4a5906e8002ed}{solve}} (self, params, data\+IO)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\doxymbox{\hyperlink{classpvade_1_1structure_1_1_structure_main_1_1_structure_aa668e2e0d37154411d5f867b1ca1eeaa}{structural\+\_\+analysis}} = params.\+general.\+structural\+\_\+analysis
+\item 
+str \doxymbox{\hyperlink{classpvade_1_1structure_1_1_structure_main_1_1_structure_a75613a8148115a9cba5f63b6960e47bd}{name}} = "{}structure"{}
+\item 
+\doxymbox{\hyperlink{classpvade_1_1structure_1_1_structure_main_1_1_structure_acde0a39d1c21ecf73d9d07b57f28f0dd}{comm}} = domain.\+comm
+\item 
+\doxymbox{\hyperlink{classpvade_1_1structure_1_1_structure_main_1_1_structure_a016c5a1aa5349c5adecee9ec1ee219d8}{rank}} = domain.\+rank
+\item 
+\doxymbox{\hyperlink{classpvade_1_1structure_1_1_structure_main_1_1_structure_a3e6709136a3c6c72edd7d3faa5cd4673}{num\+\_\+procs}} = domain.\+num\+\_\+procs
+\item 
+\doxymbox{\hyperlink{classpvade_1_1structure_1_1_structure_main_1_1_structure_aa863d8acc310443bb81ebbe00029821b}{elasticity}} = \doxymbox{\hyperlink{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity}{Elasticity}}(domain, self.\+structural\+\_\+analysis, params)
+\item 
+\doxymbox{\hyperlink{classpvade_1_1structure_1_1_structure_main_1_1_structure_aba6f155f898656c145ec2f40706bced2}{ndim}} = domain.\+structure.\+msh.\+topology.\+dim
+\item 
+int \doxymbox{\hyperlink{classpvade_1_1structure_1_1_structure_main_1_1_structure_ac3689bd218b9b0817b4901525ab3c95f}{facet\+\_\+dim}} = self.\+ndim -\/ 1
+\item 
+\doxymbox{\hyperlink{classpvade_1_1structure_1_1_structure_main_1_1_structure_ab523de80238563ccdf264a62b2dcbf7d}{hmin}} = np.\+zeros(1)
+\item 
+\doxymbox{\hyperlink{classpvade_1_1structure_1_1_structure_main_1_1_structure_a3bf3e69f3b79d3979e7f1a3d67feab40}{num\+\_\+\+V\+\_\+dofs}} = self.\+elasticity.\+num\+\_\+\+V\+\_\+dofs
+\item 
+\doxymbox{\hyperlink{classpvade_1_1structure_1_1_structure_main_1_1_structure_a9558f1923fcceef8432dd779ef0e57a0}{rho}}
+\item 
+\doxymbox{\hyperlink{classpvade_1_1structure_1_1_structure_main_1_1_structure_a4ebfe6b812b70fec226239fa9d082d1d}{E}} = params.\+structure.\+elasticity\+\_\+modulus
+\item 
+\doxymbox{\hyperlink{classpvade_1_1structure_1_1_structure_main_1_1_structure_a21e515353253042e206126d46abd1b64}{poissons\+\_\+ratio}} = params.\+structure.\+poissons\+\_\+ratio
+\item 
+\doxymbox{\hyperlink{classpvade_1_1structure_1_1_structure_main_1_1_structure_aa29b033b9ca3f2a82d3ef3e50d9974d3}{lame\+\_\+mu}} = self.\+E /\+ (2.\+0 \texorpdfstring{$\ast$}{*} (1.\+0 + self.\+poissons\+\_\+ratio))
+\item 
+tuple \doxymbox{\hyperlink{classpvade_1_1structure_1_1_structure_main_1_1_structure_a575b004ce9ac563ab613f6376bd86b56}{lame\+\_\+lambda}}
+\item 
+\doxymbox{\hyperlink{classpvade_1_1structure_1_1_structure_main_1_1_structure_a53b08e5b8de5e4f2f6fc1ede11850ce8}{north\+\_\+east\+\_\+corner\+\_\+dofs}}
+\item 
+\doxymbox{\hyperlink{classpvade_1_1structure_1_1_structure_main_1_1_structure_a8ae6a59528011c683c3fdbeeb410b960}{bc}} = self.\+elasticity.\+build\+\_\+boundary\+\_\+conditions(domain, params)
+\item 
+\doxymbox{\hyperlink{classpvade_1_1structure_1_1_structure_main_1_1_structure_a171250f40ec838fe5db6a459f2165887}{first\+\_\+call\+\_\+to\+\_\+solver}}
+\item 
+\doxymbox{\hyperlink{classpvade_1_1structure_1_1_structure_main_1_1_structure_a06b47fe9bdc70b88b0f2df16063b40f7}{problem}} = dolfinx.\+fem.\+petsc.\+Nonlinear\+Problem(self.\+res, self.\+u, self.\+bc)
+\item 
+\doxymbox{\hyperlink{classpvade_1_1structure_1_1_structure_main_1_1_structure_a474cddb35cb5f563db19778c606fe924}{solver}} = dolfinx.\+nls.\+petsc.\+Newton\+Solver(self.\+comm, self.\+problem)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Protected Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\doxymbox{\hyperlink{classpvade_1_1structure_1_1_structure_main_1_1_structure_aa28a000ca9ddfa217d9954b520ff270e}{\+\_\+assemble\+\_\+system}} (self, params)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\begin{DoxyVerb}Top-level structural mechanics coordinator.
+
+``Structure`` wraps the lower-level
+:class:`~pvade.structure.ElasticityAnalysis.Elasticity` solver and adds
+mesh-topology bookkeeping (minimum cell size, dimension information) and
+material property storage.  It is the object that the FSI loop interacts
+with directly.
+
+Attributes:
+    comm: MPI communicator shared by all PVade objects.
+    rank (int): Rank of this MPI process.
+    num_procs (int): Total number of MPI processes.
+    structural_analysis (bool): Flag indicating whether a structural
+        analysis is being performed (read from *params*).
+    name (str): Human-readable identifier (always ``"structure"``).
+    elasticity (:obj:`pvade.structure.ElasticityAnalysis.Elasticity`):
+        The underlying nonlinear elasticity physics object.
+    ndim (int): Topological dimension of the structure mesh.
+    facet_dim (int): Facet dimension (``ndim - 1``).
+    hmin (float): Global minimum cell diameter across all MPI ranks.
+    num_V_dofs (int): Global number of displacement DOFs (delegated from
+        ``elasticity``).
+    rho (dolfinx.fem.Constant): Mass density :math:`\\rho`.
+    E (float): Young's modulus.
+    poissons_ratio (float): Poisson's ratio.
+    lame_mu (float): Lamé shear modulus :math:`\\mu`.
+    lame_lambda (float): Lamé first parameter :math:`\\lambda`.
+    north_east_corner_dofs (np.ndarray): DOF indices for the probe point
+        at the north-east corner of the first panel.
+\end{DoxyVerb}
+ 
+
+\label{classpvade_1_1structure_1_1_structure_main_1_1_structure_doc-constructors}
+\Hypertarget{classpvade_1_1structure_1_1_structure_main_1_1_structure_doc-constructors}
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{classpvade_1_1structure_1_1_structure_main_1_1_structure_ad53c5f9221ec153abe804a4ec07c57bf}\index{pvade.structure.StructureMain.Structure@{pvade.structure.StructureMain.Structure}!\_\_init\_\_@{\_\_init\_\_}}
+\index{\_\_init\_\_@{\_\_init\_\_}!pvade.structure.StructureMain.Structure@{pvade.structure.StructureMain.Structure}}
+\doxysubsubsection{\texorpdfstring{\_\_init\_\_()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily \label{classpvade_1_1structure_1_1_structure_main_1_1_structure_ad53c5f9221ec153abe804a4ec07c57bf} 
+pvade.\+structure.\+Structure\+Main.\+Structure.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self}{, }\item[{}]{domain}{, }\item[{}]{params}{}\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Initialize the fluid solver
+
+This method initialize the Flow object, namely, it creates all the
+necessary function spaces on the mesh, initializes key counting and
+boolean variables and records certain characteristic quantities like
+the minimum cell size and the number of degrees of freedom attributed
+to both the pressure and velocity function spaces.
+
+Args:
+    domain (:obj:`pvade.geometry.MeshManager.Domain`): A Domain object
+\end{DoxyVerb}
+ 
+
+\label{classpvade_1_1structure_1_1_structure_main_1_1_structure_doc-func-members}
+\Hypertarget{classpvade_1_1structure_1_1_structure_main_1_1_structure_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{classpvade_1_1structure_1_1_structure_main_1_1_structure_aa28a000ca9ddfa217d9954b520ff270e}\index{pvade.structure.StructureMain.Structure@{pvade.structure.StructureMain.Structure}!\_assemble\_system@{\_assemble\_system}}
+\index{\_assemble\_system@{\_assemble\_system}!pvade.structure.StructureMain.Structure@{pvade.structure.StructureMain.Structure}}
+\doxysubsubsection{\texorpdfstring{\_assemble\_system()}{\_assemble\_system()}}
+{\footnotesize\ttfamily \label{classpvade_1_1structure_1_1_structure_main_1_1_structure_aa28a000ca9ddfa217d9954b520ff270e} 
+pvade.\+structure.\+Structure\+Main.\+Structure.\+\_\+assemble\+\_\+system (\begin{DoxyParamCaption}\item[{}]{self}{, }\item[{}]{params}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [protected]}}
+
+\begin{DoxyVerb}Pre-assemble all LHS matrices and RHS vectors
+
+Here we pre-assemble all the forms corresponding to the left-hand side
+matrices and right-hand side vectors once outside the time loop. This
+will enable us to re-use certain features like the sparsity pattern
+during the timestepping without any modification of the function
+calls.
+
+Args:
+    params (:obj:`pvade.Parameters.SimParams`): A SimParams object
+\end{DoxyVerb}
+ \Hypertarget{classpvade_1_1structure_1_1_structure_main_1_1_structure_a61265f699a59dcaca4f5f6f3bbc2ac75}\index{pvade.structure.StructureMain.Structure@{pvade.structure.StructureMain.Structure}!avg@{avg}}
+\index{avg@{avg}!pvade.structure.StructureMain.Structure@{pvade.structure.StructureMain.Structure}}
+\doxysubsubsection{\texorpdfstring{avg()}{avg()}}
+{\footnotesize\ttfamily \label{classpvade_1_1structure_1_1_structure_main_1_1_structure_a61265f699a59dcaca4f5f6f3bbc2ac75} 
+pvade.\+structure.\+Structure\+Main.\+Structure.\+avg (\begin{DoxyParamCaption}\item[{}]{self}{, }\item[{}]{x\+\_\+old}{, }\item[{}]{x\+\_\+new}{, }\item[{}]{alpha}{}\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Return the generalized-alpha weighted average of two fields.
+
+Args:
+    x_old: Field value at the previous time step.
+    x_new: Field value at the current time step.
+    alpha: Weighting parameter.
+
+Returns:
+    Weighted average of ``x_old`` and ``x_new``.
+\end{DoxyVerb}
+ \Hypertarget{classpvade_1_1structure_1_1_structure_main_1_1_structure_a953d987d5da67bea424afd188db01b74}\index{pvade.structure.StructureMain.Structure@{pvade.structure.StructureMain.Structure}!build\_boundary\_conditions@{build\_boundary\_conditions}}
+\index{build\_boundary\_conditions@{build\_boundary\_conditions}!pvade.structure.StructureMain.Structure@{pvade.structure.StructureMain.Structure}}
+\doxysubsubsection{\texorpdfstring{build\_boundary\_conditions()}{build\_boundary\_conditions()}}
+{\footnotesize\ttfamily \label{classpvade_1_1structure_1_1_structure_main_1_1_structure_a953d987d5da67bea424afd188db01b74} 
+pvade.\+structure.\+Structure\+Main.\+Structure.\+build\+\_\+boundary\+\_\+conditions (\begin{DoxyParamCaption}\item[{}]{self}{, }\item[{}]{domain}{, }\item[{}]{params}{}\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Build the boundary conditions
+
+A method to manage the building of boundary conditions, including the
+steps of identifying entities on the boundary, marking those degrees
+of freedom either by the identified facets or a gmsh marker function,
+and finally assembling a list of Boundary objects that enforce the
+correct value.
+
+Args:
+    domain (:obj:`pvade.geometry.MeshManager.Domain`): A Domain object
+    params (:obj:`pvade.Parameters.SimParams`): A SimParams object
+\end{DoxyVerb}
+ \Hypertarget{classpvade_1_1structure_1_1_structure_main_1_1_structure_ab72c7f582f6303ceb2d0b946d663b55a}\index{pvade.structure.StructureMain.Structure@{pvade.structure.StructureMain.Structure}!build\_forms@{build\_forms}}
+\index{build\_forms@{build\_forms}!pvade.structure.StructureMain.Structure@{pvade.structure.StructureMain.Structure}}
+\doxysubsubsection{\texorpdfstring{build\_forms()}{build\_forms()}}
+{\footnotesize\ttfamily \label{classpvade_1_1structure_1_1_structure_main_1_1_structure_ab72c7f582f6303ceb2d0b946d663b55a} 
+pvade.\+structure.\+Structure\+Main.\+Structure.\+build\+\_\+forms (\begin{DoxyParamCaption}\item[{}]{self}{, }\item[{}]{domain}{, }\item[{}]{params}{}\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Builds all variational statements
+
+This method creates all the functions, expressions, and variational
+forms that will be needed for the numerical solution of Navier Stokes
+using a fractional step method. This includes the calculation of a
+tentative velocity, the calculation of the change in pressure
+required to correct the tentative velocity to enforce continuity, and
+the update to the velocity field to reflect this change in
+pressure.
+
+Args:
+    domain (:obj:`pvade.geometry.MeshManager.Domain`): A Domain object
+    params (:obj:`pvade.Parameters.SimParams`): A SimParams object
+\end{DoxyVerb}
+ \Hypertarget{classpvade_1_1structure_1_1_structure_main_1_1_structure_a9d81ac7cd7484eabff7a9c4ba1a47a51}\index{pvade.structure.StructureMain.Structure@{pvade.structure.StructureMain.Structure}!build\_nullspace@{build\_nullspace}}
+\index{build\_nullspace@{build\_nullspace}!pvade.structure.StructureMain.Structure@{pvade.structure.StructureMain.Structure}}
+\doxysubsubsection{\texorpdfstring{build\_nullspace()}{build\_nullspace()}}
+{\footnotesize\ttfamily \label{classpvade_1_1structure_1_1_structure_main_1_1_structure_a9d81ac7cd7484eabff7a9c4ba1a47a51} 
+pvade.\+structure.\+Structure\+Main.\+Structure.\+build\+\_\+nullspace (\begin{DoxyParamCaption}\item[{}]{self}{, }\item[{}]{V}{}\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Build PETSc nullspace for 3D elasticity\end{DoxyVerb}
+ \Hypertarget{classpvade_1_1structure_1_1_structure_main_1_1_structure_a39b78a7464556f9edcb4a5906e8002ed}\index{pvade.structure.StructureMain.Structure@{pvade.structure.StructureMain.Structure}!solve@{solve}}
+\index{solve@{solve}!pvade.structure.StructureMain.Structure@{pvade.structure.StructureMain.Structure}}
+\doxysubsubsection{\texorpdfstring{solve()}{solve()}}
+{\footnotesize\ttfamily \label{classpvade_1_1structure_1_1_structure_main_1_1_structure_a39b78a7464556f9edcb4a5906e8002ed} 
+pvade.\+structure.\+Structure\+Main.\+Structure.\+solve (\begin{DoxyParamCaption}\item[{}]{self}{, }\item[{}]{params}{, }\item[{}]{data\+IO}{}\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Advance the structural solution by one time step.
+
+Delegates to :meth:`pvade.structure.ElasticityAnalysis.Elasticity.solve`.
+
+Args:
+    params (:obj:`pvade.IO.Parameters.SimParams`): A SimParams object.
+    dataIO (:obj:`pvade.IO.DataStream.DataStream`): The DataStream
+        I/O object.
+\end{DoxyVerb}
+ \Hypertarget{classpvade_1_1structure_1_1_structure_main_1_1_structure_a41260c0c1bd9b07b6eb59556aab01038}\index{pvade.structure.StructureMain.Structure@{pvade.structure.StructureMain.Structure}!update\_a@{update\_a}}
+\index{update\_a@{update\_a}!pvade.structure.StructureMain.Structure@{pvade.structure.StructureMain.Structure}}
+\doxysubsubsection{\texorpdfstring{update\_a()}{update\_a()}}
+{\footnotesize\ttfamily \label{classpvade_1_1structure_1_1_structure_main_1_1_structure_a41260c0c1bd9b07b6eb59556aab01038} 
+pvade.\+structure.\+Structure\+Main.\+Structure.\+update\+\_\+a (\begin{DoxyParamCaption}\item[{}]{self}{, }\item[{}]{u}{, }\item[{}]{u\+\_\+old}{, }\item[{}]{v\+\_\+old}{, }\item[{}]{a\+\_\+old}{, }\item[{}]{dt}{, }\item[{}]{beta}{, }\item[{}]{ufl}{ = {\ttfamily True}}\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Compute the new acceleration using the Newmark update formula.
+
+Delegates to :meth:`pvade.structure.ElasticityAnalysis.Elasticity.update_a`.
+
+Args:
+    u: Current displacement field (UFL expression or NumPy array).
+    u_old: Displacement at the previous time step.
+    v_old: Velocity at the previous time step.
+    a_old: Acceleration at the previous time step.
+    dt: Time step size (UFL constant or Python float).
+    beta: Newmark :math:`\\beta` parameter.
+    ufl (bool): ``True`` for UFL objects, ``False`` for plain floats.
+
+Returns:
+    Updated acceleration field.
+\end{DoxyVerb}
+ \Hypertarget{classpvade_1_1structure_1_1_structure_main_1_1_structure_a651969606b881e92aec0fee6878f6300}\index{pvade.structure.StructureMain.Structure@{pvade.structure.StructureMain.Structure}!update\_fields@{update\_fields}}
+\index{update\_fields@{update\_fields}!pvade.structure.StructureMain.Structure@{pvade.structure.StructureMain.Structure}}
+\doxysubsubsection{\texorpdfstring{update\_fields()}{update\_fields()}}
+{\footnotesize\ttfamily \label{classpvade_1_1structure_1_1_structure_main_1_1_structure_a651969606b881e92aec0fee6878f6300} 
+pvade.\+structure.\+Structure\+Main.\+Structure.\+update\+\_\+fields (\begin{DoxyParamCaption}\item[{}]{self}{, }\item[{}]{u}{, }\item[{}]{u\+\_\+old}{, }\item[{}]{v\+\_\+old}{, }\item[{}]{a\+\_\+old}{, }\item[{}]{dt}{, }\item[{}]{beta}{, }\item[{}]{gamma}{}\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Update fields at the end of each time step.\end{DoxyVerb}
+ \Hypertarget{classpvade_1_1structure_1_1_structure_main_1_1_structure_ab5a8711b75642992ee99a3b3423364b2}\index{pvade.structure.StructureMain.Structure@{pvade.structure.StructureMain.Structure}!update\_v@{update\_v}}
+\index{update\_v@{update\_v}!pvade.structure.StructureMain.Structure@{pvade.structure.StructureMain.Structure}}
+\doxysubsubsection{\texorpdfstring{update\_v()}{update\_v()}}
+{\footnotesize\ttfamily \label{classpvade_1_1structure_1_1_structure_main_1_1_structure_ab5a8711b75642992ee99a3b3423364b2} 
+pvade.\+structure.\+Structure\+Main.\+Structure.\+update\+\_\+v (\begin{DoxyParamCaption}\item[{}]{self}{, }\item[{}]{a}{, }\item[{}]{u\+\_\+old}{, }\item[{}]{v\+\_\+old}{, }\item[{}]{a\+\_\+old}{, }\item[{}]{dt}{, }\item[{}]{gamma}{, }\item[{}]{ufl}{ = {\ttfamily True}}\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Compute the new velocity using the Newmark update formula.
+
+        Delegates to :meth:`pvade.structure.ElasticityAnalysis.Elasticity.update_v`.
+
+        Args:
+            a: Current acceleration field (UFL expression or NumPy array).
+            u_old: Displacement at the previous time step (unused, kept for
+                API consistency).
+            v_old: Velocity at the previous time step.
+            a_old: Acceleration at the previous time step.
+            dt: Time step size (UFL constant or Python float).
+            gamma: Newmark :math:`\\gamma` parameter.
+            ufl (bool): ``True`` for UFL objects, ``False`` for plain floats.
+
+        Returns:
+            Updated velocity field.
+\end{DoxyVerb}
+ 
+
+\label{classpvade_1_1structure_1_1_structure_main_1_1_structure_doc-variable-members}
+\Hypertarget{classpvade_1_1structure_1_1_structure_main_1_1_structure_doc-variable-members}
+\doxysubsection{Member Data Documentation}
+\Hypertarget{classpvade_1_1structure_1_1_structure_main_1_1_structure_a8ae6a59528011c683c3fdbeeb410b960}\index{pvade.structure.StructureMain.Structure@{pvade.structure.StructureMain.Structure}!bc@{bc}}
+\index{bc@{bc}!pvade.structure.StructureMain.Structure@{pvade.structure.StructureMain.Structure}}
+\doxysubsubsection{\texorpdfstring{bc}{bc}}
+{\footnotesize\ttfamily \label{classpvade_1_1structure_1_1_structure_main_1_1_structure_a8ae6a59528011c683c3fdbeeb410b960} 
+pvade.\+structure.\+Structure\+Main.\+Structure.\+bc = self.\+elasticity.\+build\+\_\+boundary\+\_\+conditions(domain, params)}
+
+\Hypertarget{classpvade_1_1structure_1_1_structure_main_1_1_structure_acde0a39d1c21ecf73d9d07b57f28f0dd}\index{pvade.structure.StructureMain.Structure@{pvade.structure.StructureMain.Structure}!comm@{comm}}
+\index{comm@{comm}!pvade.structure.StructureMain.Structure@{pvade.structure.StructureMain.Structure}}
+\doxysubsubsection{\texorpdfstring{comm}{comm}}
+{\footnotesize\ttfamily \label{classpvade_1_1structure_1_1_structure_main_1_1_structure_acde0a39d1c21ecf73d9d07b57f28f0dd} 
+pvade.\+structure.\+Structure\+Main.\+Structure.\+comm = domain.\+comm}
+
+\Hypertarget{classpvade_1_1structure_1_1_structure_main_1_1_structure_a4ebfe6b812b70fec226239fa9d082d1d}\index{pvade.structure.StructureMain.Structure@{pvade.structure.StructureMain.Structure}!E@{E}}
+\index{E@{E}!pvade.structure.StructureMain.Structure@{pvade.structure.StructureMain.Structure}}
+\doxysubsubsection{\texorpdfstring{E}{E}}
+{\footnotesize\ttfamily \label{classpvade_1_1structure_1_1_structure_main_1_1_structure_a4ebfe6b812b70fec226239fa9d082d1d} 
+pvade.\+structure.\+Structure\+Main.\+Structure.\+E = params.\+structure.\+elasticity\+\_\+modulus}
+
+\Hypertarget{classpvade_1_1structure_1_1_structure_main_1_1_structure_aa863d8acc310443bb81ebbe00029821b}\index{pvade.structure.StructureMain.Structure@{pvade.structure.StructureMain.Structure}!elasticity@{elasticity}}
+\index{elasticity@{elasticity}!pvade.structure.StructureMain.Structure@{pvade.structure.StructureMain.Structure}}
+\doxysubsubsection{\texorpdfstring{elasticity}{elasticity}}
+{\footnotesize\ttfamily \label{classpvade_1_1structure_1_1_structure_main_1_1_structure_aa863d8acc310443bb81ebbe00029821b} 
+pvade.\+structure.\+Structure\+Main.\+Structure.\+elasticity = \doxymbox{\hyperlink{classpvade_1_1structure_1_1_elasticity_analysis_1_1_elasticity}{Elasticity}}(domain, self.\+structural\+\_\+analysis, params)}
+
+\Hypertarget{classpvade_1_1structure_1_1_structure_main_1_1_structure_ac3689bd218b9b0817b4901525ab3c95f}\index{pvade.structure.StructureMain.Structure@{pvade.structure.StructureMain.Structure}!facet\_dim@{facet\_dim}}
+\index{facet\_dim@{facet\_dim}!pvade.structure.StructureMain.Structure@{pvade.structure.StructureMain.Structure}}
+\doxysubsubsection{\texorpdfstring{facet\_dim}{facet\_dim}}
+{\footnotesize\ttfamily \label{classpvade_1_1structure_1_1_structure_main_1_1_structure_ac3689bd218b9b0817b4901525ab3c95f} 
+int pvade.\+structure.\+Structure\+Main.\+Structure.\+facet\+\_\+dim = self.\+ndim -\/ 1}
+
+\Hypertarget{classpvade_1_1structure_1_1_structure_main_1_1_structure_a171250f40ec838fe5db6a459f2165887}\index{pvade.structure.StructureMain.Structure@{pvade.structure.StructureMain.Structure}!first\_call\_to\_solver@{first\_call\_to\_solver}}
+\index{first\_call\_to\_solver@{first\_call\_to\_solver}!pvade.structure.StructureMain.Structure@{pvade.structure.StructureMain.Structure}}
+\doxysubsubsection{\texorpdfstring{first\_call\_to\_solver}{first\_call\_to\_solver}}
+{\footnotesize\ttfamily \label{classpvade_1_1structure_1_1_structure_main_1_1_structure_a171250f40ec838fe5db6a459f2165887} 
+pvade.\+structure.\+Structure\+Main.\+Structure.\+first\+\_\+call\+\_\+to\+\_\+solver}
+
+\Hypertarget{classpvade_1_1structure_1_1_structure_main_1_1_structure_ab523de80238563ccdf264a62b2dcbf7d}\index{pvade.structure.StructureMain.Structure@{pvade.structure.StructureMain.Structure}!hmin@{hmin}}
+\index{hmin@{hmin}!pvade.structure.StructureMain.Structure@{pvade.structure.StructureMain.Structure}}
+\doxysubsubsection{\texorpdfstring{hmin}{hmin}}
+{\footnotesize\ttfamily \label{classpvade_1_1structure_1_1_structure_main_1_1_structure_ab523de80238563ccdf264a62b2dcbf7d} 
+pvade.\+structure.\+Structure\+Main.\+Structure.\+hmin = np.\+zeros(1)}
+
+\Hypertarget{classpvade_1_1structure_1_1_structure_main_1_1_structure_a575b004ce9ac563ab613f6376bd86b56}\index{pvade.structure.StructureMain.Structure@{pvade.structure.StructureMain.Structure}!lame\_lambda@{lame\_lambda}}
+\index{lame\_lambda@{lame\_lambda}!pvade.structure.StructureMain.Structure@{pvade.structure.StructureMain.Structure}}
+\doxysubsubsection{\texorpdfstring{lame\_lambda}{lame\_lambda}}
+{\footnotesize\ttfamily \label{classpvade_1_1structure_1_1_structure_main_1_1_structure_a575b004ce9ac563ab613f6376bd86b56} 
+tuple pvade.\+structure.\+Structure\+Main.\+Structure.\+lame\+\_\+lambda}
+
+{\bfseries Initial value:\+}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{=\ \ (}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ self.E}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ *\ self.poissons\_ratio}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ /\ ((1.0\ +\ self.poissons\_ratio)\ *\ (1.0\ -\/\ 2.0\ *\ self.poissons\_ratio))}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ )}
+
+\end{DoxyCode}
+\Hypertarget{classpvade_1_1structure_1_1_structure_main_1_1_structure_aa29b033b9ca3f2a82d3ef3e50d9974d3}\index{pvade.structure.StructureMain.Structure@{pvade.structure.StructureMain.Structure}!lame\_mu@{lame\_mu}}
+\index{lame\_mu@{lame\_mu}!pvade.structure.StructureMain.Structure@{pvade.structure.StructureMain.Structure}}
+\doxysubsubsection{\texorpdfstring{lame\_mu}{lame\_mu}}
+{\footnotesize\ttfamily \label{classpvade_1_1structure_1_1_structure_main_1_1_structure_aa29b033b9ca3f2a82d3ef3e50d9974d3} 
+pvade.\+structure.\+Structure\+Main.\+Structure.\+lame\+\_\+mu = self.\+E /\+ (2.\+0 \texorpdfstring{$\ast$}{*} (1.\+0 + self.\+poissons\+\_\+ratio))}
+
+\Hypertarget{classpvade_1_1structure_1_1_structure_main_1_1_structure_a75613a8148115a9cba5f63b6960e47bd}\index{pvade.structure.StructureMain.Structure@{pvade.structure.StructureMain.Structure}!name@{name}}
+\index{name@{name}!pvade.structure.StructureMain.Structure@{pvade.structure.StructureMain.Structure}}
+\doxysubsubsection{\texorpdfstring{name}{name}}
+{\footnotesize\ttfamily \label{classpvade_1_1structure_1_1_structure_main_1_1_structure_a75613a8148115a9cba5f63b6960e47bd} 
+str pvade.\+structure.\+Structure\+Main.\+Structure.\+name = "{}structure"{}}
+
+\Hypertarget{classpvade_1_1structure_1_1_structure_main_1_1_structure_aba6f155f898656c145ec2f40706bced2}\index{pvade.structure.StructureMain.Structure@{pvade.structure.StructureMain.Structure}!ndim@{ndim}}
+\index{ndim@{ndim}!pvade.structure.StructureMain.Structure@{pvade.structure.StructureMain.Structure}}
+\doxysubsubsection{\texorpdfstring{ndim}{ndim}}
+{\footnotesize\ttfamily \label{classpvade_1_1structure_1_1_structure_main_1_1_structure_aba6f155f898656c145ec2f40706bced2} 
+pvade.\+structure.\+Structure\+Main.\+Structure.\+ndim = domain.\+structure.\+msh.\+topology.\+dim}
+
+\Hypertarget{classpvade_1_1structure_1_1_structure_main_1_1_structure_a53b08e5b8de5e4f2f6fc1ede11850ce8}\index{pvade.structure.StructureMain.Structure@{pvade.structure.StructureMain.Structure}!north\_east\_corner\_dofs@{north\_east\_corner\_dofs}}
+\index{north\_east\_corner\_dofs@{north\_east\_corner\_dofs}!pvade.structure.StructureMain.Structure@{pvade.structure.StructureMain.Structure}}
+\doxysubsubsection{\texorpdfstring{north\_east\_corner\_dofs}{north\_east\_corner\_dofs}}
+{\footnotesize\ttfamily \label{classpvade_1_1structure_1_1_structure_main_1_1_structure_a53b08e5b8de5e4f2f6fc1ede11850ce8} 
+pvade.\+structure.\+Structure\+Main.\+Structure.\+north\+\_\+east\+\_\+corner\+\_\+dofs}
+
+{\bfseries Initial value:\+}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{=\ \ dolfinx.fem.locate\_dofs\_topological(}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ self.elasticity.V,\ 0,\ north\_east\_corner\_facets}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ )}
+
+\end{DoxyCode}
+\Hypertarget{classpvade_1_1structure_1_1_structure_main_1_1_structure_a3e6709136a3c6c72edd7d3faa5cd4673}\index{pvade.structure.StructureMain.Structure@{pvade.structure.StructureMain.Structure}!num\_procs@{num\_procs}}
+\index{num\_procs@{num\_procs}!pvade.structure.StructureMain.Structure@{pvade.structure.StructureMain.Structure}}
+\doxysubsubsection{\texorpdfstring{num\_procs}{num\_procs}}
+{\footnotesize\ttfamily \label{classpvade_1_1structure_1_1_structure_main_1_1_structure_a3e6709136a3c6c72edd7d3faa5cd4673} 
+pvade.\+structure.\+Structure\+Main.\+Structure.\+num\+\_\+procs = domain.\+num\+\_\+procs}
+
+\Hypertarget{classpvade_1_1structure_1_1_structure_main_1_1_structure_a3bf3e69f3b79d3979e7f1a3d67feab40}\index{pvade.structure.StructureMain.Structure@{pvade.structure.StructureMain.Structure}!num\_V\_dofs@{num\_V\_dofs}}
+\index{num\_V\_dofs@{num\_V\_dofs}!pvade.structure.StructureMain.Structure@{pvade.structure.StructureMain.Structure}}
+\doxysubsubsection{\texorpdfstring{num\_V\_dofs}{num\_V\_dofs}}
+{\footnotesize\ttfamily \label{classpvade_1_1structure_1_1_structure_main_1_1_structure_a3bf3e69f3b79d3979e7f1a3d67feab40} 
+pvade.\+structure.\+Structure\+Main.\+Structure.\+num\+\_\+\+V\+\_\+dofs = self.\+elasticity.\+num\+\_\+\+V\+\_\+dofs}
+
+\Hypertarget{classpvade_1_1structure_1_1_structure_main_1_1_structure_a21e515353253042e206126d46abd1b64}\index{pvade.structure.StructureMain.Structure@{pvade.structure.StructureMain.Structure}!poissons\_ratio@{poissons\_ratio}}
+\index{poissons\_ratio@{poissons\_ratio}!pvade.structure.StructureMain.Structure@{pvade.structure.StructureMain.Structure}}
+\doxysubsubsection{\texorpdfstring{poissons\_ratio}{poissons\_ratio}}
+{\footnotesize\ttfamily \label{classpvade_1_1structure_1_1_structure_main_1_1_structure_a21e515353253042e206126d46abd1b64} 
+pvade.\+structure.\+Structure\+Main.\+Structure.\+poissons\+\_\+ratio = params.\+structure.\+poissons\+\_\+ratio}
+
+\Hypertarget{classpvade_1_1structure_1_1_structure_main_1_1_structure_a06b47fe9bdc70b88b0f2df16063b40f7}\index{pvade.structure.StructureMain.Structure@{pvade.structure.StructureMain.Structure}!problem@{problem}}
+\index{problem@{problem}!pvade.structure.StructureMain.Structure@{pvade.structure.StructureMain.Structure}}
+\doxysubsubsection{\texorpdfstring{problem}{problem}}
+{\footnotesize\ttfamily \label{classpvade_1_1structure_1_1_structure_main_1_1_structure_a06b47fe9bdc70b88b0f2df16063b40f7} 
+pvade.\+structure.\+Structure\+Main.\+Structure.\+problem = dolfinx.\+fem.\+petsc.\+Nonlinear\+Problem(self.\+res, self.\+u, self.\+bc)}
+
+\Hypertarget{classpvade_1_1structure_1_1_structure_main_1_1_structure_a016c5a1aa5349c5adecee9ec1ee219d8}\index{pvade.structure.StructureMain.Structure@{pvade.structure.StructureMain.Structure}!rank@{rank}}
+\index{rank@{rank}!pvade.structure.StructureMain.Structure@{pvade.structure.StructureMain.Structure}}
+\doxysubsubsection{\texorpdfstring{rank}{rank}}
+{\footnotesize\ttfamily \label{classpvade_1_1structure_1_1_structure_main_1_1_structure_a016c5a1aa5349c5adecee9ec1ee219d8} 
+pvade.\+structure.\+Structure\+Main.\+Structure.\+rank = domain.\+rank}
+
+\Hypertarget{classpvade_1_1structure_1_1_structure_main_1_1_structure_a9558f1923fcceef8432dd779ef0e57a0}\index{pvade.structure.StructureMain.Structure@{pvade.structure.StructureMain.Structure}!rho@{rho}}
+\index{rho@{rho}!pvade.structure.StructureMain.Structure@{pvade.structure.StructureMain.Structure}}
+\doxysubsubsection{\texorpdfstring{rho}{rho}}
+{\footnotesize\ttfamily \label{classpvade_1_1structure_1_1_structure_main_1_1_structure_a9558f1923fcceef8432dd779ef0e57a0} 
+pvade.\+structure.\+Structure\+Main.\+Structure.\+rho}
+
+{\bfseries Initial value:\+}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{=\ \ dolfinx.fem.Constant(}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ domain.structure.msh,\ params.structure.rho}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ )}
+
+\end{DoxyCode}
+\Hypertarget{classpvade_1_1structure_1_1_structure_main_1_1_structure_a474cddb35cb5f563db19778c606fe924}\index{pvade.structure.StructureMain.Structure@{pvade.structure.StructureMain.Structure}!solver@{solver}}
+\index{solver@{solver}!pvade.structure.StructureMain.Structure@{pvade.structure.StructureMain.Structure}}
+\doxysubsubsection{\texorpdfstring{solver}{solver}}
+{\footnotesize\ttfamily \label{classpvade_1_1structure_1_1_structure_main_1_1_structure_a474cddb35cb5f563db19778c606fe924} 
+pvade.\+structure.\+Structure\+Main.\+Structure.\+solver = dolfinx.\+nls.\+petsc.\+Newton\+Solver(self.\+comm, self.\+problem)}
+
+\Hypertarget{classpvade_1_1structure_1_1_structure_main_1_1_structure_aa668e2e0d37154411d5f867b1ca1eeaa}\index{pvade.structure.StructureMain.Structure@{pvade.structure.StructureMain.Structure}!structural\_analysis@{structural\_analysis}}
+\index{structural\_analysis@{structural\_analysis}!pvade.structure.StructureMain.Structure@{pvade.structure.StructureMain.Structure}}
+\doxysubsubsection{\texorpdfstring{structural\_analysis}{structural\_analysis}}
+{\footnotesize\ttfamily \label{classpvade_1_1structure_1_1_structure_main_1_1_structure_aa668e2e0d37154411d5f867b1ca1eeaa} 
+pvade.\+structure.\+Structure\+Main.\+Structure.\+structural\+\_\+analysis = params.\+general.\+structural\+\_\+analysis}
+
+
+
+The documentation for this class was generated from the following file:\+\begin{DoxyCompactItemize}
+\item 
+/\+\+Users/\+warsalan/\+work/\+pvade/\+main\+\_\+branch/\+\+PVade/\+pvade/\+structure/\+\doxymbox{\hyperlink{_structure_main_8py}{Structure\+Main.\+py}}\end{DoxyCompactItemize}

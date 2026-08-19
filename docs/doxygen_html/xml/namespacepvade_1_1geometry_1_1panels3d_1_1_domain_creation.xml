@@ -1,0 +1,42 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.17.0" xml:lang="en-US">
+  <compounddef id="namespacepvade_1_1geometry_1_1panels3d_1_1_domain_creation" kind="namespace" language="Python">
+    <compoundname>pvade::geometry::panels3d::DomainCreation</compoundname>
+    <innerclass refid="classpvade_1_1geometry_1_1panels3d_1_1_domain_creation_1_1_domain_creation" prot="public">pvade::geometry::panels3d::DomainCreation::DomainCreation</innerclass>
+    <sectiondef kind="func">
+      <memberdef kind="function" id="namespacepvade_1_1geometry_1_1panels3d_1_1_domain_creation_1a9539bb7cfd79da86137d9c228f6b4634" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>_vprint</definition>
+        <argsstring>(rank, message, level=1)</argsstring>
+        <name>_vprint</name>
+        <qualifiedname>pvade.geometry.panels3d.DomainCreation._vprint</qualifiedname>
+        <param>
+          <type>rank</type>
+          <defname>rank</defname>
+        </param>
+        <param>
+          <type>message</type>
+          <defname>message</defname>
+        </param>
+        <param>
+          <type>level</type>
+          <defname>level</defname>
+          <defval>1</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><verbatim>Rank-0 verbosity-aware print helper for geometry debug messages.</verbatim> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/panels3d/DomainCreation.py" line="8" column="1" bodyfile="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/panels3d/DomainCreation.py" bodystart="8" bodyend="13"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/geometry/panels3d/DomainCreation.py" line="1" column="1"/>
+  </compounddef>
+</doxygen>

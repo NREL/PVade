@@ -1,0 +1,346 @@
+\doxysection{pvade.\+IO.\+Parameters.\+Sim\+Params Class Reference}
+\hypertarget{classpvade_1_1_i_o_1_1_parameters_1_1_sim_params}{}\label{classpvade_1_1_i_o_1_1_parameters_1_1_sim_params}\index{pvade.IO.Parameters.SimParams@{pvade.IO.Parameters.SimParams}}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\doxymbox{\hyperlink{classpvade_1_1_i_o_1_1_parameters_1_1_sim_params_a7fb030f8bb2d150c55c038906e75ada6}{\+\_\+\+\_\+init\+\_\+\+\_\+}} (self, input\+\_\+file\+\_\+path=None)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\doxymbox{\hyperlink{classpvade_1_1_i_o_1_1_parameters_1_1_sim_params_a74f30fd8825a783c1cde15d8791b7df7}{comm}} = MPI.\+COMM\+\_\+\+WORLD
+\item 
+int \doxymbox{\hyperlink{classpvade_1_1_i_o_1_1_parameters_1_1_sim_params_a6d39976dbdb4dca1eadb2803c2dd9c73}{rank}} = self.\+comm.\+Get\+\_\+rank()
+\item 
+\doxymbox{\hyperlink{classpvade_1_1_i_o_1_1_parameters_1_1_sim_params_a7f16f5aaa14321f7def171d6e17f8c1b}{num\+\_\+procs}} = self.\+comm.\+Get\+\_\+size()
+\item 
+\doxymbox{\hyperlink{classpvade_1_1_i_o_1_1_parameters_1_1_sim_params_ada3c5686556fbc3fb468657bd4fb0ff4}{verbosity\+\_\+level}} = get\+\_\+verbosity\+\_\+level()
+\item 
+\doxymbox{\hyperlink{classpvade_1_1_i_o_1_1_parameters_1_1_sim_params_afd5e70ba06a7da0ea5d0afe552dc87c3}{schema\+\_\+dict}} = yaml.\+safe\+\_\+load(fp)
+\item 
+dict \doxymbox{\hyperlink{classpvade_1_1_i_o_1_1_parameters_1_1_sim_params_a4a7249cf9c76ea7e801af35e3867de9b}{input\+\_\+dict}} = \{\}
+\item 
+\doxymbox{\hyperlink{classpvade_1_1_i_o_1_1_parameters_1_1_sim_params_a3fe5d31c9b9001a9bea925dbe8854bc6}{input\+\_\+file\+\_\+dict}} = yaml.\+safe\+\_\+load(fp)
+\item 
+dict \doxymbox{\hyperlink{classpvade_1_1_i_o_1_1_parameters_1_1_sim_params_adaf80c6914cc81579c38e6b2c03e8650}{flat\+\_\+schema\+\_\+dict}} = \{\}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Protected Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\doxymbox{\hyperlink{classpvade_1_1_i_o_1_1_parameters_1_1_sim_params_a2ce10c8be6903bcdd9ae459c28d13600}{\+\_\+flatten\+\_\+schema\+\_\+dict}} (self)
+\item 
+\doxymbox{\hyperlink{classpvade_1_1_i_o_1_1_parameters_1_1_sim_params_a774eba3fc1bb85b552feeced2c8197ab}{\+\_\+set\+\_\+user\+\_\+params\+\_\+from\+\_\+file}} (self)
+\item 
+\doxymbox{\hyperlink{classpvade_1_1_i_o_1_1_parameters_1_1_sim_params_ab9083fd64c5b6119969eb119c92a3643}{\+\_\+initialize\+\_\+params\+\_\+to\+\_\+default}} (self, override\+\_\+existing=True)
+\item 
+\doxymbox{\hyperlink{classpvade_1_1_i_o_1_1_parameters_1_1_sim_params_ad7815e9f43c85bb533b0943c850080be}{\+\_\+set\+\_\+user\+\_\+params\+\_\+from\+\_\+cli}} (self)
+\item 
+\doxymbox{\hyperlink{classpvade_1_1_i_o_1_1_parameters_1_1_sim_params_aea671d49f6024783c80c3ed32305306b}{\+\_\+vprint}} (self, message, level=1)
+\item 
+\doxymbox{\hyperlink{classpvade_1_1_i_o_1_1_parameters_1_1_sim_params_a44898e8275d9f62b4a0c087927b6795d}{\+\_\+validate\+\_\+inputs}} (self)
+\item 
+\doxymbox{\hyperlink{classpvade_1_1_i_o_1_1_parameters_1_1_sim_params_a60263815196d32987d9dc65665bcc3e8}{\+\_\+store\+\_\+dict\+\_\+as\+\_\+attrs}} (self)
+\item 
+\doxymbox{\hyperlink{classpvade_1_1_i_o_1_1_parameters_1_1_sim_params_a1d4c9b53dcec14068d6e178668700810}{\+\_\+set\+\_\+nested\+\_\+dict\+\_\+value}} (self, parent\+\_\+obj, path\+\_\+to\+\_\+input, value, error\+\_\+on\+\_\+missing\+\_\+key=False, override\+\_\+existing=True)
+\item 
+\doxymbox{\hyperlink{classpvade_1_1_i_o_1_1_parameters_1_1_sim_params_ad87ed0c0e135a7f5f7af619c090f73e6}{\+\_\+rec\+\_\+settattr}} (self, parent\+\_\+obj, path\+\_\+to\+\_\+input, value, error\+\_\+on\+\_\+missing\+\_\+key=True)
+\item 
+\doxymbox{\hyperlink{classpvade_1_1_i_o_1_1_parameters_1_1_sim_params_aebf6c329e9fa19233925339a3eac1c3f}{\+\_\+pprint\+\_\+dict}} (self, d, indent=0)
+\item 
+\doxymbox{\hyperlink{classpvade_1_1_i_o_1_1_parameters_1_1_sim_params_ac7e4cec980188de9bde7ab8c57e6dcc9}{\+\_\+add\+\_\+derived\+\_\+quantities}} (self)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\begin{DoxyVerb}Manages and validates all simulation parameters
+
+``SimParams`` provides a set of methods to obtain user-input values from
+both input files and the command line. It also provides input validation
+via a yaml schema file. All parameters can later be access from PVade
+objects like ``params.parent_group.option`` for example,
+``params.solver.dt``.
+
+
+Attributes:
+    comm (MPI Communicator): An MPI communicator that will be shared by all PVade objects.
+    flat_schema_dict (dict): A flattened dictionary version of the yaml schema file used to set default values and provide valid command-line options.
+    input_dict (dict): The aggregated input dictionary containing all command-line updated values and input-file values.
+    input_file_dict (dict): The dictionary representing the input file.
+    num_procs (int): The total number of processors being used to solve the problem
+    rank (int): A unique ID for each process in the range `[0, 1, ..., num_procs-1]`
+    schema_dict (dict): The unflattened (nested) representation of the yaml schema dictionary.
+\end{DoxyVerb}
+ 
+
+\label{classpvade_1_1_i_o_1_1_parameters_1_1_sim_params_doc-constructors}
+\Hypertarget{classpvade_1_1_i_o_1_1_parameters_1_1_sim_params_doc-constructors}
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{classpvade_1_1_i_o_1_1_parameters_1_1_sim_params_a7fb030f8bb2d150c55c038906e75ada6}\index{pvade.IO.Parameters.SimParams@{pvade.IO.Parameters.SimParams}!\_\_init\_\_@{\_\_init\_\_}}
+\index{\_\_init\_\_@{\_\_init\_\_}!pvade.IO.Parameters.SimParams@{pvade.IO.Parameters.SimParams}}
+\doxysubsubsection{\texorpdfstring{\_\_init\_\_()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily \label{classpvade_1_1_i_o_1_1_parameters_1_1_sim_params_a7fb030f8bb2d150c55c038906e75ada6} 
+pvade.\+IO.\+Parameters.\+Sim\+Params.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self}{, }\item[{}]{input\+\_\+file\+\_\+path}{ = {\ttfamily None}}\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Create a SimParams object
+
+This method begins by reading both the schema file and the
+user-specified file into dictionaries. It overrides entries in the
+user-specified dictionary with command-line inputs and finally
+validates the complete dictionary against the schema file.
+
+Args:
+    input_file_path (str, optional): The complete path to the input yaml file defining the problem.
+\end{DoxyVerb}
+ 
+
+\label{classpvade_1_1_i_o_1_1_parameters_1_1_sim_params_doc-func-members}
+\Hypertarget{classpvade_1_1_i_o_1_1_parameters_1_1_sim_params_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{classpvade_1_1_i_o_1_1_parameters_1_1_sim_params_ac7e4cec980188de9bde7ab8c57e6dcc9}\index{pvade.IO.Parameters.SimParams@{pvade.IO.Parameters.SimParams}!\_add\_derived\_quantities@{\_add\_derived\_quantities}}
+\index{\_add\_derived\_quantities@{\_add\_derived\_quantities}!pvade.IO.Parameters.SimParams@{pvade.IO.Parameters.SimParams}}
+\doxysubsubsection{\texorpdfstring{\_add\_derived\_quantities()}{\_add\_derived\_quantities()}}
+{\footnotesize\ttfamily \label{classpvade_1_1_i_o_1_1_parameters_1_1_sim_params_ac7e4cec980188de9bde7ab8c57e6dcc9} 
+pvade.\+IO.\+Parameters.\+Sim\+Params.\+\_\+add\+\_\+derived\+\_\+quantities (\begin{DoxyParamCaption}\item[{}]{self}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [protected]}}
+
+\begin{DoxyVerb}Add derived quantities for convenience
+
+For convenience, it is helpful to store certain derived quantities in
+the SimParams object that are not explicitly provided by the user.
+For example, ``params.solver.t_steps`` is the integer number of steps
+implied by the user-provided entries for ``t_final`` and ``dt``. Such
+derived and/or convenience quantities are accumulated here. Note that
+no error checking is performed on these values since they do not
+appear in the yaml schema file, the expectation being that valid
+quantities up till this point will result in valid derived values.
+
+Args:
+    None
+\end{DoxyVerb}
+ \Hypertarget{classpvade_1_1_i_o_1_1_parameters_1_1_sim_params_a2ce10c8be6903bcdd9ae459c28d13600}\index{pvade.IO.Parameters.SimParams@{pvade.IO.Parameters.SimParams}!\_flatten\_schema\_dict@{\_flatten\_schema\_dict}}
+\index{\_flatten\_schema\_dict@{\_flatten\_schema\_dict}!pvade.IO.Parameters.SimParams@{pvade.IO.Parameters.SimParams}}
+\doxysubsubsection{\texorpdfstring{\_flatten\_schema\_dict()}{\_flatten\_schema\_dict()}}
+{\footnotesize\ttfamily \label{classpvade_1_1_i_o_1_1_parameters_1_1_sim_params_a2ce10c8be6903bcdd9ae459c28d13600} 
+pvade.\+IO.\+Parameters.\+Sim\+Params.\+\_\+flatten\+\_\+schema\+\_\+dict (\begin{DoxyParamCaption}\item[{}]{self}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [protected]}}
+
+\begin{DoxyVerb}Flatten the schema dictionary
+
+This method returns a flattened version of the schema dictionary where
+nested dictionary key:val pairs are separated with dots (`.`). For
+example::
+
+    general:
+        name: test_sim
+        size:
+            x: 10
+            y: 20
+
+will be converted to::
+
+    general.name: test_sim
+    general.size.x: 10
+    general.size.y: 20
+
+Args:
+    None
+\end{DoxyVerb}
+ \Hypertarget{classpvade_1_1_i_o_1_1_parameters_1_1_sim_params_ab9083fd64c5b6119969eb119c92a3643}\index{pvade.IO.Parameters.SimParams@{pvade.IO.Parameters.SimParams}!\_initialize\_params\_to\_default@{\_initialize\_params\_to\_default}}
+\index{\_initialize\_params\_to\_default@{\_initialize\_params\_to\_default}!pvade.IO.Parameters.SimParams@{pvade.IO.Parameters.SimParams}}
+\doxysubsubsection{\texorpdfstring{\_initialize\_params\_to\_default()}{\_initialize\_params\_to\_default()}}
+{\footnotesize\ttfamily \label{classpvade_1_1_i_o_1_1_parameters_1_1_sim_params_ab9083fd64c5b6119969eb119c92a3643} 
+pvade.\+IO.\+Parameters.\+Sim\+Params.\+\_\+initialize\+\_\+params\+\_\+to\+\_\+default (\begin{DoxyParamCaption}\item[{}]{self}{, }\item[{}]{override\+\_\+existing}{ = {\ttfamily True}}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [protected]}}
+
+\begin{DoxyVerb}Initialize values to default
+
+This method uses the `default` entry associated with each parameter in
+the yaml schema to provide a sane value where none is supplied by the
+input yaml file.
+
+Args:
+    None
+\end{DoxyVerb}
+ \Hypertarget{classpvade_1_1_i_o_1_1_parameters_1_1_sim_params_aebf6c329e9fa19233925339a3eac1c3f}\index{pvade.IO.Parameters.SimParams@{pvade.IO.Parameters.SimParams}!\_pprint\_dict@{\_pprint\_dict}}
+\index{\_pprint\_dict@{\_pprint\_dict}!pvade.IO.Parameters.SimParams@{pvade.IO.Parameters.SimParams}}
+\doxysubsubsection{\texorpdfstring{\_pprint\_dict()}{\_pprint\_dict()}}
+{\footnotesize\ttfamily \label{classpvade_1_1_i_o_1_1_parameters_1_1_sim_params_aebf6c329e9fa19233925339a3eac1c3f} 
+pvade.\+IO.\+Parameters.\+Sim\+Params.\+\_\+pprint\+\_\+dict (\begin{DoxyParamCaption}\item[{}]{self}{, }\item[{}]{d}{, }\item[{}]{indent}{ = {\ttfamily 0}}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [protected]}}
+
+\begin{DoxyVerb}Pretty print a dictionary
+
+Print a dictionary where nesting is visualized with indentation.
+Useful for validation and debugging.
+
+Args:
+    d (dict): The dictionary to print
+    indent (int, optional): The amount of indentation to use for this level, default=0
+\end{DoxyVerb}
+ \Hypertarget{classpvade_1_1_i_o_1_1_parameters_1_1_sim_params_ad87ed0c0e135a7f5f7af619c090f73e6}\index{pvade.IO.Parameters.SimParams@{pvade.IO.Parameters.SimParams}!\_rec\_settattr@{\_rec\_settattr}}
+\index{\_rec\_settattr@{\_rec\_settattr}!pvade.IO.Parameters.SimParams@{pvade.IO.Parameters.SimParams}}
+\doxysubsubsection{\texorpdfstring{\_rec\_settattr()}{\_rec\_settattr()}}
+{\footnotesize\ttfamily \label{classpvade_1_1_i_o_1_1_parameters_1_1_sim_params_ad87ed0c0e135a7f5f7af619c090f73e6} 
+pvade.\+IO.\+Parameters.\+Sim\+Params.\+\_\+rec\+\_\+settattr (\begin{DoxyParamCaption}\item[{}]{self}{, }\item[{}]{parent\+\_\+obj}{, }\item[{}]{path\+\_\+to\+\_\+input}{, }\item[{}]{value}{, }\item[{}]{error\+\_\+on\+\_\+missing\+\_\+key}{ = {\ttfamily True}}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [protected]}}
+
+\begin{DoxyVerb}Convert nested dictionary to object.attribute format
+
+This method recursively creates nested objects to hold attributes in the same manner as the nested dictionary.
+
+Args:
+    parent_obj (object): The parent object that will contain this value (self when first called)
+    path_to_input (list, str): A list of strings containing the attribute names to be used at each level
+    value (int, float, object): The value to store at the final level of nesting
+    error_on_missing_key (bool, optional): A flag to raise an error if any of the keys or sub-keys is not already present
+\end{DoxyVerb}
+ \Hypertarget{classpvade_1_1_i_o_1_1_parameters_1_1_sim_params_a1d4c9b53dcec14068d6e178668700810}\index{pvade.IO.Parameters.SimParams@{pvade.IO.Parameters.SimParams}!\_set\_nested\_dict\_value@{\_set\_nested\_dict\_value}}
+\index{\_set\_nested\_dict\_value@{\_set\_nested\_dict\_value}!pvade.IO.Parameters.SimParams@{pvade.IO.Parameters.SimParams}}
+\doxysubsubsection{\texorpdfstring{\_set\_nested\_dict\_value()}{\_set\_nested\_dict\_value()}}
+{\footnotesize\ttfamily \label{classpvade_1_1_i_o_1_1_parameters_1_1_sim_params_a1d4c9b53dcec14068d6e178668700810} 
+pvade.\+IO.\+Parameters.\+Sim\+Params.\+\_\+set\+\_\+nested\+\_\+dict\+\_\+value (\begin{DoxyParamCaption}\item[{}]{self}{, }\item[{}]{parent\+\_\+obj}{, }\item[{}]{path\+\_\+to\+\_\+input}{, }\item[{}]{value}{, }\item[{}]{error\+\_\+on\+\_\+missing\+\_\+key}{ = {\ttfamily False}, }\item[{}]{override\+\_\+existing}{ = {\ttfamily True}}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [protected]}}
+
+\begin{DoxyVerb}Set a nested value in a dictionary
+
+This method uses the flattened path to a dictionary value to create
+the nested structure/path and then store the value.
+
+Args:
+    parent_obj (dict): The dictionary containing the value to be set
+    path_to_input (list, str): A list of strings containing the key names to be used at each level
+    value (int, float, object): The value to store at the final level of nesting
+    error_on_missing_key (bool, optional): A flag to raise an error if any of the keys or sub-keys is not already present
+\end{DoxyVerb}
+ \Hypertarget{classpvade_1_1_i_o_1_1_parameters_1_1_sim_params_ad7815e9f43c85bb533b0943c850080be}\index{pvade.IO.Parameters.SimParams@{pvade.IO.Parameters.SimParams}!\_set\_user\_params\_from\_cli@{\_set\_user\_params\_from\_cli}}
+\index{\_set\_user\_params\_from\_cli@{\_set\_user\_params\_from\_cli}!pvade.IO.Parameters.SimParams@{pvade.IO.Parameters.SimParams}}
+\doxysubsubsection{\texorpdfstring{\_set\_user\_params\_from\_cli()}{\_set\_user\_params\_from\_cli()}}
+{\footnotesize\ttfamily \label{classpvade_1_1_i_o_1_1_parameters_1_1_sim_params_ad7815e9f43c85bb533b0943c850080be} 
+pvade.\+IO.\+Parameters.\+Sim\+Params.\+\_\+set\+\_\+user\+\_\+params\+\_\+from\+\_\+cli (\begin{DoxyParamCaption}\item[{}]{self}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [protected]}}
+
+\begin{DoxyVerb}Store values from command line
+
+This method uses the flattened schema dictionary, where nested options
+are stored as a one-layer dictionary with keys separated by dots
+(`.`), to generate a set of valid command line inputs that can be
+used to override options that would otherwise be set by the input
+yaml file or defaults. For example::
+
+    python main.py --solver.dt 0.01
+
+will override whatever value of ``dt`` is present in the yaml file
+with the value 0.01. Note the double hyphen to set off an argument
+name, either with or without the assignment operator is allowed
+(e.g., both ``--solver.dt 0.01`` and ``--solver.dt=0.01`` are valid)
+
+Args:
+    None
+\end{DoxyVerb}
+ \Hypertarget{classpvade_1_1_i_o_1_1_parameters_1_1_sim_params_a774eba3fc1bb85b552feeced2c8197ab}\index{pvade.IO.Parameters.SimParams@{pvade.IO.Parameters.SimParams}!\_set\_user\_params\_from\_file@{\_set\_user\_params\_from\_file}}
+\index{\_set\_user\_params\_from\_file@{\_set\_user\_params\_from\_file}!pvade.IO.Parameters.SimParams@{pvade.IO.Parameters.SimParams}}
+\doxysubsubsection{\texorpdfstring{\_set\_user\_params\_from\_file()}{\_set\_user\_params\_from\_file()}}
+{\footnotesize\ttfamily \label{classpvade_1_1_i_o_1_1_parameters_1_1_sim_params_a774eba3fc1bb85b552feeced2c8197ab} 
+pvade.\+IO.\+Parameters.\+Sim\+Params.\+\_\+set\+\_\+user\+\_\+params\+\_\+from\+\_\+file (\begin{DoxyParamCaption}\item[{}]{self}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [protected]}}
+
+\begin{DoxyVerb}Store the input-file supplied values
+
+This method stores the parameters supplied via input yaml file in the
+aggregated input dictionary.
+
+Args:
+    None
+\end{DoxyVerb}
+ \Hypertarget{classpvade_1_1_i_o_1_1_parameters_1_1_sim_params_a60263815196d32987d9dc65665bcc3e8}\index{pvade.IO.Parameters.SimParams@{pvade.IO.Parameters.SimParams}!\_store\_dict\_as\_attrs@{\_store\_dict\_as\_attrs}}
+\index{\_store\_dict\_as\_attrs@{\_store\_dict\_as\_attrs}!pvade.IO.Parameters.SimParams@{pvade.IO.Parameters.SimParams}}
+\doxysubsubsection{\texorpdfstring{\_store\_dict\_as\_attrs()}{\_store\_dict\_as\_attrs()}}
+{\footnotesize\ttfamily \label{classpvade_1_1_i_o_1_1_parameters_1_1_sim_params_a60263815196d32987d9dc65665bcc3e8} 
+pvade.\+IO.\+Parameters.\+Sim\+Params.\+\_\+store\+\_\+dict\+\_\+as\+\_\+attrs (\begin{DoxyParamCaption}\item[{}]{self}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [protected]}}
+
+\begin{DoxyVerb}Converts dictionary notation to nested object attributes
+
+This method re-structures the parameters dictionary into the slightly
+easier-to-navigate ``object.attribute`` format. For example, rather
+than having a parameters dictionary and accessing entries like
+``params['general']['name']``, we create a parameters object with
+attributes accessed like ``params.general.name``.
+
+Args:
+    None
+\end{DoxyVerb}
+ \Hypertarget{classpvade_1_1_i_o_1_1_parameters_1_1_sim_params_a44898e8275d9f62b4a0c087927b6795d}\index{pvade.IO.Parameters.SimParams@{pvade.IO.Parameters.SimParams}!\_validate\_inputs@{\_validate\_inputs}}
+\index{\_validate\_inputs@{\_validate\_inputs}!pvade.IO.Parameters.SimParams@{pvade.IO.Parameters.SimParams}}
+\doxysubsubsection{\texorpdfstring{\_validate\_inputs()}{\_validate\_inputs()}}
+{\footnotesize\ttfamily \label{classpvade_1_1_i_o_1_1_parameters_1_1_sim_params_a44898e8275d9f62b4a0c087927b6795d} 
+pvade.\+IO.\+Parameters.\+Sim\+Params.\+\_\+validate\+\_\+inputs (\begin{DoxyParamCaption}\item[{}]{self}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [protected]}}
+
+\begin{DoxyVerb}Validate the input dictionary
+
+This method uses the validate function from the jsonschema package to
+validate the complete user-supplied parameter set. This checks that
+variables are the expected type, fall within prescribed ranges, and
+also ensure that dependencies between variables are satisfied
+(e.g., if variable ``a`` is specified, then variable ``b`` must also
+be specified.)
+
+Args:
+    None
+\end{DoxyVerb}
+ \Hypertarget{classpvade_1_1_i_o_1_1_parameters_1_1_sim_params_aea671d49f6024783c80c3ed32305306b}\index{pvade.IO.Parameters.SimParams@{pvade.IO.Parameters.SimParams}!\_vprint@{\_vprint}}
+\index{\_vprint@{\_vprint}!pvade.IO.Parameters.SimParams@{pvade.IO.Parameters.SimParams}}
+\doxysubsubsection{\texorpdfstring{\_vprint()}{\_vprint()}}
+{\footnotesize\ttfamily \label{classpvade_1_1_i_o_1_1_parameters_1_1_sim_params_aea671d49f6024783c80c3ed32305306b} 
+pvade.\+IO.\+Parameters.\+Sim\+Params.\+\_\+vprint (\begin{DoxyParamCaption}\item[{}]{self}{, }\item[{}]{message}{, }\item[{}]{level}{ = {\ttfamily 1}}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [protected]}}
+
+\begin{DoxyVerb}Print from rank 0 only when current verbosity is high enough.\end{DoxyVerb}
+ 
+
+\label{classpvade_1_1_i_o_1_1_parameters_1_1_sim_params_doc-variable-members}
+\Hypertarget{classpvade_1_1_i_o_1_1_parameters_1_1_sim_params_doc-variable-members}
+\doxysubsection{Member Data Documentation}
+\Hypertarget{classpvade_1_1_i_o_1_1_parameters_1_1_sim_params_a74f30fd8825a783c1cde15d8791b7df7}\index{pvade.IO.Parameters.SimParams@{pvade.IO.Parameters.SimParams}!comm@{comm}}
+\index{comm@{comm}!pvade.IO.Parameters.SimParams@{pvade.IO.Parameters.SimParams}}
+\doxysubsubsection{\texorpdfstring{comm}{comm}}
+{\footnotesize\ttfamily \label{classpvade_1_1_i_o_1_1_parameters_1_1_sim_params_a74f30fd8825a783c1cde15d8791b7df7} 
+pvade.\+IO.\+Parameters.\+Sim\+Params.\+comm = MPI.\+COMM\+\_\+\+WORLD}
+
+\Hypertarget{classpvade_1_1_i_o_1_1_parameters_1_1_sim_params_adaf80c6914cc81579c38e6b2c03e8650}\index{pvade.IO.Parameters.SimParams@{pvade.IO.Parameters.SimParams}!flat\_schema\_dict@{flat\_schema\_dict}}
+\index{flat\_schema\_dict@{flat\_schema\_dict}!pvade.IO.Parameters.SimParams@{pvade.IO.Parameters.SimParams}}
+\doxysubsubsection{\texorpdfstring{flat\_schema\_dict}{flat\_schema\_dict}}
+{\footnotesize\ttfamily \label{classpvade_1_1_i_o_1_1_parameters_1_1_sim_params_adaf80c6914cc81579c38e6b2c03e8650} 
+dict pvade.\+IO.\+Parameters.\+Sim\+Params.\+flat\+\_\+schema\+\_\+dict = \{\}}
+
+\Hypertarget{classpvade_1_1_i_o_1_1_parameters_1_1_sim_params_a4a7249cf9c76ea7e801af35e3867de9b}\index{pvade.IO.Parameters.SimParams@{pvade.IO.Parameters.SimParams}!input\_dict@{input\_dict}}
+\index{input\_dict@{input\_dict}!pvade.IO.Parameters.SimParams@{pvade.IO.Parameters.SimParams}}
+\doxysubsubsection{\texorpdfstring{input\_dict}{input\_dict}}
+{\footnotesize\ttfamily \label{classpvade_1_1_i_o_1_1_parameters_1_1_sim_params_a4a7249cf9c76ea7e801af35e3867de9b} 
+pvade.\+IO.\+Parameters.\+Sim\+Params.\+input\+\_\+dict = \{\}}
+
+\Hypertarget{classpvade_1_1_i_o_1_1_parameters_1_1_sim_params_a3fe5d31c9b9001a9bea925dbe8854bc6}\index{pvade.IO.Parameters.SimParams@{pvade.IO.Parameters.SimParams}!input\_file\_dict@{input\_file\_dict}}
+\index{input\_file\_dict@{input\_file\_dict}!pvade.IO.Parameters.SimParams@{pvade.IO.Parameters.SimParams}}
+\doxysubsubsection{\texorpdfstring{input\_file\_dict}{input\_file\_dict}}
+{\footnotesize\ttfamily \label{classpvade_1_1_i_o_1_1_parameters_1_1_sim_params_a3fe5d31c9b9001a9bea925dbe8854bc6} 
+pvade.\+IO.\+Parameters.\+Sim\+Params.\+input\+\_\+file\+\_\+dict = yaml.\+safe\+\_\+load(fp)}
+
+\Hypertarget{classpvade_1_1_i_o_1_1_parameters_1_1_sim_params_a7f16f5aaa14321f7def171d6e17f8c1b}\index{pvade.IO.Parameters.SimParams@{pvade.IO.Parameters.SimParams}!num\_procs@{num\_procs}}
+\index{num\_procs@{num\_procs}!pvade.IO.Parameters.SimParams@{pvade.IO.Parameters.SimParams}}
+\doxysubsubsection{\texorpdfstring{num\_procs}{num\_procs}}
+{\footnotesize\ttfamily \label{classpvade_1_1_i_o_1_1_parameters_1_1_sim_params_a7f16f5aaa14321f7def171d6e17f8c1b} 
+pvade.\+IO.\+Parameters.\+Sim\+Params.\+num\+\_\+procs = self.\+comm.\+Get\+\_\+size()}
+
+\Hypertarget{classpvade_1_1_i_o_1_1_parameters_1_1_sim_params_a6d39976dbdb4dca1eadb2803c2dd9c73}\index{pvade.IO.Parameters.SimParams@{pvade.IO.Parameters.SimParams}!rank@{rank}}
+\index{rank@{rank}!pvade.IO.Parameters.SimParams@{pvade.IO.Parameters.SimParams}}
+\doxysubsubsection{\texorpdfstring{rank}{rank}}
+{\footnotesize\ttfamily \label{classpvade_1_1_i_o_1_1_parameters_1_1_sim_params_a6d39976dbdb4dca1eadb2803c2dd9c73} 
+int pvade.\+IO.\+Parameters.\+Sim\+Params.\+rank = self.\+comm.\+Get\+\_\+rank()}
+
+\Hypertarget{classpvade_1_1_i_o_1_1_parameters_1_1_sim_params_afd5e70ba06a7da0ea5d0afe552dc87c3}\index{pvade.IO.Parameters.SimParams@{pvade.IO.Parameters.SimParams}!schema\_dict@{schema\_dict}}
+\index{schema\_dict@{schema\_dict}!pvade.IO.Parameters.SimParams@{pvade.IO.Parameters.SimParams}}
+\doxysubsubsection{\texorpdfstring{schema\_dict}{schema\_dict}}
+{\footnotesize\ttfamily \label{classpvade_1_1_i_o_1_1_parameters_1_1_sim_params_afd5e70ba06a7da0ea5d0afe552dc87c3} 
+pvade.\+IO.\+Parameters.\+Sim\+Params.\+schema\+\_\+dict = yaml.\+safe\+\_\+load(fp)}
+
+\Hypertarget{classpvade_1_1_i_o_1_1_parameters_1_1_sim_params_ada3c5686556fbc3fb468657bd4fb0ff4}\index{pvade.IO.Parameters.SimParams@{pvade.IO.Parameters.SimParams}!verbosity\_level@{verbosity\_level}}
+\index{verbosity\_level@{verbosity\_level}!pvade.IO.Parameters.SimParams@{pvade.IO.Parameters.SimParams}}
+\doxysubsubsection{\texorpdfstring{verbosity\_level}{verbosity\_level}}
+{\footnotesize\ttfamily \label{classpvade_1_1_i_o_1_1_parameters_1_1_sim_params_ada3c5686556fbc3fb468657bd4fb0ff4} 
+pvade.\+IO.\+Parameters.\+Sim\+Params.\+verbosity\+\_\+level = get\+\_\+verbosity\+\_\+level()}
+
+
+
+The documentation for this class was generated from the following file:\+\begin{DoxyCompactItemize}
+\item 
+/\+\+Users/\+warsalan/\+work/\+pvade/\+main\+\_\+branch/\+\+PVade/\+pvade/\+\+IO/\+\doxymbox{\hyperlink{_parameters_8py}{Parameters.\+py}}\end{DoxyCompactItemize}

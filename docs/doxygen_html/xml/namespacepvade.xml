@@ -1,0 +1,18 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.17.0" xml:lang="en-US">
+  <compounddef id="namespacepvade" kind="namespace" language="Python">
+    <compoundname>pvade</compoundname>
+    <innerclass refid="classpvade_1_1_p_vade_error" prot="public">pvade::PVadeError</innerclass>
+    <innernamespace refid="namespacepvade_1_1fluid">pvade::fluid</innernamespace>
+    <innernamespace refid="namespacepvade_1_1fsi">pvade::fsi</innernamespace>
+    <innernamespace refid="namespacepvade_1_1geometry">pvade::geometry</innernamespace>
+    <innernamespace refid="namespacepvade_1_1_i_o">pvade::IO</innernamespace>
+    <innernamespace refid="namespacepvade_1_1structure">pvade::structure</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><verbatim>This is the base package for ``pvade``.</verbatim> </para>
+    </detaileddescription>
+    <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/__init__.py" line="1" column="1"/>
+  </compounddef>
+</doxygen>

@@ -1,2 +1,0 @@
-Governing equations
-===================

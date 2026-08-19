@@ -1,0 +1,16 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.17.0" xml:lang="en-US">
+  <compounddef id="dir_6adeff2deadc2a333db79d885ff82ef0" kind="dir">
+    <compoundname>/Users/warsalan/work/pvade/main_branch/PVade/pvade/IO</compoundname>
+    <innerfile refid="_i_o_2____init_____8py">__init__.py</innerfile>
+    <innerfile refid="_data_stream_8py">DataStream.py</innerfile>
+    <innerfile refid="_parameters_8py">Parameters.py</innerfile>
+    <innerfile refid="_utilities_8py">Utilities.py</innerfile>
+    <innerfile refid="verbosity_8py">verbosity.py</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/Users/warsalan/work/pvade/main_branch/PVade/pvade/IO/"/>
+  </compounddef>
+</doxygen>

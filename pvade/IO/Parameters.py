@@ -5,6 +5,7 @@ import argparse
 from mpi4py import MPI
 from pandas import json_normalize
 from jsonschema import validate
+from pvade.IO.verbosity import get_verbosity_level, emit_verbosity_print
 
 
 class SimParams:
@@ -42,6 +43,7 @@ class SimParams:
         self.comm = MPI.COMM_WORLD
         self.rank = self.comm.Get_rank()
         self.num_procs = self.comm.Get_size()
+        self.verbosity_level = get_verbosity_level()
 
         # Open the schema file for reading and load its contents into a dictionary
         pvade_dir = os.path.dirname(os.path.abspath(__file__))
@@ -63,7 +65,9 @@ class SimParams:
             # Open the input file for reading and load its contents into a dictionary
             with open(input_file_path, "r") as fp:
                 if self.rank == 0:
-                    print(f"Reading problem definition from {input_file_path}")
+                    self._vprint(
+                        f"Reading problem definition from {input_file_path}", level=1
+                    )
                 self.input_file_dict = yaml.safe_load(fp)
 
             # Set values as specified by the input yaml file
@@ -252,7 +256,10 @@ class SimParams:
                     try:
                         value_to_write = float(value)
                         if self.rank == 0:
-                            print(f"| Interpreting {key} as float: {value_to_write}")
+                            self._vprint(
+                                f"| Interpreting {key} as float: {value_to_write}",
+                                level=2,
+                            )
 
                     except:
                         if "[" in value and "]" in value:
@@ -263,7 +270,10 @@ class SimParams:
                             value_to_write = [float(v) for v in value_to_write]
 
                             if self.rank == 0:
-                                print(f"| Interpreting {key} as list: {value_to_write}")
+                                self._vprint(
+                                    f"| Interpreting {key} as list: {value_to_write}",
+                                    level=2,
+                                )
 
                         else:
                             # Interpretation as float failed, interpretation as list of floats
@@ -275,11 +285,19 @@ class SimParams:
                 )
 
                 if self.rank == 0:
-                    print(f"| Setting {key} = {value_to_write} from command line.")
+                    self._vprint(
+                        f"| Setting {key} = {value_to_write} from command line.",
+                        level=1,
+                    )
 
         for key in unknown:
             if self.rank == 0:
-                print(f"| Got unknown option {key}, skipping.")
+                self._vprint(f"| Got unknown option {key}, skipping.", level=1)
+
+    def _vprint(self, message, level=1):
+        """Print from rank 0 only when current verbosity is high enough."""
+        if self.rank == 0:
+            emit_verbosity_print(message, level=level)
 
     def _validate_inputs(self):
         """Validate the input dictionary
@@ -416,17 +434,16 @@ class SimParams:
 
         """
         for key, val in d.items():
-            for k in range(indent):
-                print("|   ", end="")
+            indent_prefix = "|   " * indent
 
             if isinstance(val, dict):
-                print(f"{key}:")
+                self._vprint(f"{indent_prefix}{key}:", level=2)
                 indent += 1
                 self._pprint_dict(val, indent)
                 indent -= 1
 
             else:
-                print(f"{key}: {val} ({type(val)})")
+                self._vprint(f"{indent_prefix}{key}: {val} ({type(val)})", level=2)
 
     def _add_derived_quantities(self):
         """Add derived quantities for convenience
