@@ -17,7 +17,7 @@ where:
 
 L is the length of the domain 
 H is the height of the domain 
-l is the lentgh of the flag 
+l is the length of the flag 
 h is the thickness of the flag 
 
 
@@ -26,7 +26,7 @@ h is the thickness of the flag
 
 C is the center of the circle 
 r is the radius of the circle
-A is the measurment point for benchmarking  
+A is the measurement point for benchmarking  
 
 
 For the upcoming benchmarks the following values are used:
@@ -52,7 +52,7 @@ For the upcoming benchmarks the following values are used:
 Structural Benchmarking
 -----------------------
 
-The Benchmarking of the structural solver is follows the CSM3 example in Turek and Hron [1]_.
+The benchmarking of the structural solver follows the CSM3 example in Turek and Hron [1]_.
 
 In CSM3, the structural tests are computed only for the elastic beam
 (without the surrounding fluid) adding the gravitational force only on
@@ -101,7 +101,7 @@ When we plot the "x" and "y" displacement of the point A versus time we obtain t
 .. ----------------
 .. 
 .. 
-.. In order to benchmark the CFD part of PVade we are conductind CFD3 simulation in [include citation here], and comparing the list and drag values.  
+.. In order to benchmark the CFD part of PVade we are conducting a CFD3 simulation in [include citation here], and comparing the lift and drag values.  
 .. Problem parameters table 
 .. 
 .. .. container::
@@ -187,7 +187,7 @@ This example is executed using::
   python --input $PVade/input/flag2d.yaml
 
 
-PVade start by generating the mesh for the computational domain. 
+PVade starts by generating the mesh for the computational domain. 
 In this case we are generating 2 meshes, 1 for the fluid and 1 for the structure, which match at the boundary. 
 
 The full computational Domain

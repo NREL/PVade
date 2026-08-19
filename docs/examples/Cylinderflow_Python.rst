@@ -56,14 +56,7 @@ vortex shedding.
   </video>
 
 .. note::
-
-  If the embedded player does not load in your browser, open the file directly:
-  ``docs/_build/html/_static/videos/mesh_with_bc.mp4``.
-
-Notes
------
-
-- This script is a standalone solver example and is separate from the
-  YAML-driven ``pvade_main.py --input_file ...`` workflow.
-- You can tune mesh and physics parameters directly in the script
-  (for example ``Re``, ``dt``, and mesh resolution variables).
+  - This script is a standalone solver example and is separate from the
+    YAML-driven ``pvade_main.py --input_file ...`` workflow.
+  - You can tune mesh and physics parameters directly in the script
+    (for example ``Re``, ``dt``, and mesh resolution variables).

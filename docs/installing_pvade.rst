@@ -8,14 +8,14 @@ On a Unix base machine
 PVade is a software that uses FEniCSx for its Finite Element Computation. 
 For more information about FEniCSx please refer to https://github.com/FEniCS/dolfinx.
 
-In addition to FEniCSx, PVade uses multiple python packages as part of the pre- and post-processing steps. 
-PVade dependencies are included in environment.yaml. 
+In addition to FEniCSx, PVade uses multiple Python packages as part of the pre- and post-processing steps.
+PVade dependencies are included in environment.yaml.
 
-To get started using PVade, we can use Conda/Mamba for the creation of an environment containg all the necessary dependencies. 
+To start using PVade, we can use Conda/Mamba to create an environment containing all the necessary dependencies.
 
-In order to obtain Mamba we can use the following resource https://mamba.readthedocs.io/en/latest/installation/mamba-installation.html.
+To obtain Mamba, we can use the following resource: https://mamba.readthedocs.io/en/latest/installation/mamba-installation.html.
 
-As well as, using the following resource to obtain Conda https://conda.io/projects/conda/en/latest/user-guide/install/index.html.
+To obtain Conda, we can use the following resource: https://conda.io/projects/conda/en/latest/user-guide/install/index.html.
 
 .. Note:: 
    We recommend using Mamba for its fast installation of the environment. 
@@ -33,131 +33,141 @@ where ``my_env_name`` can be replaced with a short name for your Conda environme
 
   mamba activate my_env_name
 
-from within your activate Conda environment, a simulation can be executed with::
+From within your activated Conda environment, a simulation can be executed with::
 
   python pvade_main.py --command_line_arg value
 
 
-We can test the successful installation of PVade and it's MPI implementation by running the following example ::
+We can test the successful installation of PVade and its MPI implementation by running the following example::
   
-  mpirun -np $num_cores python -u $PVade/examples/poissoneq.py 64  cg none 1
+  mpirun -np $num_cores python -u $PVade/tutorials/poissoneq.py 64  cg none 1
 
-The example solve a Poisson's equation in 3 dimensions using 64 elements and 1 order Lagrange shape functions with cg as the ksp solver and no preconditioners. 
-For more details about the poisson's problem we refer the use to the folowing link https://jsdokken.com/dolfinx-tutorial/chapter1/fundamentals.html 
+The example solves a Poisson's equation in 3 dimensions using 64 elements and 1st order Lagrange shape functions with cg as the ksp solver and no preconditioners. 
+For more details about the Poisson's problem, we refer the user to the following link: https://jsdokken.com/dolfinx-tutorial/chapter1/fundamentals.html 
 
 
 
 On a Windows machine
 ------------------------------------------------------------------------------
 
-Current as of: May 2024.
+See the [Instructions for DOLFINx](https://github.com/FEniCS/dolfinx/blob/main/README.md)
+for background. Four installation options are described below, in order of
+recommendation.
 
-[Instructions for DOLFINx](https://github.com/FEniCS/dolfinx/blob/main/README.md)
+Option 1: Using WSL2 (recommended)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-1. Using WSL2
+This is the easiest method to set up, access, and understand.
 
-A Windows 11 computer should have WSL natively. In a command prompt, ``wsl --status`` will tell you if you have WSL version 2, which is generally preferred. 
+1. Check whether WSL2 is already installed. A Windows 11 computer should have
+   WSL natively. In a command prompt, run ``wsl --status`` to check whether you
+   have WSL version 2, which is generally preferred.
+2. Install a Ubuntu distro in WSL2. In a command prompt, run::
 
-To install a Ubuntu distro in WSL 2, in a command prompt, run::
+     wsl --install
 
-   wsl --install
+   You will be prompted to create a username and password. After installation,
+   your prompt will be logged in to Ubuntu on WSL. You can also access this
+   prompt later by searching your apps for Ubuntu.
+3. In Ubuntu, install the DOLFINx environment::
 
-You'll be instructed to create a username and password. After install, your prompt will be logged in to Ubuntu on WSL. You can also access this prompt in the future by searching your apps for Ubuntu.
+     add-apt-repository ppa:fenics-packages/fenics
+     apt update
+     apt install fenicsx
 
-In Ubuntu, follow the instructions to install the DOLFINx environment.::
+   This may take up to an hour to install.
+4. After installation, access your environment by opening Ubuntu. Use ``apt``
+   or ``pip`` to install any additional packages you need. To access this
+   environment in VSCode, use the
+   [WSL extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-wsl),
+   which works similarly to remotely accessing HPC systems through SSH with the
+   [SSH extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-ssh).
 
+Option 2: Using Docker
+~~~~~~~~~~~~~~~~~~~~~~~
 
-   add-apt-repository ppa:fenics-packages/fenics
-   apt update
-   apt install fenicsx
+If you are already comfortable with Docker, we recommend using Docker for
+DOLFINx; otherwise, we recommend WSL2 instead.
 
+1. [Install](https://docs.docker.com/desktop/install/windows-install/) Docker.
+   Docker Desktop requires a license for large organizations such as NLR;
+   check license availability before proceeding. A Docker Desktop license is
+   not necessary for installing a DOLFINx environment in Docker.
+2. Docker uses images, which are recipes for programming environments, and
+   containers, which are instances based on an image. Containers can be
+   created and destroyed, entered and exited.
+3. Create and start a container by running::
 
-This may take up to an hour to install. 
+     docker run --name fenicsx -ti dolfinx/dolfinx:nightly
 
-Following installation, you can access your environment by opening Ubuntu. You can use ``apt`` or ``pip`` to install any additional packages you need. 
-If you want to access this environment in VSCode, you can use the [WSL extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-wsl), which works very similar to remotely accessing HPC systems through SSH with the [SSH extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-ssh).
+   The image ``dolfinx/dolfinx:nightly`` can be replaced with other options
+   listed in the instructions; in most cases we recommend
+   ``dolfinx/dolfinx:stable``.
+4. The first time this command is run, it also pulls the image data, which may
+   take up to 20 minutes. Running the command again creates a new container
+   from the same image; in that case, leave out or change the
+   ``--name fenicsx`` tag, and expect it to take far less time since the image
+   is already pulled.
+5. A container runs one command. By default, that command opens a terminal.
+   When you exit that terminal, the container also exits.
+6. Re-enter a Docker container by running::
 
-I found this method to be the easiest to set up, access, and understand.
+     docker start -i fenics
 
-2. Using Docker
+   Exiting and re-entering containers keeps data such as downloaded files and
+   installed packages on top of the original image. Removing and re-creating a
+   container does not keep this data; only the original image is preserved.
+7. To install additional packages, use ``pip`` while inside your Docker
+   container.
 
-[Install](https://docs.docker.com/desktop/install/windows-install/) Docker. Docker Desktop needs a license, as NLR is a large organization. I don't know if these are available. However, a Docker Destop license is not necessary for installing a DOLFINx environment in Docker.
+Option 3: Using Conda
+~~~~~~~~~~~~~~~~~~~~~~
 
-Docker uses images, which are recipes for programming environments, and containers, which are instances based on an image. Containers can be created and destroyed, entered and exited. 
+.. note::
 
-To get up and running with docker, run ::
+   As of this writing, ``mpich`` and ``fenics-dolfinx`` are not available for
+   Windows on conda-forge, so this option is not currently possible. It is
+   included here in case that changes.
 
-   docker run --name fenicsx -ti dolfinx/dolfinx:nightly
-
-
-The image, ``dolfinx/dolfinx:nightly``, can be replaced with other options listed in the instructions. 
-In most cases I would recommend ``dolfinx/dolfinx:stable``, but I used the nightly version to avoid a bug with DOLFINx that hopefully would be resolved by the time this is relevant.
-
-This instruction creates a container from the image, and the first time it is run, it also pulls the image data. This may take up to 20 minutes. If you run this command again, it will create a new container from the same image. Note that you would want to leave out or change the `--name fenicsx` tag, and that it would take far less time the second time, as the image is already pulled.
-
-A container runs one command. By default, that command is to open a terminal. When you exit that terminal, the container also exits. 
-
-You may re-enter a Docker container by running::
-
-   docker start -i fenics
-
-
-Exiting and re-entering containers will keep data like files downloaded and packages installed, 
-on top of the original image. Removing and re-creating a new container will not keep this data, only the original image. 
-
-To install additional packages, you may use ``pip`` while you are inside your docker container.
-
-There are ways to keep files from one container to another or from your container to your local computer. 
-There are also ways to modify and update the docker container with additional packages. I do not know them.
-
-Docker works on Windows. If you understand Docker, I'd recommend using Docker for DOLFINx. 
-If you don't, I'd recommend WSL2. 
-
-3. Using Conda
 Windows supports Miniconda and Anaconda. Current DOLFINx instructions read::
-
 
    conda create -n fenicsx-env
    conda activate fenicsx-env
    conda install -c conda-forge fenics-dolfinx mpich pyvista
 
+On conda-forge, ``pyvista`` supports Windows, but ``mpich`` and
+``fenics-dolfinx`` do not. If that changes, you could use conda environments on
+Windows by:
 
-On conda-forge, pyvista supports Windows, but mpich and fenics-dolfinx do not. If that changed, you could use conda environments on Windows by:
-   1. Installing Miniconda or Anaconda
-   2. Opening Anaconda prompt
-   3. Following the above instructions to create and set up the environment
+1. Installing Miniconda or Anaconda
+2. Opening Anaconda prompt
+3. Following the above instructions to create and set up the environment
 
-It's unclear whether mpich and fenics-dolfinx cannot be ported to Windows, or just haven't yet been. At present, though, they aren't, so a conda DOLFINx environment through conda-forge is not possible.
+Option 4: Using Spack
+~~~~~~~~~~~~~~~~~~~~~~
 
-4. Using Spack
+Windows only technically supports Spack, per
+[these instructions](https://spack.readthedocs.io/en/latest/getting_started.html#spack-on-windows).
+Follow this procedure:
 
-Windows only technically supports spack. In theory, one would use spack on Windows according to [these instructions](https://spack.readthedocs.io/en/latest/getting_started.html#spack-on-windows). Your procedure would look like:
-   1. Installing prerequisites VSCode with C++ compiler options, Python, Git
+1. Install prerequisites: VSCode with C++ compiler options, Python, and Git.
+2. Clone Spack::
 
-   2. Cloning spack 
-   ::
-      git clone https://github.com/spack/spack.git
-   
-   3. Opening a spack prompt, by running ``bin\spack_cmd.bat``. 
+     git clone https://github.com/spack/spack.git
 
-   4. Setting up spack
-   ::
-      spack compiler find
-      spack external find cmake
-      spack external find ninja
-   
-   5. Setting up your spack environment
-   ::
-      spack env create fenicsx-env
-      spack env activate fenicsx-env
-      spack add fenics-dolfinx+adios2 py-fenics-dolfinx cflags="-O3" fflags="-O3"
-      spack install
-   
+3. Open a spack prompt by running ``bin\spack_cmd.bat``.
+4. Set up Spack::
 
-I got no further than step 1; I couldn't find options to install VSCode with the needed C++ compiler. Many spackages are also not supported by Windows, so you likely would also not be able to run the `spack add` line in step 5.
+     spack compiler find
+     spack external find cmake
+     spack external find ninja
 
-Development to get spack to work on Windows is underway. Development to port the relevant spackages to Windows is not. Verdict: DOLFINx with Spack on Windows is impossible at current stages, and a pain even if possible.
+5. Set up your Spack environment::
 
+     spack env create fenicsx-env
+     spack env activate fenicsx-env
+     spack add fenics-dolfinx+adios2 py-fenics-dolfinx cflags="-O3" fflags="-O3"
+     spack install
 
 
 On NLR HPC machine Kestrel 
@@ -172,8 +182,8 @@ In order to use PVade on Kestrel, we can use one of the two options.
 
 1. conda/mamba installation
 
-In order to install PVade, it is recommend to use compute node. 
-You can allocate one use it interactively through: 
+In order to install PVade, it is recommended to use a compute node. 
+You can allocate one and use it interactively through: 
 
 .. code:: bash
 
@@ -203,7 +213,7 @@ We change the directory to ``$PVade`` and load mamba.
 
 .. note::
 
-   The same can be achived by using Conda.
+   The same can be achieved by using Conda.
    Mamba was shown to be faster.
 
 We then create an environment ``my_env_name`` and activate it.
@@ -217,9 +227,9 @@ To test the installation we can run an example using the command
 
 .. code::
 
-   mpirun -np $num_cores python -u $PVade/example/poissoneq.py 64  cg none 1
+   mpirun -np $num_cores python -u $PVade/tutorials/poissoneq.py 64  cg none 1
 
-The example solve a Poisson's equation in 3 dimensions using 64 elements and 1 order Lagrange shape functions with cg as the ksp solver and no preconditioners. 
+The example solves a Poisson's equation in 3 dimensions using 64 elements and 1st order Lagrange shape functions with cg as the ksp solver and no preconditioners. 
 
 .. note::
 

@@ -19,7 +19,7 @@ New users are encouraged to review the [Getting Started](https://pvade.readthedo
     ```bash
     conda activate my_env_name
     ```
-2. From within your activate Conda environment, a simulation can be executed with:
+2. From within your activated Conda environment, a simulation can be executed with:
     ```bash
     python pvade_main.py --command_line_arg value
     ```
